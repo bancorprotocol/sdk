@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "lib": [
+      "es6",
+      "dom",
+      "es2015.promise"
+    ],
+    "declaration": true,
+    "outDir": "build",
+    "rootDir": "./",
+    "strict": false,
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "./src/*"
+  ],
+  "exclude": []
+}
