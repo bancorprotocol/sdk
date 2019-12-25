@@ -1,17 +1,17 @@
 import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate } from './blockchains/ethereum/index';
 import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate } from './blockchains/eos';
 import { testConversionTypes } from '../example/example';
-import { IToken, generatePathByBlockchainIds, IConversionPaths, IConversionPathStep, IBlockchainType } from './path_generation';
+import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType } from './path_generation';
 
 let ethereumEndpoint = '';
 let eosNodeEndpoint = '';
 
-interface ISettings {
+interface Settings {
     ethereumNodeEndpointUrl: string;
     eosNodeEndpointUrl: string;
 }
 
-export async function init({ ethereumNodeEndpointUrl, eosNodeEndpointUrl }: ISettings) {
+export async function init({ ethereumNodeEndpointUrl, eosNodeEndpointUrl }: Settings) {
     ethereumEndpoint = ethereumNodeEndpointUrl;
     eosNodeEndpoint = eosNodeEndpointUrl;
     if (eosNodeEndpoint)
@@ -24,19 +24,19 @@ export async function generateEosPaths() {
     buildPathsFile();
 }
 
-export async function generatePath(sourceToken: IToken, targetToken: IToken) {
+export async function generatePath(sourceToken: Token, targetToken: Token) {
     return await generatePathByBlockchainIds(sourceToken, targetToken);
 }
 
-async function calculateRateFromPaths(paths: IConversionPaths, amount) {
+async function calculateRateFromPaths(paths: ConversionPaths, amount) {
     if (paths.paths.length == 0) return amount;
     const rate = await calculateRateFromPath(paths, amount);
     paths.paths.shift();
     return calculateRateFromPaths(paths, rate);
 }
 
-async function calculateRateFromPath(paths: IConversionPaths, amount) {
-    const blockchainType: IBlockchainType = paths.paths[0].type;
+async function calculateRateFromPath(paths: ConversionPaths, amount) {
+    const blockchainType: BlockchainType = paths.paths[0].type;
     const convertPairs = await getConverterPairs(paths.paths[0].path, blockchainType);
 
     let i = 0;
@@ -47,8 +47,8 @@ async function calculateRateFromPath(paths: IConversionPaths, amount) {
     return amount;
 }
 
-async function getConverterPairs(path: string[], blockchainType: IBlockchainType) {
-    const pairs: IConversionPathStep[] = [];
+async function getConverterPairs(path: string[], blockchainType: BlockchainType) {
+    const pairs: ConversionPathStep[] = [];
     for (let i = 0; i < path.length - 1; i += 2) {
         let converterBlockchainId = blockchainType == 'ethereum' ? await getConverterBlockchainId(path[i + 1]) : path[i + 1];
         pairs.push({ converterBlockchainId: converterBlockchainId, fromToken: path[i], toToken: path[i + 2] });
@@ -56,11 +56,11 @@ async function getConverterPairs(path: string[], blockchainType: IBlockchainType
     return pairs;
 }
 
-export async function getRateByPath(paths: IConversionPaths, amount) {
+export async function getRateByPath(paths: ConversionPaths, amount) {
     return await calculateRateFromPaths(paths, amount);
 }
 
-export async function getRate(sourceToken: IToken, targetToken: IToken, amount: string) {
+export async function getRate(sourceToken: Token, targetToken: Token, amount: string) {
     const paths = await generatePath(sourceToken, targetToken);
     return await getRateByPath(paths, amount);
 }

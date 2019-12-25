@@ -4,7 +4,7 @@
 import Web3 from 'web3';
 import { BancorConverterV9 } from './contracts/BancorConverterV9';
 import { fromWei, toWei } from './utils';
-import { IConversionPathStep, IToken } from '../../path_generation';
+import { ConversionPathStep, Token } from '../../path_generation';
 import { BancorConverter } from './contracts/BancorConverter';
 import { ContractRegistry } from './contracts/ContractRegistry';
 import { BancorConverterRegistry } from './contracts/BancorConverterRegistry';
@@ -33,13 +33,13 @@ async function getAmountInTokenWei(token: string, amount: string, web3) {
     return toWei(amount, decimals);
 }
 
-async function getConversionReturn(converterPair: IConversionPathStep, amount: string, ABI, web3) {
+async function getConversionReturn(converterPair: ConversionPathStep, amount: string, ABI, web3) {
     let converterContract = new web3.eth.Contract(ABI, converterPair.converterBlockchainId);
     const returnAmount = await converterContract.methods.getReturn(converterPair.fromToken, converterPair.toToken, amount).call();
     return returnAmount;
 }
 
-export async function getPathStepRate(converterPair: IConversionPathStep, amount: string) {
+export async function getPathStepRate(converterPair: ConversionPathStep, amount: string) {
     let amountInTokenWei = await getAmountInTokenWei(converterPair.fromToken, amount, web3);
     const lastTokenBlockchainId = converterPair.toToken;
     const lastToken = new web3.eth.Contract(eRC20Token, lastTokenBlockchainId);
@@ -91,7 +91,7 @@ export async function getReservesCount(reserves) {
 
 export async function getReserveBlockchainId(converter, position) {
     const ethereumBlockchainId = await converter.methods.connectorTokens(position).call();
-    const returnValue: IToken = {
+    const returnValue: Token = {
         blockchainType: 'ethereum',
         ethereumBlockchainId: ethereumBlockchainId
     };
@@ -119,14 +119,14 @@ async function getTokenCount(converter: any, funcName: string) {
 
 export async function getReserveToken(converterContract, i) {
     const blockchainId = await converterContract.methods.connectorTokens(i).call();
-    const token: IToken = {
+    const token: Token = {
         blockchainType: 'ethereum',
         ethereumBlockchainId: blockchainId
     };
     return token;
 }
 
-export async function getSmartTokens(token: IToken) {
+export async function getSmartTokens(token: Token) {
     const isSmartToken = await registry.methods.isSmartToken(token.ethereumBlockchainId).call();
     const smartTokens = isSmartToken ? [token.ethereumBlockchainId] : await registry.methods.getConvertibleTokenSmartTokens(token.ethereumBlockchainId).call();
     return smartTokens;

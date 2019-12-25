@@ -1,28 +1,28 @@
-import { IEOSToken } from './blockchains/eos';
-export interface IConversionPathsTokens {
-    from: IToken;
-    to: IToken;
+import { EOSToken } from './blockchains/eos';
+export interface ConversionPathsTokens {
+    from: Token;
+    to: Token;
 }
-export declare type IBlockchainType = 'ethereum' | 'eos';
-export interface IConversionPath {
+export declare type BlockchainType = 'ethereum' | 'eos';
+export interface ConversionPath {
     type: 'ethereum' | 'eos';
     path: string[];
 }
-export interface IConversionPathStep {
+export interface ConversionPathStep {
     converterBlockchainId: string;
     fromToken: string;
     toToken: string;
 }
-export interface IConversionPaths {
-    paths: IConversionPath[];
+export interface ConversionPaths {
+    paths: ConversionPath[];
 }
-export interface IToken {
+export interface Token {
     ethereumBlockchainId?: string;
-    blockchainType: IBlockchainType;
-    eosBlockchainId?: IEOSToken;
+    blockchainType: BlockchainType;
+    eosBlockchainId?: EOSToken;
 }
-export declare function getConverterToken(blockchainId: any, connector: any, blockchainType: IBlockchainType): Promise<any>;
-export declare function generatePathByBlockchainIds(sourceToken: IToken, targetToken: IToken): Promise<IConversionPaths>;
-export declare function getConversionPath(from: IToken, to: IToken): Promise<any[]>;
-export declare function findPath(pathObject: IConversionPathsTokens, blockchainType: IBlockchainType): Promise<any[]>;
-export declare function getPathToAnchorByBlockchainId(token: IToken, anchorToken: IToken): any;
+export declare function getConverterToken(blockchainId: any, connector: any, blockchainType: BlockchainType): Promise<any>;
+export declare function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token): Promise<ConversionPaths>;
+export declare function getConversionPath(from: Token, to: Token): Promise<any[]>;
+export declare function findPath(pathObject: ConversionPathsTokens, blockchainType: BlockchainType): Promise<any[]>;
+export declare function getPathToAnchorByBlockchainId(token: Token, anchorToken: Token): any;

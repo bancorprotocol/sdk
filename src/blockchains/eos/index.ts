@@ -3,16 +3,16 @@ import fetch from 'node-fetch';
 import { converterBlockchainIds } from './converter_blockchain_ids';
 import fs from 'fs';
 import { shortConvert, sellSmartToken, buySmartToken, returnWithFee } from '../../utils/formulas';
-import { IConversionPathStep, IToken } from '../../path_generation';
+import { ConversionPathStep, Token } from '../../path_generation';
 import { Paths } from './paths';
 
-interface IReserve {
+interface Reserve {
     contract: string;
     currency: string;
     ratio: number;
 }
 
-export interface IEOSToken {
+export interface EOSToken {
     tokenAccount: string;
     tokenSymbol: string;
 }
@@ -94,7 +94,7 @@ export async function getReserveBalances(code, scope) {
     });
 }
 
-export function getReserveTokenSymbol(reserve: IReserve) {
+export function getReserveTokenSymbol(reserve: Reserve) {
     return getSymbol(reserve.currency);
 }
 
@@ -116,7 +116,7 @@ export async function buildPathsFile() {
         const reservesObject = await getReservesFromCode(converterBlockchainId);
         const reserves = Object.values(reservesObject.rows);
         tokens[smartTokenContract] = { [smartTokenName]: [converterBlockchainId]};
-        reserves.map((reserveObj: IReserve) => {
+        reserves.map((reserveObj: Reserve) => {
             const reserveSymbol = getReserveTokenSymbol(reserveObj);
             const existingRecord = tokens[reserveObj.contract];
             if (existingRecord)
@@ -129,15 +129,15 @@ export async function buildPathsFile() {
     fs.writeFile('./src/blockchains/eos/paths.ts', `export const Paths = ${JSON.stringify(tokens)}`, 'utf8', () => console.log('Done making paths json'));
 }
 
-function isFromSmartToken(pair: IConversionPathStep, reserves: string[]) {
+function isFromSmartToken(pair: ConversionPathStep, reserves: string[]) {
     return (!reserves.includes(pair.fromToken));
 }
 
-function isToSmartToken(pair: IConversionPathStep, reserves: string[]) {
+function isToSmartToken(pair: ConversionPathStep, reserves: string[]) {
     return (!reserves.includes(pair.toToken));
 }
 
-export async function getPathStepRate(pair: IConversionPathStep, amount: string) {
+export async function getPathStepRate(pair: ConversionPathStep, amount: string) {
     const converterBlockchainId = pair.converterBlockchainId;
     const reserves = await getReservesFromCode(converterBlockchainId);
     const reservesContacts = reserves.rows.map(res => res.contract);
@@ -150,7 +150,7 @@ export async function getPathStepRate(pair: IConversionPathStep, amount: string)
     let magnitude = 0;
     const balanceObject = { [pair.fromToken]: balanceFrom.rows[0].balance, [pair.toToken]: balanceTo.rows[0].balance };
     const converterReserves = {};
-    reserves.rows.map((reserve: IReserve) => {
+    reserves.rows.map((reserve: Reserve) => {
         converterReserves[reserve.contract] = { ratio: reserve.ratio, balance: balanceObject[reserve.contract] };
     });
 
@@ -184,14 +184,14 @@ export async function getPathStepRate(pair: IConversionPathStep, amount: string)
     return returnWithFee(amountWithoutFee, fee, magnitude);
 }
 
-export async function getConverterBlockchainId(token: IEOSToken) {
+export async function getConverterBlockchainId(token: EOSToken) {
     return pathJson[token.tokenAccount][token.tokenSymbol][0];
 }
 
-export async function getReserveBlockchainId(reserves: IEOSToken[], position) {
+export async function getReserveBlockchainId(reserves: EOSToken[], position) {
     const reserveToken = reserves[position].tokenAccount;
     const symbol = reserves[position].tokenSymbol;
-    const tok: IToken = {
+    const tok: Token = {
         eosBlockchainId: {
             tokenAccount: reserveToken,
             tokenSymbol: symbol
@@ -213,6 +213,6 @@ export async function getReserves(converterBlockchainId) {
     return { reserves: tokens };
 }
 
-export async function getReservesCount(reserves: IEOSToken[]) {
+export async function getReservesCount(reserves: EOSToken[]) {
     return reserves.length;
 }
