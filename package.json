@@ -7,8 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf ./build && tsc",
-    "start": "npm run build && node build/src/index.js",
-    "postinstall": "node scripts/generate_contracts.js && npm run build"
+    "start": "npm run build && node build/src/index.js"
   },
   "keywords": [],
   "author": "",
