@@ -8,7 +8,7 @@
       "es2015.promise"
     ],
     "declaration": true,
-    "outDir": "build",
+    "outDir": "dist",
     "rootDir": "./",
     "strict": false,
     "moduleResolution": "node",

@@ -1,19 +1,17 @@
 {
-  "name": "bancor-sdk",
+  "name": "@bancor/bancor-sdk",
   "version": "0.1.0",
   "description": "",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf ./build && tsc",
-    "start": "npm run build && node build/src/index.js"
+    "build": "rimraf ./dist && tsc"
   },
   "keywords": [],
   "author": "",
   "dependencies": {
     "@types/text-encoding": "0.0.35",
-    "bancor-contracts": "^0.5.10",
     "decimal.js": "^10.2.0",
     "eosjs": "^20.0.0",
     "node-fetch": "^2.6.0",
@@ -22,6 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "^12.12.17",
+    "bancor-contracts": "^0.5.12",
     "module-alias": "^2.2.2",
     "rimraf": "^3.0.0",
     "ts-node": "^8.5.0",
