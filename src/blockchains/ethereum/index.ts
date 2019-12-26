@@ -90,10 +90,10 @@ export async function getReservesCount(reserves) {
 }
 
 export async function getReserveBlockchainId(converter, position) {
-    const ethereumBlockchainId = await converter.methods.connectorTokens(position).call();
+    const blockchainId = await converter.methods.connectorTokens(position).call();
     const returnValue: Token = {
         blockchainType: 'ethereum',
-        ethereumBlockchainId: ethereumBlockchainId
+        blockchainId
     };
 
     return returnValue;
@@ -121,13 +121,13 @@ export async function getReserveToken(converterContract, i) {
     const blockchainId = await converterContract.methods.connectorTokens(i).call();
     const token: Token = {
         blockchainType: 'ethereum',
-        ethereumBlockchainId: blockchainId
+        blockchainId
     };
     return token;
 }
 
 export async function getSmartTokens(token: Token) {
-    const isSmartToken = await registry.methods.isSmartToken(token.ethereumBlockchainId).call();
-    const smartTokens = isSmartToken ? [token.ethereumBlockchainId] : await registry.methods.getConvertibleTokenSmartTokens(token.ethereumBlockchainId).call();
+    const isSmartToken = await registry.methods.isSmartToken(token.blockchainId).call();
+    const smartTokens = isSmartToken ? [token.blockchainId] : await registry.methods.getConvertibleTokenSmartTokens(token.blockchainId).call();
     return smartTokens;
 }

@@ -12,11 +12,6 @@ interface Reserve {
     ratio: number;
 }
 
-export interface EOSToken {
-    tokenAccount: string;
-    tokenSymbol: string;
-}
-
 let pathJson;
 let jsonRpc;
 
@@ -184,19 +179,17 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     return returnWithFee(amountWithoutFee, fee, magnitude);
 }
 
-export async function getConverterBlockchainId(token: EOSToken) {
-    return pathJson[token.tokenAccount][token.tokenSymbol][0];
+export async function getConverterBlockchainId(token: Token) {
+    return pathJson[token.blockchainType][token.symbol][0];
 }
 
-export async function getReserveBlockchainId(reserves: EOSToken[], position) {
-    const reserveToken = reserves[position].tokenAccount;
-    const symbol = reserves[position].tokenSymbol;
+export async function getReserveBlockchainId(reserves: Token[], position) {
+    const reserveToken = reserves[position].blockchainType;
+    const symbol = reserves[position].symbol;
     const tok: Token = {
-        eosBlockchainId: {
-            tokenAccount: reserveToken,
-            tokenSymbol: symbol
-        },
-        blockchainType: 'eos'
+        blockchainType: 'eos',
+        blockchainId: reserveToken,
+        symbol
     };
 
     return tok;
@@ -213,6 +206,6 @@ export async function getReserves(converterBlockchainId) {
     return { reserves: tokens };
 }
 
-export async function getReservesCount(reserves: EOSToken[]) {
+export async function getReservesCount(reserves: Token[]) {
     return reserves.length;
 }

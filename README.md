@@ -11,7 +11,7 @@ await bancor.init({
     // optional, mandatory when interacting with the ethereum mainnet
     ethereumNodeEndpoint: '<ethereum node endpoint>',
     // optional, mandatory when interacting with the EOS mainnet
-    eosNodeEndpoint:      '<eos node endpoint>'
+    eosNodeEndpoint: '<eos node endpoint>'
 });
 ```
 
@@ -25,11 +25,11 @@ In addition, `amount` input format is a decimal big number (as opposed to wei) s
 // generate the path between DAI and ENJ
 const sourceToken = {
     blockchainType: 'ethereum',
-    ethereumBlockchainId: '0x6B175474E89094C44Da98b954EedeAC495271d0F'
+    blockchainId: '0x6B175474E89094C44Da98b954EedeAC495271d0F'
 };
 const targetToken = {
     blockchainType: 'ethereum',
-    ethereumBlockchainId: '0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c'
+    blockchainId: '0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c'
 };
 const rate = await bancor.getRate(sourceToken, targetToken, "1.0");
 
@@ -45,11 +45,11 @@ Note that the source token and the target token can reside on two different bloc
 // generate the path between ETH and BNT
 const sourceToken = {
     blockchainType: 'ethereum',
-    ethereumBlockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'
+    blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'
 };
 const targetToken = {
     blockchainType: 'ethereum',
-    ethereumBlockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
+    blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
 };
 const path = await bancor.generatePath(sourceToken, targetToken);
 
