@@ -38,22 +38,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./blockchains/ethereum/index");
 var eos_1 = require("./blockchains/eos");
-var example_1 = require("../example/example");
 var path_generation_1 = require("./path_generation");
-var ethereumEndpoint = '';
-var eosNodeEndpoint = '';
 function init(_a) {
-    var ethereumNodeEndpointUrl = _a.ethereumNodeEndpointUrl, eosNodeEndpointUrl = _a.eosNodeEndpointUrl;
+    var ethereumNodeEndpoint = _a.ethereumNodeEndpoint, eosNodeEndpoint = _a.eosNodeEndpoint;
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    ethereumEndpoint = ethereumNodeEndpointUrl;
-                    eosNodeEndpoint = eosNodeEndpointUrl;
                     if (eosNodeEndpoint)
                         eos_1.initEOS(eosNodeEndpoint);
-                    if (!ethereumEndpoint) return [3 /*break*/, 2];
-                    return [4 /*yield*/, index_1.init(ethereumEndpoint)];
+                    if (!ethereumNodeEndpoint) return [3 /*break*/, 2];
+                    return [4 /*yield*/, index_1.init(ethereumNodeEndpoint)];
                 case 1:
                     _b.sent();
                     _b.label = 2;
@@ -189,13 +184,11 @@ function getRate(sourceToken, targetToken, amount) {
     });
 }
 exports.getRate = getRate;
-// testConversionTypes(); // todo uncomment to run tests
 exports.default = {
     init: init,
     generateEosPaths: generateEosPaths,
     getRate: getRate,
     generatePath: generatePath,
     getRateByPath: getRateByPath,
-    buildPathsFile: eos_1.buildPathsFile,
-    testConversionTypes: example_1.testConversionTypes
+    buildPathsFile: eos_1.buildPathsFile
 };

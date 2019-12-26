@@ -1,11 +1,10 @@
 import { buildPathsFile } from './blockchains/eos';
-import { testConversionTypes } from '../example/example';
 import { Token, ConversionPaths } from './path_generation';
 interface Settings {
-    ethereumNodeEndpointUrl: string;
-    eosNodeEndpointUrl: string;
+    ethereumNodeEndpoint: string;
+    eosNodeEndpoint: string;
 }
-export declare function init({ ethereumNodeEndpointUrl, eosNodeEndpointUrl }: Settings): Promise<void>;
+export declare function init({ ethereumNodeEndpoint, eosNodeEndpoint }: Settings): Promise<void>;
 export declare function generateEosPaths(): Promise<void>;
 export declare function generatePath(sourceToken: Token, targetToken: Token): Promise<ConversionPaths>;
 export declare function getRateByPath(paths: ConversionPaths, amount: any): Promise<any>;
@@ -17,6 +16,5 @@ declare const _default: {
     generatePath: typeof generatePath;
     getRateByPath: typeof getRateByPath;
     buildPathsFile: typeof buildPathsFile;
-    testConversionTypes: typeof testConversionTypes;
 };
 export default _default;
