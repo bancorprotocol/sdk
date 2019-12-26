@@ -205,15 +205,15 @@ function getReservesCount(reserves) {
 exports.getReservesCount = getReservesCount;
 function getReserveBlockchainId(converter, position) {
     return __awaiter(this, void 0, void 0, function () {
-        var ethereumBlockchainId, returnValue;
+        var blockchainId, returnValue;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, converter.methods.connectorTokens(position).call()];
                 case 1:
-                    ethereumBlockchainId = _a.sent();
+                    blockchainId = _a.sent();
                     returnValue = {
                         blockchainType: 'ethereum',
-                        ethereumBlockchainId: ethereumBlockchainId
+                        blockchainId: blockchainId
                     };
                     return [2 /*return*/, returnValue];
             }
@@ -268,7 +268,7 @@ function getReserveToken(converterContract, i) {
                     blockchainId = _a.sent();
                     token = {
                         blockchainType: 'ethereum',
-                        ethereumBlockchainId: blockchainId
+                        blockchainId: blockchainId
                     };
                     return [2 /*return*/, token];
             }
@@ -281,13 +281,13 @@ function getSmartTokens(token) {
         var isSmartToken, smartTokens, _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, registry.methods.isSmartToken(token.ethereumBlockchainId).call()];
+                case 0: return [4 /*yield*/, registry.methods.isSmartToken(token.blockchainId).call()];
                 case 1:
                     isSmartToken = _b.sent();
                     if (!isSmartToken) return [3 /*break*/, 2];
-                    _a = [token.ethereumBlockchainId];
+                    _a = [token.blockchainId];
                     return [3 /*break*/, 4];
-                case 2: return [4 /*yield*/, registry.methods.getConvertibleTokenSmartTokens(token.ethereumBlockchainId).call()];
+                case 2: return [4 /*yield*/, registry.methods.getConvertibleTokenSmartTokens(token.blockchainId).call()];
                 case 3:
                     _a = _b.sent();
                     _b.label = 4;

@@ -1,11 +1,10 @@
-import { EOSToken } from './blockchains/eos';
+export declare type BlockchainType = 'ethereum' | 'eos';
 export interface ConversionPathsTokens {
     from: Token;
     to: Token;
 }
-export declare type BlockchainType = 'ethereum' | 'eos';
 export interface ConversionPath {
-    type: 'ethereum' | 'eos';
+    type: BlockchainType;
     path: string[];
 }
 export interface ConversionPathStep {
@@ -17,9 +16,9 @@ export interface ConversionPaths {
     paths: ConversionPath[];
 }
 export interface Token {
-    ethereumBlockchainId?: string;
     blockchainType: BlockchainType;
-    eosBlockchainId?: EOSToken;
+    blockchainId: string;
+    symbol?: string;
 }
 export declare function getConverterToken(blockchainId: any, connector: any, blockchainType: BlockchainType): Promise<any>;
 export declare function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token): Promise<ConversionPaths>;

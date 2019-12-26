@@ -303,7 +303,7 @@ exports.getPathStepRate = getPathStepRate;
 function getConverterBlockchainId(token) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, pathJson[token.tokenAccount][token.tokenSymbol][0]];
+            return [2 /*return*/, pathJson[token.blockchainType][token.symbol][0]];
         });
     });
 }
@@ -312,14 +312,12 @@ function getReserveBlockchainId(reserves, position) {
     return __awaiter(this, void 0, void 0, function () {
         var reserveToken, symbol, tok;
         return __generator(this, function (_a) {
-            reserveToken = reserves[position].tokenAccount;
-            symbol = reserves[position].tokenSymbol;
+            reserveToken = reserves[position].blockchainType;
+            symbol = reserves[position].symbol;
             tok = {
-                eosBlockchainId: {
-                    tokenAccount: reserveToken,
-                    tokenSymbol: symbol
-                },
-                blockchainType: 'eos'
+                blockchainType: 'eos',
+                blockchainId: reserveToken,
+                symbol: symbol
             };
             return [2 /*return*/, tok];
         });
