@@ -1,23 +1,17 @@
 import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate } from './blockchains/ethereum/index';
 import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate } from './blockchains/eos';
-import { testConversionTypes } from '../example/example';
 import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType } from './path_generation';
 
-let ethereumEndpoint = '';
-let eosNodeEndpoint = '';
-
 interface Settings {
-    ethereumNodeEndpointUrl: string;
-    eosNodeEndpointUrl: string;
+    ethereumNodeEndpoint: string;
+    eosNodeEndpoint: string;
 }
 
-export async function init({ ethereumNodeEndpointUrl, eosNodeEndpointUrl }: Settings) {
-    ethereumEndpoint = ethereumNodeEndpointUrl;
-    eosNodeEndpoint = eosNodeEndpointUrl;
+export async function init({ ethereumNodeEndpoint, eosNodeEndpoint }: Settings) {
     if (eosNodeEndpoint)
         initEOS(eosNodeEndpoint);
-    if (ethereumEndpoint)
-        await initEthereum(ethereumEndpoint);
+    if (ethereumNodeEndpoint)
+        await initEthereum(ethereumNodeEndpoint);
 }
 
 export async function generateEosPaths() {
@@ -65,14 +59,11 @@ export async function getRate(sourceToken: Token, targetToken: Token, amount: st
     return await getRateByPath(paths, amount);
 }
 
-// testConversionTypes(); // todo uncomment to run tests
-
 export default {
     init,
     generateEosPaths,
     getRate,
     generatePath,
     getRateByPath,
-    buildPathsFile,
-    testConversionTypes
+    buildPathsFile
 };
