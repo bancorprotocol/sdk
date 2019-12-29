@@ -10,5 +10,5 @@ export function fromWei(number, decimalDigits = 18) {
 export function toWei(number, decimalDigits = 18) {
     if (!number) return number;
 
-    return new Decimal(number).times(10 ** decimalDigits).toFixed();
+    return new Decimal(number).times(10 ** decimalDigits).toFixed(0);
 }
