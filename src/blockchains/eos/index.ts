@@ -184,11 +184,11 @@ export async function getConverterBlockchainId(token: Token) {
 }
 
 export async function getReserveBlockchainId(reserves: Token[], position) {
-    const reserveToken = reserves[position].blockchainId;
+    const blockchainId = reserves[position].blockchainId;
     const symbol = reserves[position].symbol;
     const tok: Token = {
         blockchainType: 'eos',
-        blockchainId: reserveToken,
+        blockchainId,
         symbol
     };
 
