@@ -180,7 +180,7 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
 }
 
 export async function getConverterBlockchainId(token: Token) {
-    return pathJson[token.blockchainType][token.symbol][0];
+    return pathJson[token.blockchainId][token.symbol][0];
 }
 
 export async function getReserveBlockchainId(reserves: Token[], position) {

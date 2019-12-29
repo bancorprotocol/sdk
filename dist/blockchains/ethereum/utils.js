@@ -16,6 +16,6 @@ function toWei(number, decimalDigits) {
     if (decimalDigits === void 0) { decimalDigits = 18; }
     if (!number)
         return number;
-    return new decimal_js_1.default(number).times(Math.pow(10, decimalDigits)).toFixed();
+    return new decimal_js_1.default(number).times(Math.pow(10, decimalDigits)).toFixed(0);
 }
 exports.toWei = toWei;

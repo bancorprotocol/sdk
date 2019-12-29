@@ -303,7 +303,7 @@ exports.getPathStepRate = getPathStepRate;
 function getConverterBlockchainId(token) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, pathJson[token.blockchainType][token.symbol][0]];
+            return [2 /*return*/, pathJson[token.blockchainId][token.symbol][0]];
         });
     });
 }

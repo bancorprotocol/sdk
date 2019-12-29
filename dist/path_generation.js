@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -50,7 +61,7 @@ var ETHBlockchainId = '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315';
 var BNTBlockchainId = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
 var EthereumAnchorToken = {
     blockchainType: 'ethereum',
-    blockchainId: BNTBlockchainId,
+    blockchainId: BNTBlockchainId
 };
 var EOSAnchorToken = {
     blockchainType: 'eos',
@@ -183,16 +194,15 @@ function generatePathByBlockchainIds(sourceToken, targetToken) {
 }
 exports.generatePathByBlockchainIds = generatePathByBlockchainIds;
 function getPath(from, to) {
-    var _a, _b, _c, _d;
     var blockchainType = from ? from.blockchainType : to.blockchainType;
     var path = {
-        from: from ? (_a = { blockchainType: blockchainType }, _a['blockchainId'] = from['blockchainId'], _a) : null,
-        to: to ? (_b = { blockchainType: blockchainType }, _b['blockchainId'] = to['blockchainId'], _b) : null
+        from: from ? from : null,
+        to: to ? to : null
     };
     if (!path.to)
-        path.to = (_c = { blockchainType: blockchainType }, _c['blockchainId'] = anchorTokens["" + blockchainType], _c);
+        path.to = __assign({}, anchorTokens[blockchainType]);
     if (!path.from)
-        path.from = (_d = { blockchainType: blockchainType }, _d['blockchainId'] = anchorTokens["" + blockchainType], _d);
+        path.from = __assign({}, anchorTokens[blockchainType]);
     return path;
 }
 function getConversionPath(from, to) {
@@ -211,10 +221,10 @@ function findPath(pathObject, blockchainType) {
         var from, to;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, getPathToAnchorByBlockchainId({ blockchainType: blockchainType, blockchainId: pathObject.from.blockchainId }, anchorTokens[blockchainType])];
+                case 0: return [4 /*yield*/, getPathToAnchorByBlockchainId(__assign({}, pathObject.from), anchorTokens[blockchainType])];
                 case 1:
                     from = _a.sent();
-                    return [4 /*yield*/, getPathToAnchorByBlockchainId({ blockchainType: blockchainType, blockchainId: pathObject.to.blockchainId }, anchorTokens[blockchainType])];
+                    return [4 /*yield*/, getPathToAnchorByBlockchainId(__assign({}, pathObject.to), anchorTokens[blockchainType])];
                 case 2:
                     to = _a.sent();
                     return [2 /*return*/, getShortestPath(from, to)];
