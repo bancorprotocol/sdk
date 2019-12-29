@@ -9,7 +9,7 @@ const BNTBlockchainId = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
 
 const EthereumAnchorToken: Token = {
     blockchainType: 'ethereum',
-    blockchainId: BNTBlockchainId,
+    blockchainId: BNTBlockchainId
 };
 
 const EOSAnchorToken: Token = {
@@ -116,15 +116,15 @@ export async function generatePathByBlockchainIds(sourceToken: Token, targetToke
 function getPath(from: Token, to: Token) {
     const blockchainType: BlockchainType = from ? from.blockchainType : to.blockchainType;
     const path: ConversionPathsTokens = {
-        from: from ? { blockchainType, ['blockchainId']: from['blockchainId'] } : null,
-        to: to ? { blockchainType, ['blockchainId']: to['blockchainId'] } : null
+        from: from ? { blockchainType, blockchainId: from.blockchainId } : null,
+        to: to ? { blockchainType, blockchainId: to.blockchainId } : null
     };
 
     if (!path.to)
-        path.to = { blockchainType, ['blockchainId']: anchorTokens[`${blockchainType}`] };
+        path.to = { blockchainType, blockchainId: anchorTokens[blockchainType].blockchainId };
 
     if (!path.from)
-        path.from = { blockchainType, ['blockchainId']: anchorTokens[`${blockchainType}`] };
+        path.from = { blockchainType, blockchainId: anchorTokens[blockchainType].blockchainId };
 
     return path;
 }
@@ -137,8 +137,8 @@ export async function getConversionPath(from: Token, to: Token) {
 }
 
 export async function findPath(pathObject: ConversionPathsTokens, blockchainType: BlockchainType) {
-    const from = await getPathToAnchorByBlockchainId({ blockchainType, blockchainId: pathObject.from.blockchainId }, anchorTokens[blockchainType] );
-    const to = await getPathToAnchorByBlockchainId({ blockchainType, blockchainId: pathObject.to.blockchainId }, anchorTokens[blockchainType] );
+    const from = await getPathToAnchorByBlockchainId({ blockchainType, blockchainId: pathObject.from.blockchainId }, anchorTokens[blockchainType]);
+    const to = await getPathToAnchorByBlockchainId({ blockchainType, blockchainId: pathObject.to.blockchainId }, anchorTokens[blockchainType]);
     return getShortestPath(from, to);
 }
 
