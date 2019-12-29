@@ -310,13 +310,13 @@ function getConverterBlockchainId(token) {
 exports.getConverterBlockchainId = getConverterBlockchainId;
 function getReserveBlockchainId(reserves, position) {
     return __awaiter(this, void 0, void 0, function () {
-        var reserveToken, symbol, tok;
+        var blockchainId, symbol, tok;
         return __generator(this, function (_a) {
-            reserveToken = reserves[position].blockchainType;
+            blockchainId = reserves[position].blockchainId;
             symbol = reserves[position].symbol;
             tok = {
                 blockchainType: 'eos',
-                blockchainId: reserveToken,
+                blockchainId: blockchainId,
                 symbol: symbol
             };
             return [2 /*return*/, tok];
@@ -335,7 +335,7 @@ function getReserves(converterBlockchainId) {
                     tokens = [];
                     reserves.rows.map(function (reserve) {
                         var symbol = getSymbol(reserve.currency);
-                        tokens.push({ tokenSymbol: symbol, tokenAccount: reserve.contract });
+                        tokens.push({ symbol: symbol, blockchainId: reserve.contract });
                     });
                     return [2 /*return*/, { reserves: tokens }];
             }
