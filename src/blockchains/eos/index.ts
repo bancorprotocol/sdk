@@ -184,11 +184,11 @@ export async function getConverterBlockchainId(token: Token) {
 }
 
 export async function getReserveBlockchainId(reserves: Token[], position) {
-    const reserveToken = reserves[position].blockchainType;
+    const blockchainId = reserves[position].blockchainId;
     const symbol = reserves[position].symbol;
     const tok: Token = {
         blockchainType: 'eos',
-        blockchainId: reserveToken,
+        blockchainId,
         symbol
     };
 
@@ -201,7 +201,7 @@ export async function getReserves(converterBlockchainId) {
     reserves.rows.map(reserve => {
         const symbol = getSymbol(reserve.currency);
 
-        tokens.push({ tokenSymbol: symbol, tokenAccount: reserve.contract });
+        tokens.push({ symbol, blockchainId: reserve.contract });
     });
     return { reserves: tokens };
 }
