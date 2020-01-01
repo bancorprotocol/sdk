@@ -78,23 +78,22 @@ function generatePath(sourceToken, targetToken) {
     });
 }
 exports.generatePath = generatePath;
-function calculateRateFromPaths(paths, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        var rate;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (paths.paths.length == 0)
-                        return [2 /*return*/, amount];
-                    return [4 /*yield*/, calculateRateFromPath(paths, amount)];
-                case 1:
-                    rate = _a.sent();
-                    paths.paths.shift();
-                    return [2 /*return*/, calculateRateFromPaths(paths, rate)];
-            }
-        });
+// export async function calculateRateFromPaths(paths: ConversionPaths, amount) {
+exports.calculateRateFromPaths = function (paths, amount) { return __awaiter(void 0, void 0, void 0, function () {
+    var rate;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (paths.paths.length == 0)
+                    return [2 /*return*/, amount];
+                return [4 /*yield*/, calculateRateFromPath(paths, amount)];
+            case 1:
+                rate = _a.sent();
+                paths.paths.shift();
+                return [2 /*return*/, exports.calculateRateFromPaths(paths, rate)];
+        }
     });
-}
+}); };
 function calculateRateFromPath(paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var blockchainType, convertPairs, i, _a;
@@ -127,6 +126,7 @@ function calculateRateFromPath(paths, amount) {
         });
     });
 }
+exports.calculateRateFromPath = calculateRateFromPath;
 function getConverterPairs(path, blockchainType) {
     return __awaiter(this, void 0, void 0, function () {
         var pairs, i, converterBlockchainId, _a;
@@ -158,17 +158,15 @@ function getConverterPairs(path, blockchainType) {
         });
     });
 }
-function getRateByPath(paths, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, calculateRateFromPaths(paths, amount)];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
+// export async function getRateByPath(paths: ConversionPaths, amount) {
+exports.getRateByPath = function (paths, amount) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, exports.calculateRateFromPaths(paths, amount)];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
     });
-}
-exports.getRateByPath = getRateByPath;
+}); };
 function getRate(sourceToken, targetToken, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var paths;
@@ -177,7 +175,7 @@ function getRate(sourceToken, targetToken, amount) {
                 case 0: return [4 /*yield*/, generatePath(sourceToken, targetToken)];
                 case 1:
                     paths = _a.sent();
-                    return [4 /*yield*/, getRateByPath(paths, amount)];
+                    return [4 /*yield*/, exports.getRateByPath(paths, amount)];
                 case 2: return [2 /*return*/, _a.sent()];
             }
         });
@@ -189,6 +187,6 @@ exports.default = {
     generateEosPaths: generateEosPaths,
     getRate: getRate,
     generatePath: generatePath,
-    getRateByPath: getRateByPath,
+    getRateByPath: exports.getRateByPath,
     buildPathsFile: eos_1.buildPathsFile
 };
