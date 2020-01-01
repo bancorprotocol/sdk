@@ -1,3 +1,7 @@
+### 0.1.4
+* Updated path generation anchor token
+
+
 ### 0.1.3
 * Fixed an issue in cross chain path generation
 
