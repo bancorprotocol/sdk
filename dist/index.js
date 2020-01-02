@@ -158,7 +158,6 @@ function getConverterPairs(path, blockchainType) {
         });
     });
 }
-// export async function getRateByPath(paths: ConversionPaths, amount) {
 exports.getRateByPath = function (paths, amount) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {

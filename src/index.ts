@@ -51,7 +51,6 @@ async function getConverterPairs(path: string[], blockchainType: BlockchainType)
     return pairs;
 }
 
-// export async function getRateByPath(paths: ConversionPaths, amount) {
 export const getRateByPath = async (paths: ConversionPaths, amount) => {
     return await calculateRateFromPaths(paths, amount);
 };
