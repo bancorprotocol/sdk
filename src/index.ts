@@ -33,6 +33,7 @@ export const calculateRateFromPaths = async (paths: ConversionPaths, amount) => 
 export async function calculateRateFromPath(paths: ConversionPaths, amount) {
     const blockchainType: BlockchainType = paths.paths[0].type;
     const convertPairs = await getConverterPairs(paths.paths[0].path, blockchainType);
+    console.log('convertPairs ', convertPairs);
 
     let i = 0;
     while (i < convertPairs.length) {
@@ -52,6 +53,7 @@ async function getConverterPairs(path: string[], blockchainType: BlockchainType)
 }
 
 export const getRateByPath = async (paths: ConversionPaths, amount) => {
+    console.log('paths ', JSON.stringify(paths));
     return await calculateRateFromPaths(paths, amount);
 };
 

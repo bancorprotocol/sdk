@@ -100,7 +100,7 @@ export async function getConverterToken(blockchainId, connector, blockchainType:
 }
 
 export async function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token) {
-    const pathObjects: ConversionPaths = { paths: []};
+    const pathObjects: ConversionPaths = { paths: [] };
 
     if (sourceToken.blockchainType == targetToken.blockchainType) {
         pathObjects.paths.push({ type: sourceToken.blockchainType, path: await getConversionPath(sourceToken, targetToken) });

@@ -104,6 +104,7 @@ function calculateRateFromPath(paths, amount) {
                     return [4 /*yield*/, getConverterPairs(paths.paths[0].path, blockchainType)];
                 case 1:
                     convertPairs = _b.sent();
+                    console.log('convertPairs ', convertPairs);
                     i = 0;
                     _b.label = 2;
                 case 2:
@@ -161,7 +162,9 @@ function getConverterPairs(path, blockchainType) {
 exports.getRateByPath = function (paths, amount) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, exports.calculateRateFromPaths(paths, amount)];
+            case 0:
+                console.log('paths ', JSON.stringify(paths));
+                return [4 /*yield*/, exports.calculateRateFromPaths(paths, amount)];
             case 1: return [2 /*return*/, _a.sent()];
         }
     });

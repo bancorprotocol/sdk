@@ -12,11 +12,11 @@ interface Reserve {
     ratio: number;
 }
 
-let pathJson;
+let pathJson = Paths;
 let jsonRpc;
 
 export function initEOS(endpoint) {
-    pathJson = Paths;
+    // pathJson = Paths;
     jsonRpc = new JsonRpc(endpoint, { fetch });
 }
 
@@ -24,7 +24,7 @@ export function getEosjsRpc() {
     return jsonRpc;
 }
 
-export async function getReservesFromCode(code) {
+export const getReservesFromCode = async code => {
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
@@ -34,9 +34,9 @@ export async function getReservesFromCode(code) {
         table: 'reserves',
         limit: 10
     });
-}
+};
 
-export async function getConverterSettings(code) {
+export const getConverterSettings = async code => {
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
@@ -46,12 +46,12 @@ export async function getConverterSettings(code) {
         table: 'settings',
         limit: 10
     });
-}
+};
 
-async function getConverterFeeFromSettings(code) {
+export const getConverterFeeFromSettings = async code => {
     const settings = await getConverterSettings(code);
     return settings.rows[0].fee;
-}
+};
 
 export async function getSmartToken(code) {
     const rpc = getEosjsRpc();
@@ -65,7 +65,7 @@ export async function getSmartToken(code) {
     });
 }
 
-export async function getSmartTokenSupply(account, code) {
+export const getSmartTokenSupply = async (account, code) => {
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
@@ -75,9 +75,9 @@ export async function getSmartTokenSupply(account, code) {
         table: 'stat',
         limit: 10
     });
-}
+};
 
-export async function getReserveBalances(code, scope) {
+export const getReserveBalances = async (code, scope) => {
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
@@ -87,11 +87,11 @@ export async function getReserveBalances(code, scope) {
         table: 'accounts',
         limit: 10
     });
-}
+};
 
-export function getReserveTokenSymbol(reserve: Reserve) {
+export const getReserveTokenSymbol = (reserve: Reserve) => {
     return getSymbol(reserve.currency);
-}
+};
 
 export function getSymbol(string) {
     return string.split(' ')[1];
@@ -135,23 +135,32 @@ function isToSmartToken(pair: ConversionPathStep, reserves: string[]) {
 export async function getPathStepRate(pair: ConversionPathStep, amount: string) {
     const converterBlockchainId = pair.converterBlockchainId;
     const reserves = await getReservesFromCode(converterBlockchainId);
+    console.log('reserves ', reserves);
     const reservesContacts = reserves.rows.map(res => res.contract);
     const fee = await getConverterFeeFromSettings(converterBlockchainId);
+    console.log('fee ', fee);
     const isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
     const balanceFrom = await getReserveBalances(pair.fromToken, pair.converterBlockchainId);
+    console.log('balanceFrom ', balanceFrom);
     const balanceTo = await getReserveBalances(pair.toToken, pair.converterBlockchainId);
+    console.log('balanceTo ', balanceTo);
     const isConversionToSmartToken = isToSmartToken(pair, reservesContacts);
     let amountWithoutFee = 0;
     let magnitude = 0;
+    console.log('PASSSS');
     const balanceObject = { [pair.fromToken]: balanceFrom.rows[0].balance, [pair.toToken]: balanceTo.rows[0].balance };
+    console.log('PASSSS 2222');
     const converterReserves = {};
     reserves.rows.map((reserve: Reserve) => {
         converterReserves[reserve.contract] = { ratio: reserve.ratio, balance: balanceObject[reserve.contract] };
     });
+    console.log('PASSSS 33333 isConversionFromSmartToken', isConversionFromSmartToken);
+    console.log('PASSSS 33333 isConversionToSmartToken', isConversionToSmartToken);
 
     if (isConversionFromSmartToken) {
         const tokenSymbol = Object.keys(pathJson[pair.fromToken])[0];
         const tokenSupplyObj = await getSmartTokenSupply(pair.fromToken, tokenSymbol);
+        console.log('tokenSupplyObj 111 ', tokenSupplyObj);
         const toReserveRatio = converterReserves[pair.toToken].ratio;
         const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
         const reserveTokenBalance = getBalance(balanceTo.rows[0].balance);
@@ -162,6 +171,7 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     else if (isConversionToSmartToken) {
         const tokenSymbol = Object.keys(pathJson[pair.toToken])[0];
         const tokenSupplyObj = await getSmartTokenSupply(pair.toToken, tokenSymbol);
+        console.log('tokenSupplyObj 222 ', tokenSupplyObj);
         const toReserveRatio = converterReserves[pair.fromToken].ratio;
         const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
         const reserveTokenBalance = getBalance(balanceFrom.rows[0].balance);
@@ -169,6 +179,7 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
         magnitude = 1;
     }
     else {
+        console.log('SHORT');
         amountWithoutFee = shortConvert(amount, getBalance(converterReserves[pair.toToken].balance), getBalance(converterReserves[pair.fromToken].balance));
         magnitude = 2;
     }
