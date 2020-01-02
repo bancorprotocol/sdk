@@ -1,4 +1,4 @@
-import * as x from '../src/index';
+import * as sdk from '../src/index';
 import * as genPath from '../src/path_generation';
 import * as ethereumFunctions from '../src/blockchains/ethereum';
 
@@ -14,7 +14,7 @@ describe('Path finder tests', () => {
             .spyOn(genPath, 'generatePathByBlockchainIds')
             .mockImplementation(() => Promise.resolve(karmaBntPath));
 
-        const { paths } = await x.generatePath(
+        const { paths } = await sdk.generatePath(
             { blockchainId: 'bntbntbntbnt', blockchainType: 'eos', symbol: 'BNT' },
             { blockchainId: 'therealkarma', symbol: 'KARMA', blockchainType: 'eos' }
         );
@@ -62,7 +62,7 @@ describe('Path finder tests', () => {
             .spyOn(genPath, 'getReserveToken')
             .mockImplementation(() => Promise.resolve(resToken));
 
-        const response = await x.generatePath({
+        const response = await sdk.generatePath({
             blockchainType: 'ethereum',
             blockchainId: srcToken
         }, {
