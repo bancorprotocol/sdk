@@ -45,10 +45,9 @@ var converter_blockchain_ids_1 = require("./converter_blockchain_ids");
 var fs_1 = __importDefault(require("fs"));
 var formulas_1 = require("../../utils/formulas");
 var paths_1 = require("./paths");
-var pathJson;
+var pathJson = paths_1.Paths;
 var jsonRpc;
 function initEOS(endpoint) {
-    pathJson = paths_1.Paths;
     jsonRpc = new eosjs_1.JsonRpc(endpoint, { fetch: node_fetch_1.default });
 }
 exports.initEOS = initEOS;
@@ -56,59 +55,51 @@ function getEosjsRpc() {
     return jsonRpc;
 }
 exports.getEosjsRpc = getEosjsRpc;
-function getReservesFromCode(code) {
-    return __awaiter(this, void 0, void 0, function () {
-        var rpc;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    rpc = getEosjsRpc();
-                    return [4 /*yield*/, rpc.get_table_rows({
-                            json: true,
-                            code: code,
-                            scope: code,
-                            table: 'reserves',
-                            limit: 10
-                        })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
+exports.getReservesFromCode = function (code) { return __awaiter(void 0, void 0, void 0, function () {
+    var rpc;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                rpc = getEosjsRpc();
+                return [4 /*yield*/, rpc.get_table_rows({
+                        json: true,
+                        code: code,
+                        scope: code,
+                        table: 'reserves',
+                        limit: 10
+                    })];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
     });
-}
-exports.getReservesFromCode = getReservesFromCode;
-function getConverterSettings(code) {
-    return __awaiter(this, void 0, void 0, function () {
-        var rpc;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    rpc = getEosjsRpc();
-                    return [4 /*yield*/, rpc.get_table_rows({
-                            json: true,
-                            code: code,
-                            scope: code,
-                            table: 'settings',
-                            limit: 10
-                        })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
+}); };
+exports.getConverterSettings = function (code) { return __awaiter(void 0, void 0, void 0, function () {
+    var rpc;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                rpc = getEosjsRpc();
+                return [4 /*yield*/, rpc.get_table_rows({
+                        json: true,
+                        code: code,
+                        scope: code,
+                        table: 'settings',
+                        limit: 10
+                    })];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
     });
-}
-exports.getConverterSettings = getConverterSettings;
-function getConverterFeeFromSettings(code) {
-    return __awaiter(this, void 0, void 0, function () {
-        var settings;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getConverterSettings(code)];
-                case 1:
-                    settings = _a.sent();
-                    return [2 /*return*/, settings.rows[0].fee];
-            }
-        });
+}); };
+exports.getConverterFeeFromSettings = function (code) { return __awaiter(void 0, void 0, void 0, function () {
+    var settings;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, exports.getConverterSettings(code)];
+            case 1:
+                settings = _a.sent();
+                return [2 /*return*/, settings.rows[0].fee];
+        }
     });
-}
+}); };
 function getSmartToken(code) {
     return __awaiter(this, void 0, void 0, function () {
         var rpc;
@@ -129,50 +120,43 @@ function getSmartToken(code) {
     });
 }
 exports.getSmartToken = getSmartToken;
-function getSmartTokenSupply(account, code) {
-    return __awaiter(this, void 0, void 0, function () {
-        var rpc;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    rpc = getEosjsRpc();
-                    return [4 /*yield*/, rpc.get_table_rows({
-                            json: true,
-                            code: account,
-                            scope: code,
-                            table: 'stat',
-                            limit: 10
-                        })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
+exports.getSmartTokenSupply = function (account, code) { return __awaiter(void 0, void 0, void 0, function () {
+    var rpc;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                rpc = getEosjsRpc();
+                return [4 /*yield*/, rpc.get_table_rows({
+                        json: true,
+                        code: account,
+                        scope: code,
+                        table: 'stat',
+                        limit: 10
+                    })];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
     });
-}
-exports.getSmartTokenSupply = getSmartTokenSupply;
-function getReserveBalances(code, scope) {
-    return __awaiter(this, void 0, void 0, function () {
-        var rpc;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    rpc = getEosjsRpc();
-                    return [4 /*yield*/, rpc.get_table_rows({
-                            json: true,
-                            code: code,
-                            scope: scope,
-                            table: 'accounts',
-                            limit: 10
-                        })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
+}); };
+exports.getReserveBalances = function (code, scope) { return __awaiter(void 0, void 0, void 0, function () {
+    var rpc;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                rpc = getEosjsRpc();
+                return [4 /*yield*/, rpc.get_table_rows({
+                        json: true,
+                        code: code,
+                        scope: scope,
+                        table: 'accounts',
+                        limit: 10
+                    })];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
     });
-}
-exports.getReserveBalances = getReserveBalances;
-function getReserveTokenSymbol(reserve) {
+}); };
+exports.getReserveTokenSymbol = function (reserve) {
     return getSymbol(reserve.currency);
-}
-exports.getReserveTokenSymbol = getReserveTokenSymbol;
+};
 function getSymbol(string) {
     return string.split(' ')[1];
 }
@@ -201,14 +185,14 @@ function buildPathsFile() {
                                         smartToken = _b.sent();
                                         smartTokenContract = smartToken.rows[0].smart_contract;
                                         smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
-                                        return [4 /*yield*/, getReservesFromCode(converterBlockchainId)];
+                                        return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId)];
                                     case 2:
                                         reservesObject = _b.sent();
                                         reserves = Object.values(reservesObject.rows);
                                         tokens[smartTokenContract] = (_a = {}, _a[smartTokenName] = [converterBlockchainId], _a);
                                         reserves.map(function (reserveObj) {
                                             var _a;
-                                            var reserveSymbol = getReserveTokenSymbol(reserveObj);
+                                            var reserveSymbol = exports.getReserveTokenSymbol(reserveObj);
                                             var existingRecord = tokens[reserveObj.contract];
                                             if (existingRecord)
                                                 existingRecord[reserveSymbol].push(converterBlockchainId);
@@ -242,18 +226,18 @@ function getPathStepRate(pair, amount) {
             switch (_b.label) {
                 case 0:
                     converterBlockchainId = pair.converterBlockchainId;
-                    return [4 /*yield*/, getReservesFromCode(converterBlockchainId)];
+                    return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId)];
                 case 1:
                     reserves = _b.sent();
                     reservesContacts = reserves.rows.map(function (res) { return res.contract; });
-                    return [4 /*yield*/, getConverterFeeFromSettings(converterBlockchainId)];
+                    return [4 /*yield*/, exports.getConverterFeeFromSettings(converterBlockchainId)];
                 case 2:
                     fee = _b.sent();
                     isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
-                    return [4 /*yield*/, getReserveBalances(pair.fromToken, pair.converterBlockchainId)];
+                    return [4 /*yield*/, exports.getReserveBalances(pair.fromToken, pair.converterBlockchainId)];
                 case 3:
                     balanceFrom = _b.sent();
-                    return [4 /*yield*/, getReserveBalances(pair.toToken, pair.converterBlockchainId)];
+                    return [4 /*yield*/, exports.getReserveBalances(pair.toToken, pair.converterBlockchainId)];
                 case 4:
                     balanceTo = _b.sent();
                     isConversionToSmartToken = isToSmartToken(pair, reservesContacts);
@@ -266,7 +250,7 @@ function getPathStepRate(pair, amount) {
                     });
                     if (!isConversionFromSmartToken) return [3 /*break*/, 6];
                     tokenSymbol = Object.keys(pathJson[pair.fromToken])[0];
-                    return [4 /*yield*/, getSmartTokenSupply(pair.fromToken, tokenSymbol)];
+                    return [4 /*yield*/, exports.getSmartTokenSupply(pair.fromToken, tokenSymbol)];
                 case 5:
                     tokenSupplyObj = _b.sent();
                     toReserveRatio = converterReserves[pair.toToken].ratio;
@@ -278,7 +262,7 @@ function getPathStepRate(pair, amount) {
                 case 6:
                     if (!isConversionToSmartToken) return [3 /*break*/, 8];
                     tokenSymbol = Object.keys(pathJson[pair.toToken])[0];
-                    return [4 /*yield*/, getSmartTokenSupply(pair.toToken, tokenSymbol)];
+                    return [4 /*yield*/, exports.getSmartTokenSupply(pair.toToken, tokenSymbol)];
                 case 7:
                     tokenSupplyObj = _b.sent();
                     toReserveRatio = converterReserves[pair.fromToken].ratio;
@@ -329,7 +313,7 @@ function getReserves(converterBlockchainId) {
         var reserves, tokens;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, getReservesFromCode(converterBlockchainId)];
+                case 0: return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId)];
                 case 1:
                     reserves = _a.sent();
                     tokens = [];

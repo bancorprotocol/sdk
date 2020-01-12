@@ -15,36 +15,38 @@ const ETHBlockchainId = '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315';
 const BNTBlockchainId = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
 let web3;
 let bancorConverter = BancorConverter;
-let eRC20Token = ERC20Token;
 let contractRegistry = ContractRegistry;
 let registryAbi = BancorConverterRegistry;
 let registry;
 
-export async function init(ethereumNodeUrl) {
+export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6') {
     web3 = new Web3(new Web3.providers.HttpProvider(ethereumNodeUrl));
-    const contractRegistryContract = new web3.eth.Contract(contractRegistry, '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6');
+    const contractRegistryContract = new web3.eth.Contract(contractRegistry, ethereumContractRegistryAddress);
     const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call(); // '0x85e27A5718382F32238497e78b4A40DD778ab847'
     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
 }
 
-async function getAmountInTokenWei(token: string, amount: string, web3) {
-    const tokenContract = new web3.eth.Contract(eRC20Token, token);
+export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
+    const tokenContract = new web3.eth.Contract(ERC20Token, token);
     const decimals = await tokenContract.methods.decimals().call();
     return toWei(amount, decimals);
-}
+};
 
-async function getConversionReturn(converterPair: ConversionPathStep, amount: string, ABI, web3) {
+export const getConversionReturn = async (converterPair: ConversionPathStep, amount: string, ABI, web3) => {
     let converterContract = new web3.eth.Contract(ABI, converterPair.converterBlockchainId);
     const returnAmount = await converterContract.methods.getReturn(converterPair.fromToken, converterPair.toToken, amount).call();
     return returnAmount;
-}
+};
+
+export const getTokenDecimals = async tokenBlockchainId => {
+    const token = new web3.eth.Contract(ERC20Token, tokenBlockchainId);
+    return await token.methods.decimals().call();
+};
 
 export async function getPathStepRate(converterPair: ConversionPathStep, amount: string) {
     let amountInTokenWei = await getAmountInTokenWei(converterPair.fromToken, amount, web3);
-    const lastTokenBlockchainId = converterPair.toToken;
-    const lastToken = new web3.eth.Contract(eRC20Token, lastTokenBlockchainId);
-    const lastTokenDecimals = await lastToken.methods.decimals().call();
-
+    const tokenBlockchainId = converterPair.toToken;
+    const tokenDecimals = await getTokenDecimals(tokenBlockchainId);
     try {
         const returnAmount = await getConversionReturn(converterPair, amountInTokenWei, bancorConverter, web3);
         amountInTokenWei = returnAmount['0'];
@@ -52,10 +54,10 @@ export async function getPathStepRate(converterPair: ConversionPathStep, amount:
     catch (e) {
         if (e.message.includes('insufficient data for uint256'))
             amountInTokenWei = await getConversionReturn(converterPair, amountInTokenWei, BancorConverterV9, web3);
-        else
-            throw (e);
+
+        else throw (e);
     }
-    return fromWei(amountInTokenWei, lastTokenDecimals);
+    return fromWei(amountInTokenWei, tokenDecimals);
 }
 
 export async function getRegistry() {
@@ -64,10 +66,10 @@ export async function getRegistry() {
     return new web3.eth.Contract(registryAbi, registryBlockchainId);
 }
 
-export async function getConverterBlockchainId(blockchainId) {
+export const getConverterBlockchainId = async blockchainId => {
     const tokenContract = new web3.eth.Contract(SmartToken, blockchainId);
     return await tokenContract.methods.owner().call();
-}
+};
 
 export function getSourceAndTargetTokens(srcToken: string, trgToken: string) {
     const isSourceETH = (srcToken || BNTBlockchainId).toLocaleLowerCase() == ETHBlockchainId.toLocaleLowerCase();

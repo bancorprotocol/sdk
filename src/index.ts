@@ -5,13 +5,14 @@ import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep
 interface Settings {
     ethereumNodeEndpoint: string;
     eosNodeEndpoint: string;
+    ethereumContractRegistryAddress?: string;
 }
 
-export async function init({ ethereumNodeEndpoint, eosNodeEndpoint }: Settings) {
-    if (eosNodeEndpoint)
-        initEOS(eosNodeEndpoint);
-    if (ethereumNodeEndpoint)
-        await initEthereum(ethereumNodeEndpoint);
+export async function init(args: Settings) {
+    if (args.eosNodeEndpoint)
+        initEOS(args.eosNodeEndpoint);
+    if (args.ethereumNodeEndpoint)
+        await initEthereum(args.ethereumNodeEndpoint, args.ethereumContractRegistryAddress);
 }
 
 export async function generateEosPaths() {
@@ -22,14 +23,14 @@ export async function generatePath(sourceToken: Token, targetToken: Token) {
     return await generatePathByBlockchainIds(sourceToken, targetToken);
 }
 
-async function calculateRateFromPaths(paths: ConversionPaths, amount) {
+export const calculateRateFromPaths = async (paths: ConversionPaths, amount) => {
     if (paths.paths.length == 0) return amount;
     const rate = await calculateRateFromPath(paths, amount);
     paths.paths.shift();
     return calculateRateFromPaths(paths, rate);
-}
+};
 
-async function calculateRateFromPath(paths: ConversionPaths, amount) {
+export async function calculateRateFromPath(paths: ConversionPaths, amount) {
     const blockchainType: BlockchainType = paths.paths[0].type;
     const convertPairs = await getConverterPairs(paths.paths[0].path, blockchainType);
 
@@ -50,9 +51,9 @@ async function getConverterPairs(path: string[], blockchainType: BlockchainType)
     return pairs;
 }
 
-export async function getRateByPath(paths: ConversionPaths, amount) {
+export const getRateByPath = async (paths: ConversionPaths, amount) => {
     return await calculateRateFromPaths(paths, amount);
-}
+};
 
 export async function getRate(sourceToken: Token, targetToken: Token, amount: string) {
     const paths = await generatePath(sourceToken, targetToken);

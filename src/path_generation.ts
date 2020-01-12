@@ -69,29 +69,29 @@ function isReserveToken(reserveToken: Token, token: Token) {
     return false;
 }
 
-async function getConverterBlockchainId(token: Token) {
+export const getConverterBlockchainId = async (token: Token) => {
     if (token.blockchainType == 'ethereum')
         return await getEthConverterBlockchainId(token.blockchainId);
     return await getEosConverterBlockchainId(token);
-}
+};
 
-async function getReserveCount(reserves, blockchainType: BlockchainType) {
+export const getReserveCount = async (reserves, blockchainType: BlockchainType) => {
     if (blockchainType == 'ethereum')
         return await getEthReservesCount(reserves);
     return await getEOSReservesCount(reserves);
-}
+};
 
-async function getReserves(blockchainId, blockchainType: BlockchainType) {
+export const getReserves = async (blockchainId, blockchainType: BlockchainType) => {
     if (blockchainType == 'ethereum')
         return await getEthReserves(blockchainId);
     return await getEOSReserves(blockchainId);
-}
+};
 
-async function getReserveToken(token, index, blockchainType: BlockchainType) {
+export const getReserveToken = async (token, index, blockchainType: BlockchainType) => {
     if (blockchainType == 'ethereum')
         return await getEthereumReserveBlockchainId(token, index);
     return await getEosReserveBlockchainId(token, index);
-}
+};
 
 export async function getConverterToken(blockchainId, connector, blockchainType: BlockchainType) {
     if (blockchainType == 'ethereum') return await getEthConverterSmartToken(connector);
@@ -99,7 +99,7 @@ export async function getConverterToken(blockchainId, connector, blockchainType:
 }
 
 export async function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token) {
-    const pathObjects: ConversionPaths = { paths: []};
+    const pathObjects: ConversionPaths = { paths: [] };
 
     if (sourceToken.blockchainType == targetToken.blockchainType) {
         pathObjects.paths.push({ type: sourceToken.blockchainType, path: await getConversionPath(sourceToken, targetToken) });

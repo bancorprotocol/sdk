@@ -90,62 +90,54 @@ function isReserveToken(reserveToken, token) {
         return true;
     return false;
 }
-function getConverterBlockchainId(token) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, ethereum_1.getConverterBlockchainId(token.blockchainId)];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2: return [4 /*yield*/, eos_1.getConverterBlockchainId(token)];
-                case 3: return [2 /*return*/, _a.sent()];
-            }
-        });
+exports.getConverterBlockchainId = function (token) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                return [4 /*yield*/, ethereum_1.getConverterBlockchainId(token.blockchainId)];
+            case 1: return [2 /*return*/, _a.sent()];
+            case 2: return [4 /*yield*/, eos_1.getConverterBlockchainId(token)];
+            case 3: return [2 /*return*/, _a.sent()];
+        }
     });
-}
-function getReserveCount(reserves, blockchainType) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!(blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, ethereum_1.getReservesCount(reserves)];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2: return [4 /*yield*/, eos_1.getReservesCount(reserves)];
-                case 3: return [2 /*return*/, _a.sent()];
-            }
-        });
+}); };
+exports.getReserveCount = function (reserves, blockchainType) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!(blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                return [4 /*yield*/, ethereum_1.getReservesCount(reserves)];
+            case 1: return [2 /*return*/, _a.sent()];
+            case 2: return [4 /*yield*/, eos_1.getReservesCount(reserves)];
+            case 3: return [2 /*return*/, _a.sent()];
+        }
     });
-}
-function getReserves(blockchainId, blockchainType) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!(blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, ethereum_1.getReserves(blockchainId)];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2: return [4 /*yield*/, eos_1.getReserves(blockchainId)];
-                case 3: return [2 /*return*/, _a.sent()];
-            }
-        });
+}); };
+exports.getReserves = function (blockchainId, blockchainType) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!(blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                return [4 /*yield*/, ethereum_1.getReserves(blockchainId)];
+            case 1: return [2 /*return*/, _a.sent()];
+            case 2: return [4 /*yield*/, eos_1.getReserves(blockchainId)];
+            case 3: return [2 /*return*/, _a.sent()];
+        }
     });
-}
-function getReserveToken(token, index, blockchainType) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!(blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, ethereum_1.getReserveBlockchainId(token, index)];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2: return [4 /*yield*/, eos_1.getReserveBlockchainId(token, index)];
-                case 3: return [2 /*return*/, _a.sent()];
-            }
-        });
+}); };
+exports.getReserveToken = function (token, index, blockchainType) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!(blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                return [4 /*yield*/, ethereum_1.getReserveBlockchainId(token, index)];
+            case 1: return [2 /*return*/, _a.sent()];
+            case 2: return [4 /*yield*/, eos_1.getReserveBlockchainId(token, index)];
+            case 3: return [2 /*return*/, _a.sent()];
+        }
     });
-}
+}); };
 function getConverterToken(blockchainId, connector, blockchainType) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -255,20 +247,20 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                 case 4:
                     if (!(_i < smartTokens_1.length)) return [3 /*break*/, 13];
                     smartToken = smartTokens_1[_i];
-                    return [4 /*yield*/, getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: token.blockchainType, blockchainId: smartToken } : token)];
+                    return [4 /*yield*/, exports.getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: token.blockchainType, blockchainId: smartToken } : token)];
                 case 5:
                     blockchainId = _b.sent();
-                    return [4 /*yield*/, getReserves(blockchainId, token.blockchainType)];
+                    return [4 /*yield*/, exports.getReserves(blockchainId, token.blockchainType)];
                 case 6:
                     reserves = (_b.sent()).reserves;
-                    return [4 /*yield*/, getReserveCount(reserves, token.blockchainType)];
+                    return [4 /*yield*/, exports.getReserveCount(reserves, token.blockchainType)];
                 case 7:
                     reservesCount = _b.sent();
                     i = 0;
                     _b.label = 8;
                 case 8:
                     if (!(i < reservesCount)) return [3 /*break*/, 12];
-                    return [4 /*yield*/, getReserveToken(reserves, i, token.blockchainType)];
+                    return [4 /*yield*/, exports.getReserveToken(reserves, i, token.blockchainType)];
                 case 9:
                     reserveToken = _b.sent();
                     if (!!isReserveToken(reserveToken, token)) return [3 /*break*/, 11];

@@ -6,12 +6,13 @@ interface Reserve {
 }
 export declare function initEOS(endpoint: any): void;
 export declare function getEosjsRpc(): any;
-export declare function getReservesFromCode(code: any): Promise<any>;
-export declare function getConverterSettings(code: any): Promise<any>;
+export declare const getReservesFromCode: (code: any) => Promise<any>;
+export declare const getConverterSettings: (code: any) => Promise<any>;
+export declare const getConverterFeeFromSettings: (code: any) => Promise<any>;
 export declare function getSmartToken(code: any): Promise<any>;
-export declare function getSmartTokenSupply(account: any, code: any): Promise<any>;
-export declare function getReserveBalances(code: any, scope: any): Promise<any>;
-export declare function getReserveTokenSymbol(reserve: Reserve): any;
+export declare const getSmartTokenSupply: (account: any, code: any) => Promise<any>;
+export declare const getReserveBalances: (code: any, scope: any) => Promise<any>;
+export declare const getReserveTokenSymbol: (reserve: Reserve) => any;
 export declare function getSymbol(string: any): any;
 export declare function getBalance(string: any): any;
 export declare function buildPathsFile(): Promise<void>;

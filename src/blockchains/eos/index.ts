@@ -12,11 +12,10 @@ interface Reserve {
     ratio: number;
 }
 
-let pathJson;
+let pathJson = Paths;
 let jsonRpc;
 
 export function initEOS(endpoint) {
-    pathJson = Paths;
     jsonRpc = new JsonRpc(endpoint, { fetch });
 }
 
@@ -24,7 +23,7 @@ export function getEosjsRpc() {
     return jsonRpc;
 }
 
-export async function getReservesFromCode(code) {
+export const getReservesFromCode = async code => {
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
@@ -34,9 +33,9 @@ export async function getReservesFromCode(code) {
         table: 'reserves',
         limit: 10
     });
-}
+};
 
-export async function getConverterSettings(code) {
+export const getConverterSettings = async code => {
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
@@ -46,12 +45,12 @@ export async function getConverterSettings(code) {
         table: 'settings',
         limit: 10
     });
-}
+};
 
-async function getConverterFeeFromSettings(code) {
+export const getConverterFeeFromSettings = async code => {
     const settings = await getConverterSettings(code);
     return settings.rows[0].fee;
-}
+};
 
 export async function getSmartToken(code) {
     const rpc = getEosjsRpc();
@@ -65,7 +64,7 @@ export async function getSmartToken(code) {
     });
 }
 
-export async function getSmartTokenSupply(account, code) {
+export const getSmartTokenSupply = async (account, code) => {
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
@@ -75,9 +74,9 @@ export async function getSmartTokenSupply(account, code) {
         table: 'stat',
         limit: 10
     });
-}
+};
 
-export async function getReserveBalances(code, scope) {
+export const getReserveBalances = async (code, scope) => {
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
@@ -87,11 +86,11 @@ export async function getReserveBalances(code, scope) {
         table: 'accounts',
         limit: 10
     });
-}
+};
 
-export function getReserveTokenSymbol(reserve: Reserve) {
+export const getReserveTokenSymbol = (reserve: Reserve) => {
     return getSymbol(reserve.currency);
-}
+};
 
 export function getSymbol(string) {
     return string.split(' ')[1];
