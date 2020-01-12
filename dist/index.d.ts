@@ -3,8 +3,9 @@ import { Token, ConversionPaths } from './path_generation';
 interface Settings {
     ethereumNodeEndpoint: string;
     eosNodeEndpoint: string;
+    ethereumContractRegistryAddress?: string;
 }
-export declare function init({ ethereumNodeEndpoint, eosNodeEndpoint }: Settings): Promise<void>;
+export declare function init({ ethereumNodeEndpoint, eosNodeEndpoint, ethereumContractRegistryAddress }: Settings): Promise<void>;
 export declare function generateEosPaths(): Promise<void>;
 export declare function generatePath(sourceToken: Token, targetToken: Token): Promise<ConversionPaths>;
 export declare const calculateRateFromPaths: (paths: ConversionPaths, amount: any) => any;

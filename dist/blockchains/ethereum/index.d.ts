@@ -1,8 +1,8 @@
 import { ConversionPathStep, Token } from '../../path_generation';
-export declare function init(ethereumNodeUrl: any): Promise<void>;
+export declare function init(ethereumNodeUrl: any, ethereumContractRegistryAddress?: string): Promise<void>;
 export declare const getAmountInTokenWei: (token: string, amount: string, web3: any) => Promise<any>;
 export declare const getConversionReturn: (converterPair: ConversionPathStep, amount: string, ABI: any, web3: any) => Promise<any>;
-export declare const getLastTokenDecimals: (eRC20Token: any, lastTokenBlockchainId: any) => Promise<any>;
+export declare const getERC20TokenDecimals: (eRC20Token: any, lastTokenBlockchainId: any) => Promise<any>;
 export declare function getPathStepRate(converterPair: ConversionPathStep, amount: string): Promise<any>;
 export declare function getRegistry(): Promise<any>;
 export declare const getConverterBlockchainId: (blockchainId: any) => Promise<any>;
