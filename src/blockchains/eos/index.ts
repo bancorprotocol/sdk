@@ -16,7 +16,6 @@ let pathJson = Paths;
 let jsonRpc;
 
 export function initEOS(endpoint) {
-    // pathJson = Paths;
     jsonRpc = new JsonRpc(endpoint, { fetch });
 }
 
