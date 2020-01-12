@@ -5,13 +5,14 @@ import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep
 interface Settings {
     ethereumNodeEndpoint: string;
     eosNodeEndpoint: string;
+    ethereumContractRegistryAddress?: string;
 }
 
-export async function init({ ethereumNodeEndpoint, eosNodeEndpoint }: Settings) {
+export async function init({ ethereumNodeEndpoint, eosNodeEndpoint, ethereumContractRegistryAddress }: Settings) {
     if (eosNodeEndpoint)
         initEOS(eosNodeEndpoint);
     if (ethereumNodeEndpoint)
-        await initEthereum(ethereumNodeEndpoint);
+        await initEthereum(ethereumNodeEndpoint, ethereumContractRegistryAddress);
 }
 
 export async function generateEosPaths() {
