@@ -57,7 +57,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable max-len */
 var eos_1 = require("./blockchains/eos");
 var ethereum_1 = require("./blockchains/ethereum");
-var ETHBlockchainId = '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315';
 var BNTBlockchainId = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
 var EthereumAnchorToken = {
     blockchainType: 'ethereum',
