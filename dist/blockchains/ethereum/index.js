@@ -102,29 +102,29 @@ exports.getConversionReturn = function (converterPair, amount, ABI, web3) { retu
         }
     });
 }); };
-exports.getTokenDecimals = function (lastTokenBlockchainId) { return __awaiter(void 0, void 0, void 0, function () {
-    var lastToken;
+exports.getTokenDecimals = function (tokenBlockchainId) { return __awaiter(void 0, void 0, void 0, function () {
+    var token;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                lastToken = new web3.eth.Contract(ERC20Token_1.ERC20Token, lastTokenBlockchainId);
-                return [4 /*yield*/, lastToken.methods.decimals().call()];
+                token = new web3.eth.Contract(ERC20Token_1.ERC20Token, tokenBlockchainId);
+                return [4 /*yield*/, token.methods.decimals().call()];
             case 1: return [2 /*return*/, _a.sent()];
         }
     });
 }); };
 function getPathStepRate(converterPair, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var amountInTokenWei, lastTokenBlockchainId, lastTokenDecimals, returnAmount, e_1;
+        var amountInTokenWei, tokenBlockchainId, tokenDecimals, returnAmount, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, exports.getAmountInTokenWei(converterPair.fromToken, amount, web3)];
                 case 1:
                     amountInTokenWei = _a.sent();
-                    lastTokenBlockchainId = converterPair.toToken;
-                    return [4 /*yield*/, exports.getTokenDecimals(lastTokenBlockchainId)];
+                    tokenBlockchainId = converterPair.toToken;
+                    return [4 /*yield*/, exports.getTokenDecimals(tokenBlockchainId)];
                 case 2:
-                    lastTokenDecimals = _a.sent();
+                    tokenDecimals = _a.sent();
                     _a.label = 3;
                 case 3:
                     _a.trys.push([3, 5, , 9]);
@@ -142,7 +142,7 @@ function getPathStepRate(converterPair, amount) {
                     return [3 /*break*/, 8];
                 case 7: throw (e_1);
                 case 8: return [3 /*break*/, 9];
-                case 9: return [2 /*return*/, utils_1.fromWei(amountInTokenWei, lastTokenDecimals)];
+                case 9: return [2 /*return*/, utils_1.fromWei(amountInTokenWei, tokenDecimals)];
             }
         });
     });
