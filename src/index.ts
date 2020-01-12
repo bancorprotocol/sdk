@@ -8,11 +8,11 @@ interface Settings {
     ethereumContractRegistryAddress?: string;
 }
 
-export async function init({ ethereumNodeEndpoint, eosNodeEndpoint, ethereumContractRegistryAddress }: Settings) {
-    if (eosNodeEndpoint)
-        initEOS(eosNodeEndpoint);
-    if (ethereumNodeEndpoint)
-        await initEthereum(ethereumNodeEndpoint, ethereumContractRegistryAddress);
+export async function init(args: Settings) {
+    if (args.eosNodeEndpoint)
+        initEOS(args.eosNodeEndpoint);
+    if (args.ethereumNodeEndpoint)
+        await initEthereum(args.ethereumNodeEndpoint, args.ethereumContractRegistryAddress);
 }
 
 export async function generateEosPaths() {
