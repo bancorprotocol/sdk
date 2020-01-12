@@ -213,7 +213,12 @@ describe('price tests', () => {
             .mockImplementationOnce(() => Promise.resolve(1000000000000000000))
             .mockImplementationOnce(() => Promise.resolve(563288093941643064061));
 
-        const shortestPathResult = ['0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315', '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533', '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c', '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340', '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'];
+        const shortestPathResult = [
+            '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315',
+            '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
+            '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c',
+            '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340',
+            '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'];
         const response = await sdk.getRateByPath({ paths: [{ type: 'ethereum' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
 
         expect(response).toEqual('209.035338725170038366');
@@ -221,5 +226,165 @@ describe('price tests', () => {
         expect(spyGetLastTokenDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetConversionReturn).toHaveBeenCalledTimes(2);
         expect(spyGetAmountInTokenWei).toHaveBeenCalledTimes(2);
+    });
+
+    it('Eos token to Eth', async () => {
+        const reserveFromCodeResult = {
+            rows: [
+                {
+                    contract: 'bntbntbntbnt',
+                    currency: '0.0000000000 BNT',
+                    ratio: 500000,
+                    p_enabled: 1
+                },
+                {
+                    contract: 'therealkarma',
+                    currency: '0.0000 KARMA',
+                    ratio: 500000,
+                    p_enabled: 1
+                }
+            ],
+            more: false,
+            next_key: ''
+        };
+
+        const spyGetReservesFromCode = jest
+            .spyOn(eosFunctions, 'getReservesFromCode')
+            .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
+
+        const spyGetConverterFeeFromSettings = jest
+            .spyOn(eosFunctions, 'getConverterFeeFromSettings')
+            .mockImplementation(() => Promise.resolve(2500));
+
+        const spyGetReserveBalances = jest
+            .spyOn(eosFunctions, 'getReserveBalances')
+            .mockImplementationOnce(() => Promise.resolve({
+                rows: [{ balance: '32355343.8280 KARMA' }],
+                more: false,
+                next_key: ''
+            }))
+            .mockImplementationOnce(() => Promise.resolve({
+                rows: [{ balance: '5950.2395821273 BNT' }],
+                more: false,
+                next_key: ''
+            }));
+
+        const spyGetConverterBlockchainId = jest
+            .spyOn(ethereumFunctions, 'getConverterBlockchainId')
+            .mockImplementationOnce(() => Promise.resolve('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA'));
+
+        const spyGetAmountInTokenWei = jest
+            .spyOn(ethereumFunctions, 'getAmountInTokenWei')
+            .mockImplementationOnce(() => Promise.resolve(''));
+
+        const spyGetLastTokenDecimals = jest
+            .spyOn(ethereumFunctions, 'getLastTokenDecimals')
+            .mockImplementationOnce(() => Promise.resolve(18));
+
+        const spyGetConversionReturn = jest
+            .spyOn(ethereumFunctions, 'getConversionReturn')
+            // eslint-disable-next-line quote-props
+            .mockImplementationOnce(() => Promise.resolve({ '0': '274802734836', '1': '550430979' }));
+
+        const response = await sdk.getRateByPath({
+            paths: [
+                {
+                    type: 'eos',
+                    path: ['therealkarma', 'bancorc11112', 'bntbntbntbnt']
+                },
+                {
+                    type: 'ethereum',
+                    path: ['0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c', '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533', '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315']
+                }]
+        }, '1');
+
+        expect(response).toEqual('0.000000274802734836');
+        expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
+        expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
+        expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
+        expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(1);
+        expect(spyGetLastTokenDecimals).toHaveBeenCalledTimes(1);
+        expect(spyGetAmountInTokenWei).toHaveBeenCalledTimes(1);
+        expect(spyGetConversionReturn).toHaveBeenCalledTimes(1);
+    });
+
+    it('Eth EOS token', async () => {
+        const spyGetAmountInTokenWei = jest
+            .spyOn(ethereumFunctions, 'getAmountInTokenWei')
+            .mockImplementationOnce(() => Promise.resolve(''))
+            .mockImplementationOnce(() => Promise.resolve(1000000000000000000));
+
+        const spyGetLastTokenDecimals = jest
+            .spyOn(ethereumFunctions, 'getLastTokenDecimals')
+            .mockImplementationOnce(() => Promise.resolve(18));
+
+        const spyGetConversionReturn = jest
+            .spyOn(ethereumFunctions, 'getConversionReturn')
+            // eslint-disable-next-line quote-props
+            .mockImplementationOnce(() => Promise.resolve({ '0': '662806411110393058533', '1': '1327603895997775277' }));
+
+        const reserveFromCodeResult = {
+            rows: [
+                {
+                    contract: 'bntbntbntbnt',
+                    currency: '0.0000000000 BNT',
+                    ratio: 500000,
+                    p_enabled: 1
+                },
+                {
+                    contract: 'therealkarma',
+                    currency: '0.0000 KARMA',
+                    ratio: 500000,
+                    p_enabled: 1
+                }
+            ],
+            more: false,
+            next_key: ''
+        };
+        const spyGetConverterFeeFromSettings = jest
+            .spyOn(eosFunctions, 'getConverterFeeFromSettings')
+            .mockImplementation(() => Promise.resolve(2500));
+
+        const spyGetReservesFromCode = jest
+            .spyOn(eosFunctions, 'getReservesFromCode')
+            .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
+
+        const spyGetReserveBalances = jest
+            .spyOn(eosFunctions, 'getReserveBalances')
+            .mockImplementationOnce(() => Promise.resolve({
+                rows: [{ balance: '5950.2395821273 BNT' }],
+                more: false,
+                next_key: ''
+            }))
+            .mockImplementationOnce(() => Promise.resolve({
+                rows: [{ balance: '32355343.8280 KARMA' }],
+                more: false,
+                next_key: ''
+            }));
+
+        const spyGetConverterBlockchainId = jest
+            .spyOn(ethereumFunctions, 'getConverterBlockchainId')
+            .mockImplementationOnce(() => Promise.resolve('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA'));
+
+        const response = await sdk.getRateByPath({
+            paths: [{
+                type: 'ethereum',
+                path: ['0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315', '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
+                    '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c']
+            },
+            {
+                type: 'eos',
+                path: ['bntbntbntbnt', 'bancorc11112', 'therealkarma']
+            }]
+        }, '1');
+
+        expect(response).toEqual(3226688.084642571);
+        expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
+        expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
+        expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
+        expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(1);
+        expect(spyGetLastTokenDecimals).toHaveBeenCalledTimes(1);
+        expect(spyGetAmountInTokenWei).toHaveBeenCalledTimes(1);
+        expect(spyGetConversionReturn).toHaveBeenCalledTimes(1);
     });
 });

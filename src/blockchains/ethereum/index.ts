@@ -28,10 +28,8 @@ export async function init(ethereumNodeUrl) {
 }
 
 export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
-    console.log('getAmountInTokenWei ');
     const tokenContract = new web3.eth.Contract(eRC20Token, token);
     const decimals = await tokenContract.methods.decimals().call();
-    console.log('await tokenContract.methods.decimals().call(); ', await tokenContract.methods.decimals().call());
     return toWei(amount, decimals);
 };
 
@@ -47,24 +45,18 @@ export const getLastTokenDecimals = async (eRC20Token, lastTokenBlockchainId) =>
 };
 
 export async function getPathStepRate(converterPair: ConversionPathStep, amount: string) {
-    console.log('getPathStepRate ', converterPair);
     let amountInTokenWei = await getAmountInTokenWei(converterPair.fromToken, amount, web3);
-    console.log('amountInTokenWei ', amountInTokenWei);
     const lastTokenBlockchainId = converterPair.toToken;
-    // const lastToken = new web3.eth.Contract(eRC20Token, lastTokenBlockchainId);
     const lastTokenDecimals = await getLastTokenDecimals(eRC20Token, lastTokenBlockchainId);
-    console.log('lastTokenDecimals ', lastTokenDecimals);
     try {
         const returnAmount = await getConversionReturn(converterPair, amountInTokenWei, bancorConverter, web3);
-        console.log('returnAmount ', returnAmount);
         amountInTokenWei = returnAmount['0'];
     }
     catch (e) {
-        if (e.message.includes('insufficient data for uint256')) {
+        if (e.message.includes('insufficient data for uint256'))
             amountInTokenWei = await getConversionReturn(converterPair, amountInTokenWei, BancorConverterV9, web3);
-            console.log('amountInTokenWei ', amountInTokenWei);
-        }
-        else { throw (e); }
+
+        else throw (e);
     }
     return fromWei(amountInTokenWei, lastTokenDecimals);
 }
@@ -77,7 +69,6 @@ export async function getRegistry() {
 
 export const getConverterBlockchainId = async blockchainId => {
     const tokenContract = new web3.eth.Contract(SmartToken, blockchainId);
-    console.log('await tokenContract.methods.owner().call() ', await tokenContract.methods.owner().call());
     return await tokenContract.methods.owner().call();
 };
 
