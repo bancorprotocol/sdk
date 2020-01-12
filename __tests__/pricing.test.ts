@@ -196,8 +196,8 @@ describe('price tests', () => {
             .mockImplementationOnce(() => Promise.resolve('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA'))
             .mockImplementationOnce(() => Promise.resolve('0x89f26Fff3F690B19057e6bEb7a82C5c29ADfe20B'));
 
-        const spyGetLastTokenDecimals = jest
-            .spyOn(ethereumFunctions, 'getLastTokenDecimals')
+        const spyGetERC20TokenDecimals = jest
+            .spyOn(ethereumFunctions, 'getERC20TokenDecimals')
             .mockImplementationOnce(() => Promise.resolve(18))
             .mockImplementationOnce(() => Promise.resolve(18));
 
@@ -223,7 +223,7 @@ describe('price tests', () => {
 
         expect(response).toEqual('209.035338725170038366');
         expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(2);
-        expect(spyGetLastTokenDecimals).toHaveBeenCalledTimes(2);
+        expect(spyGetERC20TokenDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetConversionReturn).toHaveBeenCalledTimes(2);
         expect(spyGetAmountInTokenWei).toHaveBeenCalledTimes(2);
     });
@@ -277,8 +277,8 @@ describe('price tests', () => {
             .spyOn(ethereumFunctions, 'getAmountInTokenWei')
             .mockImplementationOnce(() => Promise.resolve(''));
 
-        const spyGetLastTokenDecimals = jest
-            .spyOn(ethereumFunctions, 'getLastTokenDecimals')
+        const spyGetERC20TokenDecimals = jest
+            .spyOn(ethereumFunctions, 'getERC20TokenDecimals')
             .mockImplementationOnce(() => Promise.resolve(18));
 
         const spyGetConversionReturn = jest
@@ -303,7 +303,7 @@ describe('price tests', () => {
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
         expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(1);
-        expect(spyGetLastTokenDecimals).toHaveBeenCalledTimes(1);
+        expect(spyGetERC20TokenDecimals).toHaveBeenCalledTimes(1);
         expect(spyGetAmountInTokenWei).toHaveBeenCalledTimes(1);
         expect(spyGetConversionReturn).toHaveBeenCalledTimes(1);
     });
@@ -314,8 +314,8 @@ describe('price tests', () => {
             .mockImplementationOnce(() => Promise.resolve(''))
             .mockImplementationOnce(() => Promise.resolve(1000000000000000000));
 
-        const spyGetLastTokenDecimals = jest
-            .spyOn(ethereumFunctions, 'getLastTokenDecimals')
+        const spyGetERC20TokenDecimals = jest
+            .spyOn(ethereumFunctions, 'getERC20TokenDecimals')
             .mockImplementationOnce(() => Promise.resolve(18));
 
         const spyGetConversionReturn = jest
@@ -383,7 +383,7 @@ describe('price tests', () => {
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
         expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(1);
-        expect(spyGetLastTokenDecimals).toHaveBeenCalledTimes(1);
+        expect(spyGetERC20TokenDecimals).toHaveBeenCalledTimes(1);
         expect(spyGetAmountInTokenWei).toHaveBeenCalledTimes(1);
         expect(spyGetConversionReturn).toHaveBeenCalledTimes(1);
     });

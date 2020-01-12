@@ -39,7 +39,7 @@ export const getConversionReturn = async (converterPair: ConversionPathStep, amo
     return returnAmount;
 };
 
-export const getLastTokenDecimals = async (eRC20Token, lastTokenBlockchainId) => {
+export const getERC20TokenDecimals = async (eRC20Token, lastTokenBlockchainId) => {
     const lastToken = new web3.eth.Contract(eRC20Token, lastTokenBlockchainId);
     return await lastToken.methods.decimals().call();
 };
@@ -47,7 +47,7 @@ export const getLastTokenDecimals = async (eRC20Token, lastTokenBlockchainId) =>
 export async function getPathStepRate(converterPair: ConversionPathStep, amount: string) {
     let amountInTokenWei = await getAmountInTokenWei(converterPair.fromToken, amount, web3);
     const lastTokenBlockchainId = converterPair.toToken;
-    const lastTokenDecimals = await getLastTokenDecimals(eRC20Token, lastTokenBlockchainId);
+    const lastTokenDecimals = await getERC20TokenDecimals(eRC20Token, lastTokenBlockchainId);
     try {
         const returnAmount = await getConversionReturn(converterPair, amountInTokenWei, bancorConverter, web3);
         amountInTokenWei = returnAmount['0'];
