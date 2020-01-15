@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Paths = {
     bancorr11152: { BNTEQA: ['bancorc11152'] },
     bntbntbntbnt: { BNT: ['bancorc11152', 'bancorc11112', 'bancorc11223', 'bancorc11132', 'bancorc11153', 'bancorc11155', 'bancorc11222', 'bancorc11142', 'bancorc11232', 'bancorc11124', 'bancorc11214', 'bancorc11212', 'bancorc11131', 'bancorc11231', 'bancorc11225', 'bancorc11125', 'bancorc11134', 'bancorc11213', 'bancorc11151', 'bancorc11123', 'bancorc11121', 'bancorc11211', 'bancorc11215', 'bancorc11154', 'bancorc11144', 'bancorc11145', 'bancorc11122', 'bancorc11111', 'bnt2eoscnvrt'] },
+    creatortokns: { EYALECO: ['creatorcnvrt'], COUNCIL: ['creatorcnvrt'], NEWKIDS: ['creatorcnvrt'] },
     equacasheos1: { EQUA: ['bancorc11152'] },
     bancorr11112: { BNTKRM: ['bancorc11112'] },
     therealkarma: { KARMA: ['bancorc11112'] },
