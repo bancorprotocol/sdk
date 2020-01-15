@@ -5,6 +5,11 @@ export declare const Paths: {
     bntbntbntbnt: {
         BNT: string[];
     };
+    creatortokns: {
+        EYALECO: string[];
+        COUNCIL: string[];
+        NEWKIDS: string[];
+    };
     equacasheos1: {
         EQUA: string[];
     };
