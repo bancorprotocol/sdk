@@ -11,7 +11,10 @@ await bancor.init({
     // optional, mandatory when interacting with the ethereum mainnet
     ethereumNodeEndpoint: '<ethereum node endpoint>',
     // optional, mandatory when interacting with the EOS mainnet
-    eosNodeEndpoint: '<eos node endpoint>'
+    eosNodeEndpoint: '<eos node endpoint>',
+    // optional, can be used along with an ethereum ropsten endpoint to interact with the ropsten deployment of the contracts
+    // the default value for the argument is the mainnet contract address 
+    ethereumContractRegistryAddress: '<ethereum contract registry address>',
 });
 ```
 
