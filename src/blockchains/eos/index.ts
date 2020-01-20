@@ -100,27 +100,52 @@ export function getBalance(string) {
     return string.split(' ')[0];
 }
 
+// export async function buildPathsFile() {
+//     if (Paths) return;
+//     const tokens = {};
+//     await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
+//         const smartToken = await getSmartToken(converterBlockchainId);
+//         const smartTokenContract = smartToken.rows[0].smart_contract;
+//         const smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
+//         const reservesObject = await getReservesFromCode(converterBlockchainId);
+//         const reserves = Object.values(reservesObject.rows);
+//         tokens[smartTokenContract] = { [smartTokenName]: [converterBlockchainId]};
+//         reserves.map((reserveObj: Reserve) => {
+//             const reserveSymbol = getReserveTokenSymbol(reserveObj);
+//             const existingRecord = tokens[reserveObj.contract];
+//             if (existingRecord)
+//                 existingRecord[reserveSymbol].push(converterBlockchainId);
+
+//             tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: [converterBlockchainId]};
+//         });
+//     }));
+//     // eslint-disable-next-line no-console
+//     fs.writeFile('./src/blockchains/eos/paths.ts', `export const Paths = ${JSON.stringify(tokens)}`, 'utf8', () => console.log('Done making paths json'));
+// }
 export async function buildPathsFile() {
-    if (Paths) return;
+    // if (Paths) return;
     const tokens = {};
+    const smartTokens = {};
     await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
         const smartToken = await getSmartToken(converterBlockchainId);
+        // console.log('smartToken ', smartToken);
         const smartTokenContract = smartToken.rows[0].smart_contract;
         const smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
         const reservesObject = await getReservesFromCode(converterBlockchainId);
         const reserves = Object.values(reservesObject.rows);
-        tokens[smartTokenContract] = { [smartTokenName]: [converterBlockchainId]};
+        // tokens[smartTokenContract] = { [smartTokenName]: [converterBlockchainId] };
+        smartTokens[smartTokenContract] = { [smartTokenName]: { [smartTokenName]: converterBlockchainId } };
         reserves.map((reserveObj: Reserve) => {
             const reserveSymbol = getReserveTokenSymbol(reserveObj);
             const existingRecord = tokens[reserveObj.contract];
             if (existingRecord)
-                existingRecord[reserveSymbol].push(converterBlockchainId);
+                existingRecord[reserveSymbol][smartTokenName] = converterBlockchainId;
 
-            tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: [converterBlockchainId]};
+            tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: { [smartTokenName]: converterBlockchainId } };
         });
     }));
     // eslint-disable-next-line no-console
-    fs.writeFile('./src/blockchains/eos/paths.ts', `export const Paths = ${JSON.stringify(tokens)}`, 'utf8', () => console.log('Done making paths json'));
+    await fs.writeFile('./src/blockchains/eos/test.js', `export const Paths = \n{convertibleTokens:${JSON.stringify(tokens)}, \n smartTokens: ${JSON.stringify(smartTokens)}}`, 'utf8', () => console.log('Done making paths json'));
 }
 
 function isFromSmartToken(pair: ConversionPathStep, reserves: string[]) {

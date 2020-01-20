@@ -16,7 +16,7 @@ export async function init(args: Settings) {
 }
 
 export async function generateEosPaths() {
-    buildPathsFile();
+    await buildPathsFile();
 }
 
 export async function generatePath(sourceToken: Token, targetToken: Token) {

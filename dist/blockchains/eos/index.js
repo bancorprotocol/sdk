@@ -165,38 +165,59 @@ function getBalance(string) {
     return string.split(' ')[0];
 }
 exports.getBalance = getBalance;
+// export async function buildPathsFile() {
+//     if (Paths) return;
+//     const tokens = {};
+//     await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
+//         const smartToken = await getSmartToken(converterBlockchainId);
+//         const smartTokenContract = smartToken.rows[0].smart_contract;
+//         const smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
+//         const reservesObject = await getReservesFromCode(converterBlockchainId);
+//         const reserves = Object.values(reservesObject.rows);
+//         tokens[smartTokenContract] = { [smartTokenName]: [converterBlockchainId]};
+//         reserves.map((reserveObj: Reserve) => {
+//             const reserveSymbol = getReserveTokenSymbol(reserveObj);
+//             const existingRecord = tokens[reserveObj.contract];
+//             if (existingRecord)
+//                 existingRecord[reserveSymbol].push(converterBlockchainId);
+//             tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: [converterBlockchainId]};
+//         });
+//     }));
+//     // eslint-disable-next-line no-console
+//     fs.writeFile('./src/blockchains/eos/paths.ts', `export const Paths = ${JSON.stringify(tokens)}`, 'utf8', () => console.log('Done making paths json'));
+// }
 function buildPathsFile() {
     return __awaiter(this, void 0, void 0, function () {
-        var tokens;
+        var tokens, smartTokens;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (paths_1.Paths)
-                        return [2 /*return*/];
                     tokens = {};
+                    smartTokens = {};
                     return [4 /*yield*/, Promise.all(converter_blockchain_ids_1.converterBlockchainIds.map(function (converterBlockchainId) { return __awaiter(_this, void 0, void 0, function () {
                             var smartToken, smartTokenContract, smartTokenName, reservesObject, reserves;
-                            var _a;
-                            return __generator(this, function (_b) {
-                                switch (_b.label) {
+                            var _a, _b;
+                            return __generator(this, function (_c) {
+                                switch (_c.label) {
                                     case 0: return [4 /*yield*/, getSmartToken(converterBlockchainId)];
                                     case 1:
-                                        smartToken = _b.sent();
+                                        smartToken = _c.sent();
                                         smartTokenContract = smartToken.rows[0].smart_contract;
                                         smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
                                         return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId)];
                                     case 2:
-                                        reservesObject = _b.sent();
+                                        reservesObject = _c.sent();
                                         reserves = Object.values(reservesObject.rows);
-                                        tokens[smartTokenContract] = (_a = {}, _a[smartTokenName] = [converterBlockchainId], _a);
+                                        // tokens[smartTokenContract] = { [smartTokenName]: [converterBlockchainId] };
+                                        smartTokens[smartTokenContract] = (_a = {}, _a[smartTokenName] = (_b = {}, _b[smartTokenName] = converterBlockchainId, _b), _a);
                                         reserves.map(function (reserveObj) {
-                                            var _a;
+                                            var _a, _b;
                                             var reserveSymbol = exports.getReserveTokenSymbol(reserveObj);
                                             var existingRecord = tokens[reserveObj.contract];
                                             if (existingRecord)
-                                                existingRecord[reserveSymbol].push(converterBlockchainId);
-                                            tokens[reserveObj.contract] = existingRecord ? existingRecord : (_a = {}, _a[reserveSymbol] = [converterBlockchainId], _a);
+                                                existingRecord[reserveSymbol][smartTokenName] = converterBlockchainId;
+                                            tokens[reserveObj.contract] = existingRecord ? existingRecord : (_a = {}, _a[reserveSymbol] = (_b = {}, _b[smartTokenName] = converterBlockchainId, _b), _a);
                                         });
                                         return [2 /*return*/];
                                 }
@@ -205,7 +226,10 @@ function buildPathsFile() {
                 case 1:
                     _a.sent();
                     // eslint-disable-next-line no-console
-                    fs_1.default.writeFile('./src/blockchains/eos/paths.ts', "export const Paths = " + JSON.stringify(tokens), 'utf8', function () { return console.log('Done making paths json'); });
+                    return [4 /*yield*/, fs_1.default.writeFile('./src/blockchains/eos/test.js', "export const Paths = \n{convertibleTokens:" + JSON.stringify(tokens) + ", \n smartTokens: " + JSON.stringify(smartTokens) + "}", 'utf8', function () { return console.log('Done making paths json'); })];
+                case 2:
+                    // eslint-disable-next-line no-console
+                    _a.sent();
                     return [2 /*return*/];
             }
         });
