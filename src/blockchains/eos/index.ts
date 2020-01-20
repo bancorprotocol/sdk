@@ -149,35 +149,39 @@ export async function buildPathsFile() {
 }
 
 function isFromSmartToken(pair: ConversionPathStep, reserves: string[]) {
-    return (!reserves.includes(pair.fromToken));
+    return (!reserves.includes(Object.values(pair.fromToken)[0]));
 }
 
 function isToSmartToken(pair: ConversionPathStep, reserves: string[]) {
-    return (!reserves.includes(pair.toToken));
+    return (!reserves.includes(Object.values(pair.toToken)[0]));
 }
 
 export async function getPathStepRate(pair: ConversionPathStep, amount: string) {
-    const converterBlockchainId = pair.converterBlockchainId;
+    const toTokenBlockchainId = Object.values(pair.toToken)[0];
+    const fromTokenBlockchainId = Object.values(pair.fromToken)[0];
+    const fromTokenSymbol = Object.keys(pair.fromToken)[0];
+
+    const converterBlockchainId = Object.values(pair.converterBlockchainId)[0];
     const reserves = await getReservesFromCode(converterBlockchainId);
     const reservesContacts = reserves.rows.map(res => res.contract);
     const fee = await getConverterFeeFromSettings(converterBlockchainId);
     const isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
-    const balanceFrom = await getReserveBalances(pair.fromToken, pair.converterBlockchainId);
-    const balanceTo = await getReserveBalances(pair.toToken, pair.converterBlockchainId);
+    const balanceFrom = await getReserveBalances(fromTokenBlockchainId, converterBlockchainId);
+    const balanceTo = await getReserveBalances(toTokenBlockchainId, converterBlockchainId);
     const isConversionToSmartToken = isToSmartToken(pair, reservesContacts);
     let amountWithoutFee = 0;
     let magnitude = 0;
-    const balanceObject = { [pair.fromToken]: balanceFrom.rows[0].balance, [pair.toToken]: balanceTo.rows[0].balance };
+    const balanceObject = { [fromTokenBlockchainId]: balanceFrom.rows[0].balance, [toTokenBlockchainId]: balanceTo.rows[0].balance };
     const converterReserves = {};
     reserves.rows.map((reserve: Reserve) => {
         converterReserves[reserve.contract] = { ratio: reserve.ratio, balance: balanceObject[reserve.contract] };
     });
 
     if (isConversionFromSmartToken) {
-        console.log('pair.fromToken ', pair.fromToken);
-        const tokenSymbol = Object.keys(pathJson[pair.fromToken])[0];
-        const tokenSupplyObj = await getSmartTokenSupply(pair.fromToken, tokenSymbol);
-        const toReserveRatio = converterReserves[pair.toToken].ratio;
+        const tokenSymbol = Object.keys(pathJson.smartTokens[fromTokenBlockchainId][fromTokenSymbol])[0];
+        const tokenSupplyObj = await getSmartTokenSupply(fromTokenBlockchainId, tokenSymbol);
+        // console.log()
+        const toReserveRatio = converterReserves[toTokenBlockchainId].ratio;
         const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
         const reserveTokenBalance = getBalance(balanceTo.rows[0].balance);
         amountWithoutFee = sellSmartToken(reserveTokenBalance, toReserveRatio, amount, tokenSupply);
@@ -185,17 +189,16 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     }
 
     else if (isConversionToSmartToken) {
-        console.log('pair.toToken ', pair.toToken);
-        const tokenSymbol = Object.keys(pathJson[pair.toToken])[0];
-        const tokenSupplyObj = await getSmartTokenSupply(pair.toToken, tokenSymbol);
-        const toReserveRatio = converterReserves[pair.fromToken].ratio;
+        const tokenSymbol = Object.keys(pathJson.smartTokens[toTokenBlockchainId])[0];
+        const tokenSupplyObj = await getSmartTokenSupply(toTokenBlockchainId, tokenSymbol);
+        const toReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
         const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
         const reserveTokenBalance = getBalance(balanceFrom.rows[0].balance);
         amountWithoutFee = buySmartToken(reserveTokenBalance, toReserveRatio, amount, tokenSupply);
         magnitude = 1;
     }
     else {
-        amountWithoutFee = shortConvert(amount, getBalance(converterReserves[pair.toToken].balance), getBalance(converterReserves[pair.fromToken].balance));
+        amountWithoutFee = shortConvert(amount, getBalance(converterReserves[toTokenBlockchainId].balance), getBalance(converterReserves[fromTokenBlockchainId].balance));
         magnitude = 2;
     }
 

@@ -58,8 +58,12 @@ function isAnchorToken(token: Token) {
 
 function getTokenBlockchainId(token: Token) {
     if (token.blockchainType == 'ethereum') return token.blockchainId.toLowerCase();
-    return token.blockchainId.toLowerCase();
+    return { [token.symbol]: token.blockchainId.toLowerCase() };
 }
+// function getTokenBlockchainId(token: Token) {
+//     if (token.blockchainType == 'ethereum') return token.blockchainId.toLowerCase();
+//     return token.blockchainId.toLowerCase();
+// }
 
 function isReserveToken(reserveToken: Token, token: Token) {
     if (token.blockchainType == 'ethereum' && token.blockchainId == reserveToken.blockchainId)
@@ -157,7 +161,7 @@ export async function getPathToAnchorByBlockchainId(token: Token, anchorToken: T
             if (!isReserveToken(reserveToken, token)) {
                 const path = await getPathToAnchorByBlockchainId(reserveToken, anchorToken);
                 if (path.length > 0)
-                    return [getTokenBlockchainId(token), token.blockchainType == 'eos' ? converterBlockchainId : smartToken, ...path];
+                    return [getTokenBlockchainId(token), token.blockchainType == 'eos' ? blockchainId : smartToken, ...path];
             }
         }
     }
@@ -168,7 +172,7 @@ function getShortestPath(sourcePath, targetPath) {
     if (sourcePath.length > 0 && targetPath.length > 0) {
         let i = sourcePath.length - 1;
         let j = targetPath.length - 1;
-        while (i >= 0 && j >= 0 && sourcePath[i] == targetPath[j]) {
+        while (i >= 0 && j >= 0 && JSON.stringify(sourcePath[i]) == JSON.stringify(targetPath[j])) {
             i--;
             j--;
         }
