@@ -226,7 +226,7 @@ function findPath(pathObject, blockchainType) {
 exports.findPath = findPath;
 function getPathToAnchorByBlockchainId(token, anchorToken) {
     return __awaiter(this, void 0, void 0, function () {
-        var smartTokens, _a, response, _i, smartTokens_1, smartToken, blockchainId, reserves, reservesCount, i, reserveToken, path;
+        var smartTokens, _a, response, _i, smartTokens_1, smartToken, blockchainId, converterBlockchainId, reserves, reservesCount, i, reserveToken, path;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -250,7 +250,8 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                     return [4 /*yield*/, exports.getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: token.blockchainType, blockchainId: smartToken } : token)];
                 case 5:
                     blockchainId = _b.sent();
-                    return [4 /*yield*/, exports.getReserves(blockchainId, token.blockchainType)];
+                    converterBlockchainId = token.blockchainType == 'ethereum' ? blockchainId : Object.values(blockchainId)[0];
+                    return [4 /*yield*/, exports.getReserves(converterBlockchainId, token.blockchainType)];
                 case 6:
                     reserves = (_b.sent()).reserves;
                     return [4 /*yield*/, exports.getReserveCount(reserves, token.blockchainType)];
@@ -268,7 +269,7 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                 case 10:
                     path = _b.sent();
                     if (path.length > 0)
-                        return [2 /*return*/, __spreadArrays([getTokenBlockchainId(token), token.blockchainType == 'eos' ? blockchainId : smartToken], path)];
+                        return [2 /*return*/, __spreadArrays([getTokenBlockchainId(token), token.blockchainType == 'eos' ? converterBlockchainId : smartToken], path)];
                     _b.label = 11;
                 case 11:
                     i++;

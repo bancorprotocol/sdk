@@ -273,6 +273,7 @@ function getPathStepRate(pair, amount) {
                         converterReserves[reserve.contract] = { ratio: reserve.ratio, balance: balanceObject[reserve.contract] };
                     });
                     if (!isConversionFromSmartToken) return [3 /*break*/, 6];
+                    console.log('pair.fromToken ', pair.fromToken);
                     tokenSymbol = Object.keys(pathJson[pair.fromToken])[0];
                     return [4 /*yield*/, exports.getSmartTokenSupply(pair.fromToken, tokenSymbol)];
                 case 5:
@@ -285,6 +286,7 @@ function getPathStepRate(pair, amount) {
                     return [3 /*break*/, 9];
                 case 6:
                     if (!isConversionToSmartToken) return [3 /*break*/, 8];
+                    console.log('pair.toToken ', pair.toToken);
                     tokenSymbol = Object.keys(pathJson[pair.toToken])[0];
                     return [4 /*yield*/, exports.getSmartTokenSupply(pair.toToken, tokenSymbol)];
                 case 7:
@@ -310,8 +312,10 @@ function getPathStepRate(pair, amount) {
 exports.getPathStepRate = getPathStepRate;
 function getConverterBlockchainId(token) {
     return __awaiter(this, void 0, void 0, function () {
+        var isSmart;
         return __generator(this, function (_a) {
-            return [2 /*return*/, pathJson[token.blockchainId][token.symbol][0]];
+            isSmart = !pathJson.convertibleTokens[token.blockchainId];
+            return [2 /*return*/, pathJson[isSmart ? 'smartTokens' : 'convertibleTokens'][token.blockchainId][token.symbol]];
         });
     });
 }

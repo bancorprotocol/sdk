@@ -174,6 +174,7 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     });
 
     if (isConversionFromSmartToken) {
+        console.log('pair.fromToken ', pair.fromToken);
         const tokenSymbol = Object.keys(pathJson[pair.fromToken])[0];
         const tokenSupplyObj = await getSmartTokenSupply(pair.fromToken, tokenSymbol);
         const toReserveRatio = converterReserves[pair.toToken].ratio;
@@ -184,6 +185,7 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     }
 
     else if (isConversionToSmartToken) {
+        console.log('pair.toToken ', pair.toToken);
         const tokenSymbol = Object.keys(pathJson[pair.toToken])[0];
         const tokenSupplyObj = await getSmartTokenSupply(pair.toToken, tokenSymbol);
         const toReserveRatio = converterReserves[pair.fromToken].ratio;
@@ -204,7 +206,8 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
 }
 
 export async function getConverterBlockchainId(token: Token) {
-    return pathJson[token.blockchainId][token.symbol][0];
+    const isSmart = !pathJson.convertibleTokens[token.blockchainId];
+    return pathJson[isSmart ? 'smartTokens' : 'convertibleTokens'][token.blockchainId][token.symbol];
 }
 
 export async function getReserveBlockchainId(reserves: Token[], position) {

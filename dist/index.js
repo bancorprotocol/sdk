@@ -60,8 +60,12 @@ exports.init = init;
 function generateEosPaths() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            eos_1.buildPathsFile();
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, eos_1.buildPathsFile()];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     });
 }
