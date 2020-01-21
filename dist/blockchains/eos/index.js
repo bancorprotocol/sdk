@@ -73,16 +73,6 @@ exports.getReservesFromCode = function (code, symbol) { return __awaiter(void 0,
         }
     });
 }); };
-// export const getReservesFromCode = async code => {
-//     const rpc = getEosjsRpc();
-//     return await rpc.get_table_rows({
-//         json: true,
-//         code: code,
-//         scope: code,
-//         table: 'reserves',
-//         limit: 10
-//     });
-// };
 exports.getConverterSettings = function (code) { return __awaiter(void 0, void 0, void 0, function () {
     var rpc;
     return __generator(this, function (_a) {
@@ -182,27 +172,6 @@ function getBalance(string) {
     return string.split(' ')[0];
 }
 exports.getBalance = getBalance;
-// export async function buildPathsFile() {
-//     if (Paths) return;
-//     const tokens = {};
-//     await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
-//         const smartToken = await getSmartToken(converterBlockchainId);
-//         const smartTokenContract = smartToken.rows[0].smart_contract;
-//         const smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
-//         const reservesObject = await getReservesFromCode(converterBlockchainId);
-//         const reserves = Object.values(reservesObject.rows);
-//         tokens[smartTokenContract] = { [smartTokenName]: [converterBlockchainId]};
-//         reserves.map((reserveObj: Reserve) => {
-//             const reserveSymbol = getReserveTokenSymbol(reserveObj);
-//             const existingRecord = tokens[reserveObj.contract];
-//             if (existingRecord)
-//                 existingRecord[reserveSymbol].push(converterBlockchainId);
-//             tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: [converterBlockchainId]};
-//         });
-//     }));
-//     // eslint-disable-next-line no-console
-//     fs.writeFile('./src/blockchains/eos/paths.ts', `export const Paths = ${JSON.stringify(tokens)}`, 'utf8', () => console.log('Done making paths json'));
-// }
 function buildPathsFile() {
     return __awaiter(this, void 0, void 0, function () {
         var tokens, smartTokens;
@@ -226,7 +195,6 @@ function buildPathsFile() {
                                     case 2:
                                         reservesObject = _c.sent();
                                         reserves = Object.values(reservesObject.rows);
-                                        // tokens[smartTokenContract] = { [smartTokenName]: [converterBlockchainId] };
                                         smartTokens[smartTokenContract] = (_a = {}, _a[smartTokenName] = (_b = {}, _b[smartTokenName] = converterBlockchainId, _b), _a);
                                         reserves.map(function (reserveObj) {
                                             var _a, _b;
@@ -243,7 +211,7 @@ function buildPathsFile() {
                 case 1:
                     _a.sent();
                     // eslint-disable-next-line no-console
-                    return [4 /*yield*/, fs_1.default.writeFile('./src/blockchains/eos/test.js', "export const Paths = \n{convertibleTokens:" + JSON.stringify(tokens) + ", \n smartTokens: " + JSON.stringify(smartTokens) + "}", 'utf8', function () { return console.log('Done making paths json'); })];
+                    return [4 /*yield*/, fs_1.default.writeFile('./src/blockchains/eos/paths.ts', "export const Paths = \n{convertibleTokens:" + JSON.stringify(tokens) + ", \n smartTokens: " + JSON.stringify(smartTokens) + "}", 'utf8', function () { return console.log('Done making paths json'); })];
                 case 2:
                     // eslint-disable-next-line no-console
                     _a.sent();
@@ -277,6 +245,9 @@ function getPathStepRate(pair, amount) {
                         reserveSymbol = fromTokenSymbol;
                     if (isToTokenMultiToken)
                         reserveSymbol = toTokenSymbol;
+                    console.log('reserveSymbol ', reserveSymbol);
+                    console.log('isToTokenMultiToken ', isToTokenMultiToken);
+                    console.log('isFromTokenMultiToken ', isFromTokenMultiToken);
                     return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId, reserveSymbol)];
                 case 1:
                     reserves = _d.sent();
@@ -341,6 +312,8 @@ function getPathStepRate(pair, amount) {
                     magnitude = 1;
                     return [3 /*break*/, 15];
                 case 14:
+                    console.log('INNN converterReserves', converterReserves);
+                    console.log('INNN amount', amount);
                     amountWithoutFee = formulas_1.shortConvert(amount, getBalance(converterReserves[toTokenBlockchainId].balance), getBalance(converterReserves[fromTokenBlockchainId].balance));
                     magnitude = 2;
                     _d.label = 15;

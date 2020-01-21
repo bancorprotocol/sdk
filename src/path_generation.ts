@@ -141,7 +141,9 @@ export async function getConversionPath(from: Token, to: Token) {
 
 export async function findPath(pathObject: ConversionPathsTokens, blockchainType: BlockchainType) {
     const from = await getPathToAnchorByBlockchainId({ ...pathObject.from }, anchorTokens[blockchainType]);
+    console.log('from ', from);
     const to = await getPathToAnchorByBlockchainId({ ...pathObject.to }, anchorTokens[blockchainType]);
+    console.log('to ', to);
     return getShortestPath(from, to);
 }
 
@@ -154,6 +156,7 @@ export async function getPathToAnchorByBlockchainId(token: Token, anchorToken: T
     let response = [];
     for (const smartToken of smartTokens) {
         const blockchainId = await getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: token.blockchainType, blockchainId: smartToken } : token);
+        console.log('blockchainId ', blockchainId);
         const converterBlockchainId = token.blockchainType == 'ethereum' ? blockchainId : Object.values(blockchainId)[0];
         const { reserves } = await getReserves(converterBlockchainId, token.blockchainType, token.symbol, isMulti);
         const reservesCount = await getReserveCount(reserves, token.blockchainType);

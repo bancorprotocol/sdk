@@ -220,9 +220,11 @@ function findPath(pathObject, blockchainType) {
                 case 0: return [4 /*yield*/, getPathToAnchorByBlockchainId(__assign({}, pathObject.from), anchorTokens[blockchainType])];
                 case 1:
                     from = _a.sent();
+                    console.log('from ', from);
                     return [4 /*yield*/, getPathToAnchorByBlockchainId(__assign({}, pathObject.to), anchorTokens[blockchainType])];
                 case 2:
                     to = _a.sent();
+                    console.log('to ', to);
                     return [2 /*return*/, getShortestPath(from, to)];
             }
         });
@@ -256,6 +258,7 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                     return [4 /*yield*/, exports.getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: token.blockchainType, blockchainId: smartToken } : token)];
                 case 5:
                     blockchainId = _b.sent();
+                    console.log('blockchainId ', blockchainId);
                     converterBlockchainId = token.blockchainType == 'ethereum' ? blockchainId : Object.values(blockchainId)[0];
                     return [4 /*yield*/, exports.getReserves(converterBlockchainId, token.blockchainType, token.symbol, isMulti)];
                 case 6:

@@ -152,7 +152,7 @@ describe('Path finder tests', () => {
             },
             {
                 type: 'eos',
-                path: ['bntbntbntbnt', 'bancorc11112', 'therealkarma']
+                path: [{ BNT: 'bntbntbntbnt' }, { BNTKRM: 'bancorc11112' }, { KARMA: 'therealkarma' }]
             }
         ];
 
