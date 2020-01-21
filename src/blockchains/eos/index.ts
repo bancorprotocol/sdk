@@ -23,17 +23,31 @@ export function getEosjsRpc() {
     return jsonRpc;
 }
 
-export const getReservesFromCode = async code => {
+export const getReservesFromCode = async (code, symbol?) => {
+    const scope = symbol ? symbol : code;
+    // const scope = symbol && code == 'creatorcnvrt' ? symbol : code;
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
         json: true,
         code: code,
-        scope: code,
+        scope: scope,
         table: 'reserves',
         limit: 10
     });
 };
+
+// export const getReservesFromCode = async code => {
+//     const rpc = getEosjsRpc();
+
+//     return await rpc.get_table_rows({
+//         json: true,
+//         code: code,
+//         scope: code,
+//         table: 'reserves',
+//         limit: 10
+//     });
+// };
 
 export const getConverterSettings = async code => {
     const rpc = getEosjsRpc();
@@ -157,12 +171,14 @@ function isToSmartToken(pair: ConversionPathStep, reserves: string[]) {
 }
 
 export async function getPathStepRate(pair: ConversionPathStep, amount: string) {
+    console.log('pair ', pair);
     const toTokenBlockchainId = Object.values(pair.toToken)[0];
     const fromTokenBlockchainId = Object.values(pair.fromToken)[0];
     const fromTokenSymbol = Object.keys(pair.fromToken)[0];
-
-    // if (pathJson[pair.fromToken].isMultiConverter)
-    //     symbol = sourceSymbol;
+    const toTokenSymbol = Object.keys(pair.toToken)[0];
+    // let symbol;
+    // if (pathJson.smartTokens[fromTokenBlockchainId].isMultiConverter)
+    //     symbol = fromTokenSymbol;
     // if (pathJson[pair.toToken].isMultiConverter)
     //     symbol = targetSymbol;
     // console.log('pair.converterBlockchainId ', pair.converterBlockchainId);
@@ -208,7 +224,7 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     }
 
     else if (isConversionToSmartToken) {
-        const tokenSymbol = Object.keys(pathJson.smartTokens[toTokenBlockchainId])[0];
+        const tokenSymbol = Object.keys(pathJson.smartTokens[toTokenBlockchainId[toTokenSymbol]])[0];
         const tokenSupplyObj = await getSmartTokenSupply(toTokenBlockchainId, tokenSymbol);
         const toReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
         const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);

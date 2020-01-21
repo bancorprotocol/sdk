@@ -6,7 +6,7 @@ interface Reserve {
 }
 export declare function initEOS(endpoint: any): void;
 export declare function getEosjsRpc(): any;
-export declare const getReservesFromCode: (code: any) => Promise<any>;
+export declare const getReservesFromCode: (code: any, symbol?: any) => Promise<any>;
 export declare const getConverterSettings: (code: any) => Promise<any>;
 export declare const getConverterFeeFromSettings: (code: any) => Promise<any>;
 export declare function getSmartToken(code: any): Promise<any>;
