@@ -86,7 +86,6 @@ exports.calculateRateFromPaths = function (paths, amount) { return __awaiter(voi
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log('calculateRateFromPaths  paths ', paths);
                 if (paths.paths.length == 0)
                     return [2 /*return*/, amount];
                 return [4 /*yield*/, calculateRateFromPath(paths, amount)];
@@ -103,7 +102,6 @@ function calculateRateFromPath(paths, amount) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    console.log('calculateRateFromPath  paths ', paths);
                     blockchainType = paths.paths[0].type;
                     return [4 /*yield*/, getConverterPairs(paths.paths[0].path, blockchainType)];
                 case 1:
@@ -137,7 +135,6 @@ function getConverterPairs(path, blockchainType) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    console.log('getConverterPairs path ', path);
                     pairs = [];
                     i = 0;
                     _b.label = 1;

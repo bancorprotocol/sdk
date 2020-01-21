@@ -20,7 +20,7 @@ export declare function buildPathsFile(): Promise<void>;
 export declare function getPathStepRate(pair: ConversionPathStep, amount: string): Promise<number>;
 export declare function getConverterBlockchainId(token: Token): Promise<any>;
 export declare function getReserveBlockchainId(reserves: Token[], position: any): Promise<Token>;
-export declare function getReserves(converterBlockchainId: any): Promise<{
+export declare function getReserves(converterBlockchainId: any, symbol: any): Promise<{
     reserves: any[];
 }>;
 export declare function getReservesCount(reserves: Token[]): Promise<number>;

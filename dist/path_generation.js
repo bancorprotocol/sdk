@@ -119,14 +119,14 @@ exports.getReserveCount = function (reserves, blockchainType) { return __awaiter
         }
     });
 }); };
-exports.getReserves = function (blockchainId, blockchainType) { return __awaiter(void 0, void 0, void 0, function () {
+exports.getReserves = function (blockchainId, blockchainType, symbol) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 if (!(blockchainType == 'ethereum')) return [3 /*break*/, 2];
                 return [4 /*yield*/, ethereum_1.getReserves(blockchainId)];
             case 1: return [2 /*return*/, _a.sent()];
-            case 2: return [4 /*yield*/, eos_1.getReserves(blockchainId)];
+            case 2: return [4 /*yield*/, eos_1.getReserves(blockchainId, symbol)];
             case 3: return [2 /*return*/, _a.sent()];
         }
     });
@@ -235,7 +235,7 @@ function findPath(pathObject, blockchainType) {
 exports.findPath = findPath;
 function getPathToAnchorByBlockchainId(token, anchorToken) {
     return __awaiter(this, void 0, void 0, function () {
-        var smartTokens, _a, response, _i, smartTokens_1, smartToken, blockchainId, converterBlockchainId, reserves, reservesCount, i, reserveToken, path;
+        var smartTokens, _a, isMulti, response, _i, smartTokens_1, smartToken, blockchainId, converterBlockchainId, reserves, reservesCount, i, reserveToken, path;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -250,6 +250,7 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                     _b.label = 3;
                 case 3:
                     smartTokens = _a;
+                    isMulti = token.blockchainType == 'eos' ? eos_1.getIsMultiConverter(token.blockchainId) : false;
                     response = [];
                     _i = 0, smartTokens_1 = smartTokens;
                     _b.label = 4;
@@ -261,7 +262,10 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                     blockchainId = _b.sent();
                     console.log('blockchainId ', blockchainId);
                     converterBlockchainId = token.blockchainType == 'ethereum' ? blockchainId : Object.values(blockchainId)[0];
-                    return [4 /*yield*/, exports.getReserves(converterBlockchainId, token.blockchainType)];
+                    console.log('isMulti ', isMulti);
+                    console.log('token.blockchainId ', token.blockchainId);
+                    console.log('converterBlockchainId ', converterBlockchainId);
+                    return [4 /*yield*/, exports.getReserves(isMulti ? token.blockchainId : converterBlockchainId, token.blockchainType, token.symbol)];
                 case 6:
                     reserves = (_b.sent()).reserves;
                     return [4 /*yield*/, exports.getReserveCount(reserves, token.blockchainType)];

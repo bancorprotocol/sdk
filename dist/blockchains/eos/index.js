@@ -149,7 +149,7 @@ exports.getSmartTokenSupply = function (account, code) { return __awaiter(void 0
     });
 }); };
 exports.getIsMultiConverter = function (blockchhainId) {
-    return pathJson.smartTokens[blockchhainId].isMultiConverter;
+    return pathJson.smartTokens[blockchhainId] && pathJson.smartTokens[blockchhainId].isMultiConverter;
 };
 exports.getReserveBalances = function (code, scope) { return __awaiter(void 0, void 0, void 0, function () {
     var rpc;
@@ -263,7 +263,6 @@ function getPathStepRate(pair, amount) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    console.log('pair ', pair);
                     toTokenBlockchainId = Object.values(pair.toToken)[0];
                     fromTokenBlockchainId = Object.values(pair.fromToken)[0];
                     fromTokenSymbol = Object.keys(pair.fromToken)[0];
@@ -353,12 +352,15 @@ function getReserveBlockchainId(reserves, position) {
     });
 }
 exports.getReserveBlockchainId = getReserveBlockchainId;
-function getReserves(converterBlockchainId) {
+function getReserves(converterBlockchainId, symbol) {
     return __awaiter(this, void 0, void 0, function () {
-        var reserves, tokens;
+        var isMultiConverter, reserves, tokens;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId)];
+                case 0:
+                    isMultiConverter = exports.getIsMultiConverter(converterBlockchainId);
+                    console.log('isMultiConverter ', isMultiConverter);
+                    return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId, isMultiConverter ? symbol : null)];
                 case 1:
                     reserves = _a.sent();
                     tokens = [];

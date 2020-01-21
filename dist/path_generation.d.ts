@@ -22,7 +22,7 @@ export interface Token {
 }
 export declare const getConverterBlockchainId: (token: Token) => Promise<any>;
 export declare const getReserveCount: (reserves: any, blockchainType: BlockchainType) => Promise<any>;
-export declare const getReserves: (blockchainId: any, blockchainType: BlockchainType) => Promise<{
+export declare const getReserves: (blockchainId: any, blockchainType: BlockchainType, symbol: string) => Promise<{
     reserves: any;
 }>;
 export declare const getReserveToken: (token: any, index: any, blockchainType: BlockchainType) => Promise<Token>;
