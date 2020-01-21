@@ -25,7 +25,6 @@ export function getEosjsRpc() {
 
 export const getReservesFromCode = async (code, symbol?) => {
     const scope = symbol ? symbol : code;
-    // const scope = symbol && code == 'creatorcnvrt' ? symbol : code;
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
@@ -36,18 +35,6 @@ export const getReservesFromCode = async (code, symbol?) => {
         limit: 10
     });
 };
-
-// export const getReservesFromCode = async code => {
-//     const rpc = getEosjsRpc();
-
-//     return await rpc.get_table_rows({
-//         json: true,
-//         code: code,
-//         scope: code,
-//         table: 'reserves',
-//         limit: 10
-//     });
-// };
 
 export const getConverterSettings = async code => {
     const rpc = getEosjsRpc();
@@ -94,14 +81,14 @@ export const getIsMultiConverter = blockchhainId => {
     return pathJson.smartTokens[blockchhainId] && pathJson.smartTokens[blockchhainId].isMultiConverter;
 };
 
-export const getReserveBalances = async (code, scope) => {
+export const getReserveBalances = async (code, scope, table = 'accounts') => {
     const rpc = getEosjsRpc();
 
     return await rpc.get_table_rows({
         json: true,
         code: code,
         scope: scope,
-        table: 'accounts',
+        table: table,
         limit: 10
     });
 };
@@ -118,40 +105,15 @@ export function getBalance(string) {
     return string.split(' ')[0];
 }
 
-// export async function buildPathsFile() {
-//     if (Paths) return;
-//     const tokens = {};
-//     await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
-//         const smartToken = await getSmartToken(converterBlockchainId);
-//         const smartTokenContract = smartToken.rows[0].smart_contract;
-//         const smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
-//         const reservesObject = await getReservesFromCode(converterBlockchainId);
-//         const reserves = Object.values(reservesObject.rows);
-//         tokens[smartTokenContract] = { [smartTokenName]: [converterBlockchainId]};
-//         reserves.map((reserveObj: Reserve) => {
-//             const reserveSymbol = getReserveTokenSymbol(reserveObj);
-//             const existingRecord = tokens[reserveObj.contract];
-//             if (existingRecord)
-//                 existingRecord[reserveSymbol].push(converterBlockchainId);
-
-//             tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: [converterBlockchainId]};
-//         });
-//     }));
-//     // eslint-disable-next-line no-console
-//     fs.writeFile('./src/blockchains/eos/paths.ts', `export const Paths = ${JSON.stringify(tokens)}`, 'utf8', () => console.log('Done making paths json'));
-// }
 export async function buildPathsFile() {
-    // if (Paths) return;
     const tokens = {};
     const smartTokens = {};
     await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
         const smartToken = await getSmartToken(converterBlockchainId);
-        // console.log('smartToken ', smartToken);
         const smartTokenContract = smartToken.rows[0].smart_contract;
         const smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
         const reservesObject = await getReservesFromCode(converterBlockchainId);
         const reserves = Object.values(reservesObject.rows);
-        // tokens[smartTokenContract] = { [smartTokenName]: [converterBlockchainId] };
         smartTokens[smartTokenContract] = { [smartTokenName]: { [smartTokenName]: converterBlockchainId } };
         reserves.map((reserveObj: Reserve) => {
             const reserveSymbol = getReserveTokenSymbol(reserveObj);
@@ -163,7 +125,7 @@ export async function buildPathsFile() {
         });
     }));
     // eslint-disable-next-line no-console
-    await fs.writeFile('./src/blockchains/eos/test.js', `export const Paths = \n{convertibleTokens:${JSON.stringify(tokens)}, \n smartTokens: ${JSON.stringify(smartTokens)}}`, 'utf8', () => console.log('Done making paths json'));
+    await fs.writeFile('./src/blockchains/eos/paths.ts', `export const Paths = \n{convertibleTokens:${JSON.stringify(tokens)}, \n smartTokens: ${JSON.stringify(smartTokens)}}`, 'utf8', () => console.log('Done making paths json'));
 }
 
 function isFromSmartToken(pair: ConversionPathStep, reserves: string[]) {
@@ -179,33 +141,21 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     const fromTokenBlockchainId = Object.values(pair.fromToken)[0];
     const fromTokenSymbol = Object.keys(pair.fromToken)[0];
     const toTokenSymbol = Object.keys(pair.toToken)[0];
-    // let symbol;
-    // if (pathJson.smartTokens[fromTokenBlockchainId].isMultiConverter)
-    //     symbol = fromTokenSymbol;
-    // if (pathJson[pair.toToken].isMultiConverter)
-    //     symbol = targetSymbol;
-    // console.log('pair.converterBlockchainId ', pair.converterBlockchainId);
-    // console.log('pair.converterBlockchainId ', symbol);
-    // const reserves = await getReservesFromCode(converterBlockchainId, symbol);
-    // const reservesContacts = reserves.rows.map(res => res.contract);
-    // const fee = await getConverterFeeFromSettings(converterBlockchainId);
-    // const isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
-    // console.log('targetSymbol ', targetSymbol);
-    // const balanceFrom = pathJson[pair.toToken].isMultiConverter ? await getReserveBalances(pair.converterBlockchainId, targetSymbol, 'reserves') : (await getReserveBalances(pair.fromToken, pair.converterBlockchainId)).rows[0].balance;
-    // const balanceFrom = (await getReserveBalances(pair.fromToken, pair.converterBlockchainId)).rows[0].balance;
-    // let balanceTo;
-    // if (pathJson[pair.fromToken].isMultiConverter)
-    //     balanceTo = await getReserveBalances(pair.converterBlockchainId, sourceSymbol, 'reserves');
-    // else
-    // const balanceTo = await getReserveBalances(pair.toToken, pair.converterBlockchainId);
-
+    const isFromTokenMultiToken = getIsMultiConverter(fromTokenBlockchainId);
+    const isToTokenMultiToken = getIsMultiConverter(toTokenBlockchainId);
     const converterBlockchainId = Object.values(pair.converterBlockchainId)[0];
-    const reserves = await getReservesFromCode(converterBlockchainId);
+    let reserveSymbol;
+    if (isFromTokenMultiToken)
+        reserveSymbol = fromTokenSymbol;
+    if (isToTokenMultiToken)
+        reserveSymbol = toTokenSymbol;
+
+    const reserves = await getReservesFromCode(converterBlockchainId, reserveSymbol);
     const reservesContacts = reserves.rows.map(res => res.contract);
     const fee = await getConverterFeeFromSettings(converterBlockchainId);
     const isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
-    const balanceFrom = await getReserveBalances(fromTokenBlockchainId, converterBlockchainId);
-    const balanceTo = await getReserveBalances(toTokenBlockchainId, converterBlockchainId);
+    const balanceFrom = isToTokenMultiToken ? await getReserveBalances(converterBlockchainId, toTokenSymbol, 'reserves') : await getReserveBalances(fromTokenBlockchainId, converterBlockchainId);
+    const balanceTo = isFromTokenMultiToken ? await getReserveBalances(converterBlockchainId, fromTokenSymbol, 'reserves') : await getReserveBalances(toTokenBlockchainId, converterBlockchainId);
     const isConversionToSmartToken = isToSmartToken(pair, reservesContacts);
     let amountWithoutFee = 0;
     let magnitude = 0;
@@ -216,9 +166,9 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     });
 
     if (isConversionFromSmartToken) {
-        const tokenSymbol = Object.keys(pathJson.smartTokens[fromTokenBlockchainId][fromTokenSymbol])[0];
+        const token = pathJson.smartTokens[fromTokenBlockchainId] || pathJson.convertibleTokens[fromTokenBlockchainId];
+        const tokenSymbol = Object.keys(token[fromTokenSymbol])[0];
         const tokenSupplyObj = await getSmartTokenSupply(fromTokenBlockchainId, tokenSymbol);
-        // console.log()
         const toReserveRatio = converterReserves[toTokenBlockchainId].ratio;
         const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
         const reserveTokenBalance = getBalance(balanceTo.rows[0].balance);
@@ -227,7 +177,8 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     }
 
     else if (isConversionToSmartToken) {
-        const tokenSymbol = Object.keys(pathJson.smartTokens[toTokenBlockchainId[toTokenSymbol]])[0];
+        const token = pathJson.smartTokens[toTokenBlockchainId] || pathJson.convertibleTokens[toTokenBlockchainId];
+        const tokenSymbol = Object.keys(token[toTokenSymbol])[0];
         const tokenSupplyObj = await getSmartTokenSupply(toTokenBlockchainId, tokenSymbol);
         const toReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
         const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
@@ -263,10 +214,8 @@ export async function getReserveBlockchainId(reserves: Token[], position) {
     return tok;
 }
 
-export async function getReserves(converterBlockchainId, symbol) {
-    const isMultiConverter = getIsMultiConverter(converterBlockchainId);
-    console.log('isMultiConverter ', isMultiConverter);
-    const reserves = await getReservesFromCode(converterBlockchainId, isMultiConverter ? symbol : null);
+export async function getReserves(converterBlockchainId, symbol, isMulti = false) {
+    const reserves = await getReservesFromCode(converterBlockchainId, isMulti ? symbol : null);
     const tokens = [];
     reserves.rows.map(reserve => {
         const symbol = getSymbol(reserve.currency);

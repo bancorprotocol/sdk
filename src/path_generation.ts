@@ -85,10 +85,10 @@ export const getReserveCount = async (reserves, blockchainType: BlockchainType) 
     return await getEOSReservesCount(reserves);
 };
 
-export const getReserves = async (blockchainId, blockchainType: BlockchainType, symbol: string) => {
+export const getReserves = async (blockchainId, blockchainType: BlockchainType, symbol: string, isMulti: boolean) => {
     if (blockchainType == 'ethereum')
         return await getEthReserves(blockchainId);
-    return await getEOSReserves(blockchainId, symbol);
+    return await getEOSReserves(blockchainId, symbol, isMulti);
 };
 
 export const getReserveToken = async (token, index, blockchainType: BlockchainType) => {
@@ -140,11 +140,8 @@ export async function getConversionPath(from: Token, to: Token) {
 }
 
 export async function findPath(pathObject: ConversionPathsTokens, blockchainType: BlockchainType) {
-    console.log('findPath pathObject ', pathObject);
     const from = await getPathToAnchorByBlockchainId({ ...pathObject.from }, anchorTokens[blockchainType]);
-    console.log('from ', from);
     const to = await getPathToAnchorByBlockchainId({ ...pathObject.to }, anchorTokens[blockchainType]);
-    console.log('to ', to);
     return getShortestPath(from, to);
 }
 
@@ -157,14 +154,9 @@ export async function getPathToAnchorByBlockchainId(token: Token, anchorToken: T
     let response = [];
     for (const smartToken of smartTokens) {
         const blockchainId = await getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: token.blockchainType, blockchainId: smartToken } : token);
-        console.log('blockchainId ', blockchainId);
         const converterBlockchainId = token.blockchainType == 'ethereum' ? blockchainId : Object.values(blockchainId)[0];
-        console.log('isMulti ', isMulti);
-        console.log('token.blockchainId ', token.blockchainId);
-        console.log('converterBlockchainId ', converterBlockchainId);
-        const { reserves } = await getReserves(isMulti ? token.blockchainId : converterBlockchainId, token.blockchainType, token.symbol);
+        const { reserves } = await getReserves(converterBlockchainId, token.blockchainType, token.symbol, isMulti);
         const reservesCount = await getReserveCount(reserves, token.blockchainType);
-        console.log('reservesCount ', reservesCount);
         for (let i = 0; i < reservesCount; i++) {
             const reserveToken = await getReserveToken(reserves, i, token.blockchainType);
             if (!isReserveToken(reserveToken, token)) {
