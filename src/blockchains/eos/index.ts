@@ -161,6 +161,25 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     const fromTokenBlockchainId = Object.values(pair.fromToken)[0];
     const fromTokenSymbol = Object.keys(pair.fromToken)[0];
 
+    // if (pathJson[pair.fromToken].isMultiConverter)
+    //     symbol = sourceSymbol;
+    // if (pathJson[pair.toToken].isMultiConverter)
+    //     symbol = targetSymbol;
+    // console.log('pair.converterBlockchainId ', pair.converterBlockchainId);
+    // console.log('pair.converterBlockchainId ', symbol);
+    // const reserves = await getReservesFromCode(converterBlockchainId, symbol);
+    // const reservesContacts = reserves.rows.map(res => res.contract);
+    // const fee = await getConverterFeeFromSettings(converterBlockchainId);
+    // const isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
+    // console.log('targetSymbol ', targetSymbol);
+    // const balanceFrom = pathJson[pair.toToken].isMultiConverter ? await getReserveBalances(pair.converterBlockchainId, targetSymbol, 'reserves') : (await getReserveBalances(pair.fromToken, pair.converterBlockchainId)).rows[0].balance;
+    // const balanceFrom = (await getReserveBalances(pair.fromToken, pair.converterBlockchainId)).rows[0].balance;
+    // let balanceTo;
+    // if (pathJson[pair.fromToken].isMultiConverter)
+    //     balanceTo = await getReserveBalances(pair.converterBlockchainId, sourceSymbol, 'reserves');
+    // else
+    // const balanceTo = await getReserveBalances(pair.toToken, pair.converterBlockchainId);
+
     const converterBlockchainId = Object.values(pair.converterBlockchainId)[0];
     const reserves = await getReservesFromCode(converterBlockchainId);
     const reservesContacts = reserves.rows.map(res => res.contract);
