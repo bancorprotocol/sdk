@@ -39,6 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable max-len */
 var eosjs_1 = require("eosjs");
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var converter_blockchain_ids_1 = require("./converter_blockchain_ids");
@@ -245,9 +246,6 @@ function getPathStepRate(pair, amount) {
                         reserveSymbol = fromTokenSymbol;
                     if (isToTokenMultiToken)
                         reserveSymbol = toTokenSymbol;
-                    console.log('reserveSymbol ', reserveSymbol);
-                    console.log('isToTokenMultiToken ', isToTokenMultiToken);
-                    console.log('isFromTokenMultiToken ', isFromTokenMultiToken);
                     return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId, reserveSymbol)];
                 case 1:
                     reserves = _d.sent();
@@ -312,8 +310,6 @@ function getPathStepRate(pair, amount) {
                     magnitude = 1;
                     return [3 /*break*/, 15];
                 case 14:
-                    console.log('INNN converterReserves', converterReserves);
-                    console.log('INNN amount', amount);
                     amountWithoutFee = formulas_1.shortConvert(amount, getBalance(converterReserves[toTokenBlockchainId].balance), getBalance(converterReserves[fromTokenBlockchainId].balance));
                     magnitude = 2;
                     _d.label = 15;

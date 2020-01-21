@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { JsonRpc } from 'eosjs';
 import fetch from 'node-fetch';
 import { converterBlockchainIds } from './converter_blockchain_ids';
@@ -150,9 +151,6 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     if (isToTokenMultiToken)
         reserveSymbol = toTokenSymbol;
 
-    console.log('reserveSymbol ', reserveSymbol);
-    console.log('isToTokenMultiToken ', isToTokenMultiToken);
-    console.log('isFromTokenMultiToken ', isFromTokenMultiToken);
     const reserves = await getReservesFromCode(converterBlockchainId, reserveSymbol);
     const reservesContacts = reserves.rows.map(res => res.contract);
     const fee = await getConverterFeeFromSettings(converterBlockchainId);
@@ -190,8 +188,6 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
         magnitude = 1;
     }
     else {
-        console.log('INNN converterReserves', converterReserves);
-        console.log('INNN amount', amount);
         amountWithoutFee = shortConvert(amount, getBalance(converterReserves[toTokenBlockchainId].balance), getBalance(converterReserves[fromTokenBlockchainId].balance));
         magnitude = 2;
     }

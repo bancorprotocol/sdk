@@ -104,7 +104,7 @@ describe('Path finder tests', () => {
 
         const spyGetEOSereumConverterBlockchainId = jest
             .spyOn(eosFunctions, 'getConverterBlockchainId')
-            .mockResolvedValueOnce('bancorc11112');
+            .mockResolvedValueOnce({ BNTKRM: 'bancorc11112' });
 
         const spyGetReserves = jest
             .spyOn(genPath, 'getReserves')

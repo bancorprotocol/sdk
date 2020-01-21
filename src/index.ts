@@ -41,7 +41,7 @@ export async function calculateRateFromPath(paths: ConversionPaths, amount) {
     return amount;
 }
 
-async function getConverterPairs(path: string[], blockchainType: BlockchainType) {
+async function getConverterPairs(path: string[] | object[], blockchainType: BlockchainType) {
     const pairs: ConversionPathStep[] = [];
     for (let i = 0; i < path.length - 1; i += 2) {
         let converterBlockchainId = blockchainType == 'ethereum' ? await getConverterBlockchainId(path[i + 1]) : path[i + 1];

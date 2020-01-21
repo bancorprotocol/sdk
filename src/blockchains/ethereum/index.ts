@@ -26,7 +26,7 @@ export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0
     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
 }
 
-export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
+export const getAmountInTokenWei = async (token: string | object, amount: string, web3) => {
     const tokenContract = new web3.eth.Contract(ERC20Token, token);
     const decimals = await tokenContract.methods.decimals().call();
     return toWei(amount, decimals);
