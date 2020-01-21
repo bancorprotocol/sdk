@@ -90,6 +90,10 @@ export const getSmartTokenSupply = async (account, code) => {
     });
 };
 
+export const getIsMultiConverter = blockchhainId => {
+    return pathJson.smartTokens[blockchhainId].isMultiConverter;
+};
+
 export const getReserveBalances = async (code, scope) => {
     const rpc = getEosjsRpc();
 

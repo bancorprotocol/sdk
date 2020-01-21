@@ -1,5 +1,5 @@
 import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate } from './blockchains/ethereum/index';
-import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate } from './blockchains/eos';
+import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, getIsMultiConverter } from './blockchains/eos';
 import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType } from './path_generation';
 
 interface Settings {
@@ -24,6 +24,8 @@ export async function generatePath(sourceToken: Token, targetToken: Token) {
 }
 
 export const calculateRateFromPaths = async (paths: ConversionPaths, amount) => {
+    console.log('calculateRateFromPaths  paths ', paths);
+
     if (paths.paths.length == 0) return amount;
     const rate = await calculateRateFromPath(paths, amount);
     paths.paths.shift();
@@ -31,6 +33,7 @@ export const calculateRateFromPaths = async (paths: ConversionPaths, amount) => 
 };
 
 export async function calculateRateFromPath(paths: ConversionPaths, amount) {
+    console.log('calculateRateFromPath  paths ', paths);
     const blockchainType: BlockchainType = paths.paths[0].type;
     const convertPairs = await getConverterPairs(paths.paths[0].path, blockchainType);
     let i = 0;
@@ -42,11 +45,14 @@ export async function calculateRateFromPath(paths: ConversionPaths, amount) {
 }
 
 async function getConverterPairs(path: string[], blockchainType: BlockchainType) {
+    console.log('getConverterPairs path ', path);
     const pairs: ConversionPathStep[] = [];
     for (let i = 0; i < path.length - 1; i += 2) {
         let converterBlockchainId = blockchainType == 'ethereum' ? await getConverterBlockchainId(path[i + 1]) : path[i + 1];
         pairs.push({ converterBlockchainId: converterBlockchainId, fromToken: path[i], toToken: path[i + 2] });
     }
+    if (pairs.length == 0 && blockchainType == 'eos' && getIsMultiConverter(path[0]))
+        pairs.push({ converterBlockchainId: path[0], fromToken: path[0], toToken: path[0] });
     return pairs;
 }
 

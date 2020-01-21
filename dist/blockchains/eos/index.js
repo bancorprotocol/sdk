@@ -148,6 +148,9 @@ exports.getSmartTokenSupply = function (account, code) { return __awaiter(void 0
         }
     });
 }); };
+exports.getIsMultiConverter = function (blockchhainId) {
+    return pathJson.smartTokens[blockchhainId].isMultiConverter;
+};
 exports.getReserveBalances = function (code, scope) { return __awaiter(void 0, void 0, void 0, function () {
     var rpc;
     return __generator(this, function (_a) {
