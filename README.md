@@ -25,7 +25,7 @@ Note that the source token and the target token can reside on two different bloc
 In addition, `amount` input format is a decimal big number (as opposed to wei) since the function is blockchain agnostic.
 
 ```js
-// generate the path between DAI and ENJ
+// get the rate between DAI and ENJ
 const sourceToken = {
     blockchainType: 'ethereum',
     blockchainId: '0x6B175474E89094C44Da98b954EedeAC495271d0F'
