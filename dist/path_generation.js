@@ -217,12 +217,16 @@ function findPath(pathObject, blockchainType) {
         var from, to;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, getPathToAnchorByBlockchainId(__assign({}, pathObject.from), anchorTokens[blockchainType])];
+                case 0:
+                    console.log('findPath pathObject ', pathObject);
+                    return [4 /*yield*/, getPathToAnchorByBlockchainId(__assign({}, pathObject.from), anchorTokens[blockchainType])];
                 case 1:
                     from = _a.sent();
+                    console.log('from ', from);
                     return [4 /*yield*/, getPathToAnchorByBlockchainId(__assign({}, pathObject.to), anchorTokens[blockchainType])];
                 case 2:
                     to = _a.sent();
+                    console.log('to ', to);
                     return [2 /*return*/, getShortestPath(from, to)];
             }
         });
@@ -255,6 +259,7 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                     return [4 /*yield*/, exports.getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: token.blockchainType, blockchainId: smartToken } : token)];
                 case 5:
                     blockchainId = _b.sent();
+                    console.log('blockchainId ', blockchainId);
                     converterBlockchainId = token.blockchainType == 'ethereum' ? blockchainId : Object.values(blockchainId)[0];
                     return [4 /*yield*/, exports.getReserves(converterBlockchainId, token.blockchainType)];
                 case 6:
@@ -262,6 +267,7 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                     return [4 /*yield*/, exports.getReserveCount(reserves, token.blockchainType)];
                 case 7:
                     reservesCount = _b.sent();
+                    console.log('reservesCount ', reservesCount);
                     i = 0;
                     _b.label = 8;
                 case 8:
