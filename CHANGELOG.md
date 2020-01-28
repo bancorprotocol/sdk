@@ -1,3 +1,11 @@
+### 0.1.7
+* Added support for EOS multi converter contract
+
+
+### 0.1.6
+* Added jest tests
+
+
 ### 0.1.4
 * Updated path generation anchor token
 
