@@ -1,6 +1,6 @@
 import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate } from './blockchains/ethereum/index';
 import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMultiConverter } from './blockchains/eos';
-import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType } from './path_generation';
+import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
 
 interface Settings {
     ethereumNodeEndpoint: string;
@@ -45,10 +45,13 @@ async function getConverterPairs(path: string[] | object[], blockchainType: Bloc
     const pairs: ConversionPathStep[] = [];
     for (let i = 0; i < path.length - 1; i += 2) {
         let converterBlockchainId = blockchainType == 'ethereum' ? await getConverterBlockchainId(path[i + 1]) : path[i + 1];
-        pairs.push({ converterBlockchainId: converterBlockchainId, fromToken: path[i], toToken: path[i + 2] });
+        pairs.push({ converterBlockchainId: converterBlockchainId, fromToken: (path[i] as string), toToken: (path[i + 2] as string) });
     }
-    if (pairs.length == 0 && blockchainType == 'eos' && isMultiConverter(path[0]))
-        pairs.push({ converterBlockchainId: path[0], fromToken: path[0], toToken: path[0] });
+    if (pairs.length == 0 && blockchainType == 'eos' && isMultiConverter(path[0])) {
+        pairs.push({
+            converterBlockchainId: (path[0] as ConversionToken), fromToken: (path[0] as ConversionToken), toToken: (path[0] as ConversionToken)
+        });
+    }
     return pairs;
 }
 
