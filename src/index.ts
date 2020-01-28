@@ -1,5 +1,5 @@
 import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate } from './blockchains/ethereum/index';
-import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, getIsMultiConverter } from './blockchains/eos';
+import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMultiConverter } from './blockchains/eos';
 import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType } from './path_generation';
 
 interface Settings {
@@ -47,7 +47,7 @@ async function getConverterPairs(path: string[] | object[], blockchainType: Bloc
         let converterBlockchainId = blockchainType == 'ethereum' ? await getConverterBlockchainId(path[i + 1]) : path[i + 1];
         pairs.push({ converterBlockchainId: converterBlockchainId, fromToken: path[i], toToken: path[i + 2] });
     }
-    if (pairs.length == 0 && blockchainType == 'eos' && getIsMultiConverter(path[0]))
+    if (pairs.length == 0 && blockchainType == 'eos' && isMultiConverter(path[0]))
         pairs.push({ converterBlockchainId: path[0], fromToken: path[0], toToken: path[0] });
     return pairs;
 }

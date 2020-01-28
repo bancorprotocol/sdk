@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { getConverterBlockchainId as getEosConverterBlockchainId, getReserveBlockchainId as getEosReserveBlockchainId, getReserves as getEOSReserves, getReservesCount as getEOSReservesCount, getIsMultiConverter } from './blockchains/eos';
+import { getConverterBlockchainId as getEosConverterBlockchainId, getReserveBlockchainId as getEosReserveBlockchainId, getReserves as getEOSReserves, getReservesCount as getEOSReservesCount, isMultiConverter } from './blockchains/eos';
 import { getReserves as getEthReserves, getConverterBlockchainId as getEthConverterBlockchainId, getConverterSmartToken as getEthConverterSmartToken, getReserveBlockchainId as getEthereumReserveBlockchainId, getReservesCount as getEthReservesCount, getSmartTokens } from './blockchains/ethereum';
 
 export type BlockchainType = 'ethereum' | 'eos';
@@ -29,13 +29,17 @@ export interface ConversionPathsTokens {
 
 export interface ConversionPath {
     type: BlockchainType;
-    path: string[] | object[];
+    path: string[] | ConversionToken[];
+}
+
+export interface ConversionToken {
+    [key: string]: string;
 }
 
 export interface ConversionPathStep {
-    converterBlockchainId: string | object;
-    fromToken: string | object;
-    toToken: string | object;
+    converterBlockchainId: string | ConversionToken;
+    fromToken: string | ConversionToken;
+    toToken: string | ConversionToken;
 }
 
 export interface ConversionPaths {
@@ -149,7 +153,7 @@ export async function getPathToAnchorByBlockchainId(token: Token, anchorToken: T
         return [getTokenBlockchainId(token)];
 
     const smartTokens = token.blockchainType == 'eos' ? [token.blockchainId] : await getSmartTokens(token);
-    const isMulti = token.blockchainType == 'eos' ? getIsMultiConverter(token.blockchainId) : false;
+    const isMulti = token.blockchainType == 'eos' ? isMultiConverter(token.blockchainId) : false;
     let response = [];
     for (const smartToken of smartTokens) {
         const blockchainId = await getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: token.blockchainType, blockchainId: smartToken } : token);

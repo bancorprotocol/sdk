@@ -26,7 +26,7 @@ export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0
     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
 }
 
-export const getAmountInTokenWei = async (token: string | object, amount: string, web3) => {
+export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
     const tokenContract = new web3.eth.Contract(ERC20Token, token);
     const decimals = await tokenContract.methods.decimals().call();
     return toWei(amount, decimals);
@@ -44,7 +44,7 @@ export const getTokenDecimals = async tokenBlockchainId => {
 };
 
 export async function getPathStepRate(converterPair: ConversionPathStep, amount: string) {
-    let amountInTokenWei = await getAmountInTokenWei(converterPair.fromToken, amount, web3);
+    let amountInTokenWei = await getAmountInTokenWei((converterPair.fromToken as string), amount, web3);
     const tokenBlockchainId = converterPair.toToken;
     const tokenDecimals = await getTokenDecimals(tokenBlockchainId);
     try {
