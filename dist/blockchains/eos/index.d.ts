@@ -11,7 +11,7 @@ export declare const getConverterSettings: (code: any) => Promise<any>;
 export declare const getConverterFeeFromSettings: (code: any) => Promise<any>;
 export declare function getSmartToken(code: any): Promise<any>;
 export declare const getSmartTokenSupply: (account: any, code: any) => Promise<any>;
-export declare const getIsMultiConverter: (blockchhainId: any) => any;
+export declare const isMultiConverter: (blockchhainId: any) => any;
 export declare const getReserveBalances: (code: any, scope: any, table?: string) => Promise<any>;
 export declare const getReserveTokenSymbol: (reserve: Reserve) => any;
 export declare function getSymbol(string: any): any;

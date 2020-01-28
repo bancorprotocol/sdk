@@ -5,12 +5,15 @@ export interface ConversionPathsTokens {
 }
 export interface ConversionPath {
     type: BlockchainType;
-    path: string[] | object[];
+    path: string[] | ConversionToken[];
+}
+export interface ConversionToken {
+    [key: string]: string;
 }
 export interface ConversionPathStep {
-    converterBlockchainId: string | object;
-    fromToken: string | object;
-    toToken: string | object;
+    converterBlockchainId: string | ConversionToken;
+    fromToken: string | ConversionToken;
+    toToken: string | ConversionToken;
 }
 export interface ConversionPaths {
     paths: ConversionPath[];

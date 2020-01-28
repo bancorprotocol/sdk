@@ -156,8 +156,11 @@ function getConverterPairs(path, blockchainType) {
                     i += 2;
                     return [3 /*break*/, 1];
                 case 6:
-                    if (pairs.length == 0 && blockchainType == 'eos' && eos_1.getIsMultiConverter(path[0]))
-                        pairs.push({ converterBlockchainId: path[0], fromToken: path[0], toToken: path[0] });
+                    if (pairs.length == 0 && blockchainType == 'eos' && eos_1.isMultiConverter(path[0])) {
+                        pairs.push({
+                            converterBlockchainId: path[0], fromToken: path[0], toToken: path[0]
+                        });
+                    }
                     return [2 /*return*/, pairs];
             }
         });

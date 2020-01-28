@@ -246,7 +246,7 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                     _b.label = 3;
                 case 3:
                     smartTokens = _a;
-                    isMulti = token.blockchainType == 'eos' ? eos_1.getIsMultiConverter(token.blockchainId) : false;
+                    isMulti = token.blockchainType == 'eos' ? eos_1.isMultiConverter(token.blockchainId) : false;
                     response = [];
                     _i = 0, smartTokens_1 = smartTokens;
                     _b.label = 4;
