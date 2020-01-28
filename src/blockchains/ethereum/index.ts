@@ -44,7 +44,7 @@ export const getTokenDecimals = async tokenBlockchainId => {
 };
 
 export async function getPathStepRate(converterPair: ConversionPathStep, amount: string) {
-    let amountInTokenWei = await getAmountInTokenWei(converterPair.fromToken, amount, web3);
+    let amountInTokenWei = await getAmountInTokenWei((converterPair.fromToken as string), amount, web3);
     const tokenBlockchainId = converterPair.toToken;
     const tokenDecimals = await getTokenDecimals(tokenBlockchainId);
     try {

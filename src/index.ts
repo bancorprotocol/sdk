@@ -1,6 +1,6 @@
 import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate } from './blockchains/ethereum/index';
-import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate } from './blockchains/eos';
-import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType } from './path_generation';
+import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMultiConverter } from './blockchains/eos';
+import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
 
 interface Settings {
     ethereumNodeEndpoint: string;
@@ -16,7 +16,7 @@ export async function init(args: Settings) {
 }
 
 export async function generateEosPaths() {
-    buildPathsFile();
+    await buildPathsFile();
 }
 
 export async function generatePath(sourceToken: Token, targetToken: Token) {
@@ -33,7 +33,6 @@ export const calculateRateFromPaths = async (paths: ConversionPaths, amount) => 
 export async function calculateRateFromPath(paths: ConversionPaths, amount) {
     const blockchainType: BlockchainType = paths.paths[0].type;
     const convertPairs = await getConverterPairs(paths.paths[0].path, blockchainType);
-
     let i = 0;
     while (i < convertPairs.length) {
         amount = blockchainType == 'ethereum' ? await getEthPathStepRate(convertPairs[i], amount) : await getEOSPathStepRate(convertPairs[i], amount);
@@ -42,11 +41,16 @@ export async function calculateRateFromPath(paths: ConversionPaths, amount) {
     return amount;
 }
 
-async function getConverterPairs(path: string[], blockchainType: BlockchainType) {
+async function getConverterPairs(path: string[] | object[], blockchainType: BlockchainType) {
     const pairs: ConversionPathStep[] = [];
     for (let i = 0; i < path.length - 1; i += 2) {
         let converterBlockchainId = blockchainType == 'ethereum' ? await getConverterBlockchainId(path[i + 1]) : path[i + 1];
-        pairs.push({ converterBlockchainId: converterBlockchainId, fromToken: path[i], toToken: path[i + 2] });
+        pairs.push({ converterBlockchainId: converterBlockchainId, fromToken: (path[i] as string), toToken: (path[i + 2] as string) });
+    }
+    if (pairs.length == 0 && blockchainType == 'eos' && isMultiConverter(path[0])) {
+        pairs.push({
+            converterBlockchainId: (path[0] as ConversionToken), fromToken: (path[0] as ConversionToken), toToken: (path[0] as ConversionToken)
+        });
     }
     return pairs;
 }

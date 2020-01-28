@@ -54,7 +54,7 @@ describe('price tests', () => {
                 next_key: ''
             }));
 
-        const shortestPathResult = ['therealkarma', 'bancorc11112', 'bntbntbntbnt'];
+        const shortestPathResult = [{ KARMA: 'therealkarma' }, { BNTKRM: 'bancorc11112' }, { BNT: 'bntbntbntbnt' }];
         const response = await sdk.getRateByPath({ paths: [{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
         expect(response).toEqual(0.00018298446839888063);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
@@ -117,7 +117,7 @@ describe('price tests', () => {
                 next_key: ''
             }));
 
-        const shortestPathResult = ['bntbntbntbnt', 'bancorc11132', 'bancorr11132'];
+        const shortestPathResult = [{ BNT: 'bntbntbntbnt' }, { BNTOCT: 'bancorc11132' }, { BNTOCT: 'bancorr11132' }];
         const response = await sdk.getRateByPath({ paths: [{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
         expect(response).toEqual(1.149089903558017);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
@@ -181,7 +181,7 @@ describe('price tests', () => {
                 next_key: ''
             }));
 
-        const shortestPathResult = ['bancorr11132', 'bancorc11132', 'bntbntbntbnt'];
+        const shortestPathResult = [{ BNTOCT: 'bancorr11132' }, { BNTOCT: 'bancorc11132' }, { BNT: 'bntbntbntbnt' }];
         const response = await sdk.getRateByPath({ paths: [{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
         expect(response).toEqual(0.8702237365072208);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
@@ -290,7 +290,7 @@ describe('price tests', () => {
             paths: [
                 {
                     type: 'eos',
-                    path: ['therealkarma', 'bancorc11112', 'bntbntbntbnt']
+                    path: [{ KARMA: 'therealkarma' }, { BNTKRM: 'bancorc11112' }, { BNT: 'bntbntbntbnt' }]
                 },
                 {
                     type: 'ethereum',
@@ -374,7 +374,7 @@ describe('price tests', () => {
             },
             {
                 type: 'eos',
-                path: ['bntbntbntbnt', 'bancorc11112', 'therealkarma']
+                path: [{ BNT: 'bntbntbntbnt' }, { BNTKRM: 'bancorc11112' }, { KARMA: 'therealkarma' }]
             }]
         }, '1');
 

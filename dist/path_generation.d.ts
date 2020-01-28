@@ -5,12 +5,12 @@ export interface ConversionPathsTokens {
 }
 export interface ConversionPath {
     type: BlockchainType;
-    path: string[];
+    path: string[] | object[];
 }
 export interface ConversionPathStep {
-    converterBlockchainId: string;
-    fromToken: string;
-    toToken: string;
+    converterBlockchainId: string | object;
+    fromToken: string | object;
+    toToken: string | object;
 }
 export interface ConversionPaths {
     paths: ConversionPath[];
@@ -22,7 +22,7 @@ export interface Token {
 }
 export declare const getConverterBlockchainId: (token: Token) => Promise<any>;
 export declare const getReserveCount: (reserves: any, blockchainType: BlockchainType) => Promise<any>;
-export declare const getReserves: (blockchainId: any, blockchainType: BlockchainType) => Promise<{
+export declare const getReserves: (blockchainId: any, blockchainType: BlockchainType, symbol: string, isMulti: boolean) => Promise<{
     reserves: any;
 }>;
 export declare const getReserveToken: (token: any, index: any, blockchainType: BlockchainType) => Promise<Token>;

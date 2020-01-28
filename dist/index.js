@@ -60,8 +60,12 @@ exports.init = init;
 function generateEosPaths() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            eos_1.buildPathsFile();
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, eos_1.buildPathsFile()];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     });
 }
@@ -151,7 +155,10 @@ function getConverterPairs(path, blockchainType) {
                 case 5:
                     i += 2;
                     return [3 /*break*/, 1];
-                case 6: return [2 /*return*/, pairs];
+                case 6:
+                    if (pairs.length == 0 && blockchainType == 'eos' && eos_1.getIsMultiConverter(path[0]))
+                        pairs.push({ converterBlockchainId: path[0], fromToken: path[0], toToken: path[0] });
+                    return [2 /*return*/, pairs];
             }
         });
     });

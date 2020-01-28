@@ -79,10 +79,15 @@ function isAnchorToken(token) {
     return false;
 }
 function getTokenBlockchainId(token) {
+    var _a;
     if (token.blockchainType == 'ethereum')
         return token.blockchainId.toLowerCase();
-    return token.blockchainId.toLowerCase();
+    return _a = {}, _a[token.symbol] = token.blockchainId.toLowerCase(), _a;
 }
+// function getTokenBlockchainId(token: Token) {
+//     if (token.blockchainType == 'ethereum') return token.blockchainId.toLowerCase();
+//     return token.blockchainId.toLowerCase();
+// }
 function isReserveToken(reserveToken, token) {
     if (token.blockchainType == 'ethereum' && token.blockchainId == reserveToken.blockchainId)
         return true;
@@ -114,14 +119,14 @@ exports.getReserveCount = function (reserves, blockchainType) { return __awaiter
         }
     });
 }); };
-exports.getReserves = function (blockchainId, blockchainType) { return __awaiter(void 0, void 0, void 0, function () {
+exports.getReserves = function (blockchainId, blockchainType, symbol, isMulti) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 if (!(blockchainType == 'ethereum')) return [3 /*break*/, 2];
                 return [4 /*yield*/, ethereum_1.getReserves(blockchainId)];
             case 1: return [2 /*return*/, _a.sent()];
-            case 2: return [4 /*yield*/, eos_1.getReserves(blockchainId)];
+            case 2: return [4 /*yield*/, eos_1.getReserves(blockchainId, symbol, isMulti)];
             case 3: return [2 /*return*/, _a.sent()];
         }
     });
@@ -226,7 +231,7 @@ function findPath(pathObject, blockchainType) {
 exports.findPath = findPath;
 function getPathToAnchorByBlockchainId(token, anchorToken) {
     return __awaiter(this, void 0, void 0, function () {
-        var smartTokens, _a, response, _i, smartTokens_1, smartToken, blockchainId, reserves, reservesCount, i, reserveToken, path;
+        var smartTokens, _a, isMulti, response, _i, smartTokens_1, smartToken, blockchainId, converterBlockchainId, reserves, reservesCount, i, reserveToken, path;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -241,6 +246,7 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                     _b.label = 3;
                 case 3:
                     smartTokens = _a;
+                    isMulti = token.blockchainType == 'eos' ? eos_1.getIsMultiConverter(token.blockchainId) : false;
                     response = [];
                     _i = 0, smartTokens_1 = smartTokens;
                     _b.label = 4;
@@ -250,7 +256,8 @@ function getPathToAnchorByBlockchainId(token, anchorToken) {
                     return [4 /*yield*/, exports.getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: token.blockchainType, blockchainId: smartToken } : token)];
                 case 5:
                     blockchainId = _b.sent();
-                    return [4 /*yield*/, exports.getReserves(blockchainId, token.blockchainType)];
+                    converterBlockchainId = token.blockchainType == 'ethereum' ? blockchainId : Object.values(blockchainId)[0];
+                    return [4 /*yield*/, exports.getReserves(converterBlockchainId, token.blockchainType, token.symbol, isMulti)];
                 case 6:
                     reserves = (_b.sent()).reserves;
                     return [4 /*yield*/, exports.getReserveCount(reserves, token.blockchainType)];
@@ -286,7 +293,7 @@ function getShortestPath(sourcePath, targetPath) {
     if (sourcePath.length > 0 && targetPath.length > 0) {
         var i = sourcePath.length - 1;
         var j = targetPath.length - 1;
-        while (i >= 0 && j >= 0 && sourcePath[i] == targetPath[j]) {
+        while (i >= 0 && j >= 0 && JSON.stringify(sourcePath[i]) == JSON.stringify(targetPath[j])) {
             i--;
             j--;
         }
