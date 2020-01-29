@@ -39,6 +39,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./blockchains/ethereum/index");
 var eos_1 = require("./blockchains/eos");
 var path_generation_1 = require("./path_generation");
+var fetch_conversion_events_js_1 = require("./blockchains/ethereum/fetch_conversion_events.js");
+var retrieve_contract_version_js_1 = require("./blockchains/ethereum/retrieve_contract_version.js");
 function init(args) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -195,5 +197,7 @@ exports.default = {
     getRate: getRate,
     generatePath: generatePath,
     getRateByPath: exports.getRateByPath,
-    buildPathsFile: eos_1.buildPathsFile
+    buildPathsFile: eos_1.buildPathsFile,
+    fetchConversionEvents: fetch_conversion_events_js_1.fetchConversionEvents,
+    retrieveContractVersion: retrieve_contract_version_js_1.retrieveContractVersion
 };

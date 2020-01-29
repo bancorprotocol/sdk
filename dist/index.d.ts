@@ -19,5 +19,7 @@ declare const _default: {
     generatePath: typeof generatePath;
     getRateByPath: (paths: ConversionPaths, amount: any) => Promise<any>;
     buildPathsFile: typeof buildPathsFile;
+    fetchConversionEvents: any;
+    retrieveContractVersion: any;
 };
 export default _default;
