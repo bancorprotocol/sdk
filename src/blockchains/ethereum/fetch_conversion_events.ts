@@ -1,5 +1,3 @@
-module.exports = run;
-
 const Web3 = require("web3");
 
 const GENESIS_BLOCK_NUMBER = 3851136;
@@ -58,15 +56,15 @@ async function getOwnerUpdateEvents(web3, tokenAddress, fromBlock, toBlock) {
 async function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
     const result = [];
 
-    const batches = [{fromBlock: fromBlock}];
+    const batches = [{fromBlock: fromBlock, toBlock: undefined, owner: undefined}];
     const events = await getOwnerUpdateEvents(web3, tokenAddress, fromBlock, toBlock);
     for (const event of events.filter(event => event.blockNumber > fromBlock)) {
-        batches[batches.length - 1].owner = event.prevOwner;
         batches[batches.length - 1].toBlock = event.blockNumber - 1;
-        batches.push({fromBlock: event.blockNumber});
+        batches[batches.length - 1].owner = event.prevOwner;
+        batches.push({fromBlock: event.blockNumber, toBlock: undefined, owner: undefined});
     }
-    batches[batches.length - 1].owner = events[events.length - 1].currOwner;
     batches[batches.length - 1].toBlock = toBlock;
+    batches[batches.length - 1].owner = events[events.length - 1].currOwner;
 
     let index = 0;
     for (const batch of batches) {
@@ -92,7 +90,7 @@ async function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
     return result;
 }
 
-async function run(nodeAddress, tokenAddress, fromBlock, toBlock) {
+export async function run(nodeAddress, tokenAddress, fromBlock, toBlock) {
     const web3 = new Web3(nodeAddress);
     const result = await getConversionEvents(web3, tokenAddress, fromBlock, toBlock);
     if (web3.currentProvider.constructor.name == "WebsocketProvider")

@@ -1,5 +1,3 @@
-module.exports = run;
-
 const Web3 = require("web3");
 
 async function rpc(func) {
@@ -41,7 +39,7 @@ async function get(web3, contractAddress) {
     return {};
 }
 
-async function run(nodeAddress, contractAddress) {
+export async function run(nodeAddress, contractAddress) {
     const web3 = new Web3(nodeAddress);
     const version = get(web3, contractAddress);
     if (web3.currentProvider.constructor.name == "WebsocketProvider")

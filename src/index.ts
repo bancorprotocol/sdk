@@ -1,8 +1,8 @@
 import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate } from './blockchains/ethereum/index';
 import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMultiConverter } from './blockchains/eos';
 import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
-import { fetchConversionEvents } from './blockchains/ethereum/fetch_conversion_events.js';
-import { retrieveContractVersion } from './blockchains/ethereum/retrieve_contract_version.js';
+import { run as fetchConversionEvents } from './blockchains/ethereum/fetch_conversion_events';
+import { run as retrieveContractVersion } from './blockchains/ethereum/retrieve_contract_version';
 
 interface Settings {
     ethereumNodeEndpoint: string;
