@@ -49,7 +49,7 @@ export function calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio
     if (fromReserveRatio.equals(toReserveRatio))
         return toReserveBalance.mul(amount).div(fromReserveBalance.add(amount));
 
-    return toReserveBalance.mul(ONE.sub(fromReserveBalance.div(fromReserveBalance.plus(amount)).pow(fromReserveRatio.div(toReserveRatio))));
+    return toReserveBalance.mul(ONE.sub(fromReserveBalance.div(fromReserveBalance.add(amount)).pow(fromReserveRatio.div(toReserveRatio))));
 }
 
 // return reserveBalance * (((supply + amount) / supply) ^ (MAX_RATIO / totalRatio) - 1)
@@ -64,7 +64,7 @@ export function calculateFundCost(supply, reserveBalance, totalRatio, amount) {
     if (totalRatio.equals(MAX_RATIO))
         return (amount.mul(reserveBalance).sub(ONE)).div(supply.add(ONE));
 
-    return reserveBalance.mul(((supply.add(amount)).div(supply)).pow((MAX_RATIO.div(totalRatio))).sub(ONE));
+    return reserveBalance.mul(supply.add(amount).div(supply).pow(MAX_RATIO.div(totalRatio)).sub(ONE));
 }
 
 // return reserveBalance * (1 - ((supply - amount) / supply) ^ (MAX_RATIO / totalRatio))
@@ -83,7 +83,7 @@ export function calculateLiquidateReturn(supply, reserveBalance, totalRatio, amo
     if (totalRatio.equals(MAX_RATIO))
         return amount.mul(reserveBalance).div(supply);
 
-    return reserveBalance.mul(ONE.sub((supply.sub(amount)).div(supply)).pow(MAX_RATIO.div(totalRatio)));
+    return reserveBalance.mul(ONE.sub(supply.sub(amount).div(supply).pow(MAX_RATIO.div(totalRatio))));
 }
 
 export function getFinalAmount(amount, conversionFee, magnitude) {
