@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js/decimal.js';
 
-Decimal.set({ precision: 400 });
+Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
 
 export function decimalDivide(a, b) {
     if (a === 0 && b === 0) return 0;
