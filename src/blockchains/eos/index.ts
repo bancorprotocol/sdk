@@ -2,7 +2,7 @@ import { JsonRpc } from 'eosjs';
 import fetch from 'node-fetch';
 import { converterBlockchainIds } from './converter_blockchain_ids';
 import fs from 'fs';
-import { shortConvert, sellSmartToken, buySmartToken, returnWithFee } from '../../utils/formulas';
+import * as formulas from '../../utils/formulas';
 import { ConversionPathStep, Token } from '../../path_generation';
 import { Paths } from './paths';
 
@@ -155,7 +155,7 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
 
     const reserves = await getReservesFromCode(converterBlockchainId, reserveSymbol);
     const reservesContacts = reserves.rows.map(res => res.contract);
-    const fee = await getConverterFeeFromSettings(converterBlockchainId);
+    const conversionFee = await getConverterFeeFromSettings(converterBlockchainId);
     const isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
     let balanceFrom;
     if (isToTokenMultiToken)
@@ -169,8 +169,6 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
         balanceTo = await getReserveBalances(toTokenBlockchainId, converterBlockchainId);
 
     const isConversionToSmartToken = isToSmartToken(pair, reservesContacts);
-    let amountWithoutFee = 0;
-    let magnitude = 0;
     const balanceObject = { [fromTokenBlockchainId]: balanceFrom.rows[0].balance, [toTokenBlockchainId]: balanceTo.rows[0].balance };
     const converterReserves = {};
     reserves.rows.map((reserve: Reserve) => {
@@ -183,32 +181,31 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
         const token = pathJson.smartTokens[fromTokenBlockchainId] || pathJson.convertibleTokens[fromTokenBlockchainId];
         const tokenSymbol = Object.keys(token[fromTokenSymbol])[0];
         const tokenSupplyObj = await getSmartTokenSupply(fromTokenBlockchainId, tokenSymbol);
-        const toReserveRatio = converterReserves[toTokenBlockchainId].ratio;
-        const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
-        const reserveTokenBalance = getBalance(balanceTo.rows[0].balance);
-        amountWithoutFee = sellSmartToken(reserveTokenBalance, toReserveRatio, amount, tokenSupply);
-        magnitude = 1;
+        const supply = getBalance(tokenSupplyObj.rows[0].supply);
+        const reserveBalance = getBalance(balanceTo.rows[0].balance);
+        const reserveRatio = converterReserves[toTokenBlockchainId].ratio;
+        const amountWithoutFee = formulas.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
+        return formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed();
     }
 
     else if (isConversionToSmartToken) {
         const token = pathJson.smartTokens[toTokenBlockchainId] || pathJson.convertibleTokens[toTokenBlockchainId];
         const tokenSymbol = Object.keys(token[toTokenSymbol])[0];
         const tokenSupplyObj = await getSmartTokenSupply(toTokenBlockchainId, tokenSymbol);
-        const toReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
-        const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
-        const reserveTokenBalance = getBalance(balanceFrom.rows[0].balance);
-        amountWithoutFee = buySmartToken(reserveTokenBalance, toReserveRatio, amount, tokenSupply);
-        magnitude = 1;
+        const supply = getBalance(tokenSupplyObj.rows[0].supply);
+        const reserveBalance = getBalance(balanceFrom.rows[0].balance);
+        const reserveRatio = converterReserves[fromTokenBlockchainId].ratio;
+        const amountWithoutFee = formulas.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
+        return formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed();
     }
     else {
-        amountWithoutFee = shortConvert(amount, getBalance(converterReserves[toTokenBlockchainId].balance), getBalance(converterReserves[fromTokenBlockchainId].balance));
-        magnitude = 2;
+        const fromReserveBalance = getBalance(balanceFrom.rows[0].balance);
+        const fromReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
+        const toReserveBalance = getBalance(balanceTo.rows[0].balance);
+        const toReserveRatio = converterReserves[toTokenBlockchainId].ratio;
+        const amountWithoutFee = formulas.calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount);
+        return formulas.getFinalAmount(amountWithoutFee, conversionFee, 2).toFixed();
     }
-
-    if (fee == 0)
-        return amountWithoutFee;
-
-    return returnWithFee(amountWithoutFee, fee, magnitude);
 }
 
 export async function getConverterBlockchainId(token: Token) {

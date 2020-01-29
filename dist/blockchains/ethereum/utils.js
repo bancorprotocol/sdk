@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var decimal_js_1 = __importDefault(require("decimal.js/decimal.js"));
+var decimal_js_1 = __importDefault(require("decimal.js"));
 decimal_js_1.default.set({ precision: 100, rounding: decimal_js_1.default.ROUND_DOWN });
 function fromWei(number, decimalDigits) {
     if (decimalDigits === void 0) { decimalDigits = 18; }
