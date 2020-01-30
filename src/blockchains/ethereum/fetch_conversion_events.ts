@@ -10,6 +10,14 @@ const CONVERSION_EVENT_LEGACY = [
     {"anonymous":false,"inputs":[{"indexed":true,"name":"fromToken","type":"address"},{"indexed":true,"name":"toToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"inputAmount","type":"uint256"},{"indexed":false,"name":"outputAmount","type":"uint256"},{"indexed":false,"name":"conversionFee","type":"int256"}],"name":"Conversion","type":"event"}
 ];
 
+const TOKEN_ABI = [
+    {"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"}
+];
+
+const decimals = {};
+import Decimal from "decimal.js";
+Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
+
 function parseOwnerUpdateEvent(log) {
     const indexed = log.topics.length > 1;
     return {
@@ -17,6 +25,14 @@ function parseOwnerUpdateEvent(log) {
         prevOwner: Web3.utils.toChecksumAddress(indexed ? log.topics[1].slice(-40) : log.data.slice(26, 66)),
         currOwner: Web3.utils.toChecksumAddress(indexed ? log.topics[2].slice(-40) : log.data.slice(90, 130))
     };
+}
+
+async function getTokenAmount(web3, tokenAddress, weiAmount) {
+    if (decimals[tokenAddress] == undefined) {
+        const token = new web3.eth.Contract(TOKEN_ABI, tokenAddress);
+        decimals[tokenAddress] = await token.methods.decimals().call();
+    }
+    return new Decimal(weiAmount + "e-" + decimals[tokenAddress]).toFixed();
 }
 
 async function getPastLogs(web3, address, topic0, fromBlock, toBlock) {
@@ -78,15 +94,17 @@ async function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
             const converter = new web3.eth.Contract([abi], batch.owner);
             const events = await getPastEvents(converter, abi.name, batch.fromBlock, batch.toBlock);
             if (events.length > 0) {
-                result.push(...events.map(event => ({
-                    fromToken    : event.returnValues.fromToken    ,
-                    toToken      : event.returnValues.toToken      ,
-                    trader       : event.returnValues.trader       ,
-                    inputAmount  : event.returnValues.inputAmount  ,
-                    outputAmount : event.returnValues.outputAmount ,
-                    conversionFee: event.returnValues.conversionFee,
-                    blockNumber  : event.blockNumber
-                })));
+                for (const event of events) {
+                    result.push({
+                        fromToken    : event.returnValues.fromToken,
+                        toToken      : event.returnValues.toToken,
+                        trader       : event.returnValues.trader,
+                        inputAmount  : await getTokenAmount(web3, event.returnValues.fromToken, event.returnValues.inputAmount),
+                        outputAmount : await getTokenAmount(web3, event.returnValues.toToken, event.returnValues.outputAmount),
+                        conversionFee: event.returnValues.conversionFee,
+                        blockNumber  : event.blockNumber
+                    });
+                }
                 index = CONVERSION_EVENT_LEGACY.indexOf(abi);
                 break;
             }
