@@ -42,9 +42,12 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var Web3 = require("web3");
-var Decimal = require("decimal.js");
+var decimal_1 = __importDefault(require("../../utils/decimal"));
 var GENESIS_BLOCK_NUMBER = 3851136;
 var OWNER_UPDATE_EVENT_HASH = Web3.utils.keccak256("OwnerUpdate(address,address)");
 var CONVERSION_EVENT_LEGACY = [
@@ -56,7 +59,6 @@ var TOKEN_ABI = [
     { "constant": true, "inputs": [], "name": "decimals", "outputs": [{ "name": "", "type": "uint8" }], "payable": false, "stateMutability": "view", "type": "function" }
 ];
 var decimals = {};
-Decimal.set({ precision: 78 });
 function parseOwnerUpdateEvent(log) {
     var indexed = log.topics.length > 1;
     return {
@@ -79,7 +81,7 @@ function getTokenAmount(web3, tokenAddress, weiAmount) {
                 case 1:
                     _a[_b] = _c.sent();
                     _c.label = 2;
-                case 2: return [2 /*return*/, new Decimal(weiAmount + "e-" + decimals[tokenAddress]).toFixed()];
+                case 2: return [2 /*return*/, new decimal_1.default(weiAmount + "e-" + decimals[tokenAddress]).toFixed()];
             }
         });
     });

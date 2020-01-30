@@ -1,6 +1,4 @@
-import Decimal from 'decimal.js';
-
-Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
+import Decimal from './decimal';
 
 const ZERO = new Decimal(0);
 const ONE = new Decimal(1);

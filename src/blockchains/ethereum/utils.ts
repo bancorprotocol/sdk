@@ -1,6 +1,4 @@
-import Decimal from 'decimal.js';
-
-Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
+import Decimal from '../../utils/decimal';
 
 export function fromWei(number, decimalDigits = 18) {
     return new Decimal(`${number}e-${decimalDigits}`).toFixed();

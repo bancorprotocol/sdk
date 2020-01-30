@@ -3,16 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var decimal_js_1 = __importDefault(require("decimal.js"));
-decimal_js_1.default.set({ precision: 100, rounding: decimal_js_1.default.ROUND_DOWN });
-var ZERO = new decimal_js_1.default(0);
-var ONE = new decimal_js_1.default(1);
-var MAX_RATIO = new decimal_js_1.default(1000000);
-var MAX_FEE = new decimal_js_1.default(1000000);
+var decimal_1 = __importDefault(require("./decimal"));
+var ZERO = new decimal_1.default(0);
+var ONE = new decimal_1.default(1);
+var MAX_RATIO = new decimal_1.default(1000000);
+var MAX_FEE = new decimal_1.default(1000000);
 // return supply * ((1 + depositAmount / reserveBalance) ^ (reserveRatio / 1000000) - 1)
 function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {
     var _a;
-    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], depositAmount = _a[3];
+    _a = Array.from(arguments).map(function (x) { return new decimal_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], depositAmount = _a[3];
     // special case for 0 deposit amount
     if (depositAmount.equals(ZERO))
         return ZERO;
@@ -25,7 +24,7 @@ exports.calculatePurchaseReturn = calculatePurchaseReturn;
 // return reserveBalance * (1 - (1 - sellAmount / supply) ^ (1000000 / reserveRatio))
 function calculateSaleReturn(supply, reserveBalance, reserveRatio, sellAmount) {
     var _a;
-    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], sellAmount = _a[3];
+    _a = Array.from(arguments).map(function (x) { return new decimal_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], sellAmount = _a[3];
     // special case for 0 sell amount
     if (sellAmount.equals(ZERO))
         return ZERO;
@@ -41,7 +40,7 @@ exports.calculateSaleReturn = calculateSaleReturn;
 // return toReserveBalance * (1 - (fromReserveBalance / (fromReserveBalance + amount)) ^ (fromReserveRatio / toReserveRatio))
 function calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount) {
     var _a;
-    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), fromReserveBalance = _a[0], fromReserveRatio = _a[1], toReserveBalance = _a[2], toReserveRatio = _a[3], amount = _a[4];
+    _a = Array.from(arguments).map(function (x) { return new decimal_1.default(x); }), fromReserveBalance = _a[0], fromReserveRatio = _a[1], toReserveBalance = _a[2], toReserveRatio = _a[3], amount = _a[4];
     // special case for equal ratios
     if (fromReserveRatio.equals(toReserveRatio))
         return toReserveBalance.mul(amount).div(fromReserveBalance.add(amount));
@@ -51,7 +50,7 @@ exports.calculateCrossReserveReturn = calculateCrossReserveReturn;
 // return reserveBalance * (((supply + amount) / supply) ^ (MAX_RATIO / totalRatio) - 1)
 function calculateFundCost(supply, reserveBalance, totalRatio, amount) {
     var _a;
-    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], totalRatio = _a[2], amount = _a[3];
+    _a = Array.from(arguments).map(function (x) { return new decimal_1.default(x); }), supply = _a[0], reserveBalance = _a[1], totalRatio = _a[2], amount = _a[3];
     // special case for 0 amount
     if (amount.equals(ZERO))
         return ZERO;
@@ -64,7 +63,7 @@ exports.calculateFundCost = calculateFundCost;
 // return reserveBalance * (1 - ((supply - amount) / supply) ^ (MAX_RATIO / totalRatio))
 function calculateLiquidateReturn(supply, reserveBalance, totalRatio, amount) {
     var _a;
-    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], totalRatio = _a[2], amount = _a[3];
+    _a = Array.from(arguments).map(function (x) { return new decimal_1.default(x); }), supply = _a[0], reserveBalance = _a[1], totalRatio = _a[2], amount = _a[3];
     // special case for 0 amount
     if (amount.equals(ZERO))
         return ZERO;
@@ -79,7 +78,7 @@ function calculateLiquidateReturn(supply, reserveBalance, totalRatio, amount) {
 exports.calculateLiquidateReturn = calculateLiquidateReturn;
 function getFinalAmount(amount, conversionFee, magnitude) {
     var _a;
-    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), amount = _a[0], conversionFee = _a[1], magnitude = _a[2];
+    _a = Array.from(arguments).map(function (x) { return new decimal_1.default(x); }), amount = _a[0], conversionFee = _a[1], magnitude = _a[2];
     return amount.mul(MAX_FEE.sub(conversionFee).pow(magnitude)).div(MAX_FEE.pow(magnitude));
 }
 exports.getFinalAmount = getFinalAmount;
