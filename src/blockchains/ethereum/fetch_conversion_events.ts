@@ -1,4 +1,5 @@
 const Web3 = require("web3");
+const Decimal = require("decimal.js");
 
 const GENESIS_BLOCK_NUMBER = 3851136;
 
@@ -15,8 +16,7 @@ const TOKEN_ABI = [
 ];
 
 const decimals = {};
-import Decimal from "decimal.js";
-Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
+Decimal.set({precision: 78});
 
 function parseOwnerUpdateEvent(log) {
     const indexed = log.topics.length > 1;
