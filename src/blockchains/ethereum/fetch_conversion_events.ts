@@ -20,27 +20,33 @@ function parseOwnerUpdateEvent(log) {
 }
 
 async function getPastLogs(web3, address, topic0, fromBlock, toBlock) {
-    try {
-        return await web3.eth.getPastLogs({address: address, topics: [topic0], fromBlock: fromBlock, toBlock: toBlock});
+    if (fromBlock <= toBlock) {
+        try {
+            return await web3.eth.getPastLogs({address: address, topics: [topic0], fromBlock: fromBlock, toBlock: toBlock});
+        }
+        catch (error) {
+            const midBlock = (fromBlock + toBlock) >> 1;
+            const arr1 = await getPastLogs(web3, address, topic0, fromBlock, midBlock);
+            const arr2 = await getPastLogs(web3, address, topic0, midBlock + 1, toBlock);
+            return [...arr1, ...arr2];
+        }
     }
-    catch (error) {
-        const midBlock = (fromBlock + toBlock) >> 1;
-        const arr1 = await getPastLogs(web3, address, topic0, fromBlock, midBlock);
-        const arr2 = await getPastLogs(web3, address, topic0, midBlock + 1, toBlock);
-        return [...arr1, ...arr2];
-    }
+    return [];
 }
 
 async function getPastEvents(contract, eventName, fromBlock, toBlock) {
-    try {
-        return await contract.getPastEvents(eventName, {fromBlock: fromBlock, toBlock: toBlock});
+    if (fromBlock <= toBlock) {
+        try {
+            return await contract.getPastEvents(eventName, {fromBlock: fromBlock, toBlock: toBlock});
+        }
+        catch (error) {
+            const midBlock = (fromBlock + toBlock) >> 1;
+            const arr1 = await getPastEvents(contract, eventName, fromBlock, midBlock);
+            const arr2 = await getPastEvents(contract, eventName, midBlock + 1, toBlock);
+            return [...arr1, ...arr2];
+        }
     }
-    catch (error) {
-        const midBlock = (fromBlock + toBlock) >> 1;
-        const arr1 = await getPastEvents(contract, eventName, fromBlock, midBlock);
-        const arr2 = await getPastEvents(contract, eventName, midBlock + 1, toBlock);
-        return [...arr1, ...arr2];
-    }
+    return [];
 }
 
 async function getOwnerUpdateEvents(web3, tokenAddress, fromBlock, toBlock) {

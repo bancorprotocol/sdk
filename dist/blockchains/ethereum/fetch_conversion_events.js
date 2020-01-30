@@ -65,20 +65,23 @@ function getPastLogs(web3, address, topic0, fromBlock, toBlock) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 5]);
+                    if (!(fromBlock <= toBlock)) return [3 /*break*/, 6];
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 6]);
                     return [4 /*yield*/, web3.eth.getPastLogs({ address: address, topics: [topic0], fromBlock: fromBlock, toBlock: toBlock })];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2:
+                case 2: return [2 /*return*/, _a.sent()];
+                case 3:
                     error_1 = _a.sent();
                     midBlock = (fromBlock + toBlock) >> 1;
                     return [4 /*yield*/, getPastLogs(web3, address, topic0, fromBlock, midBlock)];
-                case 3:
+                case 4:
                     arr1 = _a.sent();
                     return [4 /*yield*/, getPastLogs(web3, address, topic0, midBlock + 1, toBlock)];
-                case 4:
+                case 5:
                     arr2 = _a.sent();
                     return [2 /*return*/, __spreadArrays(arr1, arr2)];
-                case 5: return [2 /*return*/];
+                case 6: return [2 /*return*/, []];
             }
         });
     });
@@ -89,20 +92,23 @@ function getPastEvents(contract, eventName, fromBlock, toBlock) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 5]);
+                    if (!(fromBlock <= toBlock)) return [3 /*break*/, 6];
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 6]);
                     return [4 /*yield*/, contract.getPastEvents(eventName, { fromBlock: fromBlock, toBlock: toBlock })];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2:
+                case 2: return [2 /*return*/, _a.sent()];
+                case 3:
                     error_2 = _a.sent();
                     midBlock = (fromBlock + toBlock) >> 1;
                     return [4 /*yield*/, getPastEvents(contract, eventName, fromBlock, midBlock)];
-                case 3:
+                case 4:
                     arr1 = _a.sent();
                     return [4 /*yield*/, getPastEvents(contract, eventName, midBlock + 1, toBlock)];
-                case 4:
+                case 5:
                     arr2 = _a.sent();
                     return [2 /*return*/, __spreadArrays(arr1, arr2)];
-                case 5: return [2 /*return*/];
+                case 6: return [2 /*return*/, []];
             }
         });
     });
