@@ -8,7 +8,6 @@ var ZERO = new decimal_js_1.default(0);
 var ONE = new decimal_js_1.default(1);
 var MAX_RATIO = new decimal_js_1.default(1000000);
 var MAX_FEE = new decimal_js_1.default(1000000);
-// return supply * ((1 + depositAmount / reserveBalance) ^ (reserveRatio / 1000000) - 1)
 function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], depositAmount = _a[3];
@@ -18,10 +17,10 @@ function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAm
     // special case if the ratio = 100%
     if (reserveRatio.equals(MAX_RATIO))
         return supply.mul(depositAmount).div(reserveBalance);
+    // return supply * ((1 + depositAmount / reserveBalance) ^ (reserveRatio / 1000000) - 1)
     return supply.mul((ONE.add(depositAmount.div(reserveBalance))).pow(reserveRatio.div(MAX_RATIO)).sub(ONE));
 }
 exports.calculatePurchaseReturn = calculatePurchaseReturn;
-// return reserveBalance * (1 - (1 - sellAmount / supply) ^ (1000000 / reserveRatio))
 function calculateSaleReturn(supply, reserveBalance, reserveRatio, sellAmount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], sellAmount = _a[3];
@@ -34,20 +33,20 @@ function calculateSaleReturn(supply, reserveBalance, reserveRatio, sellAmount) {
     // special case if the ratio = 100%
     if (reserveRatio.equals(MAX_RATIO))
         return reserveBalance.mul(sellAmount).div(supply);
+    // return reserveBalance * (1 - (1 - sellAmount / supply) ^ (1000000 / reserveRatio))
     return reserveBalance.mul(ONE.sub(ONE.sub(sellAmount.div(supply)).pow((MAX_RATIO.div(reserveRatio)))));
 }
 exports.calculateSaleReturn = calculateSaleReturn;
-// return toReserveBalance * (1 - (fromReserveBalance / (fromReserveBalance + amount)) ^ (fromReserveRatio / toReserveRatio))
 function calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), fromReserveBalance = _a[0], fromReserveRatio = _a[1], toReserveBalance = _a[2], toReserveRatio = _a[3], amount = _a[4];
     // special case for equal ratios
     if (fromReserveRatio.equals(toReserveRatio))
         return toReserveBalance.mul(amount).div(fromReserveBalance.add(amount));
+    // return toReserveBalance * (1 - (fromReserveBalance / (fromReserveBalance + amount)) ^ (fromReserveRatio / toReserveRatio))
     return toReserveBalance.mul(ONE.sub(fromReserveBalance.div(fromReserveBalance.add(amount)).pow(fromReserveRatio.div(toReserveRatio))));
 }
 exports.calculateCrossReserveReturn = calculateCrossReserveReturn;
-// return reserveBalance * (((supply + amount) / supply) ^ (MAX_RATIO / totalRatio) - 1)
 function calculateFundCost(supply, reserveBalance, totalRatio, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], totalRatio = _a[2], amount = _a[3];
@@ -57,10 +56,10 @@ function calculateFundCost(supply, reserveBalance, totalRatio, amount) {
     // special case if the total ratio = 100%
     if (totalRatio.equals(MAX_RATIO))
         return (amount.mul(reserveBalance).sub(ONE)).div(supply.add(ONE));
+    // return reserveBalance * (((supply + amount) / supply) ^ (MAX_RATIO / totalRatio) - 1)
     return reserveBalance.mul(supply.add(amount).div(supply).pow(MAX_RATIO.div(totalRatio)).sub(ONE));
 }
 exports.calculateFundCost = calculateFundCost;
-// return reserveBalance * (1 - ((supply - amount) / supply) ^ (MAX_RATIO / totalRatio))
 function calculateLiquidateReturn(supply, reserveBalance, totalRatio, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], totalRatio = _a[2], amount = _a[3];
@@ -73,6 +72,7 @@ function calculateLiquidateReturn(supply, reserveBalance, totalRatio, amount) {
     // special case if the total ratio = 100%
     if (totalRatio.equals(MAX_RATIO))
         return amount.mul(reserveBalance).div(supply);
+    // return reserveBalance * (1 - ((supply - amount) / supply) ^ (MAX_RATIO / totalRatio))
     return reserveBalance.mul(ONE.sub(supply.sub(amount).div(supply).pow(MAX_RATIO.div(totalRatio))));
 }
 exports.calculateLiquidateReturn = calculateLiquidateReturn;

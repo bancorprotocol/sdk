@@ -5,7 +5,6 @@ const ONE = new Decimal(1);
 const MAX_RATIO = new Decimal(1000000);
 const MAX_FEE = new Decimal(1000000);
 
-// return supply * ((1 + depositAmount / reserveBalance) ^ (reserveRatio / 1000000) - 1)
 export function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {
     [supply, reserveBalance, reserveRatio, depositAmount] = Array.from(arguments).map(x => new Decimal(x));
 
@@ -17,10 +16,10 @@ export function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, de
     if (reserveRatio.equals(MAX_RATIO))
         return supply.mul(depositAmount).div(reserveBalance);
 
+    // return supply * ((1 + depositAmount / reserveBalance) ^ (reserveRatio / 1000000) - 1)
     return supply.mul((ONE.add(depositAmount.div(reserveBalance))).pow(reserveRatio.div(MAX_RATIO)).sub(ONE));
 }
 
-// return reserveBalance * (1 - (1 - sellAmount / supply) ^ (1000000 / reserveRatio))
 export function calculateSaleReturn(supply, reserveBalance, reserveRatio, sellAmount) {
     [supply, reserveBalance, reserveRatio, sellAmount] = Array.from(arguments).map(x => new Decimal(x));
 
@@ -36,10 +35,10 @@ export function calculateSaleReturn(supply, reserveBalance, reserveRatio, sellAm
     if (reserveRatio.equals(MAX_RATIO))
         return reserveBalance.mul(sellAmount).div(supply);
 
+    // return reserveBalance * (1 - (1 - sellAmount / supply) ^ (1000000 / reserveRatio))
     return reserveBalance.mul(ONE.sub(ONE.sub(sellAmount.div(supply)).pow((MAX_RATIO.div(reserveRatio)))));
 }
 
-// return toReserveBalance * (1 - (fromReserveBalance / (fromReserveBalance + amount)) ^ (fromReserveRatio / toReserveRatio))
 export function calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount) {
     [fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount] = Array.from(arguments).map(x => new Decimal(x));
 
@@ -47,10 +46,10 @@ export function calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio
     if (fromReserveRatio.equals(toReserveRatio))
         return toReserveBalance.mul(amount).div(fromReserveBalance.add(amount));
 
+    // return toReserveBalance * (1 - (fromReserveBalance / (fromReserveBalance + amount)) ^ (fromReserveRatio / toReserveRatio))
     return toReserveBalance.mul(ONE.sub(fromReserveBalance.div(fromReserveBalance.add(amount)).pow(fromReserveRatio.div(toReserveRatio))));
 }
 
-// return reserveBalance * (((supply + amount) / supply) ^ (MAX_RATIO / totalRatio) - 1)
 export function calculateFundCost(supply, reserveBalance, totalRatio, amount) {
     [supply, reserveBalance, totalRatio, amount] = Array.from(arguments).map(x => new Decimal(x));
 
@@ -62,10 +61,10 @@ export function calculateFundCost(supply, reserveBalance, totalRatio, amount) {
     if (totalRatio.equals(MAX_RATIO))
         return (amount.mul(reserveBalance).sub(ONE)).div(supply.add(ONE));
 
+    // return reserveBalance * (((supply + amount) / supply) ^ (MAX_RATIO / totalRatio) - 1)
     return reserveBalance.mul(supply.add(amount).div(supply).pow(MAX_RATIO.div(totalRatio)).sub(ONE));
 }
 
-// return reserveBalance * (1 - ((supply - amount) / supply) ^ (MAX_RATIO / totalRatio))
 export function calculateLiquidateReturn(supply, reserveBalance, totalRatio, amount) {
     [supply, reserveBalance, totalRatio, amount] = Array.from(arguments).map(x => new Decimal(x));
 
@@ -81,6 +80,7 @@ export function calculateLiquidateReturn(supply, reserveBalance, totalRatio, amo
     if (totalRatio.equals(MAX_RATIO))
         return amount.mul(reserveBalance).div(supply);
 
+    // return reserveBalance * (1 - ((supply - amount) / supply) ^ (MAX_RATIO / totalRatio))
     return reserveBalance.mul(ONE.sub(supply.sub(amount).div(supply).pow(MAX_RATIO.div(totalRatio))));
 }
 
