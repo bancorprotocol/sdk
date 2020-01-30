@@ -43,6 +43,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable no-sync */
 /* eslint-disable prefer-reflect */
 var web3_1 = __importDefault(require("web3"));
+var decimal_js_1 = __importDefault(require("decimal.js"));
 var BancorConverterV9_1 = require("./contracts/BancorConverterV9");
 var utils_1 = require("./utils");
 var BancorConverter_1 = require("./contracts/BancorConverter");
@@ -70,6 +71,7 @@ function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
                 case 1:
                     registryBlockchainId = _a.sent();
                     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
+                    decimal_js_1.default.set({ precision: 100, rounding: decimal_js_1.default.ROUND_DOWN });
                     return [2 /*return*/];
             }
         });

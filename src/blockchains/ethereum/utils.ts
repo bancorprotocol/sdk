@@ -1,4 +1,4 @@
-import Decimal from '../../utils/decimal';
+import Decimal from 'decimal.js';
 
 export function fromWei(number, decimalDigits = 18) {
     return new Decimal(`${number}e-${decimalDigits}`).toFixed();

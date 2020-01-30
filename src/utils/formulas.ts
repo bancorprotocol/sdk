@@ -1,4 +1,4 @@
-import Decimal from './decimal';
+import Decimal from 'decimal.js';
 
 const ZERO = new Decimal(0);
 const ONE = new Decimal(1);

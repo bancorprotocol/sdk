@@ -50,6 +50,7 @@ var eosjs_1 = require("eosjs");
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var converter_blockchain_ids_1 = require("./converter_blockchain_ids");
 var fs_1 = __importDefault(require("fs"));
+var decimal_js_1 = __importDefault(require("decimal.js"));
 var formulas = __importStar(require("../../utils/formulas"));
 var paths_1 = require("./paths");
 var pathJson = paths_1.Paths;
@@ -288,6 +289,7 @@ function getPathStepRate(pair, amount) {
                             ratio: reserve.ratio, balance: balanceObject[reserve.contract]
                         };
                     });
+                    decimal_js_1.default.set({ precision: 100, rounding: decimal_js_1.default.ROUND_DOWN });
                     if (!isConversionFromSmartToken) return [3 /*break*/, 12];
                     token = pathJson.smartTokens[fromTokenBlockchainId] || pathJson.convertibleTokens[fromTokenBlockchainId];
                     tokenSymbol = Object.keys(token[fromTokenSymbol])[0];

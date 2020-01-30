@@ -2,6 +2,7 @@ import { JsonRpc } from 'eosjs';
 import fetch from 'node-fetch';
 import { converterBlockchainIds } from './converter_blockchain_ids';
 import fs from 'fs';
+import Decimal from 'decimal.js';
 import * as formulas from '../../utils/formulas';
 import { ConversionPathStep, Token } from '../../path_generation';
 import { Paths } from './paths';
@@ -176,6 +177,8 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
             ratio: reserve.ratio, balance: balanceObject[reserve.contract]
         };
     });
+
+    Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
 
     if (isConversionFromSmartToken) {
         const token = pathJson.smartTokens[fromTokenBlockchainId] || pathJson.convertibleTokens[fromTokenBlockchainId];

@@ -1,5 +1,5 @@
 const Web3 = require("web3");
-import Decimal from "../../utils/decimal";
+const Decimal = require("decimal.js");
 
 const GENESIS_BLOCK_NUMBER = 3851136;
 
@@ -86,6 +86,8 @@ async function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
     }
     batches[batches.length - 1].toBlock = toBlock;
     batches[batches.length - 1].owner = events[events.length - 1].currOwner;
+
+    Decimal.set({precision: 78});
 
     let index = 0;
     for (const batch of batches) {
