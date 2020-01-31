@@ -87,8 +87,6 @@ async function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
     batches[batches.length - 1].toBlock = toBlock;
     batches[batches.length - 1].owner = events[events.length - 1].currOwner;
 
-    Decimal.set({precision: 78});
-
     let index = 0;
     for (const batch of batches) {
         for (const abi of CONVERSION_EVENT_LEGACY.slice(index)) {

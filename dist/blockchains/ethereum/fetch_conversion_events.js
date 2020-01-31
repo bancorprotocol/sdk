@@ -176,7 +176,6 @@ function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
                     }
                     batches[batches.length - 1].toBlock = toBlock;
                     batches[batches.length - 1].owner = events[events.length - 1].currOwner;
-                    Decimal.set({ precision: 78 });
                     index = 0;
                     _b = 0, batches_1 = batches;
                     _j.label = 2;
