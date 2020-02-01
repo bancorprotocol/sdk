@@ -191,6 +191,34 @@ function getRate(sourceToken, targetToken, amount) {
     });
 }
 exports.getRate = getRate;
+function fetchConversionEvents(nodeAddress, token, fromBlock, toBlock) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, fetch_conversion_events_1.run(nodeAddress, token.blockchainId, fromBlock, toBlock)];
+                case 1: return [2 /*return*/, _a.sent()];
+                case 2: throw new Error(token.blockchainType + ' blockchain not supported');
+            }
+        });
+    });
+}
+exports.fetchConversionEvents = fetchConversionEvents;
+function retrieveContractVersion(nodeAddress, contract) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(contract.blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, retrieve_contract_version_1.run(nodeAddress, contract.blockchainId)];
+                case 1: return [2 /*return*/, _a.sent()];
+                case 2: throw new Error(contract.blockchainType + ' blockchain not supported');
+            }
+        });
+    });
+}
+exports.retrieveContractVersion = retrieveContractVersion;
 exports.default = {
     init: init,
     generateEosPaths: generateEosPaths,
@@ -198,6 +226,6 @@ exports.default = {
     generatePath: generatePath,
     getRateByPath: exports.getRateByPath,
     buildPathsFile: eos_1.buildPathsFile,
-    fetchConversionEvents: fetch_conversion_events_1.run,
-    retrieveContractVersion: retrieve_contract_version_1.run
+    fetchConversionEvents: fetchConversionEvents,
+    retrieveContractVersion: retrieveContractVersion
 };

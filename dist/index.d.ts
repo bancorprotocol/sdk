@@ -1,7 +1,5 @@
 import { buildPathsFile } from './blockchains/eos';
-import { Token, ConversionPaths } from './path_generation';
-import { run as fetchConversionEvents } from './blockchains/ethereum/fetch_conversion_events';
-import { run as retrieveContractVersion } from './blockchains/ethereum/retrieve_contract_version';
+import { Token, Contract, ConversionPaths } from './path_generation';
 interface Settings {
     ethereumNodeEndpoint: string;
     eosNodeEndpoint: string;
@@ -14,6 +12,11 @@ export declare const calculateRateFromPaths: (paths: ConversionPaths, amount: an
 export declare function calculateRateFromPath(paths: ConversionPaths, amount: any): Promise<any>;
 export declare const getRateByPath: (paths: ConversionPaths, amount: any) => Promise<any>;
 export declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<any>;
+export declare function fetchConversionEvents(nodeAddress: any, token: Token, fromBlock: any, toBlock: any): Promise<any[]>;
+export declare function retrieveContractVersion(nodeAddress: any, contract: Contract): Promise<{
+    type: string;
+    value: any;
+}>;
 declare const _default: {
     init: typeof init;
     generateEosPaths: typeof generateEosPaths;
