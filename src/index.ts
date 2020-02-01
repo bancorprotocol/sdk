@@ -1,8 +1,8 @@
 import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate } from './blockchains/ethereum/index';
 import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMultiConverter } from './blockchains/eos';
 import { Token, Contract, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
-import { run as fetch_conversion_events } from './blockchains/ethereum/fetch_conversion_events';
 import { run as retrieve_contract_version } from './blockchains/ethereum/retrieve_contract_version';
+import { run as fetch_conversion_events } from './blockchains/ethereum/fetch_conversion_events';
 import { timestampToBlockNumber } from './blockchains/ethereum/utils';
 
 interface Settings {
@@ -67,6 +67,12 @@ export async function getRate(sourceToken: Token, targetToken: Token, amount: st
     return await getRateByPath(paths, amount);
 }
 
+export async function retrieveContractVersion(nodeAddress, contract: Contract) {
+    if (contract.blockchainType == 'ethereum')
+        return await retrieve_contract_version(nodeAddress, contract.blockchainId);
+    throw new Error(contract.blockchainType + ' blockchain not supported');
+}
+
 export async function fetchConversionEvents(nodeAddress, token: Token, fromBlock, toBlock) {
     if (token.blockchainType == 'ethereum')
         return await fetch_conversion_events(nodeAddress, token.blockchainId, fromBlock, toBlock);
@@ -82,12 +88,6 @@ export async function fetchConversionEventsByTimestamp(nodeAddress, token: Token
     throw new Error(token.blockchainType + ' blockchain not supported');
 }
 
-export async function retrieveContractVersion(nodeAddress, contract: Contract) {
-    if (contract.blockchainType == 'ethereum')
-        return await retrieve_contract_version(nodeAddress, contract.blockchainId);
-    throw new Error(contract.blockchainType + ' blockchain not supported');
-}
-
 export default {
     init,
     generateEosPaths,
@@ -95,7 +95,7 @@ export default {
     generatePath,
     getRateByPath,
     buildPathsFile,
+    retrieveContractVersion,
     fetchConversionEvents,
-    fetchConversionEventsByTimestamp,
-    retrieveContractVersion
+    fetchConversionEventsByTimestamp
 };
