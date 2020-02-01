@@ -9,7 +9,7 @@ export function toWei(number, decimalDigits = 18) {
     return new Decimal(`${number}e+${decimalDigits}`).toFixed();
 }
 
-async function timestampToBlockNumber(nodeAddress, timestamp) {
+export async function timestampToBlockNumber(nodeAddress, timestamp) {
     const web3 = new Web3(nodeAddress);
     const lo = await web3.eth.getBlock(1);
     const hi = await web3.eth.getBlock("latest");

@@ -74,6 +74,7 @@ function timestampToBlockNumber(nodeAddress, timestamp) {
         });
     });
 }
+exports.timestampToBlockNumber = timestampToBlockNumber;
 function searchBlock(web3, lo, hi, timestamp) {
     return __awaiter(this, void 0, void 0, function () {
         var midNumber, mid;

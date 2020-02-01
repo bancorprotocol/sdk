@@ -3,6 +3,7 @@ import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMulti
 import { Token, Contract, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
 import { run as fetch_conversion_events } from './blockchains/ethereum/fetch_conversion_events';
 import { run as retrieve_contract_version } from './blockchains/ethereum/retrieve_contract_version';
+import { timestampToBlockNumber } from './blockchains/ethereum/utils';
 
 interface Settings {
     ethereumNodeEndpoint: string;
@@ -72,6 +73,15 @@ export async function fetchConversionEvents(nodeAddress, token: Token, fromBlock
     throw new Error(token.blockchainType + ' blockchain not supported');
 }
 
+export async function fetchConversionEventsByTimestamp(nodeAddress, token: Token, fromTimestamp, toTimestamp) {
+    if (token.blockchainType == 'ethereum') {
+        const fromBlock = await timestampToBlockNumber(nodeAddress, fromTimestamp);
+        const toBlock = await timestampToBlockNumber(nodeAddress, toTimestamp);
+        return await fetch_conversion_events(nodeAddress, token.blockchainId, fromBlock, toBlock);
+    }
+    throw new Error(token.blockchainType + ' blockchain not supported');
+}
+
 export async function retrieveContractVersion(nodeAddress, contract: Contract) {
     if (contract.blockchainType == 'ethereum')
         return await retrieve_contract_version(nodeAddress, contract.blockchainId);
@@ -86,5 +96,6 @@ export default {
     getRateByPath,
     buildPathsFile,
     fetchConversionEvents,
+    fetchConversionEventsByTimestamp,
     retrieveContractVersion
 };

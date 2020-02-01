@@ -41,6 +41,7 @@ var eos_1 = require("./blockchains/eos");
 var path_generation_1 = require("./path_generation");
 var fetch_conversion_events_1 = require("./blockchains/ethereum/fetch_conversion_events");
 var retrieve_contract_version_1 = require("./blockchains/ethereum/retrieve_contract_version");
+var utils_1 = require("./blockchains/ethereum/utils");
 function init(args) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -205,6 +206,27 @@ function fetchConversionEvents(nodeAddress, token, fromBlock, toBlock) {
     });
 }
 exports.fetchConversionEvents = fetchConversionEvents;
+function fetchConversionEventsByTimestamp(nodeAddress, token, fromTimestamp, toTimestamp) {
+    return __awaiter(this, void 0, void 0, function () {
+        var fromBlock, toBlock;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 4];
+                    return [4 /*yield*/, utils_1.timestampToBlockNumber(nodeAddress, fromTimestamp)];
+                case 1:
+                    fromBlock = _a.sent();
+                    return [4 /*yield*/, utils_1.timestampToBlockNumber(nodeAddress, toTimestamp)];
+                case 2:
+                    toBlock = _a.sent();
+                    return [4 /*yield*/, fetch_conversion_events_1.run(nodeAddress, token.blockchainId, fromBlock, toBlock)];
+                case 3: return [2 /*return*/, _a.sent()];
+                case 4: throw new Error(token.blockchainType + ' blockchain not supported');
+            }
+        });
+    });
+}
+exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
 function retrieveContractVersion(nodeAddress, contract) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -227,5 +249,6 @@ exports.default = {
     getRateByPath: exports.getRateByPath,
     buildPathsFile: eos_1.buildPathsFile,
     fetchConversionEvents: fetchConversionEvents,
+    fetchConversionEventsByTimestamp: fetchConversionEventsByTimestamp,
     retrieveContractVersion: retrieveContractVersion
 };

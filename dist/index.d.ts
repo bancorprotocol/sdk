@@ -13,6 +13,7 @@ export declare function calculateRateFromPath(paths: ConversionPaths, amount: an
 export declare const getRateByPath: (paths: ConversionPaths, amount: any) => Promise<any>;
 export declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<any>;
 export declare function fetchConversionEvents(nodeAddress: any, token: Token, fromBlock: any, toBlock: any): Promise<any[]>;
+export declare function fetchConversionEventsByTimestamp(nodeAddress: any, token: Token, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
 export declare function retrieveContractVersion(nodeAddress: any, contract: Contract): Promise<{
     type: string;
     value: any;
@@ -25,6 +26,7 @@ declare const _default: {
     getRateByPath: (paths: ConversionPaths, amount: any) => Promise<any>;
     buildPathsFile: typeof buildPathsFile;
     fetchConversionEvents: typeof fetchConversionEvents;
+    fetchConversionEventsByTimestamp: typeof fetchConversionEventsByTimestamp;
     retrieveContractVersion: typeof retrieveContractVersion;
 };
 export default _default;
