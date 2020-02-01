@@ -219,13 +219,13 @@ export async function getConverterBlockchainId(token: Token) {
 export async function getReserveBlockchainId(reserves: Token[], position) {
     const blockchainId = reserves[position].blockchainId;
     const symbol = reserves[position].symbol;
-    const tok: Token = {
+    const token: Token = {
         blockchainType: 'eos',
         blockchainId,
         symbol
     };
 
-    return tok;
+    return token;
 }
 
 export async function getReserves(converterBlockchainId, symbol, isMulti = false) {

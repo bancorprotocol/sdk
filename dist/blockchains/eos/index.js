@@ -337,16 +337,16 @@ function getConverterBlockchainId(token) {
 exports.getConverterBlockchainId = getConverterBlockchainId;
 function getReserveBlockchainId(reserves, position) {
     return __awaiter(this, void 0, void 0, function () {
-        var blockchainId, symbol, tok;
+        var blockchainId, symbol, token;
         return __generator(this, function (_a) {
             blockchainId = reserves[position].blockchainId;
             symbol = reserves[position].symbol;
-            tok = {
+            token = {
                 blockchainType: 'eos',
                 blockchainId: blockchainId,
                 symbol: symbol
             };
-            return [2 /*return*/, tok];
+            return [2 /*return*/, token];
         });
     });
 }
