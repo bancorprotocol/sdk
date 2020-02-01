@@ -58,10 +58,10 @@ function timestampToBlockNumber(nodeAddress, timestamp) {
             switch (_a.label) {
                 case 0:
                     web3 = new web3_1.default(nodeAddress);
-                    return [4 /*yield*/, web3.eth.getBlock(1)];
+                    return [4 /*yield*/, getBlock(web3, 1)];
                 case 1:
                     lo = _a.sent();
-                    return [4 /*yield*/, web3.eth.getBlock("latest")];
+                    return [4 /*yield*/, getBlock(web3, "latest")];
                 case 2:
                     hi = _a.sent();
                     return [4 /*yield*/, searchBlock(web3, lo, hi, timestamp)];
@@ -90,7 +90,7 @@ function searchBlock(web3, lo, hi, timestamp) {
                     if (!(midNumber == hi.number)) return [3 /*break*/, 4];
                     return [4 /*yield*/, searchBetterBlock(web3, hi, timestamp, -1)];
                 case 3: return [2 /*return*/, _a.sent()];
-                case 4: return [4 /*yield*/, web3.eth.getBlock(midNumber)];
+                case 4: return [4 /*yield*/, getBlock(web3, midNumber)];
                 case 5:
                     mid = _a.sent();
                     if (mid.timestamp < timestamp)
@@ -112,7 +112,7 @@ function searchBetterBlock(web3, block, timestamp, sign) {
             switch (_a.label) {
                 case 0:
                     if (!(block.timestamp * sign < timestamp * sign)) return [3 /*break*/, 2];
-                    return [4 /*yield*/, web3.eth.getBlock(block.number + sign)];
+                    return [4 /*yield*/, getBlock(web3, block.number + sign)];
                 case 1:
                     nextBlock = _a.sent();
                     if (nextBlock.timestamp * sign >= timestamp * sign)
@@ -124,3 +124,20 @@ function searchBetterBlock(web3, block, timestamp, sign) {
         });
     });
 }
+function getBlock(web3, number) {
+    return __awaiter(this, void 0, void 0, function () {
+        var block;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (blocks[number])
+                        return [2 /*return*/, blocks[number]];
+                    return [4 /*yield*/, web3.eth.getBlock(number)];
+                case 1:
+                    block = _a.sent();
+                    return [2 /*return*/, blocks[block.number] = { number: block.number, timestamp: block.timestamp }];
+            }
+        });
+    });
+}
+var blocks = {};
