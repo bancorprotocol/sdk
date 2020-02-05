@@ -89,8 +89,8 @@ export async function getReserves(converterBlockchainId) {
     return { reserves };
 }
 
-export async function getReservesCount(reserves) {
-    return await getTokenCount(reserves, 'connectorTokenCount');
+export async function getReservesCount(converter) {
+    return await converter.methods.connectorTokenCount().call();
 }
 
 export async function getReserveBlockchainId(converter, position) {
@@ -105,20 +105,6 @@ export async function getReserveBlockchainId(converter, position) {
 
 export async function getConverterSmartToken(converter) {
     return await converter.methods.token().call();
-}
-
-async function getTokenCount(converter: any, funcName: string) {
-    let response = null;
-    try {
-        response = await converter.methods[funcName]().call();
-        return response;
-    }
-    catch (error) {
-        if (!error.message.startsWith('Invalid JSON RPC response')) {
-            response = 0;
-            return response;
-        }
-    }
 }
 
 export async function getReserveToken(converterContract, i) {

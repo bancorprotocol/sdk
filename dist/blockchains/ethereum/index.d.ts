@@ -13,7 +13,7 @@ export declare function getSourceAndTargetTokens(srcToken: string, trgToken: str
 export declare function getReserves(converterBlockchainId: any): Promise<{
     reserves: any;
 }>;
-export declare function getReservesCount(reserves: any): Promise<any>;
+export declare function getReservesCount(converter: any): Promise<any>;
 export declare function getReserveBlockchainId(converter: any, position: any): Promise<Token>;
 export declare function getConverterSmartToken(converter: any): Promise<any>;
 export declare function getReserveToken(converterContract: any, i: any): Promise<Token>;

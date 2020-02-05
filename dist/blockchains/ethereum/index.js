@@ -197,11 +197,11 @@ function getReserves(converterBlockchainId) {
     });
 }
 exports.getReserves = getReserves;
-function getReservesCount(reserves) {
+function getReservesCount(converter) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, getTokenCount(reserves, 'connectorTokenCount')];
+                case 0: return [4 /*yield*/, converter.methods.connectorTokenCount().call()];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -237,32 +237,6 @@ function getConverterSmartToken(converter) {
     });
 }
 exports.getConverterSmartToken = getConverterSmartToken;
-function getTokenCount(converter, funcName) {
-    return __awaiter(this, void 0, void 0, function () {
-        var response, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    response = null;
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, converter.methods[funcName]().call()];
-                case 2:
-                    response = _a.sent();
-                    return [2 /*return*/, response];
-                case 3:
-                    error_1 = _a.sent();
-                    if (!error_1.message.startsWith('Invalid JSON RPC response')) {
-                        response = 0;
-                        return [2 /*return*/, response];
-                    }
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
-            }
-        });
-    });
-}
 function getReserveToken(converterContract, i) {
     return __awaiter(this, void 0, void 0, function () {
         var blockchainId, token;
