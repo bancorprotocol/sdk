@@ -18,10 +18,6 @@ export interface ConversionPathStep {
 export interface ConversionPaths {
     paths: ConversionPath[];
 }
-export interface Contract {
-    blockchainType: BlockchainType;
-    blockchainId: string;
-}
 export interface Token {
     blockchainType: BlockchainType;
     blockchainId: string;

@@ -43,7 +43,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable no-sync */
 /* eslint-disable prefer-reflect */
 var web3_1 = __importDefault(require("web3"));
-var decimal_js_1 = __importDefault(require("decimal.js"));
 var BancorConverterV9_1 = require("./contracts/BancorConverterV9");
 var utils_1 = require("./utils");
 var BancorConverter_1 = require("./contracts/BancorConverter");
@@ -71,7 +70,6 @@ function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
                 case 1:
                     registryBlockchainId = _a.sent();
                     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
-                    decimal_js_1.default.set({ precision: 100, rounding: decimal_js_1.default.ROUND_DOWN });
                     return [2 /*return*/];
             }
         });
@@ -197,11 +195,11 @@ function getReserves(converterBlockchainId) {
     });
 }
 exports.getReserves = getReserves;
-function getReservesCount(converter) {
+function getReservesCount(reserves) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, converter.methods.connectorTokenCount().call()];
+                case 0: return [4 /*yield*/, getTokenCount(reserves, 'connectorTokenCount')];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -237,6 +235,32 @@ function getConverterSmartToken(converter) {
     });
 }
 exports.getConverterSmartToken = getConverterSmartToken;
+function getTokenCount(converter, funcName) {
+    return __awaiter(this, void 0, void 0, function () {
+        var response, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    response = null;
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, converter.methods[funcName]().call()];
+                case 2:
+                    response = _a.sent();
+                    return [2 /*return*/, response];
+                case 3:
+                    error_1 = _a.sent();
+                    if (!error_1.message.startsWith('Invalid JSON RPC response')) {
+                        response = 0;
+                        return [2 /*return*/, response];
+                    }
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
 function getReserveToken(converterContract, i) {
     return __awaiter(this, void 0, void 0, function () {
         var blockchainId, token;

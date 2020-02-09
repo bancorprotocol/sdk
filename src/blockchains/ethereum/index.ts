@@ -2,7 +2,6 @@
 /* eslint-disable no-sync */
 /* eslint-disable prefer-reflect */
 import Web3 from 'web3';
-import Decimal from 'decimal.js';
 import { BancorConverterV9 } from './contracts/BancorConverterV9';
 import { fromWei, toWei } from './utils';
 import { ConversionPathStep, Token } from '../../path_generation';
@@ -25,7 +24,6 @@ export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0
     const contractRegistryContract = new web3.eth.Contract(contractRegistry, ethereumContractRegistryAddress);
     const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call(); // '0x85e27A5718382F32238497e78b4A40DD778ab847'
     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
-    Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
 }
 
 export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
@@ -89,8 +87,8 @@ export async function getReserves(converterBlockchainId) {
     return { reserves };
 }
 
-export async function getReservesCount(converter) {
-    return await converter.methods.connectorTokenCount().call();
+export async function getReservesCount(reserves) {
+    return await getTokenCount(reserves, 'connectorTokenCount');
 }
 
 export async function getReserveBlockchainId(converter, position) {
@@ -105,6 +103,20 @@ export async function getReserveBlockchainId(converter, position) {
 
 export async function getConverterSmartToken(converter) {
     return await converter.methods.token().call();
+}
+
+async function getTokenCount(converter: any, funcName: string) {
+    let response = null;
+    try {
+        response = await converter.methods[funcName]().call();
+        return response;
+    }
+    catch (error) {
+        if (!error.message.startsWith('Invalid JSON RPC response')) {
+            response = 0;
+            return response;
+        }
+    }
 }
 
 export async function getReserveToken(converterContract, i) {

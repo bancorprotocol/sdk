@@ -38,20 +38,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var eosjs_1 = require("eosjs");
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var converter_blockchain_ids_1 = require("./converter_blockchain_ids");
 var fs_1 = __importDefault(require("fs"));
-var decimal_js_1 = __importDefault(require("decimal.js"));
-var formulas = __importStar(require("../../utils/formulas"));
+var formulas_1 = require("../../utils/formulas");
 var paths_1 = require("./paths");
 var pathJson = paths_1.Paths;
 var jsonRpc;
@@ -237,7 +229,7 @@ function isToSmartToken(pair, reserves) {
 }
 function getPathStepRate(pair, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var toTokenBlockchainId, fromTokenBlockchainId, fromTokenSymbol, toTokenSymbol, isFromTokenMultiToken, isToTokenMultiToken, converterBlockchainId, reserveSymbol, reserves, reservesContacts, conversionFee, isConversionFromSmartToken, balanceFrom, balanceTo, isConversionToSmartToken, balanceObject, converterReserves, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amountWithoutFee;
+        var toTokenBlockchainId, fromTokenBlockchainId, fromTokenSymbol, toTokenSymbol, isFromTokenMultiToken, isToTokenMultiToken, converterBlockchainId, reserveSymbol, reserves, reservesContacts, fee, isConversionFromSmartToken, balanceFrom, balanceTo, isConversionToSmartToken, amountWithoutFee, magnitude, balanceObject, converterReserves, token, tokenSymbol, tokenSupplyObj, toReserveRatio, tokenSupply, reserveTokenBalance, token, tokenSymbol, tokenSupplyObj, toReserveRatio, tokenSupply, reserveTokenBalance;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
@@ -259,7 +251,7 @@ function getPathStepRate(pair, amount) {
                     reservesContacts = reserves.rows.map(function (res) { return res.contract; });
                     return [4 /*yield*/, exports.getConverterFeeFromSettings(converterBlockchainId)];
                 case 2:
-                    conversionFee = _b.sent();
+                    fee = _b.sent();
                     isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
                     if (!isToTokenMultiToken) return [3 /*break*/, 4];
                     return [4 /*yield*/, exports.getReserveBalances(converterBlockchainId, toTokenSymbol, 'reserves')];
@@ -282,6 +274,8 @@ function getPathStepRate(pair, amount) {
                     _b.label = 10;
                 case 10:
                     isConversionToSmartToken = isToSmartToken(pair, reservesContacts);
+                    amountWithoutFee = 0;
+                    magnitude = 0;
                     balanceObject = (_a = {}, _a[fromTokenBlockchainId] = balanceFrom.rows[0].balance, _a[toTokenBlockchainId] = balanceTo.rows[0].balance, _a);
                     converterReserves = {};
                     reserves.rows.map(function (reserve) {
@@ -289,18 +283,18 @@ function getPathStepRate(pair, amount) {
                             ratio: reserve.ratio, balance: balanceObject[reserve.contract]
                         };
                     });
-                    decimal_js_1.default.set({ precision: 100, rounding: decimal_js_1.default.ROUND_DOWN });
                     if (!isConversionFromSmartToken) return [3 /*break*/, 12];
                     token = pathJson.smartTokens[fromTokenBlockchainId] || pathJson.convertibleTokens[fromTokenBlockchainId];
                     tokenSymbol = Object.keys(token[fromTokenSymbol])[0];
                     return [4 /*yield*/, exports.getSmartTokenSupply(fromTokenBlockchainId, tokenSymbol)];
                 case 11:
                     tokenSupplyObj = _b.sent();
-                    supply = getBalance(tokenSupplyObj.rows[0].supply);
-                    reserveBalance = getBalance(balanceTo.rows[0].balance);
-                    reserveRatio = converterReserves[toTokenBlockchainId].ratio;
-                    amountWithoutFee = formulas.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
-                    return [2 /*return*/, formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed()];
+                    toReserveRatio = converterReserves[toTokenBlockchainId].ratio;
+                    tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
+                    reserveTokenBalance = getBalance(balanceTo.rows[0].balance);
+                    amountWithoutFee = formulas_1.sellSmartToken(reserveTokenBalance, toReserveRatio, amount, tokenSupply);
+                    magnitude = 1;
+                    return [3 /*break*/, 15];
                 case 12:
                     if (!isConversionToSmartToken) return [3 /*break*/, 14];
                     token = pathJson.smartTokens[toTokenBlockchainId] || pathJson.convertibleTokens[toTokenBlockchainId];
@@ -308,18 +302,20 @@ function getPathStepRate(pair, amount) {
                     return [4 /*yield*/, exports.getSmartTokenSupply(toTokenBlockchainId, tokenSymbol)];
                 case 13:
                     tokenSupplyObj = _b.sent();
-                    supply = getBalance(tokenSupplyObj.rows[0].supply);
-                    reserveBalance = getBalance(balanceFrom.rows[0].balance);
-                    reserveRatio = converterReserves[fromTokenBlockchainId].ratio;
-                    amountWithoutFee = formulas.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
-                    return [2 /*return*/, formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed()];
+                    toReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
+                    tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
+                    reserveTokenBalance = getBalance(balanceFrom.rows[0].balance);
+                    amountWithoutFee = formulas_1.buySmartToken(reserveTokenBalance, toReserveRatio, amount, tokenSupply);
+                    magnitude = 1;
+                    return [3 /*break*/, 15];
                 case 14:
-                    fromReserveBalance = getBalance(balanceFrom.rows[0].balance);
-                    fromReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
-                    toReserveBalance = getBalance(balanceTo.rows[0].balance);
-                    toReserveRatio = converterReserves[toTokenBlockchainId].ratio;
-                    amountWithoutFee = formulas.calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount);
-                    return [2 /*return*/, formulas.getFinalAmount(amountWithoutFee, conversionFee, 2).toFixed()];
+                    amountWithoutFee = formulas_1.shortConvert(amount, getBalance(converterReserves[toTokenBlockchainId].balance), getBalance(converterReserves[fromTokenBlockchainId].balance));
+                    magnitude = 2;
+                    _b.label = 15;
+                case 15:
+                    if (fee == 0)
+                        return [2 /*return*/, amountWithoutFee];
+                    return [2 /*return*/, formulas_1.returnWithFee(amountWithoutFee, fee, magnitude)];
             }
         });
     });
@@ -337,16 +333,16 @@ function getConverterBlockchainId(token) {
 exports.getConverterBlockchainId = getConverterBlockchainId;
 function getReserveBlockchainId(reserves, position) {
     return __awaiter(this, void 0, void 0, function () {
-        var blockchainId, symbol, token;
+        var blockchainId, symbol, tok;
         return __generator(this, function (_a) {
             blockchainId = reserves[position].blockchainId;
             symbol = reserves[position].symbol;
-            token = {
+            tok = {
                 blockchainType: 'eos',
                 blockchainId: blockchainId,
                 symbol: symbol
             };
-            return [2 /*return*/, token];
+            return [2 /*return*/, tok];
         });
     });
 }
