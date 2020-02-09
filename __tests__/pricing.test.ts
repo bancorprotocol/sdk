@@ -56,7 +56,7 @@ describe('price tests', () => {
 
         const shortestPathResult = [{ KARMA: 'therealkarma' }, { BNTKRM: 'bancorc11112' }, { BNT: 'bntbntbntbnt' }];
         const response = await sdk.getRateByPath({ paths: [{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
-        expect(response).toEqual(0.00018298446839888063);
+        expect(response).toEqual('0.0001829844683988806288491891575274667939632319964962791587405424143483339543408806225565348501066514424');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
@@ -119,7 +119,7 @@ describe('price tests', () => {
 
         const shortestPathResult = [{ BNT: 'bntbntbntbnt' }, { BNTOCT: 'bancorc11132' }, { BNTOCT: 'bancorr11132' }];
         const response = await sdk.getRateByPath({ paths: [{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
-        expect(response).toEqual(1.149089903558017);
+        expect(response).toEqual('1.149089903558139448418865873613390739346612635233348491398249012803478588145961828615748552277965966');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
@@ -183,7 +183,7 @@ describe('price tests', () => {
 
         const shortestPathResult = [{ BNTOCT: 'bancorr11132' }, { BNTOCT: 'bancorc11132' }, { BNT: 'bntbntbntbnt' }];
         const response = await sdk.getRateByPath({ paths: [{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
-        expect(response).toEqual(0.8702237365072208);
+        expect(response).toEqual('0.8702237365064194480241051027460314579651378541409636737891154514561671227625262785751104664761440822');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
@@ -210,8 +210,8 @@ describe('price tests', () => {
 
         const spyGetAmountInTokenWei = jest
             .spyOn(ethereumFunctions, 'getAmountInTokenWei')
-            .mockImplementationOnce(() => Promise.resolve(1000000000000000000))
-            .mockImplementationOnce(() => Promise.resolve(563288093941643064061));
+            .mockImplementationOnce(() => Promise.resolve('1000000000000000000'))
+            .mockImplementationOnce(() => Promise.resolve('563288093941643064061'));
 
         const shortestPathResult = [
             '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315',
@@ -312,7 +312,7 @@ describe('price tests', () => {
         const spyGetAmountInTokenWei = jest
             .spyOn(ethereumFunctions, 'getAmountInTokenWei')
             .mockImplementationOnce(() => Promise.resolve(''))
-            .mockImplementationOnce(() => Promise.resolve(1000000000000000000));
+            .mockImplementationOnce(() => Promise.resolve('1000000000000000000'));
 
         const spyGetTokenDecimals = jest
             .spyOn(ethereumFunctions, 'getTokenDecimals')
@@ -378,7 +378,7 @@ describe('price tests', () => {
             }]
         }, '1');
 
-        expect(response).toEqual(3226688.084642571);
+        expect(response).toEqual('3226688.084642570529407094055738289769947463047257618333877712134072470684667713285913835113451935283');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);

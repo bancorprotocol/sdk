@@ -35,19 +35,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = require("./blockchains/ethereum/index");
-var eos_1 = require("./blockchains/eos");
+var eos = __importStar(require("./blockchains/eos/index"));
+var ethereum = __importStar(require("./blockchains/ethereum/index"));
 var path_generation_1 = require("./path_generation");
+var retrieve_contract_version = __importStar(require("./blockchains/ethereum/retrieve_contract_version"));
+var fetch_conversion_events = __importStar(require("./blockchains/ethereum/fetch_conversion_events"));
+var utils_1 = require("./blockchains/ethereum/utils");
 function init(args) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (args.eosNodeEndpoint)
-                        eos_1.initEOS(args.eosNodeEndpoint);
+                        eos.init(args.eosNodeEndpoint);
                     if (!args.ethereumNodeEndpoint) return [3 /*break*/, 2];
-                    return [4 /*yield*/, index_1.init(args.ethereumNodeEndpoint, args.ethereumContractRegistryAddress)];
+                    return [4 /*yield*/, ethereum.init(args.ethereumNodeEndpoint, args.ethereumContractRegistryAddress)];
                 case 1:
                     _a.sent();
                     _a.label = 2;
@@ -57,11 +67,11 @@ function init(args) {
     });
 }
 exports.init = init;
-function generateEosPaths() {
+function buildPathsFile() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, eos_1.buildPathsFile()];
+                case 0: return [4 /*yield*/, eos.buildPathsFile()];
                 case 1:
                     _a.sent();
                     return [2 /*return*/];
@@ -69,7 +79,7 @@ function generateEosPaths() {
         });
     });
 }
-exports.generateEosPaths = generateEosPaths;
+exports.buildPathsFile = buildPathsFile;
 function generatePath(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -98,32 +108,27 @@ exports.calculateRateFromPaths = function (paths, amount) { return __awaiter(voi
 }); };
 function calculateRateFromPath(paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var blockchainType, convertPairs, i, _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var blockchainType, convertPairs, module, i;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
                     blockchainType = paths.paths[0].type;
                     return [4 /*yield*/, getConverterPairs(paths.paths[0].path, blockchainType)];
                 case 1:
-                    convertPairs = _b.sent();
+                    convertPairs = _a.sent();
+                    module = { eos: eos, ethereum: ethereum }[blockchainType];
                     i = 0;
-                    _b.label = 2;
+                    _a.label = 2;
                 case 2:
-                    if (!(i < convertPairs.length)) return [3 /*break*/, 7];
-                    if (!(blockchainType == 'ethereum')) return [3 /*break*/, 4];
-                    return [4 /*yield*/, index_1.getPathStepRate(convertPairs[i], amount)];
+                    if (!(i < convertPairs.length)) return [3 /*break*/, 5];
+                    return [4 /*yield*/, module.getPathStepRate(convertPairs[i], amount)];
                 case 3:
-                    _a = _b.sent();
-                    return [3 /*break*/, 6];
-                case 4: return [4 /*yield*/, eos_1.getPathStepRate(convertPairs[i], amount)];
-                case 5:
-                    _a = _b.sent();
-                    _b.label = 6;
-                case 6:
-                    amount = _a;
-                    i += 1;
+                    amount = _a.sent();
+                    _a.label = 4;
+                case 4:
+                    i++;
                     return [3 /*break*/, 2];
-                case 7: return [2 /*return*/, amount];
+                case 5: return [2 /*return*/, amount];
             }
         });
     });
@@ -141,7 +146,7 @@ function getConverterPairs(path, blockchainType) {
                 case 1:
                     if (!(i < path.length - 1)) return [3 /*break*/, 6];
                     if (!(blockchainType == 'ethereum')) return [3 /*break*/, 3];
-                    return [4 /*yield*/, index_1.getConverterBlockchainId(path[i + 1])];
+                    return [4 /*yield*/, ethereum.getConverterBlockchainId(path[i + 1])];
                 case 2:
                     _a = _b.sent();
                     return [3 /*break*/, 4];
@@ -156,7 +161,7 @@ function getConverterPairs(path, blockchainType) {
                     i += 2;
                     return [3 /*break*/, 1];
                 case 6:
-                    if (pairs.length == 0 && blockchainType == 'eos' && eos_1.isMultiConverter(path[0])) {
+                    if (pairs.length == 0 && blockchainType == 'eos' && eos.isMultiConverter(path[0])) {
                         pairs.push({
                             converterBlockchainId: path[0], fromToken: path[0], toToken: path[0]
                         });
@@ -189,11 +194,62 @@ function getRate(sourceToken, targetToken, amount) {
     });
 }
 exports.getRate = getRate;
+function retrieveContractVersion(nodeAddress, contract) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(contract.blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, retrieve_contract_version.run(nodeAddress, contract.blockchainId)];
+                case 1: return [2 /*return*/, _a.sent()];
+                case 2: throw new Error(contract.blockchainType + ' blockchain not supported');
+            }
+        });
+    });
+}
+exports.retrieveContractVersion = retrieveContractVersion;
+function fetchConversionEvents(nodeAddress, token, fromBlock, toBlock) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, fetch_conversion_events.run(nodeAddress, token.blockchainId, fromBlock, toBlock)];
+                case 1: return [2 /*return*/, _a.sent()];
+                case 2: throw new Error(token.blockchainType + ' blockchain not supported');
+            }
+        });
+    });
+}
+exports.fetchConversionEvents = fetchConversionEvents;
+function fetchConversionEventsByTimestamp(nodeAddress, token, fromTimestamp, toTimestamp) {
+    return __awaiter(this, void 0, void 0, function () {
+        var fromBlock, toBlock;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 4];
+                    return [4 /*yield*/, utils_1.timestampToBlockNumber(nodeAddress, fromTimestamp)];
+                case 1:
+                    fromBlock = _a.sent();
+                    return [4 /*yield*/, utils_1.timestampToBlockNumber(nodeAddress, toTimestamp)];
+                case 2:
+                    toBlock = _a.sent();
+                    return [4 /*yield*/, fetch_conversion_events.run(nodeAddress, token.blockchainId, fromBlock, toBlock)];
+                case 3: return [2 /*return*/, _a.sent()];
+                case 4: throw new Error(token.blockchainType + ' blockchain not supported');
+            }
+        });
+    });
+}
+exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
 exports.default = {
     init: init,
-    generateEosPaths: generateEosPaths,
     getRate: getRate,
     generatePath: generatePath,
     getRateByPath: exports.getRateByPath,
-    buildPathsFile: eos_1.buildPathsFile
+    buildPathsFile: buildPathsFile,
+    retrieveContractVersion: retrieveContractVersion,
+    fetchConversionEvents: fetchConversionEvents,
+    fetchConversionEventsByTimestamp: fetchConversionEventsByTimestamp
 };

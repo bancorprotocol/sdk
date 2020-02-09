@@ -1,7 +1,7 @@
 import * as sdk from '../src/index';
-import * as genPath from '../src/path_generation';
-import * as ethereumFunctions from '../src/blockchains/ethereum';
-import * as eosFunctions from '../src/blockchains/eos';
+import * as eos from '../src/blockchains/eos';
+import * as ethereum from '../src/blockchains/ethereum';
+import * as path_generation from '../src/path_generation';
 
 describe('Path finder tests', () => {
     beforeEach(() => {
@@ -13,10 +13,10 @@ describe('Path finder tests', () => {
     });
 
     it('EOS token to EOS token path finder', async () => {
-        const karmaBntPath: genPath.ConversionPaths = { paths: [{ type: 'eos', path: ['therealkarma', 'bancorc11112', 'bntbntbntbnt']}]};
+        const karmaBntPath: path_generation.ConversionPaths = { paths: [{ type: 'eos', path: ['therealkarma', 'bancorc11112', 'bntbntbntbnt']}]};
 
         const spyGeneratePath = jest
-            .spyOn(genPath, 'generatePathByBlockchainIds')
+            .spyOn(path_generation, 'generatePathByBlockchainIds')
             .mockImplementation(() => Promise.resolve(karmaBntPath));
 
         const { paths } = await sdk.generatePath(
@@ -34,7 +34,7 @@ describe('Path finder tests', () => {
         const trgToken = '0xd26114cd6ee289accf82350c8d8487fedb8a0c07';
 
         const spyGetSmartTokens = jest
-            .spyOn(ethereumFunctions, 'getSmartTokens')
+            .spyOn(ethereum, 'getSmartTokens')
             .mockResolvedValueOnce([
                 '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
                 '0x482c31355F4f7966fFcD38eC5c9635ACAe5F4D4F'
@@ -45,27 +45,18 @@ describe('Path finder tests', () => {
             ]);
 
         const spyGetConverterBlockchainId = jest
-            .spyOn(genPath, 'getConverterBlockchainId')
+            .spyOn(path_generation, 'getConverterBlockchainId')
             .mockResolvedValueOnce('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA')
             .mockResolvedValueOnce('0x89f26Fff3F690B19057e6bEb7a82C5c29ADfe20B');
 
-        const spyGetReserves = jest
-            .spyOn(genPath, 'getReserves')
-            .mockImplementation(() => Promise.resolve({ reserves: {} }));
-
-        const spyGetReserveCount = jest
-            .spyOn(genPath, 'getReserveCount')
-            .mockResolvedValueOnce('2')
-            .mockResolvedValueOnce('2');
-
         const resToken = {
-            blockchainType: 'ethereum' as genPath.BlockchainType,
+            blockchainType: 'ethereum' as path_generation.BlockchainType,
             blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
         };
 
-        const spyGetReserveToken = jest
-            .spyOn(genPath, 'getReserveToken')
-            .mockImplementation(() => Promise.resolve(resToken));
+        const spyGetReserveTokens = jest
+            .spyOn(ethereum, 'getReserveTokens')
+            .mockImplementation(() => Promise.resolve([resToken]));
 
         const response = await sdk.generatePath({
             blockchainType: 'ethereum',
@@ -84,52 +75,44 @@ describe('Path finder tests', () => {
 
         expect(response.paths[0].path).toEqual(expectedResult);
         expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
-        expect(spyGetReserves).toHaveBeenCalled();
         expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(2);
-        expect(spyGetReserveCount).toHaveBeenCalledTimes(2);
-        expect(spyGetReserveToken).toHaveBeenCalledTimes(2);
+        expect(spyGetReserveTokens).toHaveBeenCalledTimes(2);
     });
 
     it('ETH to KARMA path finder', async () => {
         const spyGetSmartTokens = jest
-            .spyOn(ethereumFunctions, 'getSmartTokens')
+            .spyOn(ethereum, 'getSmartTokens')
             .mockResolvedValue([
                 '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
                 '0x482c31355F4f7966fFcD38eC5c9635ACAe5F4D4F'
             ]);
 
         const spyGetEthereumConverterBlockchainId = jest
-            .spyOn(ethereumFunctions, 'getConverterBlockchainId')
+            .spyOn(ethereum, 'getConverterBlockchainId')
             .mockResolvedValueOnce('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA');
 
         const spyGetEOSereumConverterBlockchainId = jest
-            .spyOn(eosFunctions, 'getConverterBlockchainId')
+            .spyOn(eos, 'getConverterBlockchainId')
             .mockResolvedValueOnce({ BNTKRM: 'bancorc11112' });
 
-        const spyGetReserves = jest
-            .spyOn(genPath, 'getReserves')
-            .mockImplementation(() => Promise.resolve({ reserves: {} }));
-
-        const spyGetReserveCount = jest
-            .spyOn(genPath, 'getReserveCount')
-            .mockResolvedValueOnce('2')
-            .mockResolvedValueOnce('2');
-
         const resToken1 = {
-            blockchainType: 'ethereum' as genPath.BlockchainType,
+            blockchainType: 'ethereum' as path_generation.BlockchainType,
             blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
 
         };
         const resToken2 = {
-            blockchainType: 'eos' as genPath.BlockchainType,
+            blockchainType: 'eos' as path_generation.BlockchainType,
             blockchainId: 'bntbntbntbnt',
             symbol: 'BNT'
         };
 
-        const spyGetReserveToken = jest
-            .spyOn(genPath, 'getReserveToken')
-            .mockImplementationOnce(() => Promise.resolve(resToken1))
-            .mockImplementationOnce(() => Promise.resolve(resToken2));
+        const spyEthGetReserveTokens = jest
+            .spyOn(ethereum, 'getReserveTokens')
+            .mockImplementationOnce(() => Promise.resolve([resToken1]));
+
+        const spyEosGetReserveTokens = jest
+            .spyOn(eos, 'getReserveTokens')
+            .mockImplementationOnce(() => Promise.resolve([resToken2]));
 
         const response = await sdk.generatePath({
             blockchainType: 'ethereum',
@@ -158,10 +141,9 @@ describe('Path finder tests', () => {
 
         expect(response.paths).toEqual(expectedResult);
         expect(spyGetSmartTokens).toHaveBeenCalledTimes(1);
-        expect(spyGetReserves).toHaveBeenCalled();
         expect(spyGetEthereumConverterBlockchainId).toHaveBeenCalledTimes(1);
         expect(spyGetEOSereumConverterBlockchainId).toHaveBeenCalledTimes(1);
-        expect(spyGetReserveCount).toHaveBeenCalledTimes(2);
-        expect(spyGetReserveToken).toHaveBeenCalledTimes(2);
+        expect(spyEthGetReserveTokens).toHaveBeenCalledTimes(1);
+        expect(spyEosGetReserveTokens).toHaveBeenCalledTimes(1);
     });
 });

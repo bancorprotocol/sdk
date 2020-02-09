@@ -1,26 +1,7 @@
-/* eslint-disable max-len */
-import { getConverterBlockchainId as getEosConverterBlockchainId, getReserveBlockchainId as getEosReserveBlockchainId, getReserves as getEOSReserves, getReservesCount as getEOSReservesCount, isMultiConverter } from './blockchains/eos';
-import { getReserves as getEthReserves, getConverterBlockchainId as getEthConverterBlockchainId, getConverterSmartToken as getEthConverterSmartToken, getReserveBlockchainId as getEthereumReserveBlockchainId, getReservesCount as getEthReservesCount, getSmartTokens } from './blockchains/ethereum';
+import * as eos from './blockchains/eos/index';
+import * as ethereum from './blockchains/ethereum/index';
 
 export type BlockchainType = 'ethereum' | 'eos';
-
-const BNTBlockchainId = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
-
-const EthereumAnchorToken: Token = {
-    blockchainType: 'ethereum',
-    blockchainId: BNTBlockchainId
-};
-
-const EOSAnchorToken: Token = {
-    blockchainType: 'eos',
-    blockchainId: 'bntbntbntbnt',
-    symbol: 'BNT'
-};
-
-const anchorTokens = {
-    ethereum: EthereumAnchorToken,
-    eos: EOSAnchorToken
-};
 
 export interface ConversionPathsTokens {
     from: Token;
@@ -52,57 +33,14 @@ export interface Token {
     symbol?: string;
 }
 
-function isAnchorToken(token: Token) {
-    if (token.blockchainType == 'ethereum' && token.blockchainId.toLowerCase() == BNTBlockchainId.toLowerCase())
-        return true;
-    if (token.blockchainType == 'eos' && token.blockchainId == anchorTokens['eos'].blockchainId)
-        return true;
-    return false;
-}
-
-function getTokenBlockchainId(token: Token) {
-    if (token.blockchainType == 'ethereum') return token.blockchainId.toLowerCase();
-    return { [token.symbol]: token.blockchainId.toLowerCase() };
-}
-// function getTokenBlockchainId(token: Token) {
-//     if (token.blockchainType == 'ethereum') return token.blockchainId.toLowerCase();
-//     return token.blockchainId.toLowerCase();
-// }
-
-function isReserveToken(reserveToken: Token, token: Token) {
-    if (token.blockchainType == 'ethereum' && token.blockchainId == reserveToken.blockchainId)
-        return true;
-    if (token.blockchainType == 'eos' && token.blockchainId == reserveToken.blockchainId)
-        return true;
-    return false;
-}
-
 export const getConverterBlockchainId = async (token: Token) => {
     if (token.blockchainType == 'ethereum')
-        return await getEthConverterBlockchainId(token.blockchainId);
-    return await getEosConverterBlockchainId(token);
-};
-
-export const getReserveCount = async (reserves, blockchainType: BlockchainType) => {
-    if (blockchainType == 'ethereum')
-        return await getEthReservesCount(reserves);
-    return await getEOSReservesCount(reserves);
-};
-
-export const getReserves = async (blockchainId, blockchainType: BlockchainType, symbol: string, isMulti: boolean) => {
-    if (blockchainType == 'ethereum')
-        return await getEthReserves(blockchainId);
-    return await getEOSReserves(blockchainId, symbol, isMulti);
-};
-
-export const getReserveToken = async (token, index, blockchainType: BlockchainType) => {
-    if (blockchainType == 'ethereum')
-        return await getEthereumReserveBlockchainId(token, index);
-    return await getEosReserveBlockchainId(token, index);
+        return await ethereum.getConverterBlockchainId(token.blockchainId);
+    return await eos.getConverterBlockchainId(token);
 };
 
 export async function getConverterToken(blockchainId, connector, blockchainType: BlockchainType) {
-    if (blockchainType == 'ethereum') return await getEthConverterSmartToken(connector);
+    if (blockchainType == 'ethereum') return await ethereum.getConverterSmartToken(connector);
     return blockchainId;
 }
 
@@ -121,17 +59,11 @@ export async function generatePathByBlockchainIds(sourceToken: Token, targetToke
 
 function getPath(from: Token, to: Token) {
     const blockchainType: BlockchainType = from ? from.blockchainType : to.blockchainType;
+    const anchorToken = {eos, ethereum}[blockchainType].anchorToken;
     const path: ConversionPathsTokens = {
-        from: from ? from : null,
-        to: to ? to : null
+        from: from ? from : anchorToken,
+        to: to ? to : anchorToken
     };
-
-    if (!path.to)
-        path.to = { ...anchorTokens[blockchainType] };
-
-    if (!path.from)
-        path.from = { ...anchorTokens[blockchainType] };
-
     return path;
 }
 
@@ -143,33 +75,32 @@ export async function getConversionPath(from: Token, to: Token) {
 }
 
 export async function findPath(pathObject: ConversionPathsTokens, blockchainType: BlockchainType) {
-    const from = await getPathToAnchorByBlockchainId({ ...pathObject.from }, anchorTokens[blockchainType]);
-    const to = await getPathToAnchorByBlockchainId({ ...pathObject.to }, anchorTokens[blockchainType]);
+    const anchorToken = {eos, ethereum}[blockchainType].anchorToken;
+    const from = await getPathToAnchorByBlockchainId({ ...pathObject.from }, anchorToken);
+    const to = await getPathToAnchorByBlockchainId({ ...pathObject.to }, anchorToken);
     return getShortestPath(from, to);
 }
 
 export async function getPathToAnchorByBlockchainId(token: Token, anchorToken: Token) {
-    if (isAnchorToken(token))
-        return [getTokenBlockchainId(token)];
+    const module = {eos, ethereum}[token.blockchainType];
+    if (module.isAnchorToken(token))
+        return [module.getTokenBlockchainId(token)];
 
-    const smartTokens = token.blockchainType == 'eos' ? [token.blockchainId] : await getSmartTokens(token);
-    const isMulti = token.blockchainType == 'eos' ? isMultiConverter(token.blockchainId) : false;
-    let response = [];
+    const smartTokens = token.blockchainType == 'eos' ? [token.blockchainId] : await ethereum.getSmartTokens(token);
+    const isMulti = token.blockchainType == 'eos' ? eos.isMultiConverter(token.blockchainId) : false;
+
     for (const smartToken of smartTokens) {
-        const blockchainId = await getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: token.blockchainType, blockchainId: smartToken } : token);
+        const blockchainId = await getConverterBlockchainId(token.blockchainType == 'ethereum' ? { blockchainType: 'ethereum', blockchainId: smartToken } : token);
         const converterBlockchainId = token.blockchainType == 'ethereum' ? blockchainId : Object.values(blockchainId)[0];
-        const { reserves } = await getReserves(converterBlockchainId, token.blockchainType, token.symbol, isMulti);
-        const reservesCount = await getReserveCount(reserves, token.blockchainType);
-        for (let i = 0; i < reservesCount; i++) {
-            const reserveToken = await getReserveToken(reserves, i, token.blockchainType);
-            if (!isReserveToken(reserveToken, token)) {
-                const path = await getPathToAnchorByBlockchainId(reserveToken, anchorToken);
-                if (path.length > 0)
-                    return [getTokenBlockchainId(token), token.blockchainType == 'eos' ? blockchainId : smartToken, ...path];
-            }
+        const reserveTokens = await {eos, ethereum}[token.blockchainType].getReserveTokens(converterBlockchainId, token.symbol, isMulti);
+        for (const reserveToken of reserveTokens.filter(reserveToken => reserveToken.blockchainId != token.blockchainId)) {
+            const path = await getPathToAnchorByBlockchainId(reserveToken, anchorToken);
+            if (path.length > 0)
+                return [module.getTokenBlockchainId(token), token.blockchainType == 'eos' ? blockchainId : smartToken, ...path];
         }
     }
-    return response;
+
+    return [];
 }
 
 function getShortestPath(sourcePath, targetPath) {
