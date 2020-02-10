@@ -70,6 +70,7 @@ function getTokenAmount(web3, tokenAddress, weiAmount) {
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
+                    if (!weiAmount) return [3 /*break*/, 3];
                     if (!(decimals[tokenAddress] == undefined)) return [3 /*break*/, 2];
                     token = new web3.eth.Contract(TOKEN_ABI, tokenAddress);
                     _a = decimals;
@@ -79,6 +80,7 @@ function getTokenAmount(web3, tokenAddress, weiAmount) {
                     _a[_b] = _c.sent();
                     _c.label = 2;
                 case 2: return [2 /*return*/, new Decimal(weiAmount + "e-" + decimals[tokenAddress]).toFixed()];
+                case 3: return [2 /*return*/, "0"];
             }
         });
     });
@@ -180,22 +182,22 @@ function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
                     _b = 0, batches_1 = batches;
                     _j.label = 2;
                 case 2:
-                    if (!(_b < batches_1.length)) return [3 /*break*/, 12];
+                    if (!(_b < batches_1.length)) return [3 /*break*/, 13];
                     batch = batches_1[_b];
                     _c = 0, _d = CONVERSION_EVENT_LEGACY.slice(index);
                     _j.label = 3;
                 case 3:
-                    if (!(_c < _d.length)) return [3 /*break*/, 11];
+                    if (!(_c < _d.length)) return [3 /*break*/, 12];
                     abi = _d[_c];
                     converter = new web3.eth.Contract([abi], batch.owner);
                     return [4 /*yield*/, getPastEvents(converter, abi.name, batch.fromBlock, batch.toBlock)];
                 case 4:
                     events_2 = _j.sent();
-                    if (!(events_2.length > 0)) return [3 /*break*/, 10];
+                    if (!(events_2.length > 0)) return [3 /*break*/, 11];
                     _e = 0, events_1 = events_2;
                     _j.label = 5;
                 case 5:
-                    if (!(_e < events_1.length)) return [3 /*break*/, 9];
+                    if (!(_e < events_1.length)) return [3 /*break*/, 10];
                     event_2 = events_1[_e];
                     _g = (_f = result).push;
                     _h = {
@@ -208,24 +210,26 @@ function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
                     _h.inputAmount = _j.sent();
                     return [4 /*yield*/, getTokenAmount(web3, event_2.returnValues.toToken, event_2.returnValues.outputAmount)];
                 case 7:
-                    _g.apply(_f, [(_h.outputAmount = _j.sent(),
-                            _h.conversionFee = event_2.returnValues.conversionFee,
+                    _h.outputAmount = _j.sent();
+                    return [4 /*yield*/, getTokenAmount(web3, event_2.returnValues.toToken, event_2.returnValues.conversionFee)];
+                case 8:
+                    _g.apply(_f, [(_h.conversionFee = _j.sent(),
                             _h.blockNumber = event_2.blockNumber,
                             _h)]);
-                    _j.label = 8;
-                case 8:
+                    _j.label = 9;
+                case 9:
                     _e++;
                     return [3 /*break*/, 5];
-                case 9:
-                    index = CONVERSION_EVENT_LEGACY.indexOf(abi);
-                    return [3 /*break*/, 11];
                 case 10:
+                    index = CONVERSION_EVENT_LEGACY.indexOf(abi);
+                    return [3 /*break*/, 12];
+                case 11:
                     _c++;
                     return [3 /*break*/, 3];
-                case 11:
+                case 12:
                     _b++;
                     return [3 /*break*/, 2];
-                case 12: return [2 /*return*/, result];
+                case 13: return [2 /*return*/, result];
             }
         });
     });

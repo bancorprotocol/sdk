@@ -27,11 +27,14 @@ function parseOwnerUpdateEvent(log) {
 }
 
 async function getTokenAmount(web3, tokenAddress, weiAmount) {
-    if (decimals[tokenAddress] == undefined) {
-        const token = new web3.eth.Contract(TOKEN_ABI, tokenAddress);
-        decimals[tokenAddress] = await token.methods.decimals().call();
+    if (weiAmount) {
+        if (decimals[tokenAddress] == undefined) {
+            const token = new web3.eth.Contract(TOKEN_ABI, tokenAddress);
+            decimals[tokenAddress] = await token.methods.decimals().call();
+        }
+        return new Decimal(weiAmount + "e-" + decimals[tokenAddress]).toFixed();
     }
-    return new Decimal(weiAmount + "e-" + decimals[tokenAddress]).toFixed();
+    return "0";
 }
 
 async function getPastLogs(web3, address, topic0, fromBlock, toBlock) {
@@ -99,8 +102,8 @@ async function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
                         toToken      : event.returnValues.toToken,
                         trader       : event.returnValues.trader,
                         inputAmount  : await getTokenAmount(web3, event.returnValues.fromToken, event.returnValues.inputAmount),
-                        outputAmount : await getTokenAmount(web3, event.returnValues.toToken, event.returnValues.outputAmount),
-                        conversionFee: event.returnValues.conversionFee,
+                        outputAmount : await getTokenAmount(web3, event.returnValues.toToken  , event.returnValues.outputAmount),
+                        conversionFee: await getTokenAmount(web3, event.returnValues.toToken  , event.returnValues.conversionFee),
                         blockNumber  : event.blockNumber
                     });
                 }
