@@ -17,7 +17,7 @@ let registry;
 
 export const anchorToken: Token = {
     blockchainType: 'ethereum',
-    blockchainId: "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
+    blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
 };
 
 export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6') {
@@ -120,7 +120,7 @@ function getAllPathsRecursive(paths, path, targetToken, registryData) {
 
 export async function getAllPaths(sourceToken, targetToken) {
     const MULTICALL_ABI = [{"constant":false,"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes","name":"callData","type":"bytes"}],"internalType":"struct Multicall.Call[]","name":"calls","type":"tuple[]"},{"internalType":"bool","name":"strict","type":"bool"}],"name":"aggregate","outputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"components":[{"internalType":"bool","name":"success","type":"bool"},{"internalType":"bytes","name":"data","type":"bytes"}],"internalType":"struct Multicall.Return[]","name":"returnData","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
-    const MULTICALL_ADDRESS = "0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2";
+    const MULTICALL_ADDRESS = '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2';
     const multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
 
     const convertibleTokens = await registry.methods.getConvertibleTokens().call();
