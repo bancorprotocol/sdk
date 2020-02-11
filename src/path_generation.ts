@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { getConverterBlockchainId as getEosConverterBlockchainId, getReserveBlockchainId as getEosReserveBlockchainId, getReserves as getEOSReserves, getReservesCount as getEOSReservesCount, isMultiConverter } from './blockchains/eos';
-import { getReserves as getEthReserves, getConverterBlockchainId as getEthConverterBlockchainId, getConverterSmartToken as getEthConverterSmartToken, getReserveBlockchainId as getEthereumReserveBlockchainId, getReservesCount as getEthReservesCount, getSmartTokens } from './blockchains/ethereum';
+import { getReserves as getEthReserves, getConverterBlockchainId as getEthConverterBlockchainId, getConverterSmartToken as getEthConverterSmartToken, getReserveBlockchainId as getEthereumReserveBlockchainId, getReservesCount as getEthReservesCount, getSmartTokens, getAllPaths } from './blockchains/ethereum';
 
 export type BlockchainType = 'ethereum' | 'eos';
 
@@ -108,14 +108,28 @@ export async function getConverterToken(blockchainId, connector, blockchainType:
 
 export async function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token) {
     const pathObjects: ConversionPaths = { paths: []};
+    let paths;
 
-    if (sourceToken.blockchainType == targetToken.blockchainType) {
-        pathObjects.paths.push({ type: sourceToken.blockchainType, path: await getConversionPath(sourceToken, targetToken) });
+    switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
+        case 'eos,eos':
+            pathObjects.paths.push({ type: 'eos', path: await getConversionPath(sourceToken, targetToken) });
+            break;
+        case 'ethereum,ethereum':
+            paths = await getAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
+            pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            break;
+        case 'eos,ethereum':
+            paths = await getAllPaths(sourceToken.blockchainId, EthereumAnchorToken.blockchainId);
+            pathObjects.paths.push({ type: 'eos', path: await getConversionPath(sourceToken, null) });
+            pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            break;
+        case 'ethereum,eos':
+            paths = await getAllPaths(EthereumAnchorToken.blockchainId, targetToken.blockchainId);
+            pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            pathObjects.paths.push({ type: 'eos', path: await getConversionPath(null, targetToken) });
+            break;
     }
-    else {
-        pathObjects.paths.push({ type: sourceToken.blockchainType, path: await getConversionPath(sourceToken, null) });
-        pathObjects.paths.push({ type: targetToken.blockchainType, path: await getConversionPath(null, targetToken) });
-    }
+
     return pathObjects;
 }
 

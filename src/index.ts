@@ -1,4 +1,4 @@
-import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate } from './blockchains/ethereum/index';
+import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate, getAllPaths } from './blockchains/ethereum/index';
 import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMultiConverter } from './blockchains/eos';
 import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
 
@@ -64,11 +64,16 @@ export async function getRate(sourceToken: Token, targetToken: Token, amount: st
     return await getRateByPath(paths, amount);
 }
 
+export async function ethereumGetAllPaths(sourceToken, targetToken) {
+    return await getAllPaths(sourceToken, targetToken);
+}
+
 export default {
     init,
     generateEosPaths,
     getRate,
     generatePath,
     getRateByPath,
-    buildPathsFile
+    buildPathsFile,
+    ethereumGetAllPaths
 };
