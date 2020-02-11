@@ -12,3 +12,4 @@ export declare const getConverterBlockchainId: (blockchainId: any) => Promise<an
 export declare function getReserveTokens(converterBlockchainId: any): Promise<Token[]>;
 export declare function getConverterSmartToken(converter: any): Promise<any>;
 export declare function getSmartTokens(token: Token): Promise<any>;
+export declare function getAllPaths(sourceToken: any, targetToken: any): Promise<any[]>;

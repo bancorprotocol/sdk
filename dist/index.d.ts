@@ -21,6 +21,7 @@ export declare function retrieveContractVersion(nodeAddress: any, contract: Cont
 }>;
 export declare function fetchConversionEvents(nodeAddress: any, token: Token, fromBlock: any, toBlock: any): Promise<any[]>;
 export declare function fetchConversionEventsByTimestamp(nodeAddress: any, token: Token, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
+export declare function ethereumGetAllPaths(sourceToken: any, targetToken: any): Promise<any[]>;
 declare const _default: {
     init: typeof init;
     getRate: typeof getRate;
@@ -30,5 +31,6 @@ declare const _default: {
     retrieveContractVersion: typeof retrieveContractVersion;
     fetchConversionEvents: typeof fetchConversionEvents;
     fetchConversionEventsByTimestamp: typeof fetchConversionEventsByTimestamp;
+    ethereumGetAllPaths: typeof ethereumGetAllPaths;
 };
 export default _default;

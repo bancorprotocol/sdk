@@ -91,6 +91,10 @@ export async function fetchConversionEventsByTimestamp(nodeAddress, token: Token
     throw new Error(token.blockchainType + ' blockchain not supported');
 }
 
+export async function ethereumGetAllPaths(sourceToken, targetToken) {
+    return await ethereum.getAllPaths(sourceToken, targetToken);
+}
+
 export default {
     init,
     getRate,
@@ -99,5 +103,6 @@ export default {
     buildPathsFile,
     retrieveContractVersion,
     fetchConversionEvents,
-    fetchConversionEventsByTimestamp
+    fetchConversionEventsByTimestamp,
+    ethereumGetAllPaths
 };

@@ -35,6 +35,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -249,3 +256,56 @@ function getSmartTokens(token) {
     });
 }
 exports.getSmartTokens = getSmartTokens;
+function registryDataUpdate(registryData, key, value) {
+    if (registryData[key] == undefined)
+        registryData[key] = [value];
+    else if (!registryData[key].includes(value))
+        registryData[key].push(value);
+}
+function getAllPathsRecursive(paths, path, targetToken, registryData) {
+    var prevToken = path[path.length - 1];
+    if (prevToken == targetToken)
+        paths.push(path);
+    else
+        for (var _i = 0, _a = registryData[prevToken].filter(function (token) { return !path.includes(token); }); _i < _a.length; _i++) {
+            var nextToken = _a[_i];
+            getAllPathsRecursive(paths, __spreadArrays(path, [nextToken]), targetToken, registryData);
+        }
+}
+function getAllPaths(sourceToken, targetToken) {
+    return __awaiter(this, void 0, void 0, function () {
+        var MULTICALL_ABI, MULTICALL_ADDRESS, multicall, convertibleTokens, calls, _a, blockNumber, returnData, registryData, _loop_1, i, paths;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    MULTICALL_ABI = [{ "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
+                    MULTICALL_ADDRESS = "0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2";
+                    multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
+                    return [4 /*yield*/, registry.methods.getConvertibleTokens().call()];
+                case 1:
+                    convertibleTokens = _b.sent();
+                    calls = convertibleTokens.map(function (convertibleToken) { return [registry._address, registry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
+                    return [4 /*yield*/, multicall.methods.aggregate(calls, true).call()];
+                case 2:
+                    _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
+                    registryData = {};
+                    _loop_1 = function (i) {
+                        for (var _i = 0, _a = Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(function (n) { return web3_1.default.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)); }); _i < _a.length; _i++) {
+                            var smartToken = _a[_i];
+                            if (convertibleTokens[i] != smartToken) {
+                                registryDataUpdate(registryData, convertibleTokens[i], smartToken);
+                                registryDataUpdate(registryData, smartToken, convertibleTokens[i]);
+                            }
+                        }
+                    };
+                    for (i = 0; i < returnData.length; i++) {
+                        _loop_1(i);
+                    }
+                    paths = [];
+                    getAllPathsRecursive(paths, [sourceToken], targetToken, registryData);
+                    return [2 /*return*/, paths];
+            }
+        });
+    });
+}
+exports.getAllPaths = getAllPaths;

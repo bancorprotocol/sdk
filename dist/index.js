@@ -243,6 +243,17 @@ function fetchConversionEventsByTimestamp(nodeAddress, token, fromTimestamp, toT
     });
 }
 exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
+function ethereumGetAllPaths(sourceToken, targetToken) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, ethereum.getAllPaths(sourceToken, targetToken)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.ethereumGetAllPaths = ethereumGetAllPaths;
 exports.default = {
     init: init,
     getRate: getRate,
@@ -251,5 +262,6 @@ exports.default = {
     buildPathsFile: buildPathsFile,
     retrieveContractVersion: retrieveContractVersion,
     fetchConversionEvents: fetchConversionEvents,
-    fetchConversionEventsByTimestamp: fetchConversionEventsByTimestamp
+    fetchConversionEventsByTimestamp: fetchConversionEventsByTimestamp,
+    ethereumGetAllPaths: ethereumGetAllPaths
 };

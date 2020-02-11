@@ -102,3 +102,43 @@ export async function getSmartTokens(token: Token) {
     const isSmartToken = await registry.methods.isSmartToken(token.blockchainId).call();
     return isSmartToken ? [token.blockchainId] : await registry.methods.getConvertibleTokenSmartTokens(token.blockchainId).call();
 }
+
+function registryDataUpdate(registryData, key, value) {
+    if (registryData[key] == undefined)
+        registryData[key] = [value];
+    else if (!registryData[key].includes(value))
+        registryData[key].push(value);
+}
+
+function getAllPathsRecursive(paths, path, targetToken, registryData) {
+    const prevToken = path[path.length - 1];
+    if (prevToken == targetToken)
+        paths.push(path);
+    else for (const nextToken of registryData[prevToken].filter(token => !path.includes(token)))
+        getAllPathsRecursive(paths, [...path, nextToken], targetToken, registryData);
+}
+
+export async function getAllPaths(sourceToken, targetToken) {
+    const MULTICALL_ABI = [{"constant":false,"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes","name":"callData","type":"bytes"}],"internalType":"struct Multicall.Call[]","name":"calls","type":"tuple[]"},{"internalType":"bool","name":"strict","type":"bool"}],"name":"aggregate","outputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"components":[{"internalType":"bool","name":"success","type":"bool"},{"internalType":"bytes","name":"data","type":"bytes"}],"internalType":"struct Multicall.Return[]","name":"returnData","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
+    const MULTICALL_ADDRESS = "0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2";
+    const multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
+
+    const convertibleTokens = await registry.methods.getConvertibleTokens().call();
+    const calls = convertibleTokens.map(convertibleToken => [registry._address, registry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]);
+    const [blockNumber, returnData] = await multicall.methods.aggregate(calls, true).call();
+
+    const registryData = {};
+
+    for (let i = 0; i < returnData.length; i++) {
+        for (const smartToken of Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(n => Web3.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)))) {
+            if (convertibleTokens[i] != smartToken) {
+                registryDataUpdate(registryData, convertibleTokens[i], smartToken);
+                registryDataUpdate(registryData, smartToken, convertibleTokens[i]);
+            }
+        }
+    }
+
+    const paths = [];
+    getAllPathsRecursive(paths, [sourceToken], targetToken, registryData);
+    return paths;
+}

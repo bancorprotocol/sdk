@@ -46,14 +46,28 @@ export async function getConverterToken(blockchainId, connector, blockchainType:
 
 export async function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token) {
     const pathObjects: ConversionPaths = { paths: []};
+    let paths;
 
-    if (sourceToken.blockchainType == targetToken.blockchainType) {
-        pathObjects.paths.push({ type: sourceToken.blockchainType, path: await getConversionPath(sourceToken, targetToken) });
+    switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
+        case 'eos,eos':
+            pathObjects.paths.push({ type: 'eos', path: await getConversionPath(sourceToken, targetToken) });
+            break;
+        case 'ethereum,ethereum':
+            paths = await ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
+            pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            break;
+        case 'eos,ethereum':
+            paths = await ethereum.getAllPaths(sourceToken.blockchainId, ethereum.anchorToken.blockchainId);
+            pathObjects.paths.push({ type: 'eos', path: await getConversionPath(sourceToken, null) });
+            pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            break;
+        case 'ethereum,eos':
+            paths = await ethereum.getAllPaths(ethereum.anchorToken.blockchainId, targetToken.blockchainId);
+            pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            pathObjects.paths.push({ type: 'eos', path: await getConversionPath(null, targetToken) });
+            break;
     }
-    else {
-        pathObjects.paths.push({ type: sourceToken.blockchainType, path: await getConversionPath(sourceToken, null) });
-        pathObjects.paths.push({ type: targetToken.blockchainType, path: await getConversionPath(null, targetToken) });
-    }
+
     return pathObjects;
 }
 
