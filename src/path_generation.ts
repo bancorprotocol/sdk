@@ -1,6 +1,3 @@
-import * as eos from './blockchains/eos/index';
-import * as ethereum from './blockchains/ethereum/index';
-
 export type BlockchainType = 'ethereum' | 'eos';
 
 export interface ConversionPath {
