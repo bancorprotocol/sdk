@@ -98,8 +98,7 @@ exports.calculateRateFromPaths = function (paths, amount) { return __awaiter(voi
                 return [4 /*yield*/, calculateRateFromPath(paths, amount)];
             case 1:
                 rate = _a.sent();
-                paths.shift();
-                return [2 /*return*/, exports.calculateRateFromPaths(paths, rate)];
+                return [2 /*return*/, exports.calculateRateFromPaths(paths.slice(1), rate)];
         }
     });
 }); };

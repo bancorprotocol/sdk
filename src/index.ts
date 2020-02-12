@@ -31,8 +31,7 @@ export async function generatePath(sourceToken: Token, targetToken: Token) {
 export const calculateRateFromPaths = async (paths: ConversionPath[], amount) => {
     if (paths.length == 0) return amount;
     const rate = await calculateRateFromPath(paths, amount);
-    paths.shift();
-    return calculateRateFromPaths(paths, rate);
+    return calculateRateFromPaths(paths.slice(1), rate);
 };
 
 export async function calculateRateFromPath(paths: ConversionPath[], amount) {
