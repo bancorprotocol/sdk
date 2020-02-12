@@ -73,7 +73,6 @@ exports.anchorToken = {
     blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
 };
 function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
-    if (ethereumContractRegistryAddress === void 0) { ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6'; }
     return __awaiter(this, void 0, void 0, function () {
         var contractRegistryContract, registryBlockchainId;
         return __generator(this, function (_a) {

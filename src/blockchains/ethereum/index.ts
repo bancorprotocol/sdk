@@ -21,10 +21,10 @@ export const anchorToken: Token = {
     blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
 };
 
-export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6') {
+export async function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
     web3 = new Web3(new Web3.providers.HttpProvider(ethereumNodeUrl));
     const contractRegistryContract = new web3.eth.Contract(ContractRegistry, ethereumContractRegistryAddress);
-    const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call(); // '0x85e27A5718382F32238497e78b4A40DD778ab847'
+    const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
     registry = new web3.eth.Contract(BancorConverterRegistry, registryBlockchainId);
 }
 
