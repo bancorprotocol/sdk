@@ -2,7 +2,6 @@
 /* eslint-disable no-sync */
 /* eslint-disable prefer-reflect */
 import Web3 from 'web3';
-import Decimal from 'decimal.js';
 import { BancorConverterV9 } from './contracts/BancorConverterV9';
 import { fromWei, toWei, timestampToBlockNumber } from './utils';
 import { ConversionPathStep, Token } from '../../path_generation';
@@ -27,7 +26,6 @@ export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0
     const contractRegistryContract = new web3.eth.Contract(ContractRegistry, ethereumContractRegistryAddress);
     const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call(); // '0x85e27A5718382F32238497e78b4A40DD778ab847'
     registry = new web3.eth.Contract(BancorConverterRegistry, registryBlockchainId);
-    Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
 }
 
 export function isAnchorToken(token: Token) {

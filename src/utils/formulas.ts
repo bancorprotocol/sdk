@@ -5,6 +5,10 @@ const ONE = new Decimal(1);
 const MAX_RATIO = new Decimal(1000000);
 const MAX_FEE = new Decimal(1000000);
 
+export function init() {
+    Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
+}
+
 export function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {
     [supply, reserveBalance, reserveRatio, depositAmount] = Array.from(arguments).map(x => new Decimal(x));
 

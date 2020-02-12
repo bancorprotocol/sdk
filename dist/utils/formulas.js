@@ -8,6 +8,10 @@ var ZERO = new decimal_js_1.default(0);
 var ONE = new decimal_js_1.default(1);
 var MAX_RATIO = new decimal_js_1.default(1000000);
 var MAX_FEE = new decimal_js_1.default(1000000);
+function init() {
+    decimal_js_1.default.set({ precision: 100, rounding: decimal_js_1.default.ROUND_DOWN });
+}
+exports.init = init;
 function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], depositAmount = _a[3];
