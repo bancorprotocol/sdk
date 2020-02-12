@@ -1,9 +1,6 @@
 import * as eos from './blockchains/eos/index';
 import * as ethereum from './blockchains/ethereum/index';
 import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
-import * as retrieve_contract_version from './blockchains/ethereum/retrieve_contract_version';
-import * as fetch_conversion_events from './blockchains/ethereum/fetch_conversion_events';
-import { timestampToBlockNumber } from './blockchains/ethereum/utils';
 
 interface Settings {
     ethereumNodeEndpoint: string;
@@ -70,29 +67,28 @@ export async function getRate(sourceToken: Token, targetToken: Token, amount: st
     return await getRateByPath(paths, amount);
 }
 
-export async function retrieveContractVersion(nodeAddress, contract: Contract) {
+export async function retrieveContractVersion(contract: Contract) {
     if (contract.blockchainType == 'ethereum')
-        return await retrieve_contract_version.run(nodeAddress, contract.blockchainId);
+        return await ethereum.retrieveContractVersion(contract.blockchainId);
     throw new Error(contract.blockchainType + ' blockchain not supported');
 }
 
-export async function fetchConversionEvents(nodeAddress, token: Token, fromBlock, toBlock) {
+export async function fetchConversionEvents(token: Token, fromBlock, toBlock) {
     if (token.blockchainType == 'ethereum')
-        return await fetch_conversion_events.run(nodeAddress, token.blockchainId, fromBlock, toBlock);
+        return await ethereum.fetchConversionEvents(token.blockchainId, fromBlock, toBlock);
     throw new Error(token.blockchainType + ' blockchain not supported');
 }
 
-export async function fetchConversionEventsByTimestamp(nodeAddress, token: Token, fromTimestamp, toTimestamp) {
-    if (token.blockchainType == 'ethereum') {
-        const fromBlock = await timestampToBlockNumber(nodeAddress, fromTimestamp);
-        const toBlock = await timestampToBlockNumber(nodeAddress, toTimestamp);
-        return await fetch_conversion_events.run(nodeAddress, token.blockchainId, fromBlock, toBlock);
-    }
+export async function fetchConversionEventsByTimestamp(token: Token, fromTimestamp, toTimestamp) {
+    if (token.blockchainType == 'ethereum')
+        return await ethereum.fetchConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp);
     throw new Error(token.blockchainType + ' blockchain not supported');
 }
 
-export async function ethereumGetAllPaths(sourceToken, targetToken) {
-    return await ethereum.getAllPaths(sourceToken, targetToken);
+export async function getAllPaths(sourceToken: Token, targetToken: Token) {
+    if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')
+        return await ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
+    throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 
 export default {
@@ -104,5 +100,5 @@ export default {
     retrieveContractVersion,
     fetchConversionEvents,
     fetchConversionEventsByTimestamp,
-    ethereumGetAllPaths
+    getAllPaths
 };

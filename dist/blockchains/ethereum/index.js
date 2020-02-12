@@ -45,6 +45,13 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable max-len */
 /* eslint-disable no-sync */
@@ -58,6 +65,8 @@ var ContractRegistry_1 = require("./contracts/ContractRegistry");
 var BancorConverterRegistry_1 = require("./contracts/BancorConverterRegistry");
 var SmartToken_1 = require("./contracts/SmartToken");
 var ERC20Token_1 = require("./contracts/ERC20Token");
+var retrieve_contract_version = __importStar(require("./retrieve_contract_version"));
+var fetch_conversion_events = __importStar(require("./fetch_conversion_events"));
 var web3;
 var registry;
 exports.anchorToken = {
@@ -256,6 +265,46 @@ function getSmartTokens(token) {
     });
 }
 exports.getSmartTokens = getSmartTokens;
+function retrieveContractVersion(contract) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, retrieve_contract_version.run(web3, contract)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.retrieveContractVersion = retrieveContractVersion;
+function fetchConversionEvents(token, fromBlock, toBlock) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fetch_conversion_events.run(web3, token, fromBlock, toBlock)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.fetchConversionEvents = fetchConversionEvents;
+function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
+    return __awaiter(this, void 0, void 0, function () {
+        var fromBlock, toBlock;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, utils_1.timestampToBlockNumber(web3, fromTimestamp)];
+                case 1:
+                    fromBlock = _a.sent();
+                    return [4 /*yield*/, utils_1.timestampToBlockNumber(web3, toTimestamp)];
+                case 2:
+                    toBlock = _a.sent();
+                    return [4 /*yield*/, fetch_conversion_events.run(web3, token, fromBlock, toBlock)];
+                case 3: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
 function registryDataUpdate(registryData, key, value) {
     if (registryData[key] == undefined)
         registryData[key] = [value];

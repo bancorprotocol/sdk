@@ -36,7 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Web3 = require("web3");
 function rpc(func) {
     return __awaiter(this, void 0, void 0, function () {
         var error_1;
@@ -74,7 +73,7 @@ function parse(type, data) {
     }
     return data;
 }
-function get(web3, address) {
+function run(web3, address) {
     return __awaiter(this, void 0, void 0, function () {
         var _i, _a, type, abi, contract, version, value;
         return __generator(this, function (_b) {
@@ -99,18 +98,6 @@ function get(web3, address) {
                     return [3 /*break*/, 1];
                 case 4: return [2 /*return*/, { type: "unknown", value: "unknown" }];
             }
-        });
-    });
-}
-function run(nodeAddress, contractAddress) {
-    return __awaiter(this, void 0, void 0, function () {
-        var web3, version;
-        return __generator(this, function (_a) {
-            web3 = new Web3(nodeAddress);
-            version = get(web3, contractAddress);
-            if (web3.currentProvider.constructor.name == "WebsocketProvider")
-                web3.currentProvider.connection.close();
-            return [2 /*return*/, version];
         });
     });
 }

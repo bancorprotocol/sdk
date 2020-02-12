@@ -46,9 +46,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var eos = __importStar(require("./blockchains/eos/index"));
 var ethereum = __importStar(require("./blockchains/ethereum/index"));
 var path_generation_1 = require("./path_generation");
-var retrieve_contract_version = __importStar(require("./blockchains/ethereum/retrieve_contract_version"));
-var fetch_conversion_events = __importStar(require("./blockchains/ethereum/fetch_conversion_events"));
-var utils_1 = require("./blockchains/ethereum/utils");
 function init(args) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -194,13 +191,13 @@ function getRate(sourceToken, targetToken, amount) {
     });
 }
 exports.getRate = getRate;
-function retrieveContractVersion(nodeAddress, contract) {
+function retrieveContractVersion(contract) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!(contract.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, retrieve_contract_version.run(nodeAddress, contract.blockchainId)];
+                    return [4 /*yield*/, ethereum.retrieveContractVersion(contract.blockchainId)];
                 case 1: return [2 /*return*/, _a.sent()];
                 case 2: throw new Error(contract.blockchainType + ' blockchain not supported');
             }
@@ -208,13 +205,13 @@ function retrieveContractVersion(nodeAddress, contract) {
     });
 }
 exports.retrieveContractVersion = retrieveContractVersion;
-function fetchConversionEvents(nodeAddress, token, fromBlock, toBlock) {
+function fetchConversionEvents(token, fromBlock, toBlock) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, fetch_conversion_events.run(nodeAddress, token.blockchainId, fromBlock, toBlock)];
+                    return [4 /*yield*/, ethereum.fetchConversionEvents(token.blockchainId, fromBlock, toBlock)];
                 case 1: return [2 /*return*/, _a.sent()];
                 case 2: throw new Error(token.blockchainType + ' blockchain not supported');
             }
@@ -222,38 +219,34 @@ function fetchConversionEvents(nodeAddress, token, fromBlock, toBlock) {
     });
 }
 exports.fetchConversionEvents = fetchConversionEvents;
-function fetchConversionEventsByTimestamp(nodeAddress, token, fromTimestamp, toTimestamp) {
+function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
     return __awaiter(this, void 0, void 0, function () {
-        var fromBlock, toBlock;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 4];
-                    return [4 /*yield*/, utils_1.timestampToBlockNumber(nodeAddress, fromTimestamp)];
-                case 1:
-                    fromBlock = _a.sent();
-                    return [4 /*yield*/, utils_1.timestampToBlockNumber(nodeAddress, toTimestamp)];
-                case 2:
-                    toBlock = _a.sent();
-                    return [4 /*yield*/, fetch_conversion_events.run(nodeAddress, token.blockchainId, fromBlock, toBlock)];
-                case 3: return [2 /*return*/, _a.sent()];
-                case 4: throw new Error(token.blockchainType + ' blockchain not supported');
+                    if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, ethereum.fetchConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp)];
+                case 1: return [2 /*return*/, _a.sent()];
+                case 2: throw new Error(token.blockchainType + ' blockchain not supported');
             }
         });
     });
 }
 exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
-function ethereumGetAllPaths(sourceToken, targetToken) {
+function getAllPaths(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, ethereum.getAllPaths(sourceToken, targetToken)];
+                case 0:
+                    if (!(sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId)];
                 case 1: return [2 /*return*/, _a.sent()];
+                case 2: throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
             }
         });
     });
 }
-exports.ethereumGetAllPaths = ethereumGetAllPaths;
+exports.getAllPaths = getAllPaths;
 exports.default = {
     init: init,
     getRate: getRate,
@@ -263,5 +256,5 @@ exports.default = {
     retrieveContractVersion: retrieveContractVersion,
     fetchConversionEvents: fetchConversionEvents,
     fetchConversionEventsByTimestamp: fetchConversionEventsByTimestamp,
-    ethereumGetAllPaths: ethereumGetAllPaths
+    getAllPaths: getAllPaths
 };

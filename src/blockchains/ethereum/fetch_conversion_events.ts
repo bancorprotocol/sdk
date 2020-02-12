@@ -77,7 +77,7 @@ async function getOwnerUpdateEvents(web3, tokenAddress, fromBlock, toBlock) {
     throw new Error("Inactive Token");
 }
 
-async function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
+export async function run(web3, tokenAddress, fromBlock, toBlock) {
     const result = [];
 
     const batches = [{fromBlock: fromBlock, toBlock: undefined, owner: undefined}];
@@ -113,13 +113,5 @@ async function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
         }
     }
 
-    return result;
-}
-
-export async function run(nodeAddress, tokenAddress, fromBlock, toBlock) {
-    const web3 = new Web3(nodeAddress);
-    const result = await getConversionEvents(web3, tokenAddress, fromBlock, toBlock);
-    if (web3.currentProvider.constructor.name == "WebsocketProvider")
-        web3.currentProvider.connection.close();
     return result;
 }

@@ -12,4 +12,10 @@ export declare const getConverterBlockchainId: (blockchainId: any) => Promise<an
 export declare function getReserveTokens(converterBlockchainId: any): Promise<Token[]>;
 export declare function getConverterSmartToken(converter: any): Promise<any>;
 export declare function getSmartTokens(token: Token): Promise<any>;
+export declare function retrieveContractVersion(contract: any): Promise<{
+    type: string;
+    value: any;
+}>;
+export declare function fetchConversionEvents(token: any, fromBlock: any, toBlock: any): Promise<any[]>;
+export declare function fetchConversionEventsByTimestamp(token: any, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
 export declare function getAllPaths(sourceToken: any, targetToken: any): Promise<any[]>;

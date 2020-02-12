@@ -1,5 +1,3 @@
-const Web3 = require("web3");
-
 async function rpc(func) {
     while (true) {
         try {
@@ -27,7 +25,7 @@ function parse(type, data) {
     return data;
 }
 
-async function get(web3, address) {
+export async function run(web3, address) {
     for (const type of ["string", "bytes32", "uint16"]) {
         const abi = [{"constant":true,"inputs":[],"name":"version","outputs":[{"name":"","type":type}],"payable":false,"stateMutability":"view","type":"function"}];
         const contract = new web3.eth.Contract(abi , address);
@@ -37,12 +35,4 @@ async function get(web3, address) {
             return {type: type, value: value};
     }
     return {type: "unknown", value: "unknown"};
-}
-
-export async function run(nodeAddress, contractAddress) {
-    const web3 = new Web3(nodeAddress);
-    const version = get(web3, contractAddress);
-    if (web3.currentProvider.constructor.name == "WebsocketProvider")
-        web3.currentProvider.connection.close();
-    return version;
 }

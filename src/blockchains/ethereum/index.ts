@@ -4,13 +4,15 @@
 import Web3 from 'web3';
 import Decimal from 'decimal.js';
 import { BancorConverterV9 } from './contracts/BancorConverterV9';
-import { fromWei, toWei } from './utils';
+import { fromWei, toWei, timestampToBlockNumber } from './utils';
 import { ConversionPathStep, Token } from '../../path_generation';
 import { BancorConverter } from './contracts/BancorConverter';
 import { ContractRegistry } from './contracts/ContractRegistry';
 import { BancorConverterRegistry } from './contracts/BancorConverterRegistry';
 import { SmartToken } from './contracts/SmartToken';
 import { ERC20Token } from './contracts/ERC20Token';
+import * as retrieve_contract_version from './retrieve_contract_version';
+import * as fetch_conversion_events from './fetch_conversion_events';
 
 let web3;
 let registry;
@@ -101,6 +103,20 @@ export async function getConverterSmartToken(converter) {
 export async function getSmartTokens(token: Token) {
     const isSmartToken = await registry.methods.isSmartToken(token.blockchainId).call();
     return isSmartToken ? [token.blockchainId] : await registry.methods.getConvertibleTokenSmartTokens(token.blockchainId).call();
+}
+
+export async function retrieveContractVersion(contract) {
+    return await retrieve_contract_version.run(web3, contract);
+}
+
+export async function fetchConversionEvents(token, fromBlock, toBlock) {
+    return await fetch_conversion_events.run(web3, token, fromBlock, toBlock);
+}
+
+export async function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
+    const fromBlock = await timestampToBlockNumber(web3, fromTimestamp);
+    const toBlock = await timestampToBlockNumber(web3, toTimestamp);
+    return await fetch_conversion_events.run(web3, token, fromBlock, toBlock);
 }
 
 function registryDataUpdate(registryData, key, value) {

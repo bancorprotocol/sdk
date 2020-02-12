@@ -159,7 +159,7 @@ function getOwnerUpdateEvents(web3, tokenAddress, fromBlock, toBlock) {
         });
     });
 }
-function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
+function run(web3, tokenAddress, fromBlock, toBlock) {
     return __awaiter(this, void 0, void 0, function () {
         var result, batches, events, _i, _a, event_1, index, _b, batches_1, batch, _c, _d, abi, converter, events_2, _e, events_1, event_2, _f, _g, _h;
         return __generator(this, function (_j) {
@@ -230,23 +230,6 @@ function getConversionEvents(web3, tokenAddress, fromBlock, toBlock) {
                     _b++;
                     return [3 /*break*/, 2];
                 case 13: return [2 /*return*/, result];
-            }
-        });
-    });
-}
-function run(nodeAddress, tokenAddress, fromBlock, toBlock) {
-    return __awaiter(this, void 0, void 0, function () {
-        var web3, result;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    web3 = new Web3(nodeAddress);
-                    return [4 /*yield*/, getConversionEvents(web3, tokenAddress, fromBlock, toBlock)];
-                case 1:
-                    result = _a.sent();
-                    if (web3.currentProvider.constructor.name == "WebsocketProvider")
-                        web3.currentProvider.connection.close();
-                    return [2 /*return*/, result];
             }
         });
     });
