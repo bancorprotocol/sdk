@@ -3,11 +3,6 @@ import * as ethereum from './blockchains/ethereum/index';
 
 export type BlockchainType = 'ethereum' | 'eos';
 
-export interface ConversionPathsTokens {
-    from: Token;
-    to: Token;
-}
-
 export interface ConversionPath {
     type: BlockchainType;
     path: string[] | ConversionToken[];
