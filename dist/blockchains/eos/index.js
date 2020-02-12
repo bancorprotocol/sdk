@@ -76,7 +76,7 @@ function isAnchorToken(token) {
 exports.isAnchorToken = isAnchorToken;
 function getTokenBlockchainId(token) {
     var _a;
-    return _a = {}, _a[token.symbol] = token.blockchainId.toLowerCase(), _a;
+    return _a = {}, _a[token.symbol] = token.blockchainId, _a;
 }
 exports.getTokenBlockchainId = getTokenBlockchainId;
 function getEosjsRpc() {

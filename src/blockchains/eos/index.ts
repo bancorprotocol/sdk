@@ -30,7 +30,7 @@ export function isAnchorToken(token: Token) {
 }
 
 export function getTokenBlockchainId(token: Token) {
-    return { [token.symbol]: token.blockchainId.toLowerCase() };
+    return { [token.symbol]: token.blockchainId };
 }
 
 export function getEosjsRpc() {
