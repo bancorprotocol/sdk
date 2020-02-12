@@ -169,14 +169,18 @@ function getConverterPairs(path, blockchainType) {
         });
     });
 }
-exports.getRateByPath = function (paths, amount) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, calculateRateFromPaths(paths, amount)];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
+function getRateByPath(paths, amount) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, calculateRateFromPaths(paths, amount)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
     });
-}); };
+}
+exports.getRateByPath = getRateByPath;
+;
 function getRate(sourceToken, targetToken, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var paths;
@@ -185,7 +189,7 @@ function getRate(sourceToken, targetToken, amount) {
                 case 0: return [4 /*yield*/, generatePath(sourceToken, targetToken)];
                 case 1:
                     paths = _a.sent();
-                    return [4 /*yield*/, exports.getRateByPath(paths, amount)];
+                    return [4 /*yield*/, getRateByPath(paths, amount)];
                 case 2: return [2 /*return*/, _a.sent()];
             }
         });
@@ -252,7 +256,7 @@ exports.default = {
     init: init,
     getRate: getRate,
     generatePath: generatePath,
-    getRateByPath: exports.getRateByPath,
+    getRateByPath: getRateByPath,
     buildPathsFile: buildPathsFile,
     retrieveContractVersion: retrieveContractVersion,
     fetchConversionEvents: fetchConversionEvents,

@@ -57,7 +57,7 @@ async function getConverterPairs(path: string[] | object[], blockchainType: Bloc
     return pairs;
 }
 
-export const getRateByPath = async (paths: ConversionPath[], amount) => {
+export async function getRateByPath(paths: ConversionPath[], amount) {
     return await calculateRateFromPaths(paths, amount);
 };
 
