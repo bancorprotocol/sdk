@@ -119,12 +119,12 @@ export async function generatePathByBlockchainIds(sourceToken: Token, targetToke
             pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
             break;
         case 'eos,ethereum':
-            paths = await getAllPaths(sourceToken.blockchainId, EthereumAnchorToken.blockchainId);
+            paths = await getAllPaths(EthereumAnchorToken.blockchainId, targetToken.blockchainId);
             pathObjects.paths.push({ type: 'eos', path: await getConversionPath(sourceToken, null) });
             pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
             break;
         case 'ethereum,eos':
-            paths = await getAllPaths(EthereumAnchorToken.blockchainId, targetToken.blockchainId);
+            paths = await getAllPaths(sourceToken.blockchainId, EthereumAnchorToken.blockchainId);
             pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
             pathObjects.paths.push({ type: 'eos', path: await getConversionPath(null, targetToken) });
             break;
