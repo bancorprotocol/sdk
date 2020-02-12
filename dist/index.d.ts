@@ -11,8 +11,6 @@ interface Contract {
 export declare function init(args: Settings): Promise<void>;
 export declare function buildPathsFile(): Promise<void>;
 export declare function generatePath(sourceToken: Token, targetToken: Token): Promise<ConversionPath[]>;
-export declare const calculateRateFromPaths: (paths: ConversionPath[], amount: any) => any;
-export declare function calculateRateFromPath(paths: ConversionPath[], amount: any): Promise<any>;
 export declare const getRateByPath: (paths: ConversionPath[], amount: any) => Promise<any>;
 export declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<any>;
 export declare function retrieveContractVersion(contract: Contract): Promise<{

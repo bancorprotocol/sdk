@@ -28,13 +28,13 @@ export async function generatePath(sourceToken: Token, targetToken: Token) {
     return await generatePathByBlockchainIds(sourceToken, targetToken);
 }
 
-export const calculateRateFromPaths = async (paths: ConversionPath[], amount) => {
+async function calculateRateFromPaths(paths: ConversionPath[], amount) {
     if (paths.length == 0) return amount;
     const rate = await calculateRateFromPath(paths, amount);
     return calculateRateFromPaths(paths.slice(1), rate);
 };
 
-export async function calculateRateFromPath(paths: ConversionPath[], amount) {
+async function calculateRateFromPath(paths: ConversionPath[], amount) {
     const blockchainType: BlockchainType = paths[0].type;
     const convertPairs = await getConverterPairs(paths[0].path, blockchainType);
     const module = {eos, ethereum}[blockchainType];

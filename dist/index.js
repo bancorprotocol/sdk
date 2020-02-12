@@ -88,20 +88,23 @@ function generatePath(sourceToken, targetToken) {
     });
 }
 exports.generatePath = generatePath;
-exports.calculateRateFromPaths = function (paths, amount) { return __awaiter(void 0, void 0, void 0, function () {
-    var rate;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                if (paths.length == 0)
-                    return [2 /*return*/, amount];
-                return [4 /*yield*/, calculateRateFromPath(paths, amount)];
-            case 1:
-                rate = _a.sent();
-                return [2 /*return*/, exports.calculateRateFromPaths(paths.slice(1), rate)];
-        }
+function calculateRateFromPaths(paths, amount) {
+    return __awaiter(this, void 0, void 0, function () {
+        var rate;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (paths.length == 0)
+                        return [2 /*return*/, amount];
+                    return [4 /*yield*/, calculateRateFromPath(paths, amount)];
+                case 1:
+                    rate = _a.sent();
+                    return [2 /*return*/, calculateRateFromPaths(paths.slice(1), rate)];
+            }
+        });
     });
-}); };
+}
+;
 function calculateRateFromPath(paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var blockchainType, convertPairs, module, i;
@@ -129,7 +132,6 @@ function calculateRateFromPath(paths, amount) {
         });
     });
 }
-exports.calculateRateFromPath = calculateRateFromPath;
 function getConverterPairs(path, blockchainType) {
     return __awaiter(this, void 0, void 0, function () {
         var pairs, i, converterBlockchainId, _a;
@@ -170,7 +172,7 @@ function getConverterPairs(path, blockchainType) {
 exports.getRateByPath = function (paths, amount) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, exports.calculateRateFromPaths(paths, amount)];
+            case 0: return [4 /*yield*/, calculateRateFromPaths(paths, amount)];
             case 1: return [2 /*return*/, _a.sent()];
         }
     });
