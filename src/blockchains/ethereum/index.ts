@@ -28,10 +28,6 @@ export async function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
     registry = new web3.eth.Contract(BancorConverterRegistry, registryBlockchainId);
 }
 
-export function isAnchorToken(token: Token) {
-    return Web3.utils.toChecksumAddress(token.blockchainId) == anchorToken.blockchainId;
-}
-
 export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
     const tokenContract = new web3.eth.Contract(ERC20Token, token);
     const decimals = await tokenContract.methods.decimals().call();

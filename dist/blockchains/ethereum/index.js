@@ -90,10 +90,6 @@ function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
     });
 }
 exports.init = init;
-function isAnchorToken(token) {
-    return web3_1.default.utils.toChecksumAddress(token.blockchainId) == exports.anchorToken.blockchainId;
-}
-exports.isAnchorToken = isAnchorToken;
 exports.getAmountInTokenWei = function (token, amount, web3) { return __awaiter(void 0, void 0, void 0, function () {
     var tokenContract, decimals;
     return __generator(this, function (_a) {
