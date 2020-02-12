@@ -66,26 +66,21 @@ export async function generatePathByBlockchainIds(sourceToken: Token, targetToke
 }
 
 async function getConversionPath(from: Token, to: Token) {
-    const sourcePath = await getPathToAnchorByBlockchainId(from, eos.anchorToken);
-    const targetPath = await getPathToAnchorByBlockchainId(to, eos.anchorToken);
+    const sourcePath = await getPathToAnchor(from);
+    const targetPath = await getPathToAnchor(to);
     return getShortestPath(sourcePath, targetPath);
 }
 
-async function getPathToAnchorByBlockchainId(token: Token, anchorToken: Token) {
+async function getPathToAnchor(token: Token) {
     if (eos.isAnchorToken(token))
         return [eos.getTokenBlockchainId(token)];
 
-    const isMulti = eos.isMultiConverter(token.blockchainId);
-
-    for (const smartToken of token.blockchainId) {
-        const blockchainId = await eos.getConverterBlockchainId(token);
-        const converterBlockchainId = Object.values(blockchainId)[0];
-        const reserveTokens = await eos.getReserveTokens(converterBlockchainId, token.symbol, isMulti);
-        for (const reserveToken of reserveTokens.filter(reserveToken => reserveToken.blockchainId != token.blockchainId)) {
-            const path = await getPathToAnchorByBlockchainId(reserveToken, anchorToken);
-            if (path.length > 0)
-                return [eos.getTokenBlockchainId(token), blockchainId, ...path];
-        }
+    const blockchainId = await eos.getConverterBlockchainId(token);
+    const reserveTokens = await eos.getReserveTokens(Object.values(blockchainId)[0], token.symbol, eos.isMultiConverter(token.blockchainId));
+    for (const reserveToken of reserveTokens.filter(reserveToken => reserveToken.blockchainId != token.blockchainId)) {
+        const path = await getPathToAnchor(reserveToken);
+        if (path.length > 0)
+            return [eos.getTokenBlockchainId(token), blockchainId, ...path];
     }
 
     return [];
