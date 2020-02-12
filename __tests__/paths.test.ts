@@ -13,13 +13,13 @@ describe('Path finder tests', () => {
     });
 
     it('EOS token to EOS token path finder', async () => {
-        const karmaBntPath: path_generation.ConversionPaths = { paths: [{ type: 'eos', path: ['therealkarma', 'bancorc11112', 'bntbntbntbnt']}]};
+        const karmaBntPath: path_generation.ConversionPath[] = [{ type: 'eos', path: ['therealkarma', 'bancorc11112', 'bntbntbntbnt']}];
 
         const spyGeneratePath = jest
             .spyOn(path_generation, 'generatePathByBlockchainIds')
             .mockImplementation(() => Promise.resolve(karmaBntPath));
 
-        const { paths } = await sdk.generatePath(
+        const paths = await sdk.generatePath(
             { blockchainId: 'bntbntbntbnt', blockchainType: 'eos', symbol: 'BNT' },
             { blockchainId: 'therealkarma', symbol: 'KARMA', blockchainType: 'eos' }
         );
@@ -64,7 +64,7 @@ describe('Path finder tests', () => {
             }
         ];
 
-        expect(response.paths).toEqual(expectedResult);
+        expect(response).toEqual(expectedResult);
         expect(spyGetAllPaths).toHaveBeenCalledTimes(1);
     });
 
@@ -106,7 +106,7 @@ describe('Path finder tests', () => {
             }
         ];
 
-        expect(response.paths).toEqual(expectedResult);
+        expect(response).toEqual(expectedResult);
         expect(spyGetAllPaths).toHaveBeenCalledTimes(1);
         expect(spyGetConversionPath).toHaveBeenCalledTimes(1);
     });

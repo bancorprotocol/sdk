@@ -1,4 +1,4 @@
-import { Token, ConversionPaths, BlockchainType } from './path_generation';
+import { Token, ConversionPath, BlockchainType } from './path_generation';
 interface Settings {
     ethereumNodeEndpoint: string;
     eosNodeEndpoint: string;
@@ -10,10 +10,10 @@ interface Contract {
 }
 export declare function init(args: Settings): Promise<void>;
 export declare function buildPathsFile(): Promise<void>;
-export declare function generatePath(sourceToken: Token, targetToken: Token): Promise<ConversionPaths>;
-export declare const calculateRateFromPaths: (paths: ConversionPaths, amount: any) => any;
-export declare function calculateRateFromPath(paths: ConversionPaths, amount: any): Promise<any>;
-export declare const getRateByPath: (paths: ConversionPaths, amount: any) => Promise<any>;
+export declare function generatePath(sourceToken: Token, targetToken: Token): Promise<ConversionPath[]>;
+export declare const calculateRateFromPaths: (paths: ConversionPath[], amount: any) => any;
+export declare function calculateRateFromPath(paths: ConversionPath[], amount: any): Promise<any>;
+export declare const getRateByPath: (paths: ConversionPath[], amount: any) => Promise<any>;
 export declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<any>;
 export declare function retrieveContractVersion(contract: Contract): Promise<{
     type: string;
@@ -26,7 +26,7 @@ declare const _default: {
     init: typeof init;
     getRate: typeof getRate;
     generatePath: typeof generatePath;
-    getRateByPath: (paths: ConversionPaths, amount: any) => Promise<any>;
+    getRateByPath: (paths: ConversionPath[], amount: any) => Promise<any>;
     buildPathsFile: typeof buildPathsFile;
     retrieveContractVersion: typeof retrieveContractVersion;
     fetchConversionEvents: typeof fetchConversionEvents;

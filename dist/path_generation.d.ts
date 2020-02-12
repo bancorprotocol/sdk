@@ -11,12 +11,9 @@ export interface ConversionPathStep {
     fromToken: string | ConversionToken;
     toToken: string | ConversionToken;
 }
-export interface ConversionPaths {
-    paths: ConversionPath[];
-}
 export interface Token {
     blockchainType: BlockchainType;
     blockchainId: string;
     symbol?: string;
 }
-export declare function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token): Promise<ConversionPaths>;
+export declare function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token): Promise<ConversionPath[]>;

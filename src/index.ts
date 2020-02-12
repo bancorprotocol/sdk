@@ -1,6 +1,6 @@
 import * as eos from './blockchains/eos/index';
 import * as ethereum from './blockchains/ethereum/index';
-import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
+import { Token, generatePathByBlockchainIds, ConversionPath, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
 
 interface Settings {
     ethereumNodeEndpoint: string;
@@ -28,16 +28,16 @@ export async function generatePath(sourceToken: Token, targetToken: Token) {
     return await generatePathByBlockchainIds(sourceToken, targetToken);
 }
 
-export const calculateRateFromPaths = async (paths: ConversionPaths, amount) => {
-    if (paths.paths.length == 0) return amount;
+export const calculateRateFromPaths = async (paths: ConversionPath[], amount) => {
+    if (paths.length == 0) return amount;
     const rate = await calculateRateFromPath(paths, amount);
-    paths.paths.shift();
+    paths.shift();
     return calculateRateFromPaths(paths, rate);
 };
 
-export async function calculateRateFromPath(paths: ConversionPaths, amount) {
-    const blockchainType: BlockchainType = paths.paths[0].type;
-    const convertPairs = await getConverterPairs(paths.paths[0].path, blockchainType);
+export async function calculateRateFromPath(paths: ConversionPath[], amount) {
+    const blockchainType: BlockchainType = paths[0].type;
+    const convertPairs = await getConverterPairs(paths[0].path, blockchainType);
     const module = {eos, ethereum}[blockchainType];
     for (let i = 0; i < convertPairs.length; i++)
         amount = await module.getPathStepRate(convertPairs[i], amount);
@@ -58,7 +58,7 @@ async function getConverterPairs(path: string[] | object[], blockchainType: Bloc
     return pairs;
 }
 
-export const getRateByPath = async (paths: ConversionPaths, amount) => {
+export const getRateByPath = async (paths: ConversionPath[], amount) => {
     return await calculateRateFromPaths(paths, amount);
 };
 

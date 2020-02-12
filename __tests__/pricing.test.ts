@@ -55,7 +55,7 @@ describe('price tests', () => {
             }));
 
         const shortestPathResult = [{ KARMA: 'therealkarma' }, { BNTKRM: 'bancorc11112' }, { BNT: 'bntbntbntbnt' }];
-        const response = await sdk.getRateByPath({ paths: [{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
+        const response = await sdk.getRateByPath([{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }], '1');
         expect(response).toEqual('0.0001829844683988806288491891575274667939632319964962791587405424143483339543408806225565348501066514424');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
@@ -118,7 +118,7 @@ describe('price tests', () => {
             }));
 
         const shortestPathResult = [{ BNT: 'bntbntbntbnt' }, { BNTOCT: 'bancorc11132' }, { BNTOCT: 'bancorr11132' }];
-        const response = await sdk.getRateByPath({ paths: [{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
+        const response = await sdk.getRateByPath([{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }], '1');
         expect(response).toEqual('1.149089903558139448418865873613390739346612635233348491398249012803478588145961828615748552277965966');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
@@ -182,7 +182,7 @@ describe('price tests', () => {
             }));
 
         const shortestPathResult = [{ BNTOCT: 'bancorr11132' }, { BNTOCT: 'bancorc11132' }, { BNT: 'bntbntbntbnt' }];
-        const response = await sdk.getRateByPath({ paths: [{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
+        const response = await sdk.getRateByPath([{ type: 'eos' as genPath.BlockchainType, path: shortestPathResult }], '1');
         expect(response).toEqual('0.8702237365064194480241051027460314579651378541409636737891154514561671227625262785751104664761440822');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
@@ -207,7 +207,7 @@ describe('price tests', () => {
             '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c',
             '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340',
             '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'];
-        const response = await sdk.getRateByPath({ paths: [{ type: 'ethereum' as genPath.BlockchainType, path: shortestPathResult }]}, '1');
+        const response = await sdk.getRateByPath([{ type: 'ethereum' as genPath.BlockchainType, path: shortestPathResult }], '1');
 
         expect(response).toEqual('209.035338725170038366');
         expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(2);
@@ -263,17 +263,16 @@ describe('price tests', () => {
             .spyOn(ethereumFunctions, 'getPathStepRate')
             .mockImplementationOnce(() => Promise.resolve('0.000000274802734836'));
 
-        const response = await sdk.getRateByPath({
-            paths: [
-                {
-                    type: 'eos',
-                    path: [{ KARMA: 'therealkarma' }, { BNTKRM: 'bancorc11112' }, { BNT: 'bntbntbntbnt' }]
-                },
-                {
-                    type: 'ethereum',
-                    path: ['0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c', '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533', '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315']
-                }]
-        }, '1');
+        const response = await sdk.getRateByPath([
+            {
+                type: 'eos',
+                path: [{ KARMA: 'therealkarma' }, { BNTKRM: 'bancorc11112' }, { BNT: 'bntbntbntbnt' }]
+            },
+            {
+                type: 'ethereum',
+                path: ['0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c', '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533', '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315']
+            }
+        ], '1');
 
         expect(response).toEqual('0.000000274802734836');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
@@ -331,8 +330,8 @@ describe('price tests', () => {
             .spyOn(ethereumFunctions, 'getConverterBlockchainId')
             .mockImplementationOnce(() => Promise.resolve('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA'));
 
-        const response = await sdk.getRateByPath({
-            paths: [{
+        const response = await sdk.getRateByPath([
+            {
                 type: 'ethereum',
                 path: ['0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315', '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
                     '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c']
@@ -340,8 +339,8 @@ describe('price tests', () => {
             {
                 type: 'eos',
                 path: [{ BNT: 'bntbntbntbnt' }, { BNTKRM: 'bancorc11112' }, { KARMA: 'therealkarma' }]
-            }]
-        }, '1');
+            }
+        ], '1');
 
         expect(response).toEqual('3226688.084642570529407094055738289769947463047257618333877712134072470684667713285913835113451935283');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);

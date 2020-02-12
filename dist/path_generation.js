@@ -51,7 +51,7 @@ function generatePathByBlockchainIds(sourceToken, targetToken) {
         return __generator(this, function (_l) {
             switch (_l.label) {
                 case 0:
-                    pathObjects = { paths: [] };
+                    pathObjects = [];
                     _a = sourceToken.blockchainType + ',' + targetToken.blockchainType;
                     switch (_a) {
                         case 'eos,eos': return [3 /*break*/, 1];
@@ -61,7 +61,7 @@ function generatePathByBlockchainIds(sourceToken, targetToken) {
                     }
                     return [3 /*break*/, 11];
                 case 1:
-                    _c = (_b = pathObjects.paths).push;
+                    _c = (_b = pathObjects).push;
                     _d = { type: 'eos' };
                     return [4 /*yield*/, eos.getConversionPath(sourceToken, targetToken)];
                 case 2:
@@ -70,23 +70,23 @@ function generatePathByBlockchainIds(sourceToken, targetToken) {
                 case 3: return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId)];
                 case 4:
                     paths = _l.sent();
-                    pathObjects.paths.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
+                    pathObjects.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
                     return [3 /*break*/, 11];
                 case 5: return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, ethereum.anchorToken.blockchainId)];
                 case 6:
                     paths = _l.sent();
-                    _f = (_e = pathObjects.paths).push;
+                    _f = (_e = pathObjects).push;
                     _g = { type: 'eos' };
                     return [4 /*yield*/, eos.getConversionPath(sourceToken, eos.anchorToken)];
                 case 7:
                     _f.apply(_e, [(_g.path = _l.sent(), _g)]);
-                    pathObjects.paths.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
+                    pathObjects.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
                     return [3 /*break*/, 11];
                 case 8: return [4 /*yield*/, ethereum.getAllPaths(ethereum.anchorToken.blockchainId, targetToken.blockchainId)];
                 case 9:
                     paths = _l.sent();
-                    pathObjects.paths.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
-                    _j = (_h = pathObjects.paths).push;
+                    pathObjects.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
+                    _j = (_h = pathObjects).push;
                     _k = { type: 'eos' };
                     return [4 /*yield*/, eos.getConversionPath(eos.anchorToken, targetToken)];
                 case 10:

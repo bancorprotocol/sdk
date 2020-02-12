@@ -93,12 +93,12 @@ exports.calculateRateFromPaths = function (paths, amount) { return __awaiter(voi
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (paths.paths.length == 0)
+                if (paths.length == 0)
                     return [2 /*return*/, amount];
                 return [4 /*yield*/, calculateRateFromPath(paths, amount)];
             case 1:
                 rate = _a.sent();
-                paths.paths.shift();
+                paths.shift();
                 return [2 /*return*/, exports.calculateRateFromPaths(paths, rate)];
         }
     });
@@ -109,8 +109,8 @@ function calculateRateFromPath(paths, amount) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    blockchainType = paths.paths[0].type;
-                    return [4 /*yield*/, getConverterPairs(paths.paths[0].path, blockchainType)];
+                    blockchainType = paths[0].type;
+                    return [4 /*yield*/, getConverterPairs(paths[0].path, blockchainType)];
                 case 1:
                     convertPairs = _a.sent();
                     module = { eos: eos, ethereum: ethereum }[blockchainType];
