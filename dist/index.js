@@ -103,7 +103,7 @@ function generatePath(sourceToken, targetToken) {
                     paths = _l.sent();
                     pathObjects.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
                     return [3 /*break*/, 11];
-                case 5: return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, ethereum.anchorToken.blockchainId)];
+                case 5: return [4 /*yield*/, ethereum.getAllPaths(ethereum.anchorToken.blockchainId, targetToken.blockchainId)];
                 case 6:
                     paths = _l.sent();
                     _f = (_e = pathObjects).push;
@@ -113,7 +113,7 @@ function generatePath(sourceToken, targetToken) {
                     _f.apply(_e, [(_g.path = _l.sent(), _g)]);
                     pathObjects.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
                     return [3 /*break*/, 11];
-                case 8: return [4 /*yield*/, ethereum.getAllPaths(ethereum.anchorToken.blockchainId, targetToken.blockchainId)];
+                case 8: return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, ethereum.anchorToken.blockchainId)];
                 case 9:
                     paths = _l.sent();
                     pathObjects.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
