@@ -196,22 +196,10 @@ describe('price tests', () => {
             .mockImplementationOnce(() => Promise.resolve('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA'))
             .mockImplementationOnce(() => Promise.resolve('0x89f26Fff3F690B19057e6bEb7a82C5c29ADfe20B'));
 
-        const spyGetTokenDecimals = jest
-            .spyOn(ethereumFunctions, 'getTokenDecimals')
-            .mockImplementationOnce(() => Promise.resolve(18))
-            .mockImplementationOnce(() => Promise.resolve(18));
-
-        const spyGetConversionReturn = jest
-            .spyOn(ethereumFunctions, 'getConversionReturn')
-            // eslint-disable-next-line quote-props
-            .mockImplementationOnce(() => Promise.resolve({ '0': '562688523539875175216', '1': '1127067366221286828' }))
-            // eslint-disable-next-line quote-props
-            .mockImplementationOnce(() => Promise.resolve({ '0': '209035338725170038366', '1': '418698620654302859' }));
-
-        const spyGetAmountInTokenWei = jest
-            .spyOn(ethereumFunctions, 'getAmountInTokenWei')
-            .mockImplementationOnce(() => Promise.resolve('1000000000000000000'))
-            .mockImplementationOnce(() => Promise.resolve('563288093941643064061'));
+        const spyGetPathStepRate = jest
+            .spyOn(ethereumFunctions, 'getPathStepRate')
+            .mockImplementationOnce(() => Promise.resolve('562.688523539875175216'))
+            .mockImplementationOnce(() => Promise.resolve('209.035338725170038366'));
 
         const shortestPathResult = [
             '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315',
@@ -223,9 +211,7 @@ describe('price tests', () => {
 
         expect(response).toEqual('209.035338725170038366');
         expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(2);
-        expect(spyGetTokenDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetConversionReturn).toHaveBeenCalledTimes(2);
-        expect(spyGetAmountInTokenWei).toHaveBeenCalledTimes(2);
+        expect(spyGetPathStepRate).toHaveBeenCalledTimes(2);
     });
 
     it('Eos token to Eth', async () => {
@@ -273,18 +259,9 @@ describe('price tests', () => {
             .spyOn(ethereumFunctions, 'getConverterBlockchainId')
             .mockImplementationOnce(() => Promise.resolve('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA'));
 
-        const spyGetAmountInTokenWei = jest
-            .spyOn(ethereumFunctions, 'getAmountInTokenWei')
-            .mockImplementationOnce(() => Promise.resolve(''));
-
-        const spyGetTokenDecimals = jest
-            .spyOn(ethereumFunctions, 'getTokenDecimals')
-            .mockImplementationOnce(() => Promise.resolve(18));
-
-        const spyGetConversionReturn = jest
-            .spyOn(ethereumFunctions, 'getConversionReturn')
-            // eslint-disable-next-line quote-props
-            .mockImplementationOnce(() => Promise.resolve({ '0': '274802734836', '1': '550430979' }));
+        const spyGetPathStepRate = jest
+            .spyOn(ethereumFunctions, 'getPathStepRate')
+            .mockImplementationOnce(() => Promise.resolve('0.000000274802734836'));
 
         const response = await sdk.getRateByPath({
             paths: [
@@ -303,25 +280,13 @@ describe('price tests', () => {
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
         expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(1);
-        expect(spyGetTokenDecimals).toHaveBeenCalledTimes(1);
-        expect(spyGetAmountInTokenWei).toHaveBeenCalledTimes(1);
-        expect(spyGetConversionReturn).toHaveBeenCalledTimes(1);
+        expect(spyGetPathStepRate).toHaveBeenCalledTimes(1);
     });
 
     it('Eth EOS token', async () => {
-        const spyGetAmountInTokenWei = jest
-            .spyOn(ethereumFunctions, 'getAmountInTokenWei')
-            .mockImplementationOnce(() => Promise.resolve(''))
-            .mockImplementationOnce(() => Promise.resolve('1000000000000000000'));
-
-        const spyGetTokenDecimals = jest
-            .spyOn(ethereumFunctions, 'getTokenDecimals')
-            .mockImplementationOnce(() => Promise.resolve(18));
-
-        const spyGetConversionReturn = jest
-            .spyOn(ethereumFunctions, 'getConversionReturn')
-            // eslint-disable-next-line quote-props
-            .mockImplementationOnce(() => Promise.resolve({ '0': '662806411110393058533', '1': '1327603895997775277' }));
+        const spyGetPathStepRate = jest
+            .spyOn(ethereumFunctions, 'getPathStepRate')
+            .mockImplementationOnce(() => Promise.resolve('662.806411110393058533'));
 
         const reserveFromCodeResult = {
             rows: [
@@ -383,8 +348,6 @@ describe('price tests', () => {
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
         expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(1);
-        expect(spyGetTokenDecimals).toHaveBeenCalledTimes(1);
-        expect(spyGetAmountInTokenWei).toHaveBeenCalledTimes(1);
-        expect(spyGetConversionReturn).toHaveBeenCalledTimes(1);
+        expect(spyGetPathStepRate).toHaveBeenCalledTimes(1);
     });
 });

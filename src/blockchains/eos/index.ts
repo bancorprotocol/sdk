@@ -231,11 +231,62 @@ export async function getConverterBlockchainId(token: Token) {
     return pathJson.smartTokens[token.blockchainId][token.symbol];
 }
 
-export async function getReserveTokens(converterBlockchainId, symbol, isMulti) {
+async function getReserveTokens(converterBlockchainId, symbol, isMulti) {
     const reserves = await getReservesFromCode(converterBlockchainId, isMulti ? symbol : null);
     return reserves.rows.map(reserve => ({
         blockchainType: 'eos',
         blockchainId: reserve.contract,
         symbol: getSymbol(reserve.currency)
     }));
+}
+
+export async function getConversionPath(from: Token, to: Token) {
+    const sourcePath = await getPathToAnchor(from);
+    const targetPath = await getPathToAnchor(to);
+    return getShortestPath(sourcePath, targetPath);
+}
+
+async function getPathToAnchor(token: Token) {
+    if (isAnchorToken(token))
+        return [getTokenBlockchainId(token)];
+
+    const blockchainId = await getConverterBlockchainId(token);
+    const reserveTokens = await getReserveTokens(Object.values(blockchainId)[0], token.symbol, isMultiConverter(token.blockchainId));
+    for (const reserveToken of reserveTokens.filter(reserveToken => reserveToken.blockchainId != token.blockchainId)) {
+        const path = await getPathToAnchor(reserveToken);
+        if (path.length > 0)
+            return [getTokenBlockchainId(token), blockchainId, ...path];
+    }
+
+    return [];
+}
+
+function getShortestPath(sourcePath, targetPath) {
+    if (sourcePath.length > 0 && targetPath.length > 0) {
+        let i = sourcePath.length - 1;
+        let j = targetPath.length - 1;
+        while (i >= 0 && j >= 0 && JSON.stringify(sourcePath[i]) == JSON.stringify(targetPath[j])) {
+            i--;
+            j--;
+        }
+
+        const path = [];
+        for (let m = 0; m <= i + 1; m++)
+            path.push(sourcePath[m]);
+        for (let n = j; n >= 0; n--)
+            path.push(targetPath[n]);
+
+        let length = 0;
+        for (let p = 0; p < path.length; p += 1) {
+            for (let q = p + 2; q < path.length - p % 2; q += 2) {
+                if (path[p] == path[q])
+                    p = q;
+            }
+            path[length++] = path[p];
+        }
+
+        return path.slice(0, length);
+    }
+
+    return [];
 }

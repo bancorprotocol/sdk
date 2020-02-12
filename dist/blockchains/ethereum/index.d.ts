@@ -5,13 +5,8 @@ export declare function isAnchorToken(token: Token): boolean;
 export declare function getTokenBlockchainId(token: Token): string;
 export declare const getAmountInTokenWei: (token: string, amount: string, web3: any) => Promise<string>;
 export declare const getConversionReturn: (converterPair: ConversionPathStep, amount: string, ABI: any, web3: any) => Promise<any>;
-export declare const getTokenDecimals: (tokenBlockchainId: any) => Promise<any>;
 export declare function getPathStepRate(converterPair: ConversionPathStep, amount: string): Promise<string>;
-export declare function getRegistry(): Promise<any>;
 export declare const getConverterBlockchainId: (blockchainId: any) => Promise<any>;
-export declare function getReserveTokens(converterBlockchainId: any): Promise<Token[]>;
-export declare function getConverterSmartToken(converter: any): Promise<any>;
-export declare function getSmartTokens(token: Token): Promise<any>;
 export declare function retrieveContractVersion(contract: any): Promise<{
     type: string;
     value: any;

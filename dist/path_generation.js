@@ -35,13 +35,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -52,20 +45,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var eos = __importStar(require("./blockchains/eos/index"));
 var ethereum = __importStar(require("./blockchains/ethereum/index"));
-function getConverterToken(blockchainId, connector, blockchainType) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!(blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, ethereum.getConverterSmartToken(connector)];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2: return [2 /*return*/, blockchainId];
-            }
-        });
-    });
-}
-exports.getConverterToken = getConverterToken;
 function generatePathByBlockchainIds(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
         var pathObjects, paths, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
@@ -84,7 +63,7 @@ function generatePathByBlockchainIds(sourceToken, targetToken) {
                 case 1:
                     _c = (_b = pathObjects.paths).push;
                     _d = { type: 'eos' };
-                    return [4 /*yield*/, getConversionPath(sourceToken, targetToken)];
+                    return [4 /*yield*/, eos.getConversionPath(sourceToken, targetToken)];
                 case 2:
                     _c.apply(_b, [(_d.path = _l.sent(), _d)]);
                     return [3 /*break*/, 11];
@@ -98,7 +77,7 @@ function generatePathByBlockchainIds(sourceToken, targetToken) {
                     paths = _l.sent();
                     _f = (_e = pathObjects.paths).push;
                     _g = { type: 'eos' };
-                    return [4 /*yield*/, getConversionPath(sourceToken, eos.anchorToken)];
+                    return [4 /*yield*/, eos.getConversionPath(sourceToken, eos.anchorToken)];
                 case 7:
                     _f.apply(_e, [(_g.path = _l.sent(), _g)]);
                     pathObjects.paths.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
@@ -109,7 +88,7 @@ function generatePathByBlockchainIds(sourceToken, targetToken) {
                     pathObjects.paths.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
                     _j = (_h = pathObjects.paths).push;
                     _k = { type: 'eos' };
-                    return [4 /*yield*/, getConversionPath(eos.anchorToken, targetToken)];
+                    return [4 /*yield*/, eos.getConversionPath(eos.anchorToken, targetToken)];
                 case 10:
                     _j.apply(_h, [(_k.path = _l.sent(), _k)]);
                     return [3 /*break*/, 11];
@@ -119,77 +98,3 @@ function generatePathByBlockchainIds(sourceToken, targetToken) {
     });
 }
 exports.generatePathByBlockchainIds = generatePathByBlockchainIds;
-function getConversionPath(from, to) {
-    return __awaiter(this, void 0, void 0, function () {
-        var sourcePath, targetPath;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getPathToAnchor(from)];
-                case 1:
-                    sourcePath = _a.sent();
-                    return [4 /*yield*/, getPathToAnchor(to)];
-                case 2:
-                    targetPath = _a.sent();
-                    return [2 /*return*/, getShortestPath(sourcePath, targetPath)];
-            }
-        });
-    });
-}
-function getPathToAnchor(token) {
-    return __awaiter(this, void 0, void 0, function () {
-        var blockchainId, reserveTokens, _i, _a, reserveToken, path;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    if (eos.isAnchorToken(token))
-                        return [2 /*return*/, [eos.getTokenBlockchainId(token)]];
-                    return [4 /*yield*/, eos.getConverterBlockchainId(token)];
-                case 1:
-                    blockchainId = _b.sent();
-                    return [4 /*yield*/, eos.getReserveTokens(Object.values(blockchainId)[0], token.symbol, eos.isMultiConverter(token.blockchainId))];
-                case 2:
-                    reserveTokens = _b.sent();
-                    _i = 0, _a = reserveTokens.filter(function (reserveToken) { return reserveToken.blockchainId != token.blockchainId; });
-                    _b.label = 3;
-                case 3:
-                    if (!(_i < _a.length)) return [3 /*break*/, 6];
-                    reserveToken = _a[_i];
-                    return [4 /*yield*/, getPathToAnchor(reserveToken)];
-                case 4:
-                    path = _b.sent();
-                    if (path.length > 0)
-                        return [2 /*return*/, __spreadArrays([eos.getTokenBlockchainId(token), blockchainId], path)];
-                    _b.label = 5;
-                case 5:
-                    _i++;
-                    return [3 /*break*/, 3];
-                case 6: return [2 /*return*/, []];
-            }
-        });
-    });
-}
-function getShortestPath(sourcePath, targetPath) {
-    if (sourcePath.length > 0 && targetPath.length > 0) {
-        var i = sourcePath.length - 1;
-        var j = targetPath.length - 1;
-        while (i >= 0 && j >= 0 && JSON.stringify(sourcePath[i]) == JSON.stringify(targetPath[j])) {
-            i--;
-            j--;
-        }
-        var path = [];
-        for (var m = 0; m <= i + 1; m++)
-            path.push(sourcePath[m]);
-        for (var n = j; n >= 0; n--)
-            path.push(targetPath[n]);
-        var length_1 = 0;
-        for (var p = 0; p < path.length; p += 1) {
-            for (var q = p + 2; q < path.length - p % 2; q += 2) {
-                if (path[p] == path[q])
-                    p = q;
-            }
-            path[length_1++] = path[p];
-        }
-        return path.slice(0, length_1);
-    }
-    return [];
-}

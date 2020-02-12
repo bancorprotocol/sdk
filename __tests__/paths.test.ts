@@ -77,19 +77,9 @@ describe('Path finder tests', () => {
                 '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c'
             ]]));
 
-        const spyGetEosConverterBlockchainId = jest
-            .spyOn(eos, 'getConverterBlockchainId')
-            .mockResolvedValueOnce({ BNTKRM: 'bancorc11112' });
-
-        const resToken = {
-            blockchainType: 'eos' as path_generation.BlockchainType,
-            blockchainId: 'bntbntbntbnt',
-            symbol: 'BNT'
-        };
-
-        const spyEosGetReserveTokens = jest
-            .spyOn(eos, 'getReserveTokens')
-            .mockImplementationOnce(() => Promise.resolve([resToken]));
+        const spyGetConversionPath = jest
+            .spyOn(eos, 'getConversionPath')
+            .mockResolvedValueOnce([{ BNT: 'bntbntbntbnt' }, { BNTKRM: 'bancorc11112' }, { KARMA: 'therealkarma' }]);
 
         const response = await sdk.generatePath({
             blockchainType: 'ethereum',
@@ -118,7 +108,6 @@ describe('Path finder tests', () => {
 
         expect(response.paths).toEqual(expectedResult);
         expect(spyGetAllPaths).toHaveBeenCalledTimes(1);
-        expect(spyEosGetReserveTokens).toHaveBeenCalledTimes(1);
-        expect(spyGetEosConverterBlockchainId).toHaveBeenCalledTimes(1);
+        expect(spyGetConversionPath).toHaveBeenCalledTimes(1);
     });
 });

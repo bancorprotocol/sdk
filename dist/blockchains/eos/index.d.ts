@@ -24,5 +24,5 @@ export declare function getBalance(string: any): any;
 export declare function buildPathsFile(): Promise<void>;
 export declare function getPathStepRate(pair: ConversionPathStep, amount: string): Promise<any>;
 export declare function getConverterBlockchainId(token: Token): Promise<any>;
-export declare function getReserveTokens(converterBlockchainId: any, symbol: any, isMulti: any): Promise<any>;
+export declare function getConversionPath(from: Token, to: Token): Promise<any[]>;
 export {};
