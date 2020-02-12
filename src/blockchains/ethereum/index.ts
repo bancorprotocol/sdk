@@ -32,10 +32,6 @@ export function isAnchorToken(token: Token) {
     return Web3.utils.toChecksumAddress(token.blockchainId) == anchorToken.blockchainId;
 }
 
-export function getTokenBlockchainId(token: Token) {
-    return token.blockchainId.toLowerCase();
-}
-
 export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
     const tokenContract = new web3.eth.Contract(ERC20Token, token);
     const decimals = await tokenContract.methods.decimals().call();

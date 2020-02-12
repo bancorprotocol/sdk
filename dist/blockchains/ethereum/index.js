@@ -94,10 +94,6 @@ function isAnchorToken(token) {
     return web3_1.default.utils.toChecksumAddress(token.blockchainId) == exports.anchorToken.blockchainId;
 }
 exports.isAnchorToken = isAnchorToken;
-function getTokenBlockchainId(token) {
-    return token.blockchainId.toLowerCase();
-}
-exports.getTokenBlockchainId = getTokenBlockchainId;
 exports.getAmountInTokenWei = function (token, amount, web3) { return __awaiter(void 0, void 0, void 0, function () {
     var tokenContract, decimals;
     return __generator(this, function (_a) {
