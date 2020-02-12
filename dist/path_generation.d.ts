@@ -23,9 +23,5 @@ export interface Token {
     blockchainId: string;
     symbol?: string;
 }
-export declare const getConverterBlockchainId: (token: Token) => Promise<any>;
 export declare function getConverterToken(blockchainId: any, connector: any, blockchainType: BlockchainType): Promise<any>;
 export declare function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token): Promise<ConversionPaths>;
-export declare function getConversionPath(from: Token, to: Token): Promise<any[]>;
-export declare function findPath(pathObject: ConversionPathsTokens, blockchainType: BlockchainType): Promise<any[]>;
-export declare function getPathToAnchorByBlockchainId(token: Token, anchorToken: Token): any;
