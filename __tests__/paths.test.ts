@@ -12,23 +12,6 @@ describe('Path finder tests', () => {
         jest.restoreAllMocks();
     });
 
-    it('EOS token to EOS token path finder', async () => {
-        const karmaBntPath: path_generation.ConversionPath[] = [{ type: 'eos', path: ['therealkarma', 'bancorc11112', 'bntbntbntbnt']}];
-
-        const spyGeneratePath = jest
-            .spyOn(path_generation, 'generatePathByBlockchainIds')
-            .mockImplementation(() => Promise.resolve(karmaBntPath));
-
-        const paths = await sdk.generatePath(
-            { blockchainId: 'bntbntbntbnt', blockchainType: 'eos', symbol: 'BNT' },
-            { blockchainId: 'therealkarma', symbol: 'KARMA', blockchainType: 'eos' }
-        );
-
-        expect(spyGeneratePath).toHaveBeenCalledTimes(1);
-        const shortestPathResult = ['therealkarma', 'bancorc11112', 'bntbntbntbnt'];
-        expect(paths[0].path).toEqual(shortestPathResult);
-    });
-
     it('ETH to token path finder', async () => {
         const srcToken = '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315';
         const trgToken = '0xd26114cd6ee289accf82350c8d8487fedb8a0c07';

@@ -1,6 +1,6 @@
 import * as eos from './blockchains/eos/index';
 import * as ethereum from './blockchains/ethereum/index';
-import { Token, generatePathByBlockchainIds, ConversionPath, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
+import { Token, ConversionPath, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
 
 interface Settings {
     ethereumNodeEndpoint: string;
@@ -25,7 +25,30 @@ export async function buildPathsFile() {
 }
 
 export async function generatePath(sourceToken: Token, targetToken: Token) {
-    return await generatePathByBlockchainIds(sourceToken, targetToken);
+    const pathObjects: ConversionPath[] = [];
+    let paths;
+
+    switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
+        case 'eos,eos':
+            pathObjects.push({ type: 'eos', path: await eos.getConversionPath(sourceToken, targetToken) });
+            break;
+        case 'ethereum,ethereum':
+            paths = await ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
+            pathObjects.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            break;
+        case 'eos,ethereum':
+            paths = await ethereum.getAllPaths(sourceToken.blockchainId, ethereum.anchorToken.blockchainId);
+            pathObjects.push({ type: 'eos', path: await eos.getConversionPath(sourceToken, eos.anchorToken) });
+            pathObjects.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            break;
+        case 'ethereum,eos':
+            paths = await ethereum.getAllPaths(ethereum.anchorToken.blockchainId, targetToken.blockchainId);
+            pathObjects.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            pathObjects.push({ type: 'eos', path: await eos.getConversionPath(eos.anchorToken, targetToken) });
+            break;
+    }
+
+    return pathObjects;
 }
 
 async function calculateRateFromPaths(paths: ConversionPath[], amount) {

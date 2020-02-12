@@ -16,4 +16,3 @@ export interface Token {
     blockchainId: string;
     symbol?: string;
 }
-export declare function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token): Promise<ConversionPath[]>;
