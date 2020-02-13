@@ -4,7 +4,7 @@ export declare function init(ethereumNodeUrl: any, ethereumContractRegistryAddre
 export declare const getAmountInTokenWei: (token: string, amount: string, web3: any) => Promise<string>;
 export declare const getConversionReturn: (converterPair: ConversionPathStep, amount: string, ABI: any, web3: any) => Promise<any>;
 export declare function getPathStepRate(converterPair: ConversionPathStep, amount: string): Promise<string>;
-export declare const getConverterBlockchainId: (blockchainId: any) => Promise<any>;
+export declare function getConverterBlockchainId(tokenBlockchainId: any): Promise<any>;
 export declare function retrieveContractVersion(contract: any): Promise<{
     type: string;
     value: any;

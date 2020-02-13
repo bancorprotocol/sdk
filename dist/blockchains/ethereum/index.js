@@ -149,17 +149,20 @@ function getPathStepRate(converterPair, amount) {
     });
 }
 exports.getPathStepRate = getPathStepRate;
-exports.getConverterBlockchainId = function (blockchainId) { return __awaiter(void 0, void 0, void 0, function () {
-    var tokenContract;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                tokenContract = new web3.eth.Contract(SmartToken_1.SmartToken, blockchainId);
-                return [4 /*yield*/, tokenContract.methods.owner().call()];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
+function getConverterBlockchainId(tokenBlockchainId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var tokenContract;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    tokenContract = new web3.eth.Contract(SmartToken_1.SmartToken, tokenBlockchainId);
+                    return [4 /*yield*/, tokenContract.methods.owner().call()];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
     });
-}); };
+}
+exports.getConverterBlockchainId = getConverterBlockchainId;
 function retrieveContractVersion(contract) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

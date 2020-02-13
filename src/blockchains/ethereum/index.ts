@@ -57,10 +57,10 @@ export async function getPathStepRate(converterPair: ConversionPathStep, amount:
     }
 }
 
-export const getConverterBlockchainId = async blockchainId => {
-    const tokenContract = new web3.eth.Contract(SmartToken, blockchainId);
+export async function getConverterBlockchainId(tokenBlockchainId) {
+    const tokenContract = new web3.eth.Contract(SmartToken, tokenBlockchainId);
     return await tokenContract.methods.owner().call();
-};
+}
 
 export async function retrieveContractVersion(contract) {
     return await retrieve_contract_version.run(web3, contract);
