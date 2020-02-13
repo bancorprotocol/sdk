@@ -1,3 +1,7 @@
+### 0.1.8
+* Path generation on Ethereum now always returns the shortest path
+
+
 ### 0.1.7
 * Added support for EOS multi converter contract
 
