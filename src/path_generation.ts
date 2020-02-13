@@ -2,7 +2,7 @@ export type BlockchainType = 'ethereum' | 'eos';
 
 export interface ConversionPath {
     type: BlockchainType;
-    path: string[] | ConversionToken[];
+    path: Token[];
 }
 
 export interface ConversionToken {
