@@ -189,17 +189,20 @@ function getRate(sourceToken, targetToken, amount) {
     });
 }
 exports.getRate = getRate;
-function ethereumGetAllPaths(sourceToken, targetToken) {
+function getAllPaths(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, index_1.getAllPaths(sourceToken, targetToken)];
+                case 0:
+                    if (!(sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, index_1.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId)];
                 case 1: return [2 /*return*/, _a.sent()];
+                case 2: throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
             }
         });
     });
 }
-exports.ethereumGetAllPaths = ethereumGetAllPaths;
+exports.getAllPaths = getAllPaths;
 exports.default = {
     init: init,
     generateEosPaths: generateEosPaths,
@@ -207,5 +210,5 @@ exports.default = {
     generatePath: generatePath,
     getRateByPath: exports.getRateByPath,
     buildPathsFile: eos_1.buildPathsFile,
-    ethereumGetAllPaths: ethereumGetAllPaths
+    getAllPaths: getAllPaths
 };

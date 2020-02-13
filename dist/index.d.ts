@@ -12,7 +12,7 @@ export declare const calculateRateFromPaths: (paths: ConversionPaths, amount: an
 export declare function calculateRateFromPath(paths: ConversionPaths, amount: any): Promise<any>;
 export declare const getRateByPath: (paths: ConversionPaths, amount: any) => Promise<any>;
 export declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<any>;
-export declare function ethereumGetAllPaths(sourceToken: any, targetToken: any): Promise<any[]>;
+export declare function getAllPaths(sourceToken: Token, targetToken: Token): Promise<any[]>;
 declare const _default: {
     init: typeof init;
     generateEosPaths: typeof generateEosPaths;
@@ -20,6 +20,6 @@ declare const _default: {
     generatePath: typeof generatePath;
     getRateByPath: (paths: ConversionPaths, amount: any) => Promise<any>;
     buildPathsFile: typeof buildPathsFile;
-    ethereumGetAllPaths: typeof ethereumGetAllPaths;
+    getAllPaths: typeof getAllPaths;
 };
 export default _default;

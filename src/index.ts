@@ -1,4 +1,4 @@
-import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate, getAllPaths } from './blockchains/ethereum/index';
+import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate, getAllPaths as ethereumGetAllPaths} from './blockchains/ethereum/index';
 import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMultiConverter } from './blockchains/eos';
 import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
 
@@ -64,8 +64,10 @@ export async function getRate(sourceToken: Token, targetToken: Token, amount: st
     return await getRateByPath(paths, amount);
 }
 
-export async function ethereumGetAllPaths(sourceToken, targetToken) {
-    return await getAllPaths(sourceToken, targetToken);
+export async function getAllPaths(sourceToken: Token, targetToken: Token) {
+    if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')
+        return await ethereumGetAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
+    throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 
 export default {
@@ -75,5 +77,5 @@ export default {
     generatePath,
     getRateByPath,
     buildPathsFile,
-    ethereumGetAllPaths
+    getAllPaths
 };
