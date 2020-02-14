@@ -64,29 +64,117 @@ var BancorConverterRegistry_1 = require("./contracts/BancorConverterRegistry");
 var SmartToken_1 = require("./contracts/SmartToken");
 var ERC20Token_1 = require("./contracts/ERC20Token");
 var utils = __importStar(require("./utils"));
-var retrieve_contract_version = __importStar(require("./retrieve_contract_version"));
+var retrieve_converter_version = __importStar(require("./retrieve_converter_version"));
 var fetch_conversion_events = __importStar(require("./fetch_conversion_events"));
 var web3;
-var registry;
+var converterRegistryContract;
 exports.anchorToken = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
-function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
+function init(nodeAddress, contractRegistryAddress) {
     return __awaiter(this, void 0, void 0, function () {
-        var contractRegistryContract, registryBlockchainId;
+        var contractRegistryContract, converterRegistryAddress;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    web3 = new web3_1.default(new web3_1.default.providers.HttpProvider(ethereumNodeUrl));
-                    contractRegistryContract = new web3.eth.Contract(ContractRegistry_1.ContractRegistry, ethereumContractRegistryAddress);
+                    web3 = new web3_1.default(new web3_1.default.providers.HttpProvider(nodeAddress));
+                    contractRegistryContract = new web3.eth.Contract(ContractRegistry_1.ContractRegistry, contractRegistryAddress);
                     return [4 /*yield*/, contractRegistryContract.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
                 case 1:
-                    registryBlockchainId = _a.sent();
-                    registry = new web3.eth.Contract(BancorConverterRegistry_1.BancorConverterRegistry, registryBlockchainId);
+                    converterRegistryAddress = _a.sent();
+                    converterRegistryContract = new web3.eth.Contract(BancorConverterRegistry_1.BancorConverterRegistry, converterRegistryAddress);
                     return [2 /*return*/];
             }
         });
     });
 }
 exports.init = init;
+function getPathStepRate(smartToken, fromToken, toToken, amount) {
+    return __awaiter(this, void 0, void 0, function () {
+        var inputAmount, outputAmount, error_1, outputAmount;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, exports.toWei(fromToken, amount)];
+                case 1:
+                    inputAmount = _a.sent();
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 5, , 8]);
+                    return [4 /*yield*/, exports.getReturn(smartToken, BancorConverter_1.BancorConverter, fromToken, toToken, inputAmount)];
+                case 3:
+                    outputAmount = _a.sent();
+                    return [4 /*yield*/, exports.fromWei(toToken, outputAmount['0'])];
+                case 4: return [2 /*return*/, _a.sent()];
+                case 5:
+                    error_1 = _a.sent();
+                    if (!error_1.message.includes('insufficient data for uint256'))
+                        throw error_1;
+                    return [4 /*yield*/, exports.getReturn(smartToken, BancorConverterV9_1.BancorConverterV9, fromToken, toToken, inputAmount)];
+                case 6:
+                    outputAmount = _a.sent();
+                    return [4 /*yield*/, exports.fromWei(toToken, outputAmount)];
+                case 7: return [2 /*return*/, _a.sent()];
+                case 8: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getPathStepRate = getPathStepRate;
+function retrieveConverterVersion(converter) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, retrieve_converter_version.run(web3, converter)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.retrieveConverterVersion = retrieveConverterVersion;
+function fetchConversionEvents(token, fromBlock, toBlock) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fetch_conversion_events.run(web3, token, fromBlock, toBlock)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.fetchConversionEvents = fetchConversionEvents;
+function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
+    return __awaiter(this, void 0, void 0, function () {
+        var fromBlock, toBlock;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, utils.timestampToBlockNumber(web3, fromTimestamp)];
+                case 1:
+                    fromBlock = _a.sent();
+                    return [4 /*yield*/, utils.timestampToBlockNumber(web3, toTimestamp)];
+                case 2:
+                    toBlock = _a.sent();
+                    return [4 /*yield*/, fetch_conversion_events.run(web3, token, fromBlock, toBlock)];
+                case 3: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
+function getAllPaths(sourceToken, targetToken) {
+    return __awaiter(this, void 0, void 0, function () {
+        var paths, graph;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    paths = [];
+                    return [4 /*yield*/, exports.getGraph()];
+                case 1:
+                    graph = _a.sent();
+                    getAllPathsRecursive(paths, [sourceToken], targetToken, graph);
+                    return [2 /*return*/, paths];
+            }
+        });
+    });
+}
+exports.getAllPaths = getAllPaths;
 exports.toWei = function (token, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var tokenContract, decimals;
@@ -134,77 +222,6 @@ exports.getReturn = function (smartToken, converterABI, fromToken, toToken, amou
         });
     });
 };
-function getPathStepRate(smartToken, fromToken, toToken, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        var inputAmount, outputAmount, error_1, outputAmount;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, exports.toWei(fromToken, amount)];
-                case 1:
-                    inputAmount = _a.sent();
-                    _a.label = 2;
-                case 2:
-                    _a.trys.push([2, 5, , 8]);
-                    return [4 /*yield*/, exports.getReturn(smartToken, BancorConverter_1.BancorConverter, fromToken, toToken, inputAmount)];
-                case 3:
-                    outputAmount = _a.sent();
-                    return [4 /*yield*/, exports.fromWei(toToken, outputAmount['0'])];
-                case 4: return [2 /*return*/, _a.sent()];
-                case 5:
-                    error_1 = _a.sent();
-                    if (!error_1.message.includes('insufficient data for uint256'))
-                        throw error_1;
-                    return [4 /*yield*/, exports.getReturn(smartToken, BancorConverterV9_1.BancorConverterV9, fromToken, toToken, inputAmount)];
-                case 6:
-                    outputAmount = _a.sent();
-                    return [4 /*yield*/, exports.fromWei(toToken, outputAmount)];
-                case 7: return [2 /*return*/, _a.sent()];
-                case 8: return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.getPathStepRate = getPathStepRate;
-function retrieveConverterVersion(converter) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, retrieve_contract_version.run(web3, converter)];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
-}
-exports.retrieveConverterVersion = retrieveConverterVersion;
-function fetchConversionEvents(token, fromBlock, toBlock) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, fetch_conversion_events.run(web3, token, fromBlock, toBlock)];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
-}
-exports.fetchConversionEvents = fetchConversionEvents;
-function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
-    return __awaiter(this, void 0, void 0, function () {
-        var fromBlock, toBlock;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, utils.timestampToBlockNumber(web3, fromTimestamp)];
-                case 1:
-                    fromBlock = _a.sent();
-                    return [4 /*yield*/, utils.timestampToBlockNumber(web3, toTimestamp)];
-                case 2:
-                    toBlock = _a.sent();
-                    return [4 /*yield*/, fetch_conversion_events.run(web3, token, fromBlock, toBlock)];
-                case 3: return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
-}
-exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
 exports.getGraph = function () {
     return __awaiter(this, void 0, void 0, function () {
         var graph, MULTICALL_ABI, MULTICALL_ADDRESS, multicall, convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
@@ -215,10 +232,10 @@ exports.getGraph = function () {
                     MULTICALL_ABI = [{ "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
                     MULTICALL_ADDRESS = '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2';
                     multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
-                    return [4 /*yield*/, registry.methods.getConvertibleTokens().call()];
+                    return [4 /*yield*/, converterRegistryContract.methods.getConvertibleTokens().call()];
                 case 1:
                     convertibleTokens = _b.sent();
-                    calls = convertibleTokens.map(function (convertibleToken) { return [registry._address, registry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
+                    calls = convertibleTokens.map(function (convertibleToken) { return [converterRegistryContract._address, converterRegistryContract.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
                     return [4 /*yield*/, multicall.methods.aggregate(calls, true).call()];
                 case 2:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
@@ -255,20 +272,3 @@ function getAllPathsRecursive(paths, path, targetToken, graph) {
             getAllPathsRecursive(paths, __spreadArrays(path, [nextToken]), targetToken, graph);
         }
 }
-function getAllPaths(sourceToken, targetToken) {
-    return __awaiter(this, void 0, void 0, function () {
-        var paths, graph;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    paths = [];
-                    return [4 /*yield*/, exports.getGraph()];
-                case 1:
-                    graph = _a.sent();
-                    getAllPathsRecursive(paths, [sourceToken], targetToken, graph);
-                    return [2 /*return*/, paths];
-            }
-        });
-    });
-}
-exports.getAllPaths = getAllPaths;
