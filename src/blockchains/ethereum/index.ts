@@ -1,13 +1,12 @@
-/* eslint-disable max-len */
-/* eslint-disable no-sync */
-/* eslint-disable prefer-reflect */
 import Web3 from 'web3';
+
 import { ContractRegistry } from './contracts/ContractRegistry';
 import { BancorConverter } from './contracts/BancorConverter';
 import { BancorConverterV9 } from './contracts/BancorConverterV9';
 import { BancorConverterRegistry } from './contracts/BancorConverterRegistry';
-import { SmartToken } from './contracts/SmartToken';
 import { ERC20Token } from './contracts/ERC20Token';
+import { SmartToken } from './contracts/SmartToken';
+
 import * as utils from './utils';
 import * as retrieve_converter_version from './retrieve_converter_version';
 import * as fetch_conversion_events from './fetch_conversion_events';
@@ -24,7 +23,7 @@ export async function init(nodeAddress, contractRegistryAddress) {
     converterRegistryContract = new web3.eth.Contract(BancorConverterRegistry, converterRegistryAddress);
 }
 
-export async function getPathStepRate(smartToken, fromToken, toToken, amount) {
+export async function getConversionRate(smartToken, fromToken, toToken, amount) {
     const inputAmount = await toWei(fromToken, amount);
     try {
         const outputAmount = await getReturn(smartToken, BancorConverter, fromToken, toToken, inputAmount);
@@ -55,7 +54,7 @@ export async function fetchConversionEventsByTimestamp(token, fromTimestamp, toT
 export async function getAllPaths(sourceToken, targetToken) {
     const paths = [];
     const graph = await getGraph();
-    getAllPathsRecursive(paths, [sourceToken], targetToken, graph);
+    getAllPathsRecursive(paths, graph, [sourceToken], targetToken);
     return paths;
 }
 
@@ -108,10 +107,10 @@ function updateGraph(graph, key, value) {
         graph[key].push(value);
 }
 
-function getAllPathsRecursive(paths, path, targetToken, graph) {
-    const prevToken = path[path.length - 1];
-    if (prevToken == targetToken)
-        paths.push(path);
-    else for (const nextToken of graph[prevToken].filter(token => !path.includes(token)))
-        getAllPathsRecursive(paths, [...path, nextToken], targetToken, graph);
+function getAllPathsRecursive(paths, graph, tokens, destToken) {
+    const prevToken = tokens[tokens.length - 1];
+    if (prevToken == destToken)
+        paths.push(tokens);
+    else for (const nextToken of graph[prevToken].filter(token => !tokens.includes(token)))
+        getAllPathsRecursive(paths, graph, [...tokens, nextToken], destToken);
 }

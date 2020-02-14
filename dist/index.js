@@ -152,7 +152,7 @@ function getRateByPath(paths, amount) {
                     _b.label = 3;
                 case 3:
                     if (!(i < path.length - 1)) return [3 /*break*/, 6];
-                    return [4 /*yield*/, eos.getPathStepRate({ converter: __assign({}, path[i + 1]), fromToken: path[i], toToken: path[i + 2] }, amount)];
+                    return [4 /*yield*/, eos.getConversionRate({ converter: __assign({}, path[i + 1]), fromToken: path[i], toToken: path[i + 2] }, amount)];
                 case 4:
                     amount = _b.sent();
                     _b.label = 5;
@@ -165,7 +165,7 @@ function getRateByPath(paths, amount) {
                     _b.label = 8;
                 case 8:
                     if (!(i < path.length - 1)) return [3 /*break*/, 11];
-                    return [4 /*yield*/, ethereum.getPathStepRate(path[i + 1].blockchainId, path[i].blockchainId, path[i + 2].blockchainId, amount)];
+                    return [4 /*yield*/, ethereum.getConversionRate(path[i + 1].blockchainId, path[i].blockchainId, path[i + 2].blockchainId, amount)];
                 case 9:
                     amount = _b.sent();
                     _b.label = 10;

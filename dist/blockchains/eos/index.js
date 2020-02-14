@@ -280,7 +280,7 @@ function getConversionSteps(path) {
     });
 }
 exports.getConversionSteps = getConversionSteps;
-function getPathStepRate(step, amount) {
+function getConversionRate(step, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var toTokenBlockchainId, fromTokenBlockchainId, fromTokenSymbol, toTokenSymbol, isFromTokenMultiToken, isToTokenMultiToken, converterBlockchainId, reserveSymbol, reserves, reservesContacts, conversionFee, isConversionFromSmartToken, balanceFrom, balanceTo, isConversionToSmartToken, balanceObject, converterReserves, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amountWithoutFee;
         var _a;
@@ -369,7 +369,7 @@ function getPathStepRate(step, amount) {
         });
     });
 }
-exports.getPathStepRate = getPathStepRate;
+exports.getConversionRate = getConversionRate;
 function getConverterBlockchainId(token) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

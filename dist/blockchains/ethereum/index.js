@@ -53,16 +53,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/* eslint-disable max-len */
-/* eslint-disable no-sync */
-/* eslint-disable prefer-reflect */
 var web3_1 = __importDefault(require("web3"));
 var ContractRegistry_1 = require("./contracts/ContractRegistry");
 var BancorConverter_1 = require("./contracts/BancorConverter");
 var BancorConverterV9_1 = require("./contracts/BancorConverterV9");
 var BancorConverterRegistry_1 = require("./contracts/BancorConverterRegistry");
-var SmartToken_1 = require("./contracts/SmartToken");
 var ERC20Token_1 = require("./contracts/ERC20Token");
+var SmartToken_1 = require("./contracts/SmartToken");
 var utils = __importStar(require("./utils"));
 var retrieve_converter_version = __importStar(require("./retrieve_converter_version"));
 var fetch_conversion_events = __importStar(require("./fetch_conversion_events"));
@@ -87,7 +84,7 @@ function init(nodeAddress, contractRegistryAddress) {
     });
 }
 exports.init = init;
-function getPathStepRate(smartToken, fromToken, toToken, amount) {
+function getConversionRate(smartToken, fromToken, toToken, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var inputAmount, outputAmount, error_1, outputAmount;
         return __generator(this, function (_a) {
@@ -117,7 +114,7 @@ function getPathStepRate(smartToken, fromToken, toToken, amount) {
         });
     });
 }
-exports.getPathStepRate = getPathStepRate;
+exports.getConversionRate = getConversionRate;
 function retrieveConverterVersion(converter) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -168,7 +165,7 @@ function getAllPaths(sourceToken, targetToken) {
                     return [4 /*yield*/, exports.getGraph()];
                 case 1:
                     graph = _a.sent();
-                    getAllPathsRecursive(paths, [sourceToken], targetToken, graph);
+                    getAllPathsRecursive(paths, graph, [sourceToken], targetToken);
                     return [2 /*return*/, paths];
             }
         });
@@ -262,13 +259,13 @@ function updateGraph(graph, key, value) {
     else if (!graph[key].includes(value))
         graph[key].push(value);
 }
-function getAllPathsRecursive(paths, path, targetToken, graph) {
-    var prevToken = path[path.length - 1];
-    if (prevToken == targetToken)
-        paths.push(path);
+function getAllPathsRecursive(paths, graph, tokens, destToken) {
+    var prevToken = tokens[tokens.length - 1];
+    if (prevToken == destToken)
+        paths.push(tokens);
     else
-        for (var _i = 0, _a = graph[prevToken].filter(function (token) { return !path.includes(token); }); _i < _a.length; _i++) {
+        for (var _i = 0, _a = graph[prevToken].filter(function (token) { return !tokens.includes(token); }); _i < _a.length; _i++) {
             var nextToken = _a[_i];
-            getAllPathsRecursive(paths, __spreadArrays(path, [nextToken]), targetToken, graph);
+            getAllPathsRecursive(paths, graph, __spreadArrays(tokens, [nextToken]), destToken);
         }
 }

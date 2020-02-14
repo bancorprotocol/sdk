@@ -2,7 +2,7 @@ import { Token, Converter } from './path_generation';
 interface Settings {
     ethereumNodeEndpoint: string;
     eosNodeEndpoint: string;
-    ethereumContractRegistryAddress?: string;
+    ethereumContractRegistryAddress: string;
 }
 export declare function init(args: Settings): Promise<void>;
 export declare function buildPathsFile(): Promise<void>;
