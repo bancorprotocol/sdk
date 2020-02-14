@@ -52,12 +52,14 @@ describe('price tests', () => {
                 next_key: ''
             }));
 
-        const shortestPathResult = [
-            { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'therealkarma', symbol: 'KARMA' },
-            { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-            { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
-        ];
-        const response = await sdk.getRateByPath([shortestPathResult], '1');
+        const response = await sdk.getRateByPath([
+            [
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'therealkarma', symbol: 'KARMA' },
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+            ]
+        ], '1');
+
         expect(response).toEqual('0.0001829844683988806288491891575274667939632319964962791587405424143483339543408806225565348501066514424');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
@@ -119,12 +121,14 @@ describe('price tests', () => {
                 next_key: ''
             }));
 
-        const shortestPathResult = [
-            { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
-            { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11132', symbol: 'BNTOCT' },
-            { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorr11132', symbol: 'BNTOCT' }
-        ];
-        const response = await sdk.getRateByPath([shortestPathResult], '1');
+        const response = await sdk.getRateByPath([
+            [
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11132', symbol: 'BNTOCT' },
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorr11132', symbol: 'BNTOCT' }
+            ]
+        ], '1');
+
         expect(response).toEqual('1.149089903558139448418865873613390739346612635233348491398249012803478588145961828615748552277965966');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
@@ -187,12 +191,14 @@ describe('price tests', () => {
                 next_key: ''
             }));
 
-        const shortestPathResult = [
-            { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorr11132', symbol: 'BNTOCT' },
-            { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11132', symbol: 'BNTOCT' },
-            { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
-        ];
-        const response = await sdk.getRateByPath([shortestPathResult], '1');
+        const response = await sdk.getRateByPath([
+            [
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorr11132', symbol: 'BNTOCT' },
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11132', symbol: 'BNTOCT' },
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+            ]
+        ], '1');
+
         expect(response).toEqual('0.8702237365064194480241051027460314579651378541409636737891154514561671227625262785751104664761440822');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
@@ -216,14 +222,15 @@ describe('price tests', () => {
             .mockImplementationOnce(() => Promise.resolve({'0': '562688523539875175216'}))
             .mockImplementationOnce(() => Promise.resolve({'0': '209035338725170038366'}));
 
-        const shortestPathResult = [
-            { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
-            { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
-            { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
-            { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340'},
-            { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'}
-        ];
-        const response = await sdk.getRateByPath([shortestPathResult], '1');
+        const response = await sdk.getRateByPath([
+            [
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340'},
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'}
+            ]
+        ], '1');
 
         expect(response).toEqual('209.035338725170038366');
         expect(spyToWei).toHaveBeenCalledTimes(2);
