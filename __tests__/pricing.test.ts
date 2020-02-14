@@ -201,28 +201,34 @@ describe('price tests', () => {
     });
 
     it('Eth to eth token', async () => {
-        const spyGetConverterBlockchainId = jest
-            .spyOn(ethereum, 'getConverterBlockchainId')
-            .mockImplementationOnce(() => Promise.resolve('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA'))
-            .mockImplementationOnce(() => Promise.resolve('0x89f26Fff3F690B19057e6bEb7a82C5c29ADfe20B'));
+        const spyToWei = jest
+            .spyOn(ethereum, 'toWei')
+            .mockImplementationOnce(() => Promise.resolve('562688523539875175216'))
+            .mockImplementationOnce(() => Promise.resolve('209035338725170038366'));
 
-        const spyGetPathStepRate = jest
-            .spyOn(ethereum, 'getPathStepRate')
+        const spyFromWei = jest
+            .spyOn(ethereum, 'fromWei')
             .mockImplementationOnce(() => Promise.resolve('562.688523539875175216'))
             .mockImplementationOnce(() => Promise.resolve('209.035338725170038366'));
 
+        const spyGetReturn = jest
+            .spyOn(ethereum, 'getReturn')
+            .mockImplementationOnce(() => Promise.resolve({'0': '562688523539875175216'}))
+            .mockImplementationOnce(() => Promise.resolve({'0': '209035338725170038366'}));
+
         const shortestPathResult = [
-            { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315'},
+            { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
             { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
-            { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c'},
+            { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
             { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340'},
             { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'}
         ];
         const response = await sdk.getRateByPath([shortestPathResult], '1');
 
         expect(response).toEqual('209.035338725170038366');
-        expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(2);
-        expect(spyGetPathStepRate).toHaveBeenCalledTimes(2);
+        expect(spyToWei).toHaveBeenCalledTimes(2);
+        expect(spyFromWei).toHaveBeenCalledTimes(2);
+        expect(spyGetReturn).toHaveBeenCalledTimes(2);
     });
 
     it('Eos token to Eth', async () => {
@@ -266,13 +272,17 @@ describe('price tests', () => {
                 next_key: ''
             }));
 
-        const spyGetConverterBlockchainId = jest
-            .spyOn(ethereum, 'getConverterBlockchainId')
-            .mockImplementationOnce(() => Promise.resolve('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA'));
+        const spyToWei = jest
+            .spyOn(ethereum, 'toWei')
+            .mockImplementationOnce(() => Promise.resolve('274802734836'));
 
-        const spyGetPathStepRate = jest
-            .spyOn(ethereum, 'getPathStepRate')
+        const spyFromWei = jest
+            .spyOn(ethereum, 'fromWei')
             .mockImplementationOnce(() => Promise.resolve('0.000000274802734836'));
+
+        const spyGetReturn = jest
+            .spyOn(ethereum, 'getReturn')
+            .mockImplementationOnce(() => Promise.resolve({'0': '274802734836'}));
 
         const response = await sdk.getRateByPath([
             [
@@ -281,9 +291,9 @@ describe('price tests', () => {
                 { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
             ],
             [
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c'},
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
                 { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315'}
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'}
             ]
         ], '1');
 
@@ -291,14 +301,23 @@ describe('price tests', () => {
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
-        expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(1);
-        expect(spyGetPathStepRate).toHaveBeenCalledTimes(1);
+        expect(spyToWei).toHaveBeenCalledTimes(1);
+        expect(spyFromWei).toHaveBeenCalledTimes(1);
+        expect(spyGetReturn).toHaveBeenCalledTimes(1);
     });
 
     it('Eth EOS token', async () => {
-        const spyGetPathStepRate = jest
-            .spyOn(ethereum, 'getPathStepRate')
+        const spyToWei = jest
+            .spyOn(ethereum, 'toWei')
+            .mockImplementationOnce(() => Promise.resolve('662806411110393058533'));
+
+        const spyFromWei = jest
+            .spyOn(ethereum, 'fromWei')
             .mockImplementationOnce(() => Promise.resolve('662.806411110393058533'));
+
+        const spyGetReturn = jest
+            .spyOn(ethereum, 'getReturn')
+            .mockImplementationOnce(() => Promise.resolve({'0': '662806411110393058533'}));
 
         const reserveFromCodeResult = {
             rows: [
@@ -339,15 +358,11 @@ describe('price tests', () => {
                 next_key: ''
             }));
 
-        const spyGetConverterBlockchainId = jest
-            .spyOn(ethereum, 'getConverterBlockchainId')
-            .mockImplementationOnce(() => Promise.resolve('0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA'));
-
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315'},
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
                 { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c'}
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'}
             ],
             [
                 { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
@@ -360,7 +375,8 @@ describe('price tests', () => {
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
-        expect(spyGetConverterBlockchainId).toHaveBeenCalledTimes(1);
-        expect(spyGetPathStepRate).toHaveBeenCalledTimes(1);
+        expect(spyToWei).toHaveBeenCalledTimes(1);
+        expect(spyFromWei).toHaveBeenCalledTimes(1);
+        expect(spyGetReturn).toHaveBeenCalledTimes(1);
     });
 });

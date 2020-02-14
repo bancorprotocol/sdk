@@ -12,7 +12,7 @@ export declare const ContractRegistry: ({
     "payable": boolean;
     "stateMutability": string;
     "type": string;
-    anonymous?: undefined;
+    "anonymous"?: undefined;
 } | {
     "anonymous": boolean;
     "inputs": {
@@ -22,8 +22,8 @@ export declare const ContractRegistry: ({
     }[];
     "name": string;
     "type": string;
-    constant?: undefined;
-    outputs?: undefined;
-    payable?: undefined;
-    stateMutability?: undefined;
+    "constant"?: undefined;
+    "outputs"?: undefined;
+    "payable"?: undefined;
+    "stateMutability"?: undefined;
 })[];

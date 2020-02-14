@@ -12,7 +12,7 @@ export declare const BancorConverterV9: ({
     payable: boolean;
     stateMutability: string;
     type: string;
-    anonymous?: undefined;
+    "anonymous"?: undefined;
 } | {
     inputs: {
         name: string;
@@ -21,19 +21,19 @@ export declare const BancorConverterV9: ({
     payable: boolean;
     stateMutability: string;
     type: string;
-    constant?: undefined;
-    name?: undefined;
-    outputs?: undefined;
-    anonymous?: undefined;
+    "constant"?: undefined;
+    "name"?: undefined;
+    "outputs"?: undefined;
+    "anonymous"?: undefined;
 } | {
     payable: boolean;
     stateMutability: string;
     type: string;
-    constant?: undefined;
+    "constant"?: undefined;
     inputs?: undefined;
-    name?: undefined;
-    outputs?: undefined;
-    anonymous?: undefined;
+    "name"?: undefined;
+    "outputs"?: undefined;
+    "anonymous"?: undefined;
 } | {
     anonymous: boolean;
     inputs: {
@@ -43,8 +43,8 @@ export declare const BancorConverterV9: ({
     }[];
     name: string;
     type: string;
-    constant?: undefined;
-    outputs?: undefined;
-    payable?: undefined;
-    stateMutability?: undefined;
+    "constant"?: undefined;
+    "outputs"?: undefined;
+    "payable"?: undefined;
+    "stateMutability"?: undefined;
 })[];

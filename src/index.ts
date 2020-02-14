@@ -23,21 +23,23 @@ export async function generatePath(sourceToken: Token, targetToken: Token) {
     let eosPath;
     let ethPaths;
 
+    const ethShortestPath = paths => paths.reduce((a, b) => a.length < b.length ? a : b).map(x => ({blockchainType: 'ethereum', blockchainId: x}));
+
     switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
         case 'eos,eos':
             eosPath = await eos.getConversionPath(sourceToken, targetToken);
             return [eosPath];
         case 'ethereum,ethereum':
             ethPaths = await ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
-            return [ethPaths.reduce((a, b) => a.length < b.length ? a : b)];
+            return [ethShortestPath(ethPaths)];
         case 'eos,ethereum':
             eosPath = await eos.getConversionPath(sourceToken, eos.anchorToken);
-            ethPaths = await ethereum.getAllPaths(ethereum.anchorToken.blockchainId, targetToken.blockchainId);
-            return [eosPath, ethPaths.reduce((a, b) => a.length < b.length ? a : b)];
+            ethPaths = await ethereum.getAllPaths(ethereum.anchorToken, targetToken.blockchainId);
+            return [eosPath, ethShortestPath(ethPaths)];
         case 'ethereum,eos':
-            ethPaths = await ethereum.getAllPaths(sourceToken.blockchainId, ethereum.anchorToken.blockchainId);
+            ethPaths = await ethereum.getAllPaths(sourceToken.blockchainId, ethereum.anchorToken);
             eosPath = await eos.getConversionPath(eos.anchorToken, targetToken);
-            return [ethPaths.reduce((a, b) => a.length < b.length ? a : b), eosPath];
+            return [ethShortestPath(ethPaths), eosPath];
     }
 
     return [];
@@ -45,14 +47,19 @@ export async function generatePath(sourceToken: Token, targetToken: Token) {
 
 export async function getRateByPath(paths: Token[][], amount) {
     for (const path of paths) {
-        const module = {eos, ethereum}[path[0].blockchainType];
-        const steps : ConversionStep[] = await module.getConversionSteps(path);
-        for (const step of steps) {
-            amount = await module.getPathStepRate(step, amount);
+        switch (path[0].blockchainType) {
+        case 'eos':
+            for (let i = 0; i < path.length - 1; i += 2)
+                amount = await eos.getPathStepRate({converter: {...path[i + 1]}, fromToken: path[i], toToken: path[i + 2]}, amount);
+            break;
+        case 'ethereum':
+            for (let i = 0; i < path.length - 1; i += 2)
+                amount = await ethereum.getPathStepRate(path[i + 1].blockchainId, path[i].blockchainId, path[i + 2].blockchainId, amount);
+            break;
         }
     }
     return amount;
-};
+}
 
 export async function getRate(sourceToken: Token, targetToken: Token, amount: string) {
     const paths = await generatePath(sourceToken, targetToken);

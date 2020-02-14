@@ -13,18 +13,18 @@ describe('Path finder tests', () => {
     });
 
     it('ETH to token path finder', async () => {
-        const srcToken = '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315';
+        const srcToken = '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315';
         const trgToken = '0xd26114cd6ee289accf82350c8d8487fedb8a0c07';
 
-        const spyGetAllPaths = jest
-            .spyOn(ethereum, 'getAllPaths')
-            .mockImplementation(() => Promise.resolve([[
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315' },
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' },
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c' },
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340' },
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xd26114cd6ee289accf82350c8d8487fedb8a0c07' }
-            ]]));
+        const spyGetGraph = jest
+            .spyOn(ethereum, 'getGraph')
+            .mockImplementation(() => Promise.resolve({
+                '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315' : ['0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'],
+                '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' : ['0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'],
+                '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C' : ['0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533', '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340'],
+                '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340' : ['0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C', '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'],
+                '0xd26114cd6ee289accf82350c8d8487fedb8a0c07' : ['0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340']
+            }));
 
         const response = await sdk.generatePath({
             blockchainType: 'ethereum',
@@ -36,26 +36,26 @@ describe('Path finder tests', () => {
 
         const expectedResult = [
             [
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315' },
                 { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' },
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C' },
                 { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340' },
                 { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xd26114cd6ee289accf82350c8d8487fedb8a0c07' }
             ]
         ];
 
         expect(response).toEqual(expectedResult);
-        expect(spyGetAllPaths).toHaveBeenCalledTimes(1);
+        expect(spyGetGraph).toHaveBeenCalledTimes(1);
     });
 
     it('ETH to KARMA path finder', async () => {
-        const spyGetAllPaths = jest
-            .spyOn(ethereum, 'getAllPaths')
-            .mockImplementation(() => Promise.resolve([[
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315' },
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' },
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c' }
-            ]]));
+        const spyGetGraph = jest
+            .spyOn(ethereum, 'getGraph')
+            .mockImplementation(() => Promise.resolve({
+               '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315' : ['0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'],
+               '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' : ['0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'],
+               '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C' : ['0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533']
+            }));
 
         const spyGetConversionPath = jest
             .spyOn(eos, 'getConversionPath')
@@ -67,7 +67,7 @@ describe('Path finder tests', () => {
 
         const response = await sdk.generatePath({
             blockchainType: 'ethereum',
-            blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315'
+            blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'
         },
         {
             blockchainType: 'eos',
@@ -77,9 +77,9 @@ describe('Path finder tests', () => {
 
         const expectedResult = [
             [
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315' },
                 { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' },
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c' }
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C' }
             ],
             [
                 { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
@@ -89,7 +89,7 @@ describe('Path finder tests', () => {
         ];
 
         expect(response).toEqual(expectedResult);
-        expect(spyGetAllPaths).toHaveBeenCalledTimes(1);
+        expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetConversionPath).toHaveBeenCalledTimes(1);
     });
 });

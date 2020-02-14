@@ -2,24 +2,20 @@
 /* eslint-disable no-sync */
 /* eslint-disable prefer-reflect */
 import Web3 from 'web3';
-import { BancorConverterV9 } from './contracts/BancorConverterV9';
-import { fromWei, toWei, timestampToBlockNumber } from './utils';
-import { ConversionStep, Token, Converter } from '../../path_generation';
-import { BancorConverter } from './contracts/BancorConverter';
 import { ContractRegistry } from './contracts/ContractRegistry';
+import { BancorConverter } from './contracts/BancorConverter';
+import { BancorConverterV9 } from './contracts/BancorConverterV9';
 import { BancorConverterRegistry } from './contracts/BancorConverterRegistry';
 import { SmartToken } from './contracts/SmartToken';
 import { ERC20Token } from './contracts/ERC20Token';
+import * as utils from './utils';
 import * as retrieve_contract_version from './retrieve_contract_version';
 import * as fetch_conversion_events from './fetch_conversion_events';
 
 let web3;
 let registry;
 
-export const anchorToken: Token = {
-    blockchainType: 'ethereum',
-    blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
-};
+export const anchorToken = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
 
 export async function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
     web3 = new Web3(new Web3.providers.HttpProvider(ethereumNodeUrl));
@@ -28,46 +24,36 @@ export async function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
     registry = new web3.eth.Contract(BancorConverterRegistry, registryBlockchainId);
 }
 
-export const getAmountInTokenWei = async (token: Token, amount: string, web3) => {
+export const toWei = async function(token, amount) {
     const tokenContract = new web3.eth.Contract(ERC20Token, token);
     const decimals = await tokenContract.methods.decimals().call();
-    return toWei(amount, decimals);
+    return utils.toWei(amount, decimals);
 };
 
-export const getConversionReturn = async (converterPair: ConversionStep, amount: string, ABI, web3) => {
-    let converterContract = new web3.eth.Contract(ABI, converterPair.converter.blockchainId);
-    const returnAmount = await converterContract.methods.getReturn(converterPair.fromToken, converterPair.toToken, amount).call();
-    return returnAmount;
+export const fromWei = async function(token, amount) {
+    const tokenContract = new web3.eth.Contract(ERC20Token, token);
+    const decimals = await tokenContract.methods.decimals().call();
+    return utils.fromWei(amount, decimals);
 };
 
-export async function getConversionSteps(path: Token[]) {
-    const pairs: ConversionStep[] = [];
-    for (let i = 0; i < path.length - 1; i += 2) {
-        const converter : Converter = {blockchainType: 'ethereum', blockchainId: await getConverterBlockchainId(path[i + 1])};
-        pairs.push({converter: converter, fromToken: path[i], toToken: path[i + 2]});
-    }
-    return pairs;
-}
+export const getReturn = async function(smartToken, converterABI, fromToken, toToken, amount) {
+    const tokenContract = new web3.eth.Contract(SmartToken, smartToken);
+    const converter = await tokenContract.methods.owner().call();
+    const converterContract = new web3.eth.Contract(converterABI, converter);
+    return await converterContract.methods.getReturn(fromToken, toToken, amount).call();
+};
 
-export const getConverterBlockchainId = async function(token: Token) {
-    const tokenContract = new web3.eth.Contract(SmartToken, token.blockchainId);
-    return await tokenContract.methods.owner().call();
-}
-
-export async function getPathStepRate(converterPair: ConversionStep, amount: string) {
-    const amountInTokenWei = await getAmountInTokenWei(converterPair.fromToken, amount, web3);
-    const tokenContract = new web3.eth.Contract(ERC20Token, converterPair.toToken.blockchainId);
-    const tokenDecimals = await tokenContract.methods.decimals().call();
+export async function getPathStepRate(smartToken, fromToken, toToken, amount) {
+    const inputAmount = await toWei(fromToken, amount);
     try {
-        const returnAmount = await getConversionReturn(converterPair, amountInTokenWei, BancorConverter, web3);
-        return fromWei(returnAmount['0'], tokenDecimals);
+        const outputAmount = await getReturn(smartToken, BancorConverter, fromToken, toToken, inputAmount);
+        return await fromWei(toToken, outputAmount['0']);
     }
     catch (error) {
-        if (error.message.includes('insufficient data for uint256')) {
-            const returnAmount = await getConversionReturn(converterPair, amountInTokenWei, BancorConverterV9, web3);
-            return fromWei(returnAmount, tokenDecimals);
-        }
-        throw error;
+        if (!error.message.includes('insufficient data for uint256'))
+            throw error;
+        const outputAmount = await getReturn(smartToken, BancorConverterV9, fromToken, toToken, inputAmount);
+        return await fromWei(toToken, outputAmount);
     }
 }
 
@@ -80,27 +66,14 @@ export async function fetchConversionEvents(token, fromBlock, toBlock) {
 }
 
 export async function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
-    const fromBlock = await timestampToBlockNumber(web3, fromTimestamp);
-    const toBlock = await timestampToBlockNumber(web3, toTimestamp);
+    const fromBlock = await utils.timestampToBlockNumber(web3, fromTimestamp);
+    const toBlock = await utils.timestampToBlockNumber(web3, toTimestamp);
     return await fetch_conversion_events.run(web3, token, fromBlock, toBlock);
 }
 
-function registryDataUpdate(registryData, key, value) {
-    if (registryData[key] == undefined)
-        registryData[key] = [value];
-    else if (!registryData[key].includes(value))
-        registryData[key].push(value);
-}
+export const getGraph = async function() {
+    const graph = {};
 
-function getAllPathsRecursive(paths, path, targetToken, registryData) {
-    const prevToken = path[path.length - 1];
-    if (prevToken == targetToken)
-        paths.push(path);
-    else for (const nextToken of registryData[prevToken].filter(token => !path.includes(token)))
-        getAllPathsRecursive(paths, [...path, nextToken], targetToken, registryData);
-}
-
-export async function getAllPaths(sourceToken, targetToken) {
     const MULTICALL_ABI = [{"constant":false,"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes","name":"callData","type":"bytes"}],"internalType":"struct Multicall.Call[]","name":"calls","type":"tuple[]"},{"internalType":"bool","name":"strict","type":"bool"}],"name":"aggregate","outputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"components":[{"internalType":"bool","name":"success","type":"bool"},{"internalType":"bytes","name":"data","type":"bytes"}],"internalType":"struct Multicall.Return[]","name":"returnData","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
     const MULTICALL_ADDRESS = '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2';
     const multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
@@ -109,18 +82,36 @@ export async function getAllPaths(sourceToken, targetToken) {
     const calls = convertibleTokens.map(convertibleToken => [registry._address, registry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]);
     const [blockNumber, returnData] = await multicall.methods.aggregate(calls, true).call();
 
-    const registryData = {};
-
     for (let i = 0; i < returnData.length; i++) {
         for (const smartToken of Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(n => Web3.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)))) {
             if (convertibleTokens[i] != smartToken) {
-                registryDataUpdate(registryData, convertibleTokens[i], smartToken);
-                registryDataUpdate(registryData, smartToken, convertibleTokens[i]);
+                updateGraph(graph, convertibleTokens[i], smartToken);
+                updateGraph(graph, smartToken, convertibleTokens[i]);
             }
         }
     }
 
+    return graph;
+};
+
+function updateGraph(graph, key, value) {
+    if (graph[key] == undefined)
+        graph[key] = [value];
+    else if (!graph[key].includes(value))
+        graph[key].push(value);
+}
+
+function getAllPathsRecursive(paths, path, targetToken, graph) {
+    const prevToken = path[path.length - 1];
+    if (prevToken == targetToken)
+        paths.push(path);
+    else for (const nextToken of graph[prevToken].filter(token => !path.includes(token)))
+        getAllPathsRecursive(paths, [...path, nextToken], targetToken, graph);
+}
+
+export async function getAllPaths(sourceToken, targetToken) {
     const paths = [];
-    getAllPathsRecursive(paths, [sourceToken], targetToken, registryData);
-    return paths.map(path => path.map(blockchainId => ({blockchainType: 'ethereum', blockchainId: blockchainId})));
+    const graph = await getGraph();
+    getAllPathsRecursive(paths, [sourceToken], targetToken, graph);
+    return paths;
 }
