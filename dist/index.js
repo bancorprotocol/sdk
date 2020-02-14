@@ -78,11 +78,10 @@ function buildPathsFile() {
 exports.buildPathsFile = buildPathsFile;
 function generatePath(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
-        var pathObjects, paths, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-        return __generator(this, function (_l) {
-            switch (_l.label) {
+        var eosPath, ethPaths, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    pathObjects = [];
                     _a = sourceToken.blockchainType + ',' + targetToken.blockchainType;
                     switch (_a) {
                         case 'eos,eos': return [3 /*break*/, 1];
@@ -91,131 +90,65 @@ function generatePath(sourceToken, targetToken) {
                         case 'ethereum,eos': return [3 /*break*/, 8];
                     }
                     return [3 /*break*/, 11];
-                case 1:
-                    _c = (_b = pathObjects).push;
-                    _d = { type: 'eos' };
-                    return [4 /*yield*/, eos.getConversionPath(sourceToken, targetToken)];
+                case 1: return [4 /*yield*/, eos.getConversionPath(sourceToken, targetToken)];
                 case 2:
-                    _c.apply(_b, [(_d.path = _l.sent(), _d)]);
-                    return [3 /*break*/, 11];
+                    eosPath = _b.sent();
+                    return [2 /*return*/, [eosPath]];
                 case 3: return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId)];
                 case 4:
-                    paths = _l.sent();
-                    pathObjects.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
-                    return [3 /*break*/, 11];
-                case 5: return [4 /*yield*/, ethereum.getAllPaths(ethereum.anchorToken.blockchainId, targetToken.blockchainId)];
+                    ethPaths = _b.sent();
+                    return [2 /*return*/, [ethPaths.reduce(function (a, b) { return a.length < b.length ? a : b; })]];
+                case 5: return [4 /*yield*/, eos.getConversionPath(sourceToken, eos.anchorToken)];
                 case 6:
-                    paths = _l.sent();
-                    _f = (_e = pathObjects).push;
-                    _g = { type: 'eos' };
-                    return [4 /*yield*/, eos.getConversionPath(sourceToken, eos.anchorToken)];
+                    eosPath = _b.sent();
+                    return [4 /*yield*/, ethereum.getAllPaths(ethereum.anchorToken.blockchainId, targetToken.blockchainId)];
                 case 7:
-                    _f.apply(_e, [(_g.path = _l.sent(), _g)]);
-                    pathObjects.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
-                    return [3 /*break*/, 11];
+                    ethPaths = _b.sent();
+                    return [2 /*return*/, [eosPath, ethPaths.reduce(function (a, b) { return a.length < b.length ? a : b; })]];
                 case 8: return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, ethereum.anchorToken.blockchainId)];
                 case 9:
-                    paths = _l.sent();
-                    pathObjects.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
-                    _j = (_h = pathObjects).push;
-                    _k = { type: 'eos' };
+                    ethPaths = _b.sent();
                     return [4 /*yield*/, eos.getConversionPath(eos.anchorToken, targetToken)];
                 case 10:
-                    _j.apply(_h, [(_k.path = _l.sent(), _k)]);
-                    return [3 /*break*/, 11];
-                case 11: return [2 /*return*/, pathObjects];
+                    eosPath = _b.sent();
+                    return [2 /*return*/, [ethPaths.reduce(function (a, b) { return a.length < b.length ? a : b; }), eosPath]];
+                case 11: return [2 /*return*/, []];
             }
         });
     });
 }
 exports.generatePath = generatePath;
-function calculateRateFromPaths(paths, amount) {
+function getRateByPath(paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var rate;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (paths.length == 0)
-                        return [2 /*return*/, amount];
-                    return [4 /*yield*/, calculateRateFromPath(paths, amount)];
-                case 1:
-                    rate = _a.sent();
-                    return [2 /*return*/, calculateRateFromPaths(paths.slice(1), rate)];
-            }
-        });
-    });
-}
-;
-function calculateRateFromPath(paths, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        var blockchainType, convertPairs, module, i;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    blockchainType = paths[0].type;
-                    return [4 /*yield*/, getConverterPairs(paths[0].path, blockchainType)];
-                case 1:
-                    convertPairs = _a.sent();
-                    module = { eos: eos, ethereum: ethereum }[blockchainType];
-                    i = 0;
-                    _a.label = 2;
-                case 2:
-                    if (!(i < convertPairs.length)) return [3 /*break*/, 5];
-                    return [4 /*yield*/, module.getPathStepRate(convertPairs[i], amount)];
-                case 3:
-                    amount = _a.sent();
-                    _a.label = 4;
-                case 4:
-                    i++;
-                    return [3 /*break*/, 2];
-                case 5: return [2 /*return*/, amount];
-            }
-        });
-    });
-}
-function getConverterPairs(path, blockchainType) {
-    return __awaiter(this, void 0, void 0, function () {
-        var pairs, i, converterBlockchainId, _a;
+        var _i, paths_1, path, module_1, steps, _a, steps_1, step;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    pairs = [];
-                    i = 0;
+                    _i = 0, paths_1 = paths;
                     _b.label = 1;
                 case 1:
-                    if (!(i < path.length - 1)) return [3 /*break*/, 6];
-                    if (!(blockchainType == 'ethereum')) return [3 /*break*/, 3];
-                    return [4 /*yield*/, ethereum.getConverterBlockchainId(path[i + 1])];
+                    if (!(_i < paths_1.length)) return [3 /*break*/, 7];
+                    path = paths_1[_i];
+                    module_1 = { eos: eos, ethereum: ethereum }[path[0].blockchainType];
+                    return [4 /*yield*/, module_1.getConversionSteps(path)];
                 case 2:
-                    _a = _b.sent();
-                    return [3 /*break*/, 4];
+                    steps = _b.sent();
+                    _a = 0, steps_1 = steps;
+                    _b.label = 3;
                 case 3:
-                    _a = path[i + 1];
-                    _b.label = 4;
+                    if (!(_a < steps_1.length)) return [3 /*break*/, 6];
+                    step = steps_1[_a];
+                    return [4 /*yield*/, module_1.getPathStepRate(step, amount)];
                 case 4:
-                    converterBlockchainId = _a;
-                    pairs.push({ converterBlockchainId: converterBlockchainId, fromToken: path[i], toToken: path[i + 2] });
+                    amount = _b.sent();
                     _b.label = 5;
                 case 5:
-                    i += 2;
-                    return [3 /*break*/, 1];
+                    _a++;
+                    return [3 /*break*/, 3];
                 case 6:
-                    if (pairs.length == 0 && blockchainType == 'eos' && eos.isMultiConverter(path[0])) {
-                        pairs.push({
-                            converterBlockchainId: path[0], fromToken: path[0], toToken: path[0]
-                        });
-                    }
-                    return [2 /*return*/, pairs];
-            }
-        });
-    });
-}
-function getRateByPath(paths, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, calculateRateFromPaths(paths, amount)];
-                case 1: return [2 /*return*/, _a.sent()];
+                    _i++;
+                    return [3 /*break*/, 1];
+                case 7: return [2 /*return*/, amount];
             }
         });
     });
@@ -237,20 +170,20 @@ function getRate(sourceToken, targetToken, amount) {
     });
 }
 exports.getRate = getRate;
-function retrieveContractVersion(contract) {
+function retrieveConverterVersion(converter) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!(contract.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, ethereum.retrieveContractVersion(contract.blockchainId)];
+                    if (!(converter.blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, ethereum.retrieveConverterVersion(converter.blockchainId)];
                 case 1: return [2 /*return*/, _a.sent()];
-                case 2: throw new Error(contract.blockchainType + ' blockchain not supported');
+                case 2: throw new Error(converter.blockchainType + ' blockchain not supported');
             }
         });
     });
 }
-exports.retrieveContractVersion = retrieveContractVersion;
+exports.retrieveConverterVersion = retrieveConverterVersion;
 function fetchConversionEvents(token, fromBlock, toBlock) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -299,7 +232,7 @@ exports.default = {
     generatePath: generatePath,
     getRateByPath: getRateByPath,
     buildPathsFile: buildPathsFile,
-    retrieveContractVersion: retrieveContractVersion,
+    retrieveConverterVersion: retrieveConverterVersion,
     fetchConversionEvents: fetchConversionEvents,
     fetchConversionEventsByTimestamp: fetchConversionEventsByTimestamp,
     getAllPaths: getAllPaths

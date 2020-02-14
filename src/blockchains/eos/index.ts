@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { converterBlockchainIds } from './converter_blockchain_ids';
 import fs from 'fs';
 import * as formulas from '../../utils/formulas';
-import { ConversionPathStep, Token } from '../../path_generation';
+import { ConversionStep, Token } from '../../path_generation';
 import { Paths } from './paths';
 
 interface Reserve {
@@ -145,22 +145,31 @@ export async function buildPathsFile() {
         () => console.log('Done making paths json'));
 }
 
-function isFromSmartToken(pair: ConversionPathStep, reserves: string[]) {
-    return (!reserves.includes(Object.values(pair.fromToken)[0]));
+function isFromSmartToken(step: ConversionStep, reserves: string[]) {
+    return !reserves.includes(step.fromToken.blockchainId);
 }
 
-function isToSmartToken(pair: ConversionPathStep, reserves: string[]) {
-    return (!reserves.includes(Object.values(pair.toToken)[0]));
+function isToSmartToken(step: ConversionStep, reserves: string[]) {
+    return !reserves.includes(step.toToken.blockchainId);
 }
 
-export async function getPathStepRate(pair: ConversionPathStep, amount: string) {
-    const toTokenBlockchainId = Object.values(pair.toToken)[0];
-    const fromTokenBlockchainId = Object.values(pair.fromToken)[0];
-    const fromTokenSymbol = Object.keys(pair.fromToken)[0];
-    const toTokenSymbol = Object.keys(pair.toToken)[0];
+export async function getConversionSteps(path: Token[]) {
+    if (path.length == 1 && isMultiConverter(path[0]))
+        return [{converter: {...path[0]}, fromToken: path[0], toToken: path[0]}] as ConversionStep[];
+    const steps: ConversionStep[] = [];
+    for (let i = 0; i < path.length - 1; i += 2)
+        steps.push({converter: {...path[i + 1]}, fromToken: path[i], toToken: path[i + 2]});
+    return steps;
+}
+
+export async function getPathStepRate(step: ConversionStep, amount: string) {
+    const toTokenBlockchainId = step.toToken.blockchainId;
+    const fromTokenBlockchainId = step.fromToken.blockchainId;
+    const fromTokenSymbol = step.fromToken.symbol;
+    const toTokenSymbol = step.toToken.symbol;
     const isFromTokenMultiToken = isMultiConverter(fromTokenBlockchainId);
     const isToTokenMultiToken = isMultiConverter(toTokenBlockchainId);
-    const converterBlockchainId = Object.values(pair.converterBlockchainId)[0];
+    const converterBlockchainId = step.converter.blockchainId;
     let reserveSymbol;
     if (isFromTokenMultiToken)
         reserveSymbol = fromTokenSymbol;
@@ -170,7 +179,7 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     const reserves = await getReservesFromCode(converterBlockchainId, reserveSymbol);
     const reservesContacts = reserves.rows.map(res => res.contract);
     const conversionFee = await getConverterFeeFromSettings(converterBlockchainId);
-    const isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
+    const isConversionFromSmartToken = isFromSmartToken(step, reservesContacts);
     let balanceFrom;
     if (isToTokenMultiToken)
         balanceFrom = await getReserveBalances(converterBlockchainId, toTokenSymbol, 'reserves');
@@ -182,7 +191,7 @@ export async function getPathStepRate(pair: ConversionPathStep, amount: string) 
     else
         balanceTo = await getReserveBalances(toTokenBlockchainId, converterBlockchainId);
 
-    const isConversionToSmartToken = isToSmartToken(pair, reservesContacts);
+    const isConversionToSmartToken = isToSmartToken(step, reservesContacts);
     const balanceObject = { [fromTokenBlockchainId]: balanceFrom.rows[0].balance, [toTokenBlockchainId]: balanceTo.rows[0].balance };
     const converterReserves = {};
     reserves.rows.map((reserve: Reserve) => {

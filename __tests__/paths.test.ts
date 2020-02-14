@@ -19,11 +19,11 @@ describe('Path finder tests', () => {
         const spyGetAllPaths = jest
             .spyOn(ethereum, 'getAllPaths')
             .mockImplementation(() => Promise.resolve([[
-                '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315',
-                '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
-                '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c',
-                '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340',
-                '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xd26114cd6ee289accf82350c8d8487fedb8a0c07' }
             ]]));
 
         const response = await sdk.generatePath({
@@ -35,16 +35,13 @@ describe('Path finder tests', () => {
         });
 
         const expectedResult = [
-            {
-                type: 'ethereum',
-                path: [
-                    '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315',
-                    '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
-                    '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c',
-                    '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340',
-                    '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'
-                ]
-            }
+            [
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xd26114cd6ee289accf82350c8d8487fedb8a0c07' }
+            ]
         ];
 
         expect(response).toEqual(expectedResult);
@@ -55,14 +52,18 @@ describe('Path finder tests', () => {
         const spyGetAllPaths = jest
             .spyOn(ethereum, 'getAllPaths')
             .mockImplementation(() => Promise.resolve([[
-                '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315',
-                '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
-                '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c'
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c' }
             ]]));
 
         const spyGetConversionPath = jest
             .spyOn(eos, 'getConversionPath')
-            .mockResolvedValueOnce([{ BNT: 'bntbntbntbnt' }, { BNTKRM: 'bancorc11112' }, { KARMA: 'therealkarma' }]);
+            .mockResolvedValueOnce([
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'therealkarma', symbol: 'KARMA' }
+            ]);
 
         const response = await sdk.generatePath({
             blockchainType: 'ethereum',
@@ -75,18 +76,16 @@ describe('Path finder tests', () => {
         });
 
         const expectedResult = [
-            {
-                type: 'ethereum',
-                path: [
-                    '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315',
-                    '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
-                    '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c'
-                ]
-            },
-            {
-                type: 'eos',
-                path: [{ BNT: 'bntbntbntbnt' }, { BNTKRM: 'bancorc11112' }, { KARMA: 'therealkarma' }]
-            }
+            [
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' },
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c' }
+            ],
+            [
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
+                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'therealkarma', symbol: 'KARMA' }
+            ]
         ];
 
         expect(response).toEqual(expectedResult);

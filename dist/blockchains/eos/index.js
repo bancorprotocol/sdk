@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -249,26 +260,40 @@ function buildPathsFile() {
     });
 }
 exports.buildPathsFile = buildPathsFile;
-function isFromSmartToken(pair, reserves) {
-    return (!reserves.includes(Object.values(pair.fromToken)[0]));
+function isFromSmartToken(step, reserves) {
+    return !reserves.includes(step.fromToken.blockchainId);
 }
-function isToSmartToken(pair, reserves) {
-    return (!reserves.includes(Object.values(pair.toToken)[0]));
+function isToSmartToken(step, reserves) {
+    return !reserves.includes(step.toToken.blockchainId);
 }
-function getPathStepRate(pair, amount) {
+function getConversionSteps(path) {
+    return __awaiter(this, void 0, void 0, function () {
+        var steps, i;
+        return __generator(this, function (_a) {
+            if (path.length == 1 && exports.isMultiConverter(path[0]))
+                return [2 /*return*/, [{ converter: __assign({}, path[0]), fromToken: path[0], toToken: path[0] }]];
+            steps = [];
+            for (i = 0; i < path.length - 1; i += 2)
+                steps.push({ converter: __assign({}, path[i + 1]), fromToken: path[i], toToken: path[i + 2] });
+            return [2 /*return*/, steps];
+        });
+    });
+}
+exports.getConversionSteps = getConversionSteps;
+function getPathStepRate(step, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var toTokenBlockchainId, fromTokenBlockchainId, fromTokenSymbol, toTokenSymbol, isFromTokenMultiToken, isToTokenMultiToken, converterBlockchainId, reserveSymbol, reserves, reservesContacts, conversionFee, isConversionFromSmartToken, balanceFrom, balanceTo, isConversionToSmartToken, balanceObject, converterReserves, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amountWithoutFee;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    toTokenBlockchainId = Object.values(pair.toToken)[0];
-                    fromTokenBlockchainId = Object.values(pair.fromToken)[0];
-                    fromTokenSymbol = Object.keys(pair.fromToken)[0];
-                    toTokenSymbol = Object.keys(pair.toToken)[0];
+                    toTokenBlockchainId = step.toToken.blockchainId;
+                    fromTokenBlockchainId = step.fromToken.blockchainId;
+                    fromTokenSymbol = step.fromToken.symbol;
+                    toTokenSymbol = step.toToken.symbol;
                     isFromTokenMultiToken = exports.isMultiConverter(fromTokenBlockchainId);
                     isToTokenMultiToken = exports.isMultiConverter(toTokenBlockchainId);
-                    converterBlockchainId = Object.values(pair.converterBlockchainId)[0];
+                    converterBlockchainId = step.converter.blockchainId;
                     if (isFromTokenMultiToken)
                         reserveSymbol = fromTokenSymbol;
                     if (isToTokenMultiToken)
@@ -280,7 +305,7 @@ function getPathStepRate(pair, amount) {
                     return [4 /*yield*/, exports.getConverterFeeFromSettings(converterBlockchainId)];
                 case 2:
                     conversionFee = _b.sent();
-                    isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
+                    isConversionFromSmartToken = isFromSmartToken(step, reservesContacts);
                     if (!isToTokenMultiToken) return [3 /*break*/, 4];
                     return [4 /*yield*/, exports.getReserveBalances(converterBlockchainId, toTokenSymbol, 'reserves')];
                 case 3:
@@ -301,7 +326,7 @@ function getPathStepRate(pair, amount) {
                     balanceTo = _b.sent();
                     _b.label = 10;
                 case 10:
-                    isConversionToSmartToken = isToSmartToken(pair, reservesContacts);
+                    isConversionToSmartToken = isToSmartToken(step, reservesContacts);
                     balanceObject = (_a = {}, _a[fromTokenBlockchainId] = balanceFrom.rows[0].balance, _a[toTokenBlockchainId] = balanceTo.rows[0].balance, _a);
                     converterReserves = {};
                     reserves.rows.map(function (reserve) {
