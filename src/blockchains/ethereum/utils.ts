@@ -9,13 +9,10 @@ export function toWei(number, decimalDigits = 18) {
     return new Decimal(`${number}e+${decimalDigits}`).toFixed();
 }
 
-export async function timestampToBlockNumber(nodeAddress, timestamp) {
-    const web3 = new Web3(nodeAddress);
+export async function timestampToBlockNumber(web3, timestamp) {
     const lo = await getBlock(web3, 1);
     const hi = await getBlock(web3, "latest");
     const block = await searchBlock(web3, lo, hi, timestamp);
-    if (web3.currentProvider.constructor.name == "WebsocketProvider")
-        web3.currentProvider.connection.close();
     return block.number;
 }
 

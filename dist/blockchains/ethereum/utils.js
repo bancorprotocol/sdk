@@ -39,7 +39,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var web3_1 = __importDefault(require("web3"));
 var decimal_js_1 = __importDefault(require("decimal.js"));
 function fromWei(number, decimalDigits) {
     if (decimalDigits === void 0) { decimalDigits = 18; }
@@ -51,14 +50,12 @@ function toWei(number, decimalDigits) {
     return new decimal_js_1.default(number + "e+" + decimalDigits).toFixed();
 }
 exports.toWei = toWei;
-function timestampToBlockNumber(nodeAddress, timestamp) {
+function timestampToBlockNumber(web3, timestamp) {
     return __awaiter(this, void 0, void 0, function () {
-        var web3, lo, hi, block;
+        var lo, hi, block;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    web3 = new web3_1.default(nodeAddress);
-                    return [4 /*yield*/, getBlock(web3, 1)];
+                case 0: return [4 /*yield*/, getBlock(web3, 1)];
                 case 1:
                     lo = _a.sent();
                     return [4 /*yield*/, getBlock(web3, "latest")];
@@ -67,8 +64,6 @@ function timestampToBlockNumber(nodeAddress, timestamp) {
                     return [4 /*yield*/, searchBlock(web3, lo, hi, timestamp)];
                 case 3:
                     block = _a.sent();
-                    if (web3.currentProvider.constructor.name == "WebsocketProvider")
-                        web3.currentProvider.connection.close();
                     return [2 /*return*/, block.number];
             }
         });
