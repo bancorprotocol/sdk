@@ -68,7 +68,7 @@ var eosjs_1 = require("eosjs");
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var converter_blockchain_ids_1 = require("./converter_blockchain_ids");
 var fs_1 = __importDefault(require("fs"));
-var formulas = __importStar(require("../../utils/formulas"));
+var formulas = __importStar(require("./formulas"));
 var paths_1 = require("./paths");
 var pathJson = paths_1.Paths;
 var jsonRpc;

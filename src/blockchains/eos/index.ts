@@ -2,7 +2,7 @@ import { JsonRpc } from 'eosjs';
 import fetch from 'node-fetch';
 import { converterBlockchainIds } from './converter_blockchain_ids';
 import fs from 'fs';
-import * as formulas from '../../utils/formulas';
+import * as formulas from './formulas';
 import { ConversionStep, Token } from '../../path_generation';
 import { Paths } from './paths';
 
