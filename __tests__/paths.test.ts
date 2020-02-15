@@ -23,13 +23,10 @@ describe('Path finder tests', () => {
                 '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07' : ['0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340']
             }));
 
-        const response = await sdk.generatePath({
-            blockchainType: 'ethereum',
-            blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'
-        }, {
-            blockchainType: 'ethereum',
-            blockchainId: '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07'
-        });
+        const response = await sdk.generatePath(
+            {blockchainType: 'ethereum', blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
+            {blockchainType: 'ethereum', blockchainId: '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07'}
+        );
 
         const expectedResult = [
             [
@@ -62,15 +59,10 @@ describe('Path finder tests', () => {
                 { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' }
             ]);
 
-        const response = await sdk.generatePath({
-            blockchainType: 'ethereum',
-            blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'
-        },
-        {
-            blockchainType: 'eos',
-            blockchainId: 'therealkarma',
-            symbol: 'KARMA'
-        });
+        const response = await sdk.generatePath(
+            {blockchainType: 'ethereum', blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
+            {blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA'}
+        );
 
         const expectedResult = [
             [
