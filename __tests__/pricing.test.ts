@@ -54,9 +54,9 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'therealkarma', symbol: 'KARMA' },
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+                { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' },
+                { blockchainType: 'eos', blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
+                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
             ]
         ], '1');
 
@@ -123,9 +123,9 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11132', symbol: 'BNTOCT' },
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorr11132', symbol: 'BNTOCT' }
+                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
+                { blockchainType: 'eos', blockchainId: 'bancorc11132', symbol: 'BNTOCT' },
+                { blockchainType: 'eos', blockchainId: 'bancorr11132', symbol: 'BNTOCT' }
             ]
         ], '1');
 
@@ -193,9 +193,9 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorr11132', symbol: 'BNTOCT' },
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11132', symbol: 'BNTOCT' },
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+                { blockchainType: 'eos', blockchainId: 'bancorr11132', symbol: 'BNTOCT' },
+                { blockchainType: 'eos', blockchainId: 'bancorc11132', symbol: 'BNTOCT' },
+                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
             ]
         ], '1');
 
@@ -224,11 +224,11 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07'}
+                { blockchainType: 'ethereum', blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
+                { blockchainType: 'ethereum', blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
+                { blockchainType: 'ethereum', blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
+                { blockchainType: 'ethereum', blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340'},
+                { blockchainType: 'ethereum', blockchainId: '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07'}
             ]
         ], '1');
 
@@ -293,14 +293,14 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'therealkarma', symbol: 'KARMA' },
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+                { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' },
+                { blockchainType: 'eos', blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
+                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
             ],
             [
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'}
+                { blockchainType: 'ethereum', blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
+                { blockchainType: 'ethereum', blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
+                { blockchainType: 'ethereum', blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'}
             ]
         ], '1');
 
@@ -367,14 +367,14 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'}
+                { blockchainType: 'ethereum', blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
+                { blockchainType: 'ethereum', blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
+                { blockchainType: 'ethereum', blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'}
             ],
             [
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-                { blockchainType: 'eos' as path_generation.BlockchainType, blockchainId: 'therealkarma', symbol: 'KARMA' }
+                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
+                { blockchainType: 'eos', blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
+                { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' }
             ]
         ], '1');
 
