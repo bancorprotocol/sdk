@@ -70,7 +70,9 @@ function getTokenAmount(web3, tokenAddress, weiAmount) {
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
-                    if (!weiAmount) return [3 /*break*/, 3];
+                    if (weiAmount == undefined || weiAmount == "0") {
+                        return [2 /*return*/, weiAmount];
+                    }
                     if (!(decimals[tokenAddress] == undefined)) return [3 /*break*/, 2];
                     token = new web3.eth.Contract(TOKEN_ABI, tokenAddress);
                     _a = decimals;
@@ -80,7 +82,6 @@ function getTokenAmount(web3, tokenAddress, weiAmount) {
                     _a[_b] = _c.sent();
                     _c.label = 2;
                 case 2: return [2 /*return*/, new Decimal(weiAmount + "e-" + decimals[tokenAddress]).toFixed()];
-                case 3: return [2 /*return*/, "0"];
             }
         });
     });

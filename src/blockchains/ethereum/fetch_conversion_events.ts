@@ -27,14 +27,14 @@ function parseOwnerUpdateEvent(log) {
 }
 
 async function getTokenAmount(web3, tokenAddress, weiAmount) {
-    if (weiAmount) {
-        if (decimals[tokenAddress] == undefined) {
-            const token = new web3.eth.Contract(TOKEN_ABI, tokenAddress);
-            decimals[tokenAddress] = await token.methods.decimals().call();
-        }
-        return new Decimal(weiAmount + "e-" + decimals[tokenAddress]).toFixed();
+    if (weiAmount == undefined || weiAmount == "0") {
+        return weiAmount;
     }
-    return "0";
+    if (decimals[tokenAddress] == undefined) {
+        const token = new web3.eth.Contract(TOKEN_ABI, tokenAddress);
+        decimals[tokenAddress] = await token.methods.decimals().call();
+    }
+    return new Decimal(weiAmount + "e-" + decimals[tokenAddress]).toFixed();
 }
 
 async function getPastLogs(web3, address, topic0, fromBlock, toBlock) {
