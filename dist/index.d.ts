@@ -1,30 +1,19 @@
 import { Token, Converter } from './path_generation';
+export { init, generatePath, getRateByPath, getRate, getAllPaths, retrieveConverterVersion, fetchConversionEvents, fetchConversionEventsByTimestamp, buildPathsFile };
 interface Settings {
     ethereumNodeEndpoint: string;
     eosNodeEndpoint: string;
     ethereumContractRegistryAddress: string;
 }
-export declare function init(args: Settings): Promise<void>;
-export declare function buildPathsFile(): Promise<void>;
-export declare function generatePath(sourceToken: Token, targetToken: Token): Promise<any[]>;
-export declare function getRateByPath(paths: Token[][], amount: any): Promise<any>;
-export declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<any>;
-export declare function retrieveConverterVersion(converter: Converter): Promise<{
+declare function init(args: Settings): Promise<void>;
+declare function generatePath(sourceToken: Token, targetToken: Token): Promise<any[]>;
+declare function getRateByPath(paths: Token[][], amount: any): Promise<any>;
+declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<any>;
+declare function getAllPaths(sourceToken: Token, targetToken: Token): Promise<any[]>;
+declare function retrieveConverterVersion(converter: Converter): Promise<{
     type: string;
     value: any;
 }>;
-export declare function fetchConversionEvents(token: Token, fromBlock: any, toBlock: any): Promise<any[]>;
-export declare function fetchConversionEventsByTimestamp(token: Token, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
-export declare function getAllPaths(sourceToken: Token, targetToken: Token): Promise<any[]>;
-declare const _default: {
-    init: typeof init;
-    getRate: typeof getRate;
-    generatePath: typeof generatePath;
-    getRateByPath: typeof getRateByPath;
-    buildPathsFile: typeof buildPathsFile;
-    retrieveConverterVersion: typeof retrieveConverterVersion;
-    fetchConversionEvents: typeof fetchConversionEvents;
-    fetchConversionEventsByTimestamp: typeof fetchConversionEventsByTimestamp;
-    getAllPaths: typeof getAllPaths;
-};
-export default _default;
+declare function fetchConversionEvents(token: Token, fromBlock: any, toBlock: any): Promise<any[]>;
+declare function fetchConversionEventsByTimestamp(token: Token, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
+declare function buildPathsFile(): Promise<void>;

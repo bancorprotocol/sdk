@@ -4,8 +4,8 @@ interface Reserve {
     currency: string;
     ratio: number;
 }
-export declare const anchorToken: Token;
 export declare function init(endpoint: any): void;
+export declare function getAnchorToken(): Token;
 export declare function isAnchorToken(token: Token): boolean;
 export declare function getTokenBlockchainId(token: Token): {
     [x: string]: string;

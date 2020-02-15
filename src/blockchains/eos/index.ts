@@ -15,7 +15,7 @@ interface Reserve {
 let pathJson = Paths;
 let jsonRpc;
 
-export const anchorToken: Token = {
+const anchorToken : Token = {
     blockchainType: 'eos',
     blockchainId: 'bntbntbntbnt',
     symbol: 'BNT'
@@ -23,6 +23,10 @@ export const anchorToken: Token = {
 
 export function init(endpoint) {
     jsonRpc = new JsonRpc(endpoint, { fetch });
+}
+
+export function getAnchorToken() {
+    return anchorToken;
 }
 
 export function isAnchorToken(token: Token) {

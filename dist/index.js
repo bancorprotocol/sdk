@@ -74,19 +74,6 @@ function init(args) {
     });
 }
 exports.init = init;
-function buildPathsFile() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, eos.buildPathsFile()];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.buildPathsFile = buildPathsFile;
 function generatePath(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
         var eosPath, ethPaths, ethShortestPath, _a;
@@ -110,17 +97,17 @@ function generatePath(sourceToken, targetToken) {
                 case 4:
                     ethPaths = _b.sent();
                     return [2 /*return*/, [ethShortestPath(ethPaths)]];
-                case 5: return [4 /*yield*/, eos.getConversionPath(sourceToken, eos.anchorToken)];
+                case 5: return [4 /*yield*/, eos.getConversionPath(sourceToken, eos.getAnchorToken())];
                 case 6:
                     eosPath = _b.sent();
-                    return [4 /*yield*/, ethereum.getAllPaths(ethereum.anchorToken, targetToken.blockchainId)];
+                    return [4 /*yield*/, ethereum.getAllPaths(ethereum.getAnchorToken(), targetToken.blockchainId)];
                 case 7:
                     ethPaths = _b.sent();
                     return [2 /*return*/, [eosPath, ethShortestPath(ethPaths)]];
-                case 8: return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, ethereum.anchorToken)];
+                case 8: return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, ethereum.getAnchorToken())];
                 case 9:
                     ethPaths = _b.sent();
-                    return [4 /*yield*/, eos.getConversionPath(eos.anchorToken, targetToken)];
+                    return [4 /*yield*/, eos.getConversionPath(eos.getAnchorToken(), targetToken)];
                 case 10:
                     eosPath = _b.sent();
                     return [2 /*return*/, [ethShortestPath(ethPaths), eosPath]];
@@ -197,6 +184,20 @@ function getRate(sourceToken, targetToken, amount) {
     });
 }
 exports.getRate = getRate;
+function getAllPaths(sourceToken, targetToken) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId)];
+                case 1: return [2 /*return*/, _a.sent()];
+                case 2: throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
+            }
+        });
+    });
+}
+exports.getAllPaths = getAllPaths;
 function retrieveConverterVersion(converter) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -239,28 +240,16 @@ function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
     });
 }
 exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
-function getAllPaths(sourceToken, targetToken) {
+function buildPathsFile() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    if (!(sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId)];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2: throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
+                case 0: return [4 /*yield*/, eos.buildPathsFile()];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
             }
         });
     });
 }
-exports.getAllPaths = getAllPaths;
-exports.default = {
-    init: init,
-    getRate: getRate,
-    generatePath: generatePath,
-    getRateByPath: getRateByPath,
-    buildPathsFile: buildPathsFile,
-    retrieveConverterVersion: retrieveConverterVersion,
-    fetchConversionEvents: fetchConversionEvents,
-    fetchConversionEventsByTimestamp: fetchConversionEventsByTimestamp,
-    getAllPaths: getAllPaths
-};
+exports.buildPathsFile = buildPathsFile;

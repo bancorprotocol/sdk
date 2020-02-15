@@ -65,7 +65,6 @@ var retrieve_converter_version = __importStar(require("./retrieve_converter_vers
 var fetch_conversion_events = __importStar(require("./fetch_conversion_events"));
 var web3;
 var converterRegistryContract;
-exports.anchorToken = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
 function init(nodeAddress, contractRegistryAddress) {
     return __awaiter(this, void 0, void 0, function () {
         var contractRegistryContract, converterRegistryAddress;
@@ -84,6 +83,10 @@ function init(nodeAddress, contractRegistryAddress) {
     });
 }
 exports.init = init;
+function getAnchorToken() {
+    return '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
+}
+exports.getAnchorToken = getAnchorToken;
 function getConversionRate(smartToken, fromToken, toToken, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var inputAmount, outputAmount, error_1, outputAmount;
@@ -115,6 +118,23 @@ function getConversionRate(smartToken, fromToken, toToken, amount) {
     });
 }
 exports.getConversionRate = getConversionRate;
+function getAllPaths(sourceToken, targetToken) {
+    return __awaiter(this, void 0, void 0, function () {
+        var paths, graph;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    paths = [];
+                    return [4 /*yield*/, exports.getGraph()];
+                case 1:
+                    graph = _a.sent();
+                    getAllPathsRecursive(paths, graph, [sourceToken], targetToken);
+                    return [2 /*return*/, paths];
+            }
+        });
+    });
+}
+exports.getAllPaths = getAllPaths;
 function retrieveConverterVersion(converter) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -155,23 +175,6 @@ function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
     });
 }
 exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
-function getAllPaths(sourceToken, targetToken) {
-    return __awaiter(this, void 0, void 0, function () {
-        var paths, graph;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    paths = [];
-                    return [4 /*yield*/, exports.getGraph()];
-                case 1:
-                    graph = _a.sent();
-                    getAllPathsRecursive(paths, graph, [sourceToken], targetToken);
-                    return [2 /*return*/, paths];
-            }
-        });
-    });
-}
-exports.getAllPaths = getAllPaths;
 exports.toWei = function (token, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var tokenContract, decimals;

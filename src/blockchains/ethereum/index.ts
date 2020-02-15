@@ -11,19 +11,31 @@ import * as utils from './utils';
 import * as retrieve_converter_version from './retrieve_converter_version';
 import * as fetch_conversion_events from './fetch_conversion_events';
 
+export {
+    init,
+    getAnchorToken,
+    getConversionRate,
+    getAllPaths,
+    retrieveConverterVersion,
+    fetchConversionEvents,
+    fetchConversionEventsByTimestamp
+};
+
 let web3;
 let converterRegistryContract;
 
-export const anchorToken = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
-
-export async function init(nodeAddress, contractRegistryAddress) {
+async function init(nodeAddress, contractRegistryAddress) {
     web3 = new Web3(new Web3.providers.HttpProvider(nodeAddress));
     const contractRegistryContract = new web3.eth.Contract(ContractRegistry, contractRegistryAddress);
     const converterRegistryAddress = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
     converterRegistryContract = new web3.eth.Contract(BancorConverterRegistry, converterRegistryAddress);
 }
 
-export async function getConversionRate(smartToken, fromToken, toToken, amount) {
+function getAnchorToken() {
+    return '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
+}
+
+async function getConversionRate(smartToken, fromToken, toToken, amount) {
     const inputAmount = await toWei(fromToken, amount);
     try {
         const outputAmount = await getReturn(smartToken, BancorConverter, fromToken, toToken, inputAmount);
@@ -37,25 +49,25 @@ export async function getConversionRate(smartToken, fromToken, toToken, amount) 
     }
 }
 
-export async function retrieveConverterVersion(converter) {
-    return await retrieve_converter_version.run(web3, converter);
-}
-
-export async function fetchConversionEvents(token, fromBlock, toBlock) {
-    return await fetch_conversion_events.run(web3, token, fromBlock, toBlock);
-}
-
-export async function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
-    const fromBlock = await utils.timestampToBlockNumber(web3, fromTimestamp);
-    const toBlock = await utils.timestampToBlockNumber(web3, toTimestamp);
-    return await fetch_conversion_events.run(web3, token, fromBlock, toBlock);
-}
-
-export async function getAllPaths(sourceToken, targetToken) {
+async function getAllPaths(sourceToken, targetToken) {
     const paths = [];
     const graph = await getGraph();
     getAllPathsRecursive(paths, graph, [sourceToken], targetToken);
     return paths;
+}
+
+async function retrieveConverterVersion(converter) {
+    return await retrieve_converter_version.run(web3, converter);
+}
+
+async function fetchConversionEvents(token, fromBlock, toBlock) {
+    return await fetch_conversion_events.run(web3, token, fromBlock, toBlock);
+}
+
+async function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
+    const fromBlock = await utils.timestampToBlockNumber(web3, fromTimestamp);
+    const toBlock = await utils.timestampToBlockNumber(web3, toTimestamp);
+    return await fetch_conversion_events.run(web3, token, fromBlock, toBlock);
 }
 
 export const toWei = async function(token, amount) {

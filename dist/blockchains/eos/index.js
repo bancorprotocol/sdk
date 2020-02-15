@@ -72,7 +72,7 @@ var formulas = __importStar(require("../../utils/formulas"));
 var paths_1 = require("./paths");
 var pathJson = paths_1.Paths;
 var jsonRpc;
-exports.anchorToken = {
+var anchorToken = {
     blockchainType: 'eos',
     blockchainId: 'bntbntbntbnt',
     symbol: 'BNT'
@@ -81,8 +81,12 @@ function init(endpoint) {
     jsonRpc = new eosjs_1.JsonRpc(endpoint, { fetch: node_fetch_1.default });
 }
 exports.init = init;
+function getAnchorToken() {
+    return anchorToken;
+}
+exports.getAnchorToken = getAnchorToken;
 function isAnchorToken(token) {
-    return token.blockchainId == exports.anchorToken.blockchainId && token.symbol == exports.anchorToken.symbol;
+    return token.blockchainId == anchorToken.blockchainId && token.symbol == anchorToken.symbol;
 }
 exports.isAnchorToken = isAnchorToken;
 function getTokenBlockchainId(token) {
