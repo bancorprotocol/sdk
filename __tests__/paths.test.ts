@@ -43,6 +43,10 @@ describe('Path finder tests', () => {
     });
 
     it('ETH to KARMA path finder', async () => {
+        const spyGetContractAddresses = jest
+            .spyOn(ethereum, 'getContractAddresses')
+            .mockImplementation(() => ({anchorToken: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'}));
+
         const spyGetGraph = jest
             .spyOn(ethereum, 'getGraph')
             .mockImplementation(() => Promise.resolve({
@@ -80,5 +84,6 @@ describe('Path finder tests', () => {
         expect(response).toEqual(expectedResult);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetConversionPath).toHaveBeenCalledTimes(1);
+        expect(spyGetContractAddresses).toHaveBeenCalledTimes(1);
     });
 });

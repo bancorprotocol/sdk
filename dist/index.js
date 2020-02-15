@@ -64,7 +64,7 @@ function init(args) {
                     if (args.eosNodeEndpoint)
                         eos.init(args.eosNodeEndpoint);
                     if (!args.ethereumNodeEndpoint) return [3 /*break*/, 2];
-                    return [4 /*yield*/, ethereum.init(args.ethereumNodeEndpoint, args.ethereumContractRegistryAddress)];
+                    return [4 /*yield*/, ethereum.init(args.ethereumNodeEndpoint)];
                 case 1:
                     _a.sent();
                     _a.label = 2;

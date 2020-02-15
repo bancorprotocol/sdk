@@ -63,20 +63,36 @@ var SmartToken_1 = require("./contracts/SmartToken");
 var utils = __importStar(require("./utils"));
 var retrieve_converter_version = __importStar(require("./retrieve_converter_version"));
 var fetch_conversion_events = __importStar(require("./fetch_conversion_events"));
+var CONTRACT_ADDRESSES = {
+    main: {
+        registry: '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4',
+        multicall: '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2',
+        anchorToken: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
+    },
+    ropsten: {
+        registry: '0xFD95E724962fCfC269010A0c6700Aa09D5de3074',
+        multicall: '0xf3ad7e31b052ff96566eedd218a823430e74b406',
+        anchorToken: '0x62bd9D98d4E188e281D7B78e29334969bbE1053c',
+    }
+};
+var MULTICALL_CONTRACT_ABI = [{ "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
 var web3;
-var converterRegistryContract;
-function init(nodeAddress, contractRegistryAddress) {
+var networkType;
+var converterRegistryAddress;
+function init(nodeAddress) {
     return __awaiter(this, void 0, void 0, function () {
-        var contractRegistryContract, converterRegistryAddress;
+        var contractRegistry;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     web3 = new web3_1.default(new web3_1.default.providers.HttpProvider(nodeAddress));
-                    contractRegistryContract = new web3.eth.Contract(ContractRegistry_1.ContractRegistry, contractRegistryAddress);
-                    return [4 /*yield*/, contractRegistryContract.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
+                    return [4 /*yield*/, web3.eth.net.getNetworkType()];
                 case 1:
+                    networkType = _a.sent();
+                    contractRegistry = new web3.eth.Contract(ContractRegistry_1.ContractRegistry, exports.getContractAddresses().registry);
+                    return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
+                case 2:
                     converterRegistryAddress = _a.sent();
-                    converterRegistryContract = new web3.eth.Contract(BancorConverterRegistry_1.BancorConverterRegistry, converterRegistryAddress);
                     return [2 /*return*/];
             }
         });
@@ -84,7 +100,7 @@ function init(nodeAddress, contractRegistryAddress) {
 }
 exports.init = init;
 function getAnchorToken() {
-    return '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
+    return exports.getContractAddresses().anchorToken;
 }
 exports.getAnchorToken = getAnchorToken;
 function getConversionRate(smartToken, fromToken, toToken, amount) {
@@ -175,6 +191,11 @@ function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
     });
 }
 exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
+exports.getContractAddresses = function () {
+    if (CONTRACT_ADDRESSES.hasOwnProperty(networkType))
+        return CONTRACT_ADDRESSES[networkType];
+    throw new Error(networkType + ' network not supported');
+};
 exports.toWei = function (token, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var tokenContract, decimals;
@@ -224,19 +245,18 @@ exports.getReturn = function (smartToken, converterABI, fromToken, toToken, amou
 };
 exports.getGraph = function () {
     return __awaiter(this, void 0, void 0, function () {
-        var graph, MULTICALL_ABI, MULTICALL_ADDRESS, multicall, convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
+        var graph, multicallContract, converterRegistry, convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     graph = {};
-                    MULTICALL_ABI = [{ "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
-                    MULTICALL_ADDRESS = '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2';
-                    multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
-                    return [4 /*yield*/, converterRegistryContract.methods.getConvertibleTokens().call()];
+                    multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, exports.getContractAddresses().multicall);
+                    converterRegistry = new web3.eth.Contract(BancorConverterRegistry_1.BancorConverterRegistry, converterRegistryAddress);
+                    return [4 /*yield*/, converterRegistry.methods.getConvertibleTokens().call()];
                 case 1:
                     convertibleTokens = _b.sent();
-                    calls = convertibleTokens.map(function (convertibleToken) { return [converterRegistryContract._address, converterRegistryContract.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
-                    return [4 /*yield*/, multicall.methods.aggregate(calls, true).call()];
+                    calls = convertibleTokens.map(function (convertibleToken) { return [converterRegistry._address, converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
+                    return [4 /*yield*/, multicallContract.methods.aggregate(calls, true).call()];
                 case 2:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
                     _loop_1 = function (i) {

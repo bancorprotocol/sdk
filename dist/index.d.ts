@@ -3,7 +3,6 @@ export { init, generatePath, getRateByPath, getRate, getAllPaths, retrieveConver
 interface Settings {
     ethereumNodeEndpoint: string;
     eosNodeEndpoint: string;
-    ethereumContractRegistryAddress: string;
 }
 declare function init(args: Settings): Promise<void>;
 declare function generatePath(sourceToken: Token, targetToken: Token): Promise<any[]>;

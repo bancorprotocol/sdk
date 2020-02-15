@@ -17,14 +17,13 @@ export {
 interface Settings {
     ethereumNodeEndpoint: string;
     eosNodeEndpoint: string;
-    ethereumContractRegistryAddress: string;
 }
 
 async function init(args: Settings) {
     if (args.eosNodeEndpoint)
         eos.init(args.eosNodeEndpoint);
     if (args.ethereumNodeEndpoint)
-        await ethereum.init(args.ethereumNodeEndpoint, args.ethereumContractRegistryAddress);
+        await ethereum.init(args.ethereumNodeEndpoint);
 }
 
 async function generatePath(sourceToken: Token, targetToken: Token) {
