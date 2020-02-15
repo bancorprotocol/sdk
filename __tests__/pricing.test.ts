@@ -228,7 +228,7 @@ describe('price tests', () => {
                 { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
                 { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
                 { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340'},
-                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'}
+                { blockchainType: 'ethereum' as path_generation.BlockchainType, blockchainId: '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07'}
             ]
         ], '1');
 
