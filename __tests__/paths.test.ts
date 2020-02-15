@@ -1,7 +1,6 @@
 import * as sdk from '../src/index';
 import * as eos from '../src/blockchains/eos';
 import * as ethereum from '../src/blockchains/ethereum';
-import * as path_generation from '../src/path_generation';
 
 describe('Path finder tests', () => {
     beforeEach(() => {
