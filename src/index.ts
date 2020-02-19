@@ -1,6 +1,6 @@
 import * as eos from './blockchains/eos/index';
 import * as ethereum from './blockchains/ethereum/index';
-import { BlockchainType, Token, Converter, ConversionStep } from './path_generation';
+import { Token, Converter } from './path_generation';
 
 export {
     init,
