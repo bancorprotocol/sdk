@@ -136,7 +136,7 @@ function getConversionRate(smartToken, fromToken, toToken, amount) {
 exports.getConversionRate = getConversionRate;
 function getAllPaths(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
-        var paths, graph;
+        var paths, graph, tokens, destToken;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -144,7 +144,9 @@ function getAllPaths(sourceToken, targetToken) {
                     return [4 /*yield*/, exports.getGraph()];
                 case 1:
                     graph = _a.sent();
-                    getAllPathsRecursive(paths, graph, [sourceToken], targetToken);
+                    tokens = [web3_1.default.utils.toChecksumAddress(sourceToken)];
+                    destToken = web3_1.default.utils.toChecksumAddress(targetToken);
+                    getAllPathsRecursive(paths, graph, tokens, destToken);
                     return [2 /*return*/, paths];
             }
         });

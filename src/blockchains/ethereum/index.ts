@@ -68,7 +68,9 @@ async function getConversionRate(smartToken, fromToken, toToken, amount) {
 async function getAllPaths(sourceToken, targetToken) {
     const paths = [];
     const graph = await getGraph();
-    getAllPathsRecursive(paths, graph, [sourceToken], targetToken);
+    const tokens = [Web3.utils.toChecksumAddress(sourceToken)];
+    const destToken = Web3.utils.toChecksumAddress(targetToken);
+    getAllPathsRecursive(paths, graph, tokens, destToken);
     return paths;
 }
 
