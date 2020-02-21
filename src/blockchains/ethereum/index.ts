@@ -170,6 +170,6 @@ export async function getAllPaths(sourceToken, targetToken) {
     }
 
     const paths = [];
-    getAllPathsRecursive(paths, [sourceToken], targetToken, registryData);
+    getAllPathsRecursive(paths, [Web3.utils.toChecksumAddress(sourceToken)], Web3.utils.toChecksumAddress(targetToken), registryData);
     return paths;
 }
