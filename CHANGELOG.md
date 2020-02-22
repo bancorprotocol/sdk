@@ -1,3 +1,7 @@
+### 0.1.9
+* Fixed Ethereum non checksummed address input
+
+
 ### 0.1.8
 * Path generation on Ethereum now always returns the shortest path
 
