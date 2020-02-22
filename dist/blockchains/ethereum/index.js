@@ -355,7 +355,7 @@ function getAllPaths(sourceToken, targetToken) {
                         _loop_1(i);
                     }
                     paths = [];
-                    getAllPathsRecursive(paths, [sourceToken], targetToken, registryData);
+                    getAllPathsRecursive(paths, [web3_1.default.utils.toChecksumAddress(sourceToken)], web3_1.default.utils.toChecksumAddress(targetToken), registryData);
                     return [2 /*return*/, paths];
             }
         });
