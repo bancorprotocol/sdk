@@ -209,11 +209,9 @@ describe('price tests', () => {
         const spyToWei = jest
             .spyOn(ethereum, 'toWei')
             .mockImplementationOnce(() => Promise.resolve('562688523539875175216'))
-            .mockImplementationOnce(() => Promise.resolve('209035338725170038366'));
 
         const spyFromWei = jest
             .spyOn(ethereum, 'fromWei')
-            .mockImplementationOnce(() => Promise.resolve('562.688523539875175216'))
             .mockImplementationOnce(() => Promise.resolve('209.035338725170038366'));
 
         const spyGetReturn = jest
@@ -232,8 +230,8 @@ describe('price tests', () => {
         ], '1');
 
         expect(response).toEqual('209.035338725170038366');
-        expect(spyToWei).toHaveBeenCalledTimes(2);
-        expect(spyFromWei).toHaveBeenCalledTimes(2);
+        expect(spyToWei).toHaveBeenCalledTimes(1);
+        expect(spyFromWei).toHaveBeenCalledTimes(1);
         expect(spyGetReturn).toHaveBeenCalledTimes(2);
     });
 

@@ -166,7 +166,13 @@ export async function getConversionSteps(path: Token[]) {
     return steps;
 }
 
-export async function getConversionRate(step: ConversionStep, amount: string) {
+export async function getRateByPath(path, amount) {
+    for (let i = 0; i < path.length - 1; i += 2)
+        amount = await getConversionRate({converter: {...path[i + 1]}, fromToken: path[i], toToken: path[i + 2]}, amount);
+    return amount;
+}
+
+async function getConversionRate(step: ConversionStep, amount: string) {
     const toTokenBlockchainId = step.toToken.blockchainId;
     const fromTokenBlockchainId = step.fromToken.blockchainId;
     const fromTokenSymbol = step.fromToken.symbol;

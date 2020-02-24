@@ -284,6 +284,29 @@ function getConversionSteps(path) {
     });
 }
 exports.getConversionSteps = getConversionSteps;
+function getRateByPath(path, amount) {
+    return __awaiter(this, void 0, void 0, function () {
+        var i;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    i = 0;
+                    _a.label = 1;
+                case 1:
+                    if (!(i < path.length - 1)) return [3 /*break*/, 4];
+                    return [4 /*yield*/, getConversionRate({ converter: __assign({}, path[i + 1]), fromToken: path[i], toToken: path[i + 2] }, amount)];
+                case 2:
+                    amount = _a.sent();
+                    _a.label = 3;
+                case 3:
+                    i += 2;
+                    return [3 /*break*/, 1];
+                case 4: return [2 /*return*/, amount];
+            }
+        });
+    });
+}
+exports.getRateByPath = getRateByPath;
 function getConversionRate(step, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var toTokenBlockchainId, fromTokenBlockchainId, fromTokenSymbol, toTokenSymbol, isFromTokenMultiToken, isToTokenMultiToken, converterBlockchainId, reserveSymbol, reserves, reservesContacts, conversionFee, isConversionFromSmartToken, balanceFrom, balanceTo, isConversionToSmartToken, balanceObject, converterReserves, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amountWithoutFee;
@@ -373,7 +396,6 @@ function getConversionRate(step, amount) {
         });
     });
 }
-exports.getConversionRate = getConversionRate;
 function getConverterBlockchainId(token) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

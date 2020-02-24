@@ -29,7 +29,7 @@ const MULTICALL_CONTRACT_ABI = [{"constant":false,"inputs":[{"components":[{"int
 export {
     init,
     getAnchorToken,
-    getConversionRate,
+    getRateByPath,
     getAllPaths,
     retrieveConverterVersion,
     fetchConversionEvents,
@@ -51,17 +51,23 @@ function getAnchorToken() {
     return getContractAddresses().anchorToken;
 }
 
-async function getConversionRate(smartToken, fromToken, toToken, amount) {
-    const inputAmount = await toWei(fromToken, amount);
+async function getRateByPath(path, amount) {
+    amount = await toWei(path[0], amount);
+    for (let i = 0; i < path.length - 1; i += 2)
+        amount = await getConversionRate(path[i + 1], path[i], path[i + 2], amount);
+    return await fromWei(path[path.length - 1], amount);
+}
+
+async function getConversionRate(smartToken, fromToken, toToken, inputAmount) {
     try {
         const outputAmount = await getReturn(smartToken, BancorConverter, fromToken, toToken, inputAmount);
-        return await fromWei(toToken, outputAmount['0']);
+        return outputAmount['0'];
     }
     catch (error) {
         if (!error.message.includes('insufficient data for uint256'))
             throw error;
         const outputAmount = await getReturn(smartToken, BancorConverterV9, fromToken, toToken, inputAmount);
-        return await fromWei(toToken, outputAmount);
+        return outputAmount;
     }
 }
 

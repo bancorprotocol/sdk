@@ -56,12 +56,10 @@ async function getRateByPath(paths: Token[][], amount) {
     for (const path of paths) {
         switch (path[0].blockchainType) {
         case 'eos':
-            for (let i = 0; i < path.length - 1; i += 2)
-                amount = await eos.getConversionRate({converter: {...path[i + 1]}, fromToken: path[i], toToken: path[i + 2]}, amount);
+            amount = await eos.getRateByPath(path, amount);
             break;
         case 'ethereum':
-            for (let i = 0; i < path.length - 1; i += 2)
-                amount = await ethereum.getConversionRate(path[i + 1].blockchainId, path[i].blockchainId, path[i + 2].blockchainId, amount);
+            amount = await ethereum.getRateByPath(path.map(token => token.blockchainId), amount);
             break;
         }
     }

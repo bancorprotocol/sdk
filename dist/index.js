@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -119,51 +108,33 @@ function generatePath(sourceToken, targetToken) {
 exports.generatePath = generatePath;
 function getRateByPath(paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var _i, paths_1, path, _a, i, i;
+        var _i, paths_1, path, _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _i = 0, paths_1 = paths;
                     _b.label = 1;
                 case 1:
-                    if (!(_i < paths_1.length)) return [3 /*break*/, 13];
+                    if (!(_i < paths_1.length)) return [3 /*break*/, 7];
                     path = paths_1[_i];
                     _a = path[0].blockchainType;
                     switch (_a) {
                         case 'eos': return [3 /*break*/, 2];
-                        case 'ethereum': return [3 /*break*/, 7];
+                        case 'ethereum': return [3 /*break*/, 4];
                     }
-                    return [3 /*break*/, 12];
-                case 2:
-                    i = 0;
-                    _b.label = 3;
+                    return [3 /*break*/, 6];
+                case 2: return [4 /*yield*/, eos.getRateByPath(path, amount)];
                 case 3:
-                    if (!(i < path.length - 1)) return [3 /*break*/, 6];
-                    return [4 /*yield*/, eos.getConversionRate({ converter: __assign({}, path[i + 1]), fromToken: path[i], toToken: path[i + 2] }, amount)];
-                case 4:
                     amount = _b.sent();
-                    _b.label = 5;
+                    return [3 /*break*/, 6];
+                case 4: return [4 /*yield*/, ethereum.getRateByPath(path.map(function (token) { return token.blockchainId; }), amount)];
                 case 5:
-                    i += 2;
-                    return [3 /*break*/, 3];
-                case 6: return [3 /*break*/, 12];
-                case 7:
-                    i = 0;
-                    _b.label = 8;
-                case 8:
-                    if (!(i < path.length - 1)) return [3 /*break*/, 11];
-                    return [4 /*yield*/, ethereum.getConversionRate(path[i + 1].blockchainId, path[i].blockchainId, path[i + 2].blockchainId, amount)];
-                case 9:
                     amount = _b.sent();
-                    _b.label = 10;
-                case 10:
-                    i += 2;
-                    return [3 /*break*/, 8];
-                case 11: return [3 /*break*/, 12];
-                case 12:
+                    return [3 /*break*/, 6];
+                case 6:
                     _i++;
                     return [3 /*break*/, 1];
-                case 13: return [2 /*return*/, amount];
+                case 7: return [2 /*return*/, amount];
             }
         });
     });

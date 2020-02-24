@@ -1,7 +1,7 @@
-export { init, getAnchorToken, getConversionRate, getAllPaths, retrieveConverterVersion, fetchConversionEvents, fetchConversionEventsByTimestamp };
+export { init, getAnchorToken, getRateByPath, getAllPaths, retrieveConverterVersion, fetchConversionEvents, fetchConversionEventsByTimestamp };
 declare function init(nodeAddress: any): Promise<void>;
 declare function getAnchorToken(): any;
-declare function getConversionRate(smartToken: any, fromToken: any, toToken: any, amount: any): Promise<string>;
+declare function getRateByPath(path: any, amount: any): Promise<string>;
 declare function getAllPaths(sourceToken: any, targetToken: any): Promise<any[]>;
 declare function retrieveConverterVersion(converter: any): Promise<{
     type: string;

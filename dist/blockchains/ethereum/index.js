@@ -103,37 +103,56 @@ function getAnchorToken() {
     return exports.getContractAddresses().anchorToken;
 }
 exports.getAnchorToken = getAnchorToken;
-function getConversionRate(smartToken, fromToken, toToken, amount) {
+function getRateByPath(path, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var inputAmount, outputAmount, error_1, outputAmount;
+        var i;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, exports.toWei(fromToken, amount)];
+                case 0: return [4 /*yield*/, exports.toWei(path[0], amount)];
                 case 1:
-                    inputAmount = _a.sent();
+                    amount = _a.sent();
+                    i = 0;
                     _a.label = 2;
                 case 2:
-                    _a.trys.push([2, 5, , 8]);
-                    return [4 /*yield*/, exports.getReturn(smartToken, BancorConverter_1.BancorConverter, fromToken, toToken, inputAmount)];
+                    if (!(i < path.length - 1)) return [3 /*break*/, 5];
+                    return [4 /*yield*/, getConversionRate(path[i + 1], path[i], path[i + 2], amount)];
                 case 3:
-                    outputAmount = _a.sent();
-                    return [4 /*yield*/, exports.fromWei(toToken, outputAmount['0'])];
-                case 4: return [2 /*return*/, _a.sent()];
-                case 5:
-                    error_1 = _a.sent();
-                    if (!error_1.message.includes('insufficient data for uint256'))
-                        throw error_1;
-                    return [4 /*yield*/, exports.getReturn(smartToken, BancorConverterV9_1.BancorConverterV9, fromToken, toToken, inputAmount)];
-                case 6:
-                    outputAmount = _a.sent();
-                    return [4 /*yield*/, exports.fromWei(toToken, outputAmount)];
-                case 7: return [2 /*return*/, _a.sent()];
-                case 8: return [2 /*return*/];
+                    amount = _a.sent();
+                    _a.label = 4;
+                case 4:
+                    i += 2;
+                    return [3 /*break*/, 2];
+                case 5: return [4 /*yield*/, exports.fromWei(path[path.length - 1], amount)];
+                case 6: return [2 /*return*/, _a.sent()];
             }
         });
     });
 }
-exports.getConversionRate = getConversionRate;
+exports.getRateByPath = getRateByPath;
+function getConversionRate(smartToken, fromToken, toToken, inputAmount) {
+    return __awaiter(this, void 0, void 0, function () {
+        var outputAmount, error_1, outputAmount;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 4]);
+                    return [4 /*yield*/, exports.getReturn(smartToken, BancorConverter_1.BancorConverter, fromToken, toToken, inputAmount)];
+                case 1:
+                    outputAmount = _a.sent();
+                    return [2 /*return*/, outputAmount['0']];
+                case 2:
+                    error_1 = _a.sent();
+                    if (!error_1.message.includes('insufficient data for uint256'))
+                        throw error_1;
+                    return [4 /*yield*/, exports.getReturn(smartToken, BancorConverterV9_1.BancorConverterV9, fromToken, toToken, inputAmount)];
+                case 3:
+                    outputAmount = _a.sent();
+                    return [2 /*return*/, outputAmount];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
 function getAllPaths(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
         var paths, graph, tokens, destToken;

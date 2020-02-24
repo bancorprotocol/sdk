@@ -23,7 +23,7 @@ export declare function getSymbol(string: any): any;
 export declare function getBalance(string: any): any;
 export declare function buildPathsFile(): Promise<void>;
 export declare function getConversionSteps(path: Token[]): Promise<ConversionStep[]>;
-export declare function getConversionRate(step: ConversionStep, amount: string): Promise<any>;
+export declare function getRateByPath(path: any, amount: any): Promise<any>;
 export declare function getConverterBlockchainId(token: Token): Promise<any>;
 export declare function getConversionPath(from: Token, to: Token): Promise<any[]>;
 export {};
