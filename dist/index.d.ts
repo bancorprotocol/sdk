@@ -1,14 +1,15 @@
 import { Token, Converter } from './path_generation';
-export { init, generatePath, getRateByPath, getRate, getAllPaths, retrieveConverterVersion, fetchConversionEvents, fetchConversionEventsByTimestamp, buildPathsFile };
+export { init, generatePath, getRateByPath, getRate, getAllPaths, getAllRates, retrieveConverterVersion, fetchConversionEvents, fetchConversionEventsByTimestamp, buildPathsFile };
 interface Settings {
     ethereumNodeEndpoint: string;
     eosNodeEndpoint: string;
 }
 declare function init(args: Settings): Promise<void>;
 declare function generatePath(sourceToken: Token, targetToken: Token): Promise<any[]>;
-declare function getRateByPath(paths: Token[][], amount: any): Promise<any>;
-declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<any>;
+declare function getRateByPath(paths: Token[][], amount: string): Promise<string>;
+declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<string>;
 declare function getAllPaths(sourceToken: Token, targetToken: Token): Promise<any[]>;
+declare function getAllRates(paths: Token[][], amounts: string[]): Promise<any>;
 declare function retrieveConverterVersion(converter: Converter): Promise<{
     type: string;
     value: any;

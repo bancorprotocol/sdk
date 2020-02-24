@@ -124,6 +124,28 @@ function getRateByPath(path, amount) {
     });
 }
 exports.getRateByPath = getRateByPath;
+function getRateByPaths(paths, amounts) {
+    return __awaiter(this, void 0, void 0, function () {
+        var sourceDecimals, targetDecimals;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, exports.getDecimals(paths.map(function (path) { return path[0]; }))];
+                case 1:
+                    sourceDecimals = _a.sent();
+                    return [4 /*yield*/, exports.getDecimals(paths.map(function (path) { return path[path.length - 1]; }))];
+                case 2:
+                    targetDecimals = _a.sent();
+                    amounts = amounts.map(function (amount, index) { return utils.toWei(amount, sourceDecimals[index]); });
+                    return [4 /*yield*/, exports.getRates(paths, amounts)];
+                case 3:
+                    amounts = _a.sent();
+                    amounts = amounts.map(function (amount, index) { return utils.fromWei(amount, targetDecimals[index]); });
+                    return [2 /*return*/, amounts];
+            }
+        });
+    });
+}
+exports.getRateByPaths = getRateByPaths;
 function getAllPaths(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
         var paths, graph, tokens, destToken;
@@ -227,6 +249,40 @@ exports.getReturn = function (path, amount) {
                     bancorNetworkContract = new web3.eth.Contract(BancorNetwork_1.BancorNetwork, bancorNetworkAddress);
                     return [4 /*yield*/, bancorNetworkContract.methods.getReturnByPath(path, amount).call()];
                 case 1: return [2 /*return*/, (_a.sent())['0']];
+            }
+        });
+    });
+};
+exports.getDecimals = function (tokens) {
+    return __awaiter(this, void 0, void 0, function () {
+        var tokenContracts, multicallContract, calls, _a, blockNumber, returnData;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    tokenContracts = tokens.map(function (token) { return new web3.eth.Contract(ERC20Token_1.ERC20Token, token); });
+                    multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, exports.getContractAddresses().multicall);
+                    calls = tokenContracts.map(function (tokenContract) { return [tokenContract._address, tokenContract.methods.decimals().encodeABI()]; });
+                    return [4 /*yield*/, multicallContract.methods.aggregate(calls, true).call()];
+                case 1:
+                    _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
+                    return [2 /*return*/, returnData.map(function (item) { return web3_1.default.utils.toBN(item.data).toString(); })];
+            }
+        });
+    });
+};
+exports.getRates = function (paths, amounts) {
+    return __awaiter(this, void 0, void 0, function () {
+        var bancorNetworkContract, multicallContract, calls, _a, blockNumber, returnData;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    bancorNetworkContract = new web3.eth.Contract(BancorNetwork_1.BancorNetwork, bancorNetworkAddress);
+                    multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, exports.getContractAddresses().multicall);
+                    calls = paths.map(function (path, index) { return [bancorNetworkAddress, bancorNetworkContract.methods.getReturnByPath(path, amounts[index]).encodeABI()]; });
+                    return [4 /*yield*/, multicallContract.methods.aggregate(calls, true).call()];
+                case 1:
+                    _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
+                    return [2 /*return*/, returnData.map(function (item) { return web3_1.default.utils.toBN(item.data.substr(0, 66)).toString(); })];
             }
         });
     });

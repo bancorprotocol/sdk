@@ -8,6 +8,7 @@ export {
     getRateByPath,
     getRate,
     getAllPaths,
+    getAllRates,
     retrieveConverterVersion,
     fetchConversionEvents,
     fetchConversionEventsByTimestamp,
@@ -52,7 +53,7 @@ async function generatePath(sourceToken: Token, targetToken: Token) {
     return [];
 }
 
-async function getRateByPath(paths: Token[][], amount) {
+async function getRateByPath(paths: Token[][], amount: string) {
     for (const path of paths) {
         switch (path[0].blockchainType) {
         case 'eos':
@@ -75,6 +76,12 @@ async function getAllPaths(sourceToken: Token, targetToken: Token) {
     if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')
         return await ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
+}
+
+async function getAllRates(paths: Token[][], amounts: string[]) {
+    if (paths.every(path => path.every(token => token.blockchainType == 'ethereum')))
+        return await ethereum.getRateByPaths(paths.map(path => path.map(token => token.blockchainId)), amounts);
+    throw new Error("only ethereum blockchain supported");
 }
 
 async function retrieveConverterVersion(converter: Converter) {

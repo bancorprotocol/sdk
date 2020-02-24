@@ -29,6 +29,7 @@ export {
     init,
     getAnchorToken,
     getRateByPath,
+    getRateByPaths,
     getAllPaths,
     retrieveConverterVersion,
     fetchConversionEvents,
@@ -57,6 +58,15 @@ async function getRateByPath(path, amount) {
     amount = await getReturn(path, amount);
     amount = await fromWei(path[path.length - 1], amount);
     return amount;
+}
+
+async function getRateByPaths(paths, amounts) {
+    const sourceDecimals = await getDecimals(paths.map(path => path[0]));
+    const targetDecimals = await getDecimals(paths.map(path => path[path.length - 1]));
+    amounts = amounts.map((amount, index) => utils.toWei(amount, sourceDecimals[index]));
+    amounts = await getRates(paths, amounts);
+    amounts = amounts.map((amount, index) => utils.fromWei(amount, targetDecimals[index]));
+    return amounts;
 }
 
 async function getAllPaths(sourceToken, targetToken) {
@@ -103,6 +113,26 @@ export const fromWei = async function(token, amount) {
 export const getReturn = async function(path, amount) {
     const bancorNetworkContract = new web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
     return (await bancorNetworkContract.methods.getReturnByPath(path, amount).call())['0'];
+}
+
+export const getDecimals = async function(tokens) {
+    const tokenContracts = tokens.map(token => new web3.eth.Contract(ERC20Token, token));
+    const multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, getContractAddresses().multicall);
+
+    const calls = tokenContracts.map(tokenContract => [tokenContract._address, tokenContract.methods.decimals().encodeABI()]);
+    const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, true).call();
+
+    return returnData.map(item => Web3.utils.toBN(item.data).toString());
+}
+
+export const getRates = async function(paths, amounts) {
+    const bancorNetworkContract = new web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
+    const multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, getContractAddresses().multicall);
+
+    const calls = paths.map((path, index) => [bancorNetworkAddress, bancorNetworkContract.methods.getReturnByPath(path, amounts[index]).encodeABI()]);
+    const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, true).call();
+
+    return returnData.map(item => Web3.utils.toBN(item.data.substr(0, 66)).toString());
 }
 
 export const getGraph = async function() {
