@@ -54,21 +54,8 @@ function getAnchorToken() {
 async function getRateByPath(path, amount) {
     amount = await toWei(path[0], amount);
     for (let i = 0; i < path.length - 1; i += 2)
-        amount = await getConversionRate(path[i + 1], path[i], path[i + 2], amount);
+        amount = await getReturn(path[i + 1], path[i], path[i + 2], amount);
     return await fromWei(path[path.length - 1], amount);
-}
-
-async function getConversionRate(smartToken, fromToken, toToken, inputAmount) {
-    try {
-        const outputAmount = await getReturn(smartToken, BancorConverter, fromToken, toToken, inputAmount);
-        return outputAmount['0'];
-    }
-    catch (error) {
-        if (!error.message.includes('insufficient data for uint256'))
-            throw error;
-        const outputAmount = await getReturn(smartToken, BancorConverterV9, fromToken, toToken, inputAmount);
-        return outputAmount;
-    }
 }
 
 async function getAllPaths(sourceToken, targetToken) {
@@ -112,12 +99,20 @@ export const fromWei = async function(token, amount) {
     return utils.fromWei(amount, decimals);
 };
 
-export const getReturn = async function(smartToken, converterABI, fromToken, toToken, amount) {
+export const getReturn = async function(smartToken, fromToken, toToken, amount) {
     const tokenContract = new web3.eth.Contract(SmartToken, smartToken);
-    const converter = await tokenContract.methods.owner().call();
-    const converterContract = new web3.eth.Contract(converterABI, converter);
-    return await converterContract.methods.getReturn(fromToken, toToken, amount).call();
-};
+    const converterAddress = await tokenContract.methods.owner().call();
+    try {
+        const converterContract = new web3.eth.Contract(BancorConverter, converterAddress);
+        return (await converterContract.methods.getReturn(fromToken, toToken, amount).call())['0'];
+    }
+    catch (error) {
+        if (!error.message.includes('insufficient data for uint256'))
+            throw error;
+        const converterContract = new web3.eth.Contract(BancorConverterV9, converterAddress);
+        return (await converterContract.methods.getReturn(fromToken, toToken, amount).call());
+    }
+}
 
 export const getGraph = async function() {
     const graph = {};

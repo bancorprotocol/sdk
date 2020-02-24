@@ -12,5 +12,5 @@ declare function fetchConversionEventsByTimestamp(token: any, fromTimestamp: any
 export declare const getContractAddresses: () => any;
 export declare const toWei: (token: any, amount: any) => Promise<string>;
 export declare const fromWei: (token: any, amount: any) => Promise<string>;
-export declare const getReturn: (smartToken: any, converterABI: any, fromToken: any, toToken: any, amount: any) => Promise<any>;
+export declare const getReturn: (smartToken: any, fromToken: any, toToken: any, amount: any) => Promise<any>;
 export declare const getGraph: () => Promise<{}>;
