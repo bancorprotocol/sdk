@@ -1,4 +1,4 @@
-export declare const BancorConverter: ({
+export declare const BancorNetwork: ({
     "constant": boolean;
     "inputs": {
         "name": string;

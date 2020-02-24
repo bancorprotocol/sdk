@@ -1,7 +1,7 @@
 export { init, getAnchorToken, getRateByPath, getAllPaths, retrieveConverterVersion, fetchConversionEvents, fetchConversionEventsByTimestamp };
 declare function init(nodeAddress: any): Promise<void>;
 declare function getAnchorToken(): any;
-declare function getRateByPath(path: any, amount: any): Promise<string>;
+declare function getRateByPath(path: any, amount: any): Promise<any>;
 declare function getAllPaths(sourceToken: any, targetToken: any): Promise<any[]>;
 declare function retrieveConverterVersion(converter: any): Promise<{
     type: string;
@@ -12,5 +12,5 @@ declare function fetchConversionEventsByTimestamp(token: any, fromTimestamp: any
 export declare const getContractAddresses: () => any;
 export declare const toWei: (token: any, amount: any) => Promise<string>;
 export declare const fromWei: (token: any, amount: any) => Promise<string>;
-export declare const getReturn: (smartToken: any, fromToken: any, toToken: any, amount: any) => Promise<any>;
+export declare const getReturn: (path: any, amount: any) => Promise<any>;
 export declare const getGraph: () => Promise<{}>;

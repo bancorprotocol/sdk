@@ -1,8 +1,7 @@
 import Web3 from 'web3';
 
 import { ContractRegistry } from './contracts/ContractRegistry';
-import { BancorConverter } from './contracts/BancorConverter';
-import { BancorConverterV9 } from './contracts/BancorConverterV9';
+import { BancorNetwork } from './contracts/BancorNetwork';
 import { BancorConverterRegistry } from './contracts/BancorConverterRegistry';
 import { ERC20Token } from './contracts/ERC20Token';
 import { SmartToken } from './contracts/SmartToken';
@@ -38,12 +37,14 @@ export {
 
 let web3;
 let networkType;
+let bancorNetworkAddress;
 let converterRegistryAddress;
 
 async function init(nodeAddress) {
     web3 = new Web3(new Web3.providers.HttpProvider(nodeAddress));
     networkType = await web3.eth.net.getNetworkType();
     const contractRegistry = new web3.eth.Contract(ContractRegistry, getContractAddresses().registry);
+    bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
     converterRegistryAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
 }
 
@@ -53,9 +54,9 @@ function getAnchorToken() {
 
 async function getRateByPath(path, amount) {
     amount = await toWei(path[0], amount);
-    for (let i = 0; i < path.length - 1; i += 2)
-        amount = await getReturn(path[i + 1], path[i], path[i + 2], amount);
-    return await fromWei(path[path.length - 1], amount);
+    amount = await getReturn(path, amount);
+    amount = await fromWei(path[path.length - 1], amount);
+    return amount;
 }
 
 async function getAllPaths(sourceToken, targetToken) {
@@ -99,19 +100,9 @@ export const fromWei = async function(token, amount) {
     return utils.fromWei(amount, decimals);
 };
 
-export const getReturn = async function(smartToken, fromToken, toToken, amount) {
-    const tokenContract = new web3.eth.Contract(SmartToken, smartToken);
-    const converterAddress = await tokenContract.methods.owner().call();
-    try {
-        const converterContract = new web3.eth.Contract(BancorConverter, converterAddress);
-        return (await converterContract.methods.getReturn(fromToken, toToken, amount).call())['0'];
-    }
-    catch (error) {
-        if (!error.message.includes('insufficient data for uint256'))
-            throw error;
-        const converterContract = new web3.eth.Contract(BancorConverterV9, converterAddress);
-        return (await converterContract.methods.getReturn(fromToken, toToken, amount).call());
-    }
+export const getReturn = async function(path, amount) {
+    const bancorNetworkContract = new web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
+    return (await bancorNetworkContract.methods.getReturnByPath(path, amount).call())['0'];
 }
 
 export const getGraph = async function() {

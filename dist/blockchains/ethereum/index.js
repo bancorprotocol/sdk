@@ -55,11 +55,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var web3_1 = __importDefault(require("web3"));
 var ContractRegistry_1 = require("./contracts/ContractRegistry");
-var BancorConverter_1 = require("./contracts/BancorConverter");
-var BancorConverterV9_1 = require("./contracts/BancorConverterV9");
+var BancorNetwork_1 = require("./contracts/BancorNetwork");
 var BancorConverterRegistry_1 = require("./contracts/BancorConverterRegistry");
 var ERC20Token_1 = require("./contracts/ERC20Token");
-var SmartToken_1 = require("./contracts/SmartToken");
 var utils = __importStar(require("./utils"));
 var retrieve_converter_version = __importStar(require("./retrieve_converter_version"));
 var fetch_conversion_events = __importStar(require("./fetch_conversion_events"));
@@ -78,6 +76,7 @@ var CONTRACT_ADDRESSES = {
 var MULTICALL_CONTRACT_ABI = [{ "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
 var web3;
 var networkType;
+var bancorNetworkAddress;
 var converterRegistryAddress;
 function init(nodeAddress) {
     return __awaiter(this, void 0, void 0, function () {
@@ -90,8 +89,11 @@ function init(nodeAddress) {
                 case 1:
                     networkType = _a.sent();
                     contractRegistry = new web3.eth.Contract(ContractRegistry_1.ContractRegistry, exports.getContractAddresses().registry);
-                    return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
+                    return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorNetwork')).call()];
                 case 2:
+                    bancorNetworkAddress = _a.sent();
+                    return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
+                case 3:
                     converterRegistryAddress = _a.sent();
                     return [2 /*return*/];
             }
@@ -105,25 +107,18 @@ function getAnchorToken() {
 exports.getAnchorToken = getAnchorToken;
 function getRateByPath(path, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var i;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, exports.toWei(path[0], amount)];
                 case 1:
                     amount = _a.sent();
-                    i = 0;
-                    _a.label = 2;
+                    return [4 /*yield*/, exports.getReturn(path, amount)];
                 case 2:
-                    if (!(i < path.length - 1)) return [3 /*break*/, 5];
-                    return [4 /*yield*/, exports.getReturn(path[i + 1], path[i], path[i + 2], amount)];
+                    amount = _a.sent();
+                    return [4 /*yield*/, exports.fromWei(path[path.length - 1], amount)];
                 case 3:
                     amount = _a.sent();
-                    _a.label = 4;
-                case 4:
-                    i += 2;
-                    return [3 /*break*/, 2];
-                case 5: return [4 /*yield*/, exports.fromWei(path[path.length - 1], amount)];
-                case 6: return [2 /*return*/, _a.sent()];
+                    return [2 /*return*/, amount];
             }
         });
     });
@@ -223,30 +218,15 @@ exports.fromWei = function (token, amount) {
         });
     });
 };
-exports.getReturn = function (smartToken, fromToken, toToken, amount) {
+exports.getReturn = function (path, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var tokenContract, converterAddress, converterContract, error_1, converterContract;
+        var bancorNetworkContract;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    tokenContract = new web3.eth.Contract(SmartToken_1.SmartToken, smartToken);
-                    return [4 /*yield*/, tokenContract.methods.owner().call()];
-                case 1:
-                    converterAddress = _a.sent();
-                    _a.label = 2;
-                case 2:
-                    _a.trys.push([2, 4, , 6]);
-                    converterContract = new web3.eth.Contract(BancorConverter_1.BancorConverter, converterAddress);
-                    return [4 /*yield*/, converterContract.methods.getReturn(fromToken, toToken, amount).call()];
-                case 3: return [2 /*return*/, (_a.sent())['0']];
-                case 4:
-                    error_1 = _a.sent();
-                    if (!error_1.message.includes('insufficient data for uint256'))
-                        throw error_1;
-                    converterContract = new web3.eth.Contract(BancorConverterV9_1.BancorConverterV9, converterAddress);
-                    return [4 /*yield*/, converterContract.methods.getReturn(fromToken, toToken, amount).call()];
-                case 5: return [2 /*return*/, (_a.sent())];
-                case 6: return [2 /*return*/];
+                    bancorNetworkContract = new web3.eth.Contract(BancorNetwork_1.BancorNetwork, bancorNetworkAddress);
+                    return [4 /*yield*/, bancorNetworkContract.methods.getReturnByPath(path, amount).call()];
+                case 1: return [2 /*return*/, (_a.sent())['0']];
             }
         });
     });

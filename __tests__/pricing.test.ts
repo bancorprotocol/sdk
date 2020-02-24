@@ -232,7 +232,7 @@ describe('price tests', () => {
         expect(response).toEqual('209.035338725170038366');
         expect(spyToWei).toHaveBeenCalledTimes(1);
         expect(spyFromWei).toHaveBeenCalledTimes(1);
-        expect(spyGetReturn).toHaveBeenCalledTimes(2);
+        expect(spyGetReturn).toHaveBeenCalledTimes(1);
     });
 
     it('Eos token to Eth', async () => {
