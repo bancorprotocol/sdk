@@ -28,7 +28,7 @@ async function init(args: Settings) {
         await ethereum.init(args.ethereumNodeEndpoint);
 }
 
-async function generatePath(sourceToken: Token, targetToken: Token, amount: string = "1", getEthBestPath: (paths: string[], rates: string[]) => string[] = getEthCheapestPath) {
+async function generatePath(sourceToken: Token, targetToken: Token, amount: string = "1", getEthBestPath: (paths: string[][], rates: string[]) => string[] = getEthCheapestPath) {
     let eosPath;
     let ethPaths;
     let ethRates;
@@ -100,20 +100,36 @@ async function buildPathsFile() {
     await eos.buildPathsFile();
 }
 
-function getEthShortestPath(paths, rates) {
+function getEthShortestPath(paths: string[][], rates: string[]) {
     let bestPathIndex = 0;
     for (let i = 1; i < paths.length; i++) {
-        if ((paths[bestPathIndex].length > paths[i].length) || (paths[bestPathIndex].length == paths[i].length && rates[bestPathIndex] < rates[i]))
+        if (shorterPath(paths, bestPathIndex, i) || (equalPath(paths, bestPathIndex, i) && cheaperRate(rates, bestPathIndex, i)))
             bestPathIndex = i;
     }
     return paths[bestPathIndex];
 }
 
-function getEthCheapestPath(paths, rates) {
+function getEthCheapestPath(paths: string[][], rates: string[]) {
     let bestPathIndex = 0;
     for (let i = 1; i < rates.length; i++) {
-        if ((rates[bestPathIndex] < rates[i]) || (rates[bestPathIndex] == rates[i] && paths[bestPathIndex].length > paths[i].length))
+        if (cheaperRate(rates, bestPathIndex, i) || (equalRate(rates, bestPathIndex, i) && shorterPath(paths, bestPathIndex, i)))
             bestPathIndex = i;
     }
     return paths[bestPathIndex];
+}
+
+function shorterPath(paths: string[][], index1: number, index2: number) {
+    return paths[index1].length < paths[index2].length;
+}
+
+function cheaperRate(rates: string[], index1: number, index2: number) {
+    return rates[index1] > rates[index2];
+}
+
+function equalPath(paths: string[][], index1: number, index2: number) {
+    return paths[index1].length == paths[index2].length;
+}
+
+function equalRate(rates: string[], index1: number, index2: number) {
+    return rates[index1] == rates[index2];
 }

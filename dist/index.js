@@ -230,7 +230,7 @@ exports.buildPathsFile = buildPathsFile;
 function getEthShortestPath(paths, rates) {
     var bestPathIndex = 0;
     for (var i = 1; i < paths.length; i++) {
-        if ((paths[bestPathIndex].length > paths[i].length) || (paths[bestPathIndex].length == paths[i].length && rates[bestPathIndex] < rates[i]))
+        if (shorterPath(paths, bestPathIndex, i) || (equalPath(paths, bestPathIndex, i) && cheaperRate(rates, bestPathIndex, i)))
             bestPathIndex = i;
     }
     return paths[bestPathIndex];
@@ -239,9 +239,21 @@ exports.getEthShortestPath = getEthShortestPath;
 function getEthCheapestPath(paths, rates) {
     var bestPathIndex = 0;
     for (var i = 1; i < rates.length; i++) {
-        if ((rates[bestPathIndex] < rates[i]) || (rates[bestPathIndex] == rates[i] && paths[bestPathIndex].length > paths[i].length))
+        if (cheaperRate(rates, bestPathIndex, i) || (equalRate(rates, bestPathIndex, i) && shorterPath(paths, bestPathIndex, i)))
             bestPathIndex = i;
     }
     return paths[bestPathIndex];
 }
 exports.getEthCheapestPath = getEthCheapestPath;
+function shorterPath(paths, index1, index2) {
+    return paths[index1].length < paths[index2].length;
+}
+function cheaperRate(rates, index1, index2) {
+    return rates[index1] > rates[index2];
+}
+function equalPath(paths, index1, index2) {
+    return paths[index1].length == paths[index2].length;
+}
+function equalRate(rates, index1, index2) {
+    return rates[index1] == rates[index2];
+}
