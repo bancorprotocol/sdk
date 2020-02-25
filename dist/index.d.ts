@@ -7,12 +7,12 @@ interface Settings {
 }
 export declare function init(args: Settings): Promise<void>;
 export declare function generateEosPaths(): Promise<void>;
-export declare function generatePath(sourceToken: Token, targetToken: Token, getBestPath?: (paths: string[], rates: string[]) => string[]): Promise<ConversionPaths>;
+export declare function generatePath(sourceToken: Token, targetToken: Token, amount?: string, getBestPath?: (paths: string[], rates: string[]) => string[]): Promise<ConversionPaths>;
 export declare const calculateRateFromPaths: (paths: ConversionPaths, amount: any) => any;
 export declare function calculateRateFromPath(paths: ConversionPaths, amount: any): Promise<any>;
 export declare const getRateByPath: (paths: ConversionPaths, amount: any) => Promise<any>;
 export declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<any>;
-export declare function getAllPathsAndRates(sourceToken: Token, targetToken: Token): Promise<any[]>;
+export declare function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount?: string): Promise<any[]>;
 declare const _default: {
     init: typeof init;
     generateEosPaths: typeof generateEosPaths;

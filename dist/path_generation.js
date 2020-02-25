@@ -157,7 +157,7 @@ function getConverterToken(blockchainId, connector, blockchainType) {
     });
 }
 exports.getConverterToken = getConverterToken;
-function generatePathByBlockchainIds(sourceToken, targetToken, getBestPath) {
+function generatePathByBlockchainIds(sourceToken, targetToken, amount, getBestPath) {
     return __awaiter(this, void 0, void 0, function () {
         var pathObjects, paths, rates, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         var _l, _m, _o;
@@ -180,12 +180,12 @@ function generatePathByBlockchainIds(sourceToken, targetToken, getBestPath) {
                 case 2:
                     _c.apply(_b, [(_d.path = _p.sent(), _d)]);
                     return [3 /*break*/, 11];
-                case 3: return [4 /*yield*/, ethereum_1.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId)];
+                case 3: return [4 /*yield*/, ethereum_1.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
                 case 4:
                     _l = _p.sent(), paths = _l[0], rates = _l[1];
                     pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
                     return [3 /*break*/, 11];
-                case 5: return [4 /*yield*/, ethereum_1.getAllPathsAndRates(EthereumAnchorToken.blockchainId, targetToken.blockchainId)];
+                case 5: return [4 /*yield*/, ethereum_1.getAllPathsAndRates(EthereumAnchorToken.blockchainId, targetToken.blockchainId, amount)];
                 case 6:
                     _m = _p.sent(), paths = _m[0], rates = _m[1];
                     _f = (_e = pathObjects.paths).push;
@@ -195,7 +195,7 @@ function generatePathByBlockchainIds(sourceToken, targetToken, getBestPath) {
                     _f.apply(_e, [(_g.path = _p.sent(), _g)]);
                     pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
                     return [3 /*break*/, 11];
-                case 8: return [4 /*yield*/, ethereum_1.getAllPathsAndRates(sourceToken.blockchainId, EthereumAnchorToken.blockchainId)];
+                case 8: return [4 /*yield*/, ethereum_1.getAllPathsAndRates(sourceToken.blockchainId, EthereumAnchorToken.blockchainId, amount)];
                 case 9:
                     _o = _p.sent(), paths = _o[0], rates = _o[1];
                     pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });

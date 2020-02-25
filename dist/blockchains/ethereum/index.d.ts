@@ -18,4 +18,4 @@ export declare function getReserveBlockchainId(converter: any, position: any): P
 export declare function getConverterSmartToken(converter: any): Promise<any>;
 export declare function getReserveToken(converterContract: any, i: any): Promise<Token>;
 export declare function getSmartTokens(token: Token): Promise<any>;
-export declare function getAllPathsAndRates(sourceToken: any, targetToken: any): Promise<any[]>;
+export declare function getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;

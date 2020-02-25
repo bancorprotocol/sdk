@@ -332,7 +332,7 @@ function getAllPathsRecursive(paths, path, targetToken, registryData) {
             getAllPathsRecursive(paths, __spreadArrays(path, [nextToken]), targetToken, registryData);
         }
 }
-function getAllPathsAndRates(sourceToken, targetToken) {
+function getAllPathsAndRates(sourceToken, targetToken, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var MULTICALL_ABI, MULTICALL_ADDRESS, multicall, convertibleTokens, calls, _a, blockNumber, returnData, registryData, _loop_1, i, paths, sourceDecimals, targetDecimals, rates;
         return __generator(this, function (_b) {
@@ -369,7 +369,7 @@ function getAllPathsAndRates(sourceToken, targetToken) {
                     return [4 /*yield*/, getDecimals(targetToken)];
                 case 4:
                     targetDecimals = _b.sent();
-                    return [4 /*yield*/, getRates(multicall, paths, utils_1.toWei(1, sourceDecimals))];
+                    return [4 /*yield*/, getRates(multicall, paths, utils_1.toWei(amount, sourceDecimals))];
                 case 5:
                     rates = _b.sent();
                     return [2 /*return*/, [paths, rates.map(function (rate) { return utils_1.fromWei(rate, targetDecimals); })]];

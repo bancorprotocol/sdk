@@ -19,8 +19,8 @@ export async function generateEosPaths() {
     await buildPathsFile();
 }
 
-export async function generatePath(sourceToken: Token, targetToken: Token, getBestPath: (paths: string[], rates: string[]) => string[] = ethGetCheapestPath) {
-    return await generatePathByBlockchainIds(sourceToken, targetToken, getBestPath);
+export async function generatePath(sourceToken: Token, targetToken: Token, amount: string = "1", getBestPath: (paths: string[], rates: string[]) => string[] = ethGetCheapestPath) {
+    return await generatePathByBlockchainIds(sourceToken, targetToken, amount, getBestPath);
 }
 
 export const calculateRateFromPaths = async (paths: ConversionPaths, amount) => {
@@ -64,9 +64,9 @@ export async function getRate(sourceToken: Token, targetToken: Token, amount: st
     return await getRateByPath(paths, amount);
 }
 
-export async function getAllPathsAndRates(sourceToken: Token, targetToken: Token) {
+export async function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = "1") {
     if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')
-        return await ethGetAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId);
+        return await ethGetAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 

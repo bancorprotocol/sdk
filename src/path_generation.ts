@@ -106,7 +106,7 @@ export async function getConverterToken(blockchainId, connector, blockchainType:
     return blockchainId;
 }
 
-export async function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token, getBestPath: (paths: string[], rates: string[]) => string[]) {
+export async function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token, amount: string, getBestPath: (paths: string[], rates: string[]) => string[]) {
     const pathObjects: ConversionPaths = { paths: []};
     let paths, rates;
 
@@ -115,16 +115,16 @@ export async function generatePathByBlockchainIds(sourceToken: Token, targetToke
             pathObjects.paths.push({ type: 'eos', path: await getConversionPath(sourceToken, targetToken) });
             break;
         case 'ethereum,ethereum':
-            [paths, rates] = await getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId);
+            [paths, rates] = await getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
             pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
             break;
         case 'eos,ethereum':
-            [paths, rates] = await getAllPathsAndRates(EthereumAnchorToken.blockchainId, targetToken.blockchainId);
+            [paths, rates] = await getAllPathsAndRates(EthereumAnchorToken.blockchainId, targetToken.blockchainId, amount);
             pathObjects.paths.push({ type: 'eos', path: await getConversionPath(sourceToken, null) });
             pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
             break;
         case 'ethereum,eos':
-            [paths, rates] = await getAllPathsAndRates(sourceToken.blockchainId, EthereumAnchorToken.blockchainId);
+            [paths, rates] = await getAllPathsAndRates(sourceToken.blockchainId, EthereumAnchorToken.blockchainId, amount);
             pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
             pathObjects.paths.push({ type: 'eos', path: await getConversionPath(null, targetToken) });
             break;

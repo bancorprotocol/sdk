@@ -154,7 +154,7 @@ function getAllPathsRecursive(paths, path, targetToken, registryData) {
         getAllPathsRecursive(paths, [...path, nextToken], targetToken, registryData);
 }
 
-export async function getAllPathsAndRates(sourceToken, targetToken) {
+export async function getAllPathsAndRates(sourceToken, targetToken, amount) {
     const MULTICALL_ABI = [{"constant":false,"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes","name":"callData","type":"bytes"}],"internalType":"struct Multicall.Call[]","name":"calls","type":"tuple[]"},{"internalType":"bool","name":"strict","type":"bool"}],"name":"aggregate","outputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"components":[{"internalType":"bool","name":"success","type":"bool"},{"internalType":"bytes","name":"data","type":"bytes"}],"internalType":"struct Multicall.Return[]","name":"returnData","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
     const MULTICALL_ADDRESS = '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2';
     const multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
@@ -179,7 +179,7 @@ export async function getAllPathsAndRates(sourceToken, targetToken) {
 
     const sourceDecimals = await getDecimals(sourceToken);
     const targetDecimals = await getDecimals(targetToken);
-    const rates = await getRates(multicall, paths, toWei(1, sourceDecimals));
+    const rates = await getRates(multicall, paths, toWei(amount, sourceDecimals));
     return [paths, rates.map(rate => fromWei(rate, targetDecimals))];
 }
 
