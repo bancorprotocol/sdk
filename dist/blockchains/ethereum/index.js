@@ -124,7 +124,7 @@ function getRateByPath(path, amount) {
     });
 }
 exports.getRateByPath = getRateByPath;
-function getAllPathsAndRates(sourceToken, targetToken) {
+function getAllPathsAndRates(sourceToken, targetToken, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var paths, graph, tokens, destToken, sourceDecimals, targetDecimals, rates;
         return __generator(this, function (_a) {
@@ -143,7 +143,7 @@ function getAllPathsAndRates(sourceToken, targetToken) {
                     return [4 /*yield*/, exports.getDecimals(targetToken)];
                 case 3:
                     targetDecimals = _a.sent();
-                    return [4 /*yield*/, exports.getRates(paths, utils.toWei(1, sourceDecimals))];
+                    return [4 /*yield*/, exports.getRates(paths, utils.toWei(amount, sourceDecimals))];
                 case 4:
                     rates = _a.sent();
                     return [2 /*return*/, [paths, rates.map(function (rate) { return utils.fromWei(rate, targetDecimals); })]];

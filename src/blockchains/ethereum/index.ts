@@ -59,7 +59,7 @@ async function getRateByPath(path, amount) {
     return amount;
 }
 
-async function getAllPathsAndRates(sourceToken, targetToken) {
+async function getAllPathsAndRates(sourceToken, targetToken, amount) {
     const paths = [];
     const graph = await getGraph();
     const tokens = [Web3.utils.toChecksumAddress(sourceToken)];
@@ -67,7 +67,7 @@ async function getAllPathsAndRates(sourceToken, targetToken) {
     getAllPathsRecursive(paths, graph, tokens, destToken);
     const sourceDecimals = await getDecimals(sourceToken);
     const targetDecimals = await getDecimals(targetToken);
-    const rates = await getRates(paths, utils.toWei(1, sourceDecimals));
+    const rates = await getRates(paths, utils.toWei(amount, sourceDecimals));
     return [paths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
 }
 

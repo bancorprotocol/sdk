@@ -28,7 +28,7 @@ async function init(args: Settings) {
         await ethereum.init(args.ethereumNodeEndpoint);
 }
 
-async function generatePath(sourceToken: Token, targetToken: Token, getEthBestPath: (paths: string[], rates: string[]) => string[] = getEthCheapestPath) {
+async function generatePath(sourceToken: Token, targetToken: Token, amount: string = "1", getEthBestPath: (paths: string[], rates: string[]) => string[] = getEthCheapestPath) {
     let eosPath;
     let ethPaths;
     let ethRates;
@@ -38,14 +38,14 @@ async function generatePath(sourceToken: Token, targetToken: Token, getEthBestPa
             eosPath = await eos.getConversionPath(sourceToken, targetToken);
             return [eosPath];
         case 'ethereum,ethereum':
-            [ethPaths, ethRates] = await ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId);
+            [ethPaths, ethRates] = await ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
             return [getEthBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
         case 'eos,ethereum':
             eosPath = await eos.getConversionPath(sourceToken, eos.getAnchorToken());
-            [ethPaths, ethRates] = await ethereum.getAllPathsAndRates(ethereum.getAnchorToken(), targetToken.blockchainId);
+            [ethPaths, ethRates] = await ethereum.getAllPathsAndRates(ethereum.getAnchorToken(), targetToken.blockchainId, amount);
             return [eosPath, getEthBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
         case 'ethereum,eos':
-            [ethPaths, ethRates] = await ethereum.getAllPathsAndRates(sourceToken.blockchainId, ethereum.getAnchorToken());
+            [ethPaths, ethRates] = await ethereum.getAllPathsAndRates(sourceToken.blockchainId, ethereum.getAnchorToken(), amount);
             eosPath = await eos.getConversionPath(eos.getAnchorToken(), targetToken);
             return [getEthBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), eosPath];
     }
@@ -72,9 +72,9 @@ async function getRate(sourceToken: Token, targetToken: Token, amount: string) {
     return await getRateByPath(paths, amount);
 }
 
-async function getAllPathsAndRates(sourceToken: Token, targetToken: Token) {
+async function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = "1") {
     if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')
-        return await ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId);
+        return await ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 

@@ -2,7 +2,7 @@ export { init, getAnchorToken, getRateByPath, getAllPathsAndRates, retrieveConve
 declare function init(nodeAddress: any): Promise<void>;
 declare function getAnchorToken(): any;
 declare function getRateByPath(path: any, amount: any): Promise<any>;
-declare function getAllPathsAndRates(sourceToken: any, targetToken: any): Promise<any[]>;
+declare function getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;
 declare function retrieveConverterVersion(converter: any): Promise<{
     type: string;
     value: any;
