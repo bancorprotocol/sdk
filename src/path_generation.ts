@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { getConverterBlockchainId as getEosConverterBlockchainId, getReserveBlockchainId as getEosReserveBlockchainId, getReserves as getEOSReserves, getReservesCount as getEOSReservesCount, isMultiConverter } from './blockchains/eos';
-import { getReserves as getEthReserves, getConverterBlockchainId as getEthConverterBlockchainId, getConverterSmartToken as getEthConverterSmartToken, getReserveBlockchainId as getEthereumReserveBlockchainId, getReservesCount as getEthReservesCount, getSmartTokens, getAllPaths } from './blockchains/ethereum';
+import { getReserves as getEthReserves, getConverterBlockchainId as getEthConverterBlockchainId, getConverterSmartToken as getEthConverterSmartToken, getReserveBlockchainId as getEthereumReserveBlockchainId, getReservesCount as getEthReservesCount, getSmartTokens, getAllPathsAndRates } from './blockchains/ethereum';
 
 export type BlockchainType = 'ethereum' | 'eos';
 
@@ -106,26 +106,26 @@ export async function getConverterToken(blockchainId, connector, blockchainType:
     return blockchainId;
 }
 
-export async function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token) {
+export async function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token, getBestPath: (paths: string[], rates: string[]) => string[]) {
     const pathObjects: ConversionPaths = { paths: []};
-    let paths;
+    let paths, rates;
 
     switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
         case 'eos,eos':
             pathObjects.paths.push({ type: 'eos', path: await getConversionPath(sourceToken, targetToken) });
             break;
         case 'ethereum,ethereum':
-            paths = await getAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
-            pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            [paths, rates] = await getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId);
+            pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
             break;
         case 'eos,ethereum':
-            paths = await getAllPaths(EthereumAnchorToken.blockchainId, targetToken.blockchainId);
+            [paths, rates] = await getAllPathsAndRates(EthereumAnchorToken.blockchainId, targetToken.blockchainId);
             pathObjects.paths.push({ type: 'eos', path: await getConversionPath(sourceToken, null) });
-            pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
             break;
         case 'ethereum,eos':
-            paths = await getAllPaths(sourceToken.blockchainId, EthereumAnchorToken.blockchainId);
-            pathObjects.paths.push({ type: 'ethereum', path: paths.reduce((a, b) => a.length < b.length ? a : b)});
+            [paths, rates] = await getAllPathsAndRates(sourceToken.blockchainId, EthereumAnchorToken.blockchainId);
+            pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
             pathObjects.paths.push({ type: 'eos', path: await getConversionPath(null, targetToken) });
             break;
     }
@@ -214,4 +214,22 @@ function getShortestPath(sourcePath, targetPath) {
     }
 
     return [];
+}
+
+export function ethGetShortestPath(paths, rates) {
+    let bestPathIndex = 0;
+    for (let i = 1; i < paths.length; i++) {
+        if ((paths[bestPathIndex].length > paths[i].length) || (paths[bestPathIndex].length == paths[i].length && rates[bestPathIndex] < rates[i]))
+            bestPathIndex = i;
+    }
+    return paths[bestPathIndex];
+}
+
+export function ethGetCheapestPath(paths, rates) {
+    let bestPathIndex = 0;
+    for (let i = 1; i < rates.length; i++) {
+        if ((rates[bestPathIndex] < rates[i]) || (rates[bestPathIndex] == rates[i] && paths[bestPathIndex].length > paths[i].length))
+            bestPathIndex = i;
+    }
+    return paths[bestPathIndex];
 }

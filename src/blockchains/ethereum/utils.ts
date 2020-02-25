@@ -3,12 +3,9 @@ import Decimal from 'decimal.js/decimal.js';
 Decimal.set({ precision: 400 });
 
 export function fromWei(number, decimalDigits = 18) {
-    if (!number) return number;
-    return new Decimal(number).times(1 / 10 ** decimalDigits).toFixed();
+    return new Decimal(`${number}e-${decimalDigits}`).toFixed();
 }
 
 export function toWei(number, decimalDigits = 18) {
-    if (!number) return number;
-
-    return new Decimal(number).times(10 ** decimalDigits).toFixed(0);
+    return new Decimal(`${number}e+${decimalDigits}`).toFixed();
 }

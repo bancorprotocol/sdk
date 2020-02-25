@@ -30,7 +30,9 @@ export declare const getReserves: (blockchainId: any, blockchainType: Blockchain
 }>;
 export declare const getReserveToken: (token: any, index: any, blockchainType: BlockchainType) => Promise<Token>;
 export declare function getConverterToken(blockchainId: any, connector: any, blockchainType: BlockchainType): Promise<any>;
-export declare function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token): Promise<ConversionPaths>;
+export declare function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token, getBestPath: (paths: string[], rates: string[]) => string[]): Promise<ConversionPaths>;
 export declare function getConversionPath(from: Token, to: Token): Promise<any[]>;
 export declare function findPath(pathObject: ConversionPathsTokens, blockchainType: BlockchainType): Promise<any[]>;
 export declare function getPathToAnchorByBlockchainId(token: Token, anchorToken: Token): any;
+export declare function ethGetShortestPath(paths: any, rates: any): any;
+export declare function ethGetCheapestPath(paths: any, rates: any): any;

@@ -1,6 +1,6 @@
-import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate, getAllPaths as ethereumGetAllPaths} from './blockchains/ethereum/index';
+import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate, getAllPathsAndRates as ethGetAllPathsAndRates} from './blockchains/ethereum/index';
 import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMultiConverter } from './blockchains/eos';
-import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
+import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken, ethGetShortestPath, ethGetCheapestPath } from './path_generation';
 
 interface Settings {
     ethereumNodeEndpoint: string;
@@ -19,8 +19,8 @@ export async function generateEosPaths() {
     await buildPathsFile();
 }
 
-export async function generatePath(sourceToken: Token, targetToken: Token) {
-    return await generatePathByBlockchainIds(sourceToken, targetToken);
+export async function generatePath(sourceToken: Token, targetToken: Token, getBestPath: (paths: string[], rates: string[]) => string[] = ethGetCheapestPath) {
+    return await generatePathByBlockchainIds(sourceToken, targetToken, getBestPath);
 }
 
 export const calculateRateFromPaths = async (paths: ConversionPaths, amount) => {
@@ -64,9 +64,9 @@ export async function getRate(sourceToken: Token, targetToken: Token, amount: st
     return await getRateByPath(paths, amount);
 }
 
-export async function getAllPaths(sourceToken: Token, targetToken: Token) {
+export async function getAllPathsAndRates(sourceToken: Token, targetToken: Token) {
     if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')
-        return await ethereumGetAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
+        return await ethGetAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId);
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 
@@ -77,5 +77,5 @@ export default {
     generatePath,
     getRateByPath,
     buildPathsFile,
-    getAllPaths
+    getAllPathsAndRates
 };

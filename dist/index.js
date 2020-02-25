@@ -70,11 +70,12 @@ function generateEosPaths() {
     });
 }
 exports.generateEosPaths = generateEosPaths;
-function generatePath(sourceToken, targetToken) {
+function generatePath(sourceToken, targetToken, getBestPath) {
+    if (getBestPath === void 0) { getBestPath = path_generation_1.ethGetCheapestPath; }
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, path_generation_1.generatePathByBlockchainIds(sourceToken, targetToken)];
+                case 0: return [4 /*yield*/, path_generation_1.generatePathByBlockchainIds(sourceToken, targetToken, getBestPath)];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -189,20 +190,20 @@ function getRate(sourceToken, targetToken, amount) {
     });
 }
 exports.getRate = getRate;
-function getAllPaths(sourceToken, targetToken) {
+function getAllPathsAndRates(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!(sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, index_1.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId)];
+                    return [4 /*yield*/, index_1.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId)];
                 case 1: return [2 /*return*/, _a.sent()];
                 case 2: throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
             }
         });
     });
 }
-exports.getAllPaths = getAllPaths;
+exports.getAllPathsAndRates = getAllPathsAndRates;
 exports.default = {
     init: init,
     generateEosPaths: generateEosPaths,
@@ -210,5 +211,5 @@ exports.default = {
     generatePath: generatePath,
     getRateByPath: exports.getRateByPath,
     buildPathsFile: eos_1.buildPathsFile,
-    getAllPaths: getAllPaths
+    getAllPathsAndRates: getAllPathsAndRates
 };
