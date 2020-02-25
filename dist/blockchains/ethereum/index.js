@@ -135,11 +135,11 @@ function getRateByPaths(paths, amounts) {
                     return [4 /*yield*/, exports.getDecimals(paths.map(function (path) { return path[path.length - 1]; }))];
                 case 2:
                     targetDecimals = _a.sent();
-                    amounts = amounts.map(function (amount, index) { return utils.toWei(amount, sourceDecimals[index]); });
+                    amounts = sourceDecimals.map(function (decimals, index) { return decimals ? utils.toWei(amounts[index], decimals) : "0"; });
                     return [4 /*yield*/, exports.getRates(paths, amounts)];
                 case 3:
                     amounts = _a.sent();
-                    amounts = amounts.map(function (amount, index) { return utils.fromWei(amount, targetDecimals[index]); });
+                    amounts = targetDecimals.map(function (decimals, index) { return decimals ? utils.fromWei(amounts[index], decimals) : "0"; });
                     return [2 /*return*/, amounts];
             }
         });
@@ -262,10 +262,10 @@ exports.getDecimals = function (tokens) {
                     tokenContracts = tokens.map(function (token) { return new web3.eth.Contract(ERC20Token_1.ERC20Token, token); });
                     multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, exports.getContractAddresses().multicall);
                     calls = tokenContracts.map(function (tokenContract) { return [tokenContract._address, tokenContract.methods.decimals().encodeABI()]; });
-                    return [4 /*yield*/, multicallContract.methods.aggregate(calls, true).call()];
+                    return [4 /*yield*/, multicallContract.methods.aggregate(calls, false).call()];
                 case 1:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
-                    return [2 /*return*/, returnData.map(function (item) { return web3_1.default.utils.toBN(item.data).toString(); })];
+                    return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data).toString() : ""; })];
             }
         });
     });
@@ -279,10 +279,10 @@ exports.getRates = function (paths, amounts) {
                     bancorNetworkContract = new web3.eth.Contract(BancorNetwork_1.BancorNetwork, bancorNetworkAddress);
                     multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, exports.getContractAddresses().multicall);
                     calls = paths.map(function (path, index) { return [bancorNetworkAddress, bancorNetworkContract.methods.getReturnByPath(path, amounts[index]).encodeABI()]; });
-                    return [4 /*yield*/, multicallContract.methods.aggregate(calls, true).call()];
+                    return [4 /*yield*/, multicallContract.methods.aggregate(calls, false).call()];
                 case 1:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
-                    return [2 /*return*/, returnData.map(function (item) { return web3_1.default.utils.toBN(item.data.substr(0, 66)).toString(); })];
+                    return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : "0"; })];
             }
         });
     });

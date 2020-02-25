@@ -63,9 +63,9 @@ async function getRateByPath(path, amount) {
 async function getRateByPaths(paths, amounts) {
     const sourceDecimals = await getDecimals(paths.map(path => path[0]));
     const targetDecimals = await getDecimals(paths.map(path => path[path.length - 1]));
-    amounts = amounts.map((amount, index) => utils.toWei(amount, sourceDecimals[index]));
+    amounts = sourceDecimals.map((decimals, index) => decimals ? utils.toWei(amounts[index], decimals) : "0");
     amounts = await getRates(paths, amounts);
-    amounts = amounts.map((amount, index) => utils.fromWei(amount, targetDecimals[index]));
+    amounts = targetDecimals.map((decimals, index) => decimals ? utils.fromWei(amounts[index], decimals) : "0");
     return amounts;
 }
 
@@ -120,9 +120,9 @@ export const getDecimals = async function(tokens) {
     const multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, getContractAddresses().multicall);
 
     const calls = tokenContracts.map(tokenContract => [tokenContract._address, tokenContract.methods.decimals().encodeABI()]);
-    const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, true).call();
+    const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, false).call();
 
-    return returnData.map(item => Web3.utils.toBN(item.data).toString());
+    return returnData.map(item => item.success ? Web3.utils.toBN(item.data).toString() : "");
 }
 
 export const getRates = async function(paths, amounts) {
@@ -130,9 +130,9 @@ export const getRates = async function(paths, amounts) {
     const multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, getContractAddresses().multicall);
 
     const calls = paths.map((path, index) => [bancorNetworkAddress, bancorNetworkContract.methods.getReturnByPath(path, amounts[index]).encodeABI()]);
-    const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, true).call();
+    const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, false).call();
 
-    return returnData.map(item => Web3.utils.toBN(item.data.substr(0, 66)).toString());
+    return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : "0");
 }
 
 export const getGraph = async function() {
