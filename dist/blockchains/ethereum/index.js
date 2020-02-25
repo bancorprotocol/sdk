@@ -199,12 +199,10 @@ exports.getContractAddresses = function () {
 };
 exports.toWei = function (token, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var tokenContract, decimals;
+        var decimals;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    tokenContract = new web3.eth.Contract(ERC20Token_1.ERC20Token, token);
-                    return [4 /*yield*/, tokenContract.methods.decimals().call()];
+                case 0: return [4 /*yield*/, exports.getDecimals(token)];
                 case 1:
                     decimals = _a.sent();
                     return [2 /*return*/, utils.toWei(amount, decimals)];
@@ -214,12 +212,10 @@ exports.toWei = function (token, amount) {
 };
 exports.fromWei = function (token, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var tokenContract, decimals;
+        var decimals;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    tokenContract = new web3.eth.Contract(ERC20Token_1.ERC20Token, token);
-                    return [4 /*yield*/, tokenContract.methods.decimals().call()];
+                case 0: return [4 /*yield*/, exports.getDecimals(token)];
                 case 1:
                     decimals = _a.sent();
                     return [2 /*return*/, utils.fromWei(amount, decimals)];

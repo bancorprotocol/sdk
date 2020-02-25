@@ -92,14 +92,12 @@ export const getContractAddresses = function() {
 };
 
 export const toWei = async function(token, amount) {
-    const tokenContract = new web3.eth.Contract(ERC20Token, token);
-    const decimals = await tokenContract.methods.decimals().call();
+    const decimals = await getDecimals(token);
     return utils.toWei(amount, decimals);
 };
 
 export const fromWei = async function(token, amount) {
-    const tokenContract = new web3.eth.Contract(ERC20Token, token);
-    const decimals = await tokenContract.methods.decimals().call();
+    const decimals = await getDecimals(token);
     return utils.fromWei(amount, decimals);
 };
 
