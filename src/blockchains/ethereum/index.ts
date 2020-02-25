@@ -113,7 +113,7 @@ export const fromWei = async function(token, amount) {
 export const getReturn = async function(path, amount) {
     const bancorNetworkContract = new web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
     return (await bancorNetworkContract.methods.getReturnByPath(path, amount).call())['0'];
-}
+};
 
 export const getDecimals = async function(tokens) {
     const tokenContracts = tokens.map(token => new web3.eth.Contract(ERC20Token, token));
@@ -123,7 +123,7 @@ export const getDecimals = async function(tokens) {
     const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, false).call();
 
     return returnData.map(item => item.success ? Web3.utils.toBN(item.data).toString() : "");
-}
+};
 
 export const getRates = async function(paths, amounts) {
     const bancorNetworkContract = new web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
@@ -133,7 +133,7 @@ export const getRates = async function(paths, amounts) {
     const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, false).call();
 
     return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : "0");
-}
+};
 
 export const getGraph = async function() {
     const graph = {};
