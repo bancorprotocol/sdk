@@ -124,31 +124,9 @@ function getRateByPath(path, amount) {
     });
 }
 exports.getRateByPath = getRateByPath;
-function getRateByPaths(paths, amounts) {
+function getAllPathsAndRates(sourceToken, targetToken) {
     return __awaiter(this, void 0, void 0, function () {
-        var sourceDecimals, targetDecimals;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, exports.getDecimals(paths.map(function (path) { return path[0]; }))];
-                case 1:
-                    sourceDecimals = _a.sent();
-                    return [4 /*yield*/, exports.getDecimals(paths.map(function (path) { return path[path.length - 1]; }))];
-                case 2:
-                    targetDecimals = _a.sent();
-                    amounts = sourceDecimals.map(function (decimals, index) { return decimals ? utils.toWei(amounts[index], decimals) : "0"; });
-                    return [4 /*yield*/, exports.getRates(paths, amounts)];
-                case 3:
-                    amounts = _a.sent();
-                    amounts = targetDecimals.map(function (decimals, index) { return decimals ? utils.fromWei(amounts[index], decimals) : "0"; });
-                    return [2 /*return*/, amounts];
-            }
-        });
-    });
-}
-exports.getRateByPaths = getRateByPaths;
-function getAllPaths(sourceToken, targetToken) {
-    return __awaiter(this, void 0, void 0, function () {
-        var paths, graph, tokens, destToken;
+        var paths, graph, tokens, destToken, sourceDecimals, targetDecimals, rates;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -159,12 +137,21 @@ function getAllPaths(sourceToken, targetToken) {
                     tokens = [web3_1.default.utils.toChecksumAddress(sourceToken)];
                     destToken = web3_1.default.utils.toChecksumAddress(targetToken);
                     getAllPathsRecursive(paths, graph, tokens, destToken);
-                    return [2 /*return*/, paths];
+                    return [4 /*yield*/, exports.getDecimals(sourceToken)];
+                case 2:
+                    sourceDecimals = _a.sent();
+                    return [4 /*yield*/, exports.getDecimals(targetToken)];
+                case 3:
+                    targetDecimals = _a.sent();
+                    return [4 /*yield*/, exports.getRates(paths, utils.toWei(1, sourceDecimals))];
+                case 4:
+                    rates = _a.sent();
+                    return [2 /*return*/, [paths, rates.map(function (rate) { return utils.fromWei(rate, targetDecimals); })]];
             }
         });
     });
 }
-exports.getAllPaths = getAllPaths;
+exports.getAllPathsAndRates = getAllPathsAndRates;
 function retrieveConverterVersion(converter) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -253,24 +240,20 @@ exports.getReturn = function (path, amount) {
         });
     });
 };
-exports.getDecimals = function (tokens) {
+exports.getDecimals = function (token) {
     return __awaiter(this, void 0, void 0, function () {
-        var tokenContracts, multicallContract, calls, _a, blockNumber, returnData;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var tokenContract;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
-                    tokenContracts = tokens.map(function (token) { return new web3.eth.Contract(ERC20Token_1.ERC20Token, token); });
-                    multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, exports.getContractAddresses().multicall);
-                    calls = tokenContracts.map(function (tokenContract) { return [tokenContract._address, tokenContract.methods.decimals().encodeABI()]; });
-                    return [4 /*yield*/, multicallContract.methods.aggregate(calls, false).call()];
-                case 1:
-                    _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
-                    return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data).toString() : ""; })];
+                    tokenContract = new web3.eth.Contract(ERC20Token_1.ERC20Token, token);
+                    return [4 /*yield*/, tokenContract.methods.decimals().call()];
+                case 1: return [2 /*return*/, _a.sent()];
             }
         });
     });
 };
-exports.getRates = function (paths, amounts) {
+exports.getRates = function (paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var bancorNetworkContract, multicallContract, calls, _a, blockNumber, returnData;
         return __generator(this, function (_b) {
@@ -278,7 +261,7 @@ exports.getRates = function (paths, amounts) {
                 case 0:
                     bancorNetworkContract = new web3.eth.Contract(BancorNetwork_1.BancorNetwork, bancorNetworkAddress);
                     multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, exports.getContractAddresses().multicall);
-                    calls = paths.map(function (path, index) { return [bancorNetworkAddress, bancorNetworkContract.methods.getReturnByPath(path, amounts[index]).encodeABI()]; });
+                    calls = paths.map(function (path) { return [bancorNetworkAddress, bancorNetworkContract.methods.getReturnByPath(path, amount).encodeABI()]; });
                     return [4 /*yield*/, multicallContract.methods.aggregate(calls, false).call()];
                 case 1:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];

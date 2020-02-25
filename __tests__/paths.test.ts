@@ -22,6 +22,15 @@ describe('Path finder tests', () => {
                 '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07' : ['0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340']
             }));
 
+        const spyGetDecimals = jest
+            .spyOn(ethereum, 'getDecimals')
+            .mockImplementationOnce(() => Promise.resolve('18'))
+            .mockImplementationOnce(() => Promise.resolve('18'))
+
+        const spyGetRates = jest
+            .spyOn(ethereum, 'getRates')
+            .mockImplementationOnce(() => Promise.resolve(['0']));
+
         const response = await sdk.generatePath(
             {blockchainType: 'ethereum', blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
             {blockchainType: 'ethereum', blockchainId: '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07'}
@@ -39,6 +48,8 @@ describe('Path finder tests', () => {
 
         expect(response).toEqual(expectedResult);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
+        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
+        expect(spyGetRates).toHaveBeenCalledTimes(1);
     });
 
     it('ETH to KARMA path finder', async () => {
@@ -53,6 +64,15 @@ describe('Path finder tests', () => {
                '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533' : ['0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'],
                '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C' : ['0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533']
             }));
+
+        const spyGetDecimals = jest
+            .spyOn(ethereum, 'getDecimals')
+            .mockImplementationOnce(() => Promise.resolve('18'))
+            .mockImplementationOnce(() => Promise.resolve('18'));
+
+        const spyGetRates = jest
+            .spyOn(ethereum, 'getRates')
+            .mockImplementationOnce(() => Promise.resolve(['0']));
 
         const spyGetConversionPath = jest
             .spyOn(eos, 'getConversionPath')
@@ -82,6 +102,8 @@ describe('Path finder tests', () => {
 
         expect(response).toEqual(expectedResult);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
+        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
+        expect(spyGetRates).toHaveBeenCalledTimes(1);
         expect(spyGetConversionPath).toHaveBeenCalledTimes(1);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(1);
     });

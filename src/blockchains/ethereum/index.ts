@@ -29,8 +29,7 @@ export {
     init,
     getAnchorToken,
     getRateByPath,
-    getRateByPaths,
-    getAllPaths,
+    getAllPathsAndRates,
     retrieveConverterVersion,
     fetchConversionEvents,
     fetchConversionEventsByTimestamp
@@ -60,22 +59,16 @@ async function getRateByPath(path, amount) {
     return amount;
 }
 
-async function getRateByPaths(paths, amounts) {
-    const sourceDecimals = await getDecimals(paths.map(path => path[0]));
-    const targetDecimals = await getDecimals(paths.map(path => path[path.length - 1]));
-    amounts = sourceDecimals.map((decimals, index) => decimals ? utils.toWei(amounts[index], decimals) : "0");
-    amounts = await getRates(paths, amounts);
-    amounts = targetDecimals.map((decimals, index) => decimals ? utils.fromWei(amounts[index], decimals) : "0");
-    return amounts;
-}
-
-async function getAllPaths(sourceToken, targetToken) {
+async function getAllPathsAndRates(sourceToken, targetToken) {
     const paths = [];
     const graph = await getGraph();
     const tokens = [Web3.utils.toChecksumAddress(sourceToken)];
     const destToken = Web3.utils.toChecksumAddress(targetToken);
     getAllPathsRecursive(paths, graph, tokens, destToken);
-    return paths;
+    const sourceDecimals = await getDecimals(sourceToken);
+    const targetDecimals = await getDecimals(targetToken);
+    const rates = await getRates(paths, utils.toWei(1, sourceDecimals));
+    return [paths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
 }
 
 async function retrieveConverterVersion(converter) {
@@ -115,21 +108,16 @@ export const getReturn = async function(path, amount) {
     return (await bancorNetworkContract.methods.getReturnByPath(path, amount).call())['0'];
 };
 
-export const getDecimals = async function(tokens) {
-    const tokenContracts = tokens.map(token => new web3.eth.Contract(ERC20Token, token));
-    const multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, getContractAddresses().multicall);
-
-    const calls = tokenContracts.map(tokenContract => [tokenContract._address, tokenContract.methods.decimals().encodeABI()]);
-    const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, false).call();
-
-    return returnData.map(item => item.success ? Web3.utils.toBN(item.data).toString() : "");
+export const getDecimals = async function(token) {
+    const tokenContract = new web3.eth.Contract(ERC20Token, token);
+    return await tokenContract.methods.decimals().call();
 };
 
-export const getRates = async function(paths, amounts) {
+export const getRates = async function(paths, amount) {
     const bancorNetworkContract = new web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
     const multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, getContractAddresses().multicall);
 
-    const calls = paths.map((path, index) => [bancorNetworkAddress, bancorNetworkContract.methods.getReturnByPath(path, amounts[index]).encodeABI()]);
+    const calls = paths.map(path => [bancorNetworkAddress, bancorNetworkContract.methods.getReturnByPath(path, amount).encodeABI()]);
     const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, false).call();
 
     return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : "0");

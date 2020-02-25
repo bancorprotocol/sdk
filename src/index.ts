@@ -7,8 +7,9 @@ export {
     generatePath,
     getRateByPath,
     getRate,
-    getAllPaths,
-    getAllRates,
+    getAllPathsAndRates,
+    getEthShortestPath,
+    getEthCheapestPath,
     retrieveConverterVersion,
     fetchConversionEvents,
     fetchConversionEventsByTimestamp,
@@ -27,27 +28,26 @@ async function init(args: Settings) {
         await ethereum.init(args.ethereumNodeEndpoint);
 }
 
-async function generatePath(sourceToken: Token, targetToken: Token) {
+async function generatePath(sourceToken: Token, targetToken: Token, getEthBestPath: (paths: string[], rates: string[]) => string[] = getEthCheapestPath) {
     let eosPath;
     let ethPaths;
-
-    const ethShortestPath = paths => paths.reduce((a, b) => a.length < b.length ? a : b).map(x => ({blockchainType: 'ethereum', blockchainId: x}));
+    let ethRates;
 
     switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
         case 'eos,eos':
             eosPath = await eos.getConversionPath(sourceToken, targetToken);
             return [eosPath];
         case 'ethereum,ethereum':
-            ethPaths = await ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
-            return [ethShortestPath(ethPaths)];
+            [ethPaths, ethRates] = await ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId);
+            return [getEthBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
         case 'eos,ethereum':
             eosPath = await eos.getConversionPath(sourceToken, eos.getAnchorToken());
-            ethPaths = await ethereum.getAllPaths(ethereum.getAnchorToken(), targetToken.blockchainId);
-            return [eosPath, ethShortestPath(ethPaths)];
+            [ethPaths, ethRates] = await ethereum.getAllPathsAndRates(ethereum.getAnchorToken(), targetToken.blockchainId);
+            return [eosPath, getEthBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
         case 'ethereum,eos':
-            ethPaths = await ethereum.getAllPaths(sourceToken.blockchainId, ethereum.getAnchorToken());
+            [ethPaths, ethRates] = await ethereum.getAllPathsAndRates(sourceToken.blockchainId, ethereum.getAnchorToken());
             eosPath = await eos.getConversionPath(eos.getAnchorToken(), targetToken);
-            return [ethShortestPath(ethPaths), eosPath];
+            return [getEthBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), eosPath];
     }
 
     return [];
@@ -72,16 +72,10 @@ async function getRate(sourceToken: Token, targetToken: Token, amount: string) {
     return await getRateByPath(paths, amount);
 }
 
-async function getAllPaths(sourceToken: Token, targetToken: Token) {
+async function getAllPathsAndRates(sourceToken: Token, targetToken: Token) {
     if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')
-        return await ethereum.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId);
+        return await ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId);
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
-}
-
-async function getAllRates(paths: Token[][], amounts: string[]) {
-    if (paths.every(path => path.every(token => token.blockchainType == 'ethereum')))
-        return await ethereum.getRateByPaths(paths.map(path => path.map(token => token.blockchainId)), amounts);
-    throw new Error("only ethereum blockchain supported");
 }
 
 async function retrieveConverterVersion(converter: Converter) {
@@ -104,4 +98,22 @@ async function fetchConversionEventsByTimestamp(token: Token, fromTimestamp, toT
 
 async function buildPathsFile() {
     await eos.buildPathsFile();
+}
+
+function getEthShortestPath(paths, rates) {
+    let bestPathIndex = 0;
+    for (let i = 1; i < paths.length; i++) {
+        if ((paths[bestPathIndex].length > paths[i].length) || (paths[bestPathIndex].length == paths[i].length && rates[bestPathIndex] < rates[i]))
+            bestPathIndex = i;
+    }
+    return paths[bestPathIndex];
+}
+
+function getEthCheapestPath(paths, rates) {
+    let bestPathIndex = 0;
+    for (let i = 1; i < rates.length; i++) {
+        if ((rates[bestPathIndex] < rates[i]) || (rates[bestPathIndex] == rates[i] && paths[bestPathIndex].length > paths[i].length))
+            bestPathIndex = i;
+    }
+    return paths[bestPathIndex];
 }
