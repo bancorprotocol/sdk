@@ -106,7 +106,7 @@ export async function getConverterToken(blockchainId, connector, blockchainType:
     return blockchainId;
 }
 
-export async function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token, amount: string, getBestPath: (paths: string[], rates: string[]) => string[]) {
+export async function generatePathByBlockchainIds(sourceToken: Token, targetToken: Token, amount: string, getBestPath: (paths: string[][], rates: string[]) => string[]) {
     const pathObjects: ConversionPaths = { paths: []};
     let paths, rates;
 
@@ -214,22 +214,4 @@ function getShortestPath(sourcePath, targetPath) {
     }
 
     return [];
-}
-
-export function ethGetShortestPath(paths, rates) {
-    let bestPathIndex = 0;
-    for (let i = 1; i < paths.length; i++) {
-        if ((paths[bestPathIndex].length > paths[i].length) || (paths[bestPathIndex].length == paths[i].length && rates[bestPathIndex] < rates[i]))
-            bestPathIndex = i;
-    }
-    return paths[bestPathIndex];
-}
-
-export function ethGetCheapestPath(paths, rates) {
-    let bestPathIndex = 0;
-    for (let i = 1; i < rates.length; i++) {
-        if ((rates[bestPathIndex] < rates[i]) || (rates[bestPathIndex] == rates[i] && paths[bestPathIndex].length > paths[i].length))
-            bestPathIndex = i;
-    }
-    return paths[bestPathIndex];
 }

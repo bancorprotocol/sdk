@@ -1,6 +1,6 @@
 import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate, getAllPathsAndRates as ethGetAllPathsAndRates} from './blockchains/ethereum/index';
 import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMultiConverter } from './blockchains/eos';
-import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken, ethGetShortestPath, ethGetCheapestPath } from './path_generation';
+import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
 
 interface Settings {
     ethereumNodeEndpoint: string;
@@ -19,7 +19,7 @@ export async function generateEosPaths() {
     await buildPathsFile();
 }
 
-export async function generatePath(sourceToken: Token, targetToken: Token, amount: string = "1", getBestPath: (paths: string[], rates: string[]) => string[] = ethGetCheapestPath) {
+export async function generatePath(sourceToken: Token, targetToken: Token, amount: string = "1", getBestPath: (paths: string[][], rates: string[]) => string[] = getEthCheapestPath) {
     return await generatePathByBlockchainIds(sourceToken, targetToken, amount, getBestPath);
 }
 
@@ -70,6 +70,40 @@ export async function getAllPathsAndRates(sourceToken: Token, targetToken: Token
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 
+export function getEthShortestPath(paths: string[][], rates: string[]) {
+    let bestPathIndex = 0;
+    for (let i = 1; i < paths.length; i++) {
+        if (shorterPath(paths, bestPathIndex, i) || (equalPath(paths, bestPathIndex, i) && cheaperRate(rates, bestPathIndex, i)))
+            bestPathIndex = i;
+    }
+    return paths[bestPathIndex];
+}
+
+export function getEthCheapestPath(paths: string[][], rates: string[]) {
+    let bestPathIndex = 0;
+    for (let i = 1; i < rates.length; i++) {
+        if (cheaperRate(rates, bestPathIndex, i) || (equalRate(rates, bestPathIndex, i) && shorterPath(paths, bestPathIndex, i)))
+            bestPathIndex = i;
+    }
+    return paths[bestPathIndex];
+}
+
+function shorterPath(paths: string[][], index1: number, index2: number) {
+    return paths[index1].length < paths[index2].length;
+}
+
+function cheaperRate(rates: string[], index1: number, index2: number) {
+    return rates[index1] > rates[index2];
+}
+
+function equalPath(paths: string[][], index1: number, index2: number) {
+    return paths[index1].length == paths[index2].length;
+}
+
+function equalRate(rates: string[], index1: number, index2: number) {
+    return rates[index1] == rates[index2];
+}
+
 export default {
     init,
     generateEosPaths,
@@ -77,5 +111,7 @@ export default {
     generatePath,
     getRateByPath,
     buildPathsFile,
-    getAllPathsAndRates
+    getAllPathsAndRates,
+    getEthShortestPath,
+    getEthCheapestPath
 };

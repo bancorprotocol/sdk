@@ -336,21 +336,3 @@ function getShortestPath(sourcePath, targetPath) {
     }
     return [];
 }
-function ethGetShortestPath(paths, rates) {
-    var bestPathIndex = 0;
-    for (var i = 1; i < paths.length; i++) {
-        if ((paths[bestPathIndex].length > paths[i].length) || (paths[bestPathIndex].length == paths[i].length && rates[bestPathIndex] < rates[i]))
-            bestPathIndex = i;
-    }
-    return paths[bestPathIndex];
-}
-exports.ethGetShortestPath = ethGetShortestPath;
-function ethGetCheapestPath(paths, rates) {
-    var bestPathIndex = 0;
-    for (var i = 1; i < rates.length; i++) {
-        if ((rates[bestPathIndex] < rates[i]) || (rates[bestPathIndex] == rates[i] && paths[bestPathIndex].length > paths[i].length))
-            bestPathIndex = i;
-    }
-    return paths[bestPathIndex];
-}
-exports.ethGetCheapestPath = ethGetCheapestPath;

@@ -72,7 +72,7 @@ function generateEosPaths() {
 exports.generateEosPaths = generateEosPaths;
 function generatePath(sourceToken, targetToken, amount, getBestPath) {
     if (amount === void 0) { amount = "1"; }
-    if (getBestPath === void 0) { getBestPath = path_generation_1.ethGetCheapestPath; }
+    if (getBestPath === void 0) { getBestPath = getEthCheapestPath; }
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -206,6 +206,36 @@ function getAllPathsAndRates(sourceToken, targetToken, amount) {
     });
 }
 exports.getAllPathsAndRates = getAllPathsAndRates;
+function getEthShortestPath(paths, rates) {
+    var bestPathIndex = 0;
+    for (var i = 1; i < paths.length; i++) {
+        if (shorterPath(paths, bestPathIndex, i) || (equalPath(paths, bestPathIndex, i) && cheaperRate(rates, bestPathIndex, i)))
+            bestPathIndex = i;
+    }
+    return paths[bestPathIndex];
+}
+exports.getEthShortestPath = getEthShortestPath;
+function getEthCheapestPath(paths, rates) {
+    var bestPathIndex = 0;
+    for (var i = 1; i < rates.length; i++) {
+        if (cheaperRate(rates, bestPathIndex, i) || (equalRate(rates, bestPathIndex, i) && shorterPath(paths, bestPathIndex, i)))
+            bestPathIndex = i;
+    }
+    return paths[bestPathIndex];
+}
+exports.getEthCheapestPath = getEthCheapestPath;
+function shorterPath(paths, index1, index2) {
+    return paths[index1].length < paths[index2].length;
+}
+function cheaperRate(rates, index1, index2) {
+    return rates[index1] > rates[index2];
+}
+function equalPath(paths, index1, index2) {
+    return paths[index1].length == paths[index2].length;
+}
+function equalRate(rates, index1, index2) {
+    return rates[index1] == rates[index2];
+}
 exports.default = {
     init: init,
     generateEosPaths: generateEosPaths,
@@ -213,5 +243,7 @@ exports.default = {
     generatePath: generatePath,
     getRateByPath: exports.getRateByPath,
     buildPathsFile: eos_1.buildPathsFile,
-    getAllPathsAndRates: getAllPathsAndRates
+    getAllPathsAndRates: getAllPathsAndRates,
+    getEthShortestPath: getEthShortestPath,
+    getEthCheapestPath: getEthCheapestPath
 };
