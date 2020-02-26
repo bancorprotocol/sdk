@@ -207,21 +207,21 @@ function getAllPathsAndRates(sourceToken, targetToken, amount) {
 }
 exports.getAllPathsAndRates = getAllPathsAndRates;
 function getEthShortestPath(paths, rates) {
-    var bestPathIndex = 0;
+    var index = 0;
     for (var i = 1; i < paths.length; i++) {
-        if (shorterPath(paths, bestPathIndex, i) || (equalPath(paths, bestPathIndex, i) && cheaperRate(rates, bestPathIndex, i)))
-            bestPathIndex = i;
+        if (shorterPath(paths, index, i) || (equalPath(paths, index, i) && cheaperRate(rates, index, i)))
+            index = i;
     }
-    return paths[bestPathIndex];
+    return paths[index];
 }
 exports.getEthShortestPath = getEthShortestPath;
 function getEthCheapestPath(paths, rates) {
-    var bestPathIndex = 0;
+    var index = 0;
     for (var i = 1; i < rates.length; i++) {
-        if (cheaperRate(rates, bestPathIndex, i) || (equalRate(rates, bestPathIndex, i) && shorterPath(paths, bestPathIndex, i)))
-            bestPathIndex = i;
+        if (cheaperRate(rates, index, i) || (equalRate(rates, index, i) && shorterPath(paths, index, i)))
+            index = i;
     }
-    return paths[bestPathIndex];
+    return paths[index];
 }
 exports.getEthCheapestPath = getEthCheapestPath;
 function shorterPath(paths, index1, index2) {
