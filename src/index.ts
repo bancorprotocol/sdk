@@ -132,7 +132,7 @@ function cheaperRate(rates: string[], index1: number, index2: number) {
     rate2Parts[0] = rate2Parts[0].padStart(rate1Parts[0].length, "0");
     rate1Parts[1] = rate1Parts[1].padEnd  (rate2Parts[1].length, "0");
     rate2Parts[1] = rate2Parts[1].padEnd  (rate1Parts[1].length, "0");
-    return rate1Parts.join("").localeCompare(rate2Parts.join("")) == -1;
+    return rate1Parts.join("") < rate2Parts.join("");
 }
 
 function equalPath(paths: string[][], index1: number, index2: number) {
