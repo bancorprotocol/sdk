@@ -206,18 +206,14 @@ describe('price tests', () => {
     });
 
     it('Eth to eth token', async () => {
-        const spyToWei = jest
-            .spyOn(ethereum, 'toWei')
-            .mockImplementationOnce(() => Promise.resolve('562688523539875175216'))
-
-        const spyFromWei = jest
-            .spyOn(ethereum, 'fromWei')
-            .mockImplementationOnce(() => Promise.resolve('209.035338725170038366'));
+        const spyGetDecimals = jest
+            .spyOn(ethereum, 'getDecimals')
+            .mockImplementationOnce(() => Promise.resolve('18'))
+            .mockImplementationOnce(() => Promise.resolve('18'));
 
         const spyGetReturn = jest
             .spyOn(ethereum, 'getReturn')
-            .mockImplementationOnce(() => Promise.resolve({'0': '562688523539875175216'}))
-            .mockImplementationOnce(() => Promise.resolve({'0': '209035338725170038366'}));
+            .mockImplementationOnce(() => Promise.resolve('209035338725170038366'));
 
         const response = await sdk.getRateByPath([
             [
@@ -230,8 +226,7 @@ describe('price tests', () => {
         ], '1');
 
         expect(response).toEqual('209.035338725170038366');
-        expect(spyToWei).toHaveBeenCalledTimes(1);
-        expect(spyFromWei).toHaveBeenCalledTimes(1);
+        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetReturn).toHaveBeenCalledTimes(1);
     });
 
@@ -276,17 +271,14 @@ describe('price tests', () => {
                 next_key: ''
             }));
 
-        const spyToWei = jest
-            .spyOn(ethereum, 'toWei')
-            .mockImplementationOnce(() => Promise.resolve('274802734836'));
-
-        const spyFromWei = jest
-            .spyOn(ethereum, 'fromWei')
-            .mockImplementationOnce(() => Promise.resolve('0.000000274802734836'));
+        const spyGetDecimals = jest
+            .spyOn(ethereum, 'getDecimals')
+            .mockImplementationOnce(() => Promise.resolve('18'))
+            .mockImplementationOnce(() => Promise.resolve('18'));
 
         const spyGetReturn = jest
             .spyOn(ethereum, 'getReturn')
-            .mockImplementationOnce(() => Promise.resolve({'0': '274802734836'}));
+            .mockImplementationOnce(() => Promise.resolve('274802734836'));
 
         const response = await sdk.getRateByPath([
             [
@@ -305,23 +297,19 @@ describe('price tests', () => {
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
-        expect(spyToWei).toHaveBeenCalledTimes(1);
-        expect(spyFromWei).toHaveBeenCalledTimes(1);
+        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetReturn).toHaveBeenCalledTimes(1);
     });
 
     it('Eth EOS token', async () => {
-        const spyToWei = jest
-            .spyOn(ethereum, 'toWei')
-            .mockImplementationOnce(() => Promise.resolve('662806411110393058533'));
-
-        const spyFromWei = jest
-            .spyOn(ethereum, 'fromWei')
-            .mockImplementationOnce(() => Promise.resolve('662.806411110393058533'));
+        const spyGetDecimals = jest
+            .spyOn(ethereum, 'getDecimals')
+            .mockImplementationOnce(() => Promise.resolve('18'))
+            .mockImplementationOnce(() => Promise.resolve('18'));
 
         const spyGetReturn = jest
             .spyOn(ethereum, 'getReturn')
-            .mockImplementationOnce(() => Promise.resolve({'0': '662806411110393058533'}));
+            .mockImplementationOnce(() => Promise.resolve('662806411110393058533'));
 
         const reserveFromCodeResult = {
             rows: [
@@ -379,8 +367,7 @@ describe('price tests', () => {
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
-        expect(spyToWei).toHaveBeenCalledTimes(1);
-        expect(spyFromWei).toHaveBeenCalledTimes(1);
+        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetReturn).toHaveBeenCalledTimes(1);
     });
 });

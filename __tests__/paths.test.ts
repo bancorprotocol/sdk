@@ -25,7 +25,7 @@ describe('Path finder tests', () => {
         const spyGetDecimals = jest
             .spyOn(ethereum, 'getDecimals')
             .mockImplementationOnce(() => Promise.resolve('18'))
-            .mockImplementationOnce(() => Promise.resolve('18'))
+            .mockImplementationOnce(() => Promise.resolve('18'));
 
         const spyGetRates = jest
             .spyOn(ethereum, 'getRates')
