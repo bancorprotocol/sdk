@@ -101,21 +101,21 @@ async function buildPathsFile() {
 }
 
 function getEthShortestPath(paths: string[][], rates: string[]) {
-    let bestPathIndex = 0;
+    let index = 0;
     for (let i = 1; i < paths.length; i++) {
-        if (shorterPath(paths, bestPathIndex, i) || (equalPath(paths, bestPathIndex, i) && cheaperRate(rates, bestPathIndex, i)))
-            bestPathIndex = i;
+        if (shorterPath(paths, index, i) || (equalPath(paths, index, i) && cheaperRate(rates, index, i)))
+            index = i;
     }
-    return paths[bestPathIndex];
+    return paths[index];
 }
 
 function getEthCheapestPath(paths: string[][], rates: string[]) {
-    let bestPathIndex = 0;
+    let index = 0;
     for (let i = 1; i < rates.length; i++) {
-        if (cheaperRate(rates, bestPathIndex, i) || (equalRate(rates, bestPathIndex, i) && shorterPath(paths, bestPathIndex, i)))
-            bestPathIndex = i;
+        if (cheaperRate(rates, index, i) || (equalRate(rates, index, i) && shorterPath(paths, index, i)))
+            index = i;
     }
-    return paths[bestPathIndex];
+    return paths[index];
 }
 
 function shorterPath(paths: string[][], index1: number, index2: number) {
