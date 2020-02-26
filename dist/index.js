@@ -71,7 +71,7 @@ function generateEosPaths() {
 }
 exports.generateEosPaths = generateEosPaths;
 function generatePath(sourceToken, targetToken, amount, getBestPath) {
-    if (amount === void 0) { amount = "1"; }
+    if (amount === void 0) { amount = '1'; }
     if (getBestPath === void 0) { getBestPath = getEthCheapestPath; }
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -192,7 +192,7 @@ function getRate(sourceToken, targetToken, amount) {
 }
 exports.getRate = getRate;
 function getAllPathsAndRates(sourceToken, targetToken, amount) {
-    if (amount === void 0) { amount = "1"; }
+    if (amount === void 0) { amount = '1'; }
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -229,13 +229,13 @@ function shorterPath(paths, index1, index2) {
 }
 function cheaperRate(rates, index1, index2) {
     // return Number(rates[index1]) < Number(rates[index2]);
-    var rate1 = rates[index1].split(".").concat("");
-    var rate2 = rates[index2].split(".").concat("");
-    rate1[0] = rate1[0].padStart(rate2[0].length, "0");
-    rate2[0] = rate2[0].padStart(rate1[0].length, "0");
-    rate1[1] = rate1[1].padEnd(rate2[1].length, "0");
-    rate2[1] = rate2[1].padEnd(rate1[1].length, "0");
-    return rate1.join("") < rate2.join("");
+    var rate1 = rates[index1].split('.').concat('');
+    var rate2 = rates[index2].split('.').concat('');
+    rate1[0] = rate1[0].padStart(rate2[0].length, '0');
+    rate2[0] = rate2[0].padStart(rate1[0].length, '0');
+    rate1[1] = rate1[1].padEnd(rate2[1].length, '0');
+    rate2[1] = rate2[1].padEnd(rate1[1].length, '0');
+    return rate1.join('') < rate2.join('');
 }
 function equalPath(paths, index1, index2) {
     return paths[index1].length == paths[index2].length;

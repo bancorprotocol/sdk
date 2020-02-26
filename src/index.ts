@@ -19,7 +19,7 @@ export async function generateEosPaths() {
     await buildPathsFile();
 }
 
-export async function generatePath(sourceToken: Token, targetToken: Token, amount: string = "1", getBestPath: (paths: string[][], rates: string[]) => string[] = getEthCheapestPath) {
+export async function generatePath(sourceToken: Token, targetToken: Token, amount: string = '1', getBestPath: (paths: string[][], rates: string[]) => string[] = getEthCheapestPath) {
     return await generatePathByBlockchainIds(sourceToken, targetToken, amount, getBestPath);
 }
 
@@ -64,7 +64,7 @@ export async function getRate(sourceToken: Token, targetToken: Token, amount: st
     return await getRateByPath(paths, amount);
 }
 
-export async function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = "1") {
+export async function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1') {
     if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')
         return await ethGetAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
@@ -94,13 +94,13 @@ function shorterPath(paths: string[][], index1: number, index2: number) {
 
 function cheaperRate(rates: string[], index1: number, index2: number) {
     // return Number(rates[index1]) < Number(rates[index2]);
-    const rate1 = rates[index1].split(".").concat("");
-    const rate2 = rates[index2].split(".").concat("");
-    rate1[0] = rate1[0].padStart(rate2[0].length, "0");
-    rate2[0] = rate2[0].padStart(rate1[0].length, "0");
-    rate1[1] = rate1[1].padEnd(rate2[1].length, "0");
-    rate2[1] = rate2[1].padEnd(rate1[1].length, "0");
-    return rate1.join("") < rate2.join("");
+    const rate1 = rates[index1].split('.').concat('');
+    const rate2 = rates[index2].split('.').concat('');
+    rate1[0] = rate1[0].padStart(rate2[0].length, '0');
+    rate2[0] = rate2[0].padStart(rate1[0].length, '0');
+    rate1[1] = rate1[1].padEnd(rate2[1].length, '0');
+    rate2[1] = rate2[1].padEnd(rate1[1].length, '0');
+    return rate1.join('') < rate2.join('');
 }
 
 function equalPath(paths: string[][], index1: number, index2: number) {
