@@ -229,13 +229,13 @@ function shorterPath(paths, index1, index2) {
 }
 function cheaperRate(rates, index1, index2) {
     // return Number(rates[index1]) < Number(rates[index2]);
-    var rate1Parts = rates[index1].split(".").concat("");
-    var rate2Parts = rates[index2].split(".").concat("");
-    rate1Parts[0] = rate1Parts[0].padStart(rate2Parts[0].length, "0");
-    rate2Parts[0] = rate2Parts[0].padStart(rate1Parts[0].length, "0");
-    rate1Parts[1] = rate1Parts[1].padEnd(rate2Parts[1].length, "0");
-    rate2Parts[1] = rate2Parts[1].padEnd(rate1Parts[1].length, "0");
-    return rate1Parts.join("").localeCompare(rate2Parts.join("")) == -1;
+    var rate1 = rates[index1].split(".").concat("");
+    var rate2 = rates[index2].split(".").concat("");
+    rate1[0] = rate1[0].padStart(rate2[0].length, "0");
+    rate2[0] = rate2[0].padStart(rate1[0].length, "0");
+    rate1[1] = rate1[1].padEnd(rate2[1].length, "0");
+    rate2[1] = rate2[1].padEnd(rate1[1].length, "0");
+    return rate1.join("") < rate2.join("");
 }
 function equalPath(paths, index1, index2) {
     return paths[index1].length == paths[index2].length;
