@@ -123,7 +123,14 @@ function shorterPath(paths: string[][], index1: number, index2: number) {
 }
 
 function cheaperRate(rates: string[], index1: number, index2: number) {
-    return rates[index1] > rates[index2];
+    // return Number(rates[index1]) > Number(rates[index2]);
+    const rate1Parts = rates[index1].split(".").concat("");
+    const rate2Parts = rates[index2].split(".").concat("");
+    rate1Parts[0] = rate1Parts[0].padStart(rate2Parts[0].length, "0");
+    rate2Parts[0] = rate2Parts[0].padStart(rate1Parts[0].length, "0");
+    rate1Parts[1] = rate1Parts[1].padEnd  (rate2Parts[1].length, "0");
+    rate2Parts[1] = rate2Parts[1].padEnd  (rate1Parts[1].length, "0");
+    return rate1Parts.join("").localeCompare(rate2Parts.join("")) == 1;
 }
 
 function equalPath(paths: string[][], index1: number, index2: number) {

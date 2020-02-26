@@ -249,7 +249,14 @@ function shorterPath(paths, index1, index2) {
     return paths[index1].length < paths[index2].length;
 }
 function cheaperRate(rates, index1, index2) {
-    return rates[index1] > rates[index2];
+    // return Number(rates[index1]) > Number(rates[index2]);
+    var rate1Parts = rates[index1].split(".").concat("");
+    var rate2Parts = rates[index2].split(".").concat("");
+    rate1Parts[0] = rate1Parts[0].padStart(rate2Parts[0].length, "0");
+    rate2Parts[0] = rate2Parts[0].padStart(rate1Parts[0].length, "0");
+    rate1Parts[1] = rate1Parts[1].padEnd(rate2Parts[1].length, "0");
+    rate2Parts[1] = rate2Parts[1].padEnd(rate1Parts[1].length, "0");
+    return rate1Parts.join("").localeCompare(rate2Parts.join("")) == 1;
 }
 function equalPath(paths, index1, index2) {
     return paths[index1].length == paths[index2].length;
