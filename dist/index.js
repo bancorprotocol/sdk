@@ -103,7 +103,6 @@ function generatePath(sourceToken, targetToken, amount, getEthBestPath) {
                     eosPath = _e.sent();
                     return [2 /*return*/, [getEthBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); }), eosPath]];
                 case 11: throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
-                case 12: return [2 /*return*/, []];
             }
         });
     });

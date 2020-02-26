@@ -48,11 +48,9 @@ async function generatePath(sourceToken: Token, targetToken: Token, amount: stri
         [ethPaths, ethRates] = await ethereum.getAllPathsAndRates(sourceToken.blockchainId, ethereum.getAnchorToken(), amount);
         eosPath = await eos.getConversionPath(eos.getAnchorToken(), targetToken);
         return [getEthBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), eosPath];
-    default:
-        throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
     }
 
-    return [];
+    throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 
 async function getRateByPath(paths: Token[][], amount: string) {
