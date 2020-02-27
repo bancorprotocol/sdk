@@ -2,6 +2,10 @@ import * as eos from './blockchains/eos/index';
 import * as ethereum from './blockchains/ethereum/index';
 import { Token, Converter } from './path_generation';
 
+// TODO:
+// 1. Declare a return-value type for function `fetchConversionEvents` and for function `fetchConversionEventsByTimestamp`
+// 2. Change type `paths: string[][], rates: string[]` to `paths: Token[][], rates: string[]` or `{path: Token[]; rate: string;}[]`
+
 export {
     init,
     generatePath,
