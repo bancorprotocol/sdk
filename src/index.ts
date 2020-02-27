@@ -2,10 +2,6 @@ import * as eos from './blockchains/eos/index';
 import * as ethereum from './blockchains/ethereum/index';
 import { Token, Converter } from './path_generation';
 
-// TODO:
-// 1. Declare a return-value type for function `fetchConversionEvents` and for function `fetchConversionEventsByTimestamp`
-// 2. Change type `paths: string[][], rates: string[]` to `paths: Token[][], rates: string[]` or `{path: Token[]; rate: string;}[]`
-
 export {
     init,
     generatePath,
@@ -80,9 +76,11 @@ async function getRate(sourceToken: Token, targetToken: Token, amount: string): 
     return await getRateByPath(paths, amount);
 }
 
-async function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<Array<[string[][], string[]]>> {
-    if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')
-        return await ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
+async function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
+    if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum') {
+        const [paths, rates] = await ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
+        return paths.map((path, i) => ({path: path.map(x => ({blockchainType: 'ethereum', blockchainId: x})), rate: rates[i]}));
+    }
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 

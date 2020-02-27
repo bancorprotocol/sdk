@@ -160,12 +160,15 @@ exports.getRate = getRate;
 function getAllPathsAndRates(sourceToken, targetToken, amount) {
     if (amount === void 0) { amount = '1'; }
     return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var _a, paths, rates_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     if (!(sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')) return [3 /*break*/, 2];
                     return [4 /*yield*/, ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
-                case 1: return [2 /*return*/, _a.sent()];
+                case 1:
+                    _a = _b.sent(), paths = _a[0], rates_1 = _a[1];
+                    return [2 /*return*/, paths.map(function (path, i) { return ({ path: path.map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); }), rate: rates_1[i] }); })];
                 case 2: throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
             }
         });

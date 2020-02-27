@@ -11,7 +11,10 @@ declare function generatePath(sourceToken: Token, targetToken: Token, { amount, 
 }): Promise<Token[][]>;
 declare function getRateByPath(paths: Token[][], amount: string): Promise<string>;
 declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<string>;
-declare function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount?: string): Promise<Array<[string[][], string[]]>>;
+declare function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount?: string): Promise<{
+    path: Token[];
+    rate: string;
+}>;
 declare function retrieveConverterVersion(converter: Converter): Promise<{
     type: string;
     value: string;
