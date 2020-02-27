@@ -5,7 +5,10 @@ interface Settings {
     eosNodeEndpoint: string;
 }
 declare function init(args: Settings): Promise<void>;
-declare function generatePath(sourceToken: Token, targetToken: Token, amount?: string, getEthBestPath?: (paths: string[][], rates: string[]) => string[]): Promise<Token[][]>;
+declare function generatePath(sourceToken: Token, targetToken: Token, { amount, getEthBestPath }?: {
+    amount?: string;
+    getEthBestPath?: typeof getEthCheapestPath;
+}): Promise<Token[][]>;
 declare function getRateByPath(paths: Token[][], amount: string): Promise<string>;
 declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<string>;
 declare function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount?: string): Promise<Array<[string[][], string[]]>>;

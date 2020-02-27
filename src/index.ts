@@ -34,8 +34,7 @@ async function init(args: Settings) {
 
 async function generatePath(sourceToken: Token,
                             targetToken: Token,
-                            amount: string = '1',
-                            getEthBestPath: (paths: string[][], rates: string[]) => string[] = getEthCheapestPath): Promise<Token[][]> {
+                            {amount = '1', getEthBestPath = getEthCheapestPath} = {}): Promise<Token[][]> {
     let eosPath;
     let ethPaths;
     let ethRates;
