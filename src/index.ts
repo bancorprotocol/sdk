@@ -28,7 +28,10 @@ async function init(args: Settings) {
         await ethereum.init(args.ethereumNodeEndpoint);
 }
 
-async function generatePath(sourceToken: Token, targetToken: Token, amount: string = '1', getEthBestPath: (paths: string[][], rates: string[]) => string[] = getEthCheapestPath) {
+async function generatePath(sourceToken: Token,
+                            targetToken: Token,
+                            amount: string = '1',
+                            getEthBestPath: (paths: string[][], rates: string[]) => string[] = getEthCheapestPath): Promise<Token[][]> {
     let eosPath;
     let ethPaths;
     let ethRates;
@@ -53,7 +56,7 @@ async function generatePath(sourceToken: Token, targetToken: Token, amount: stri
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 
-async function getRateByPath(paths: Token[][], amount: string) {
+async function getRateByPath(paths: Token[][], amount: string): Promise<string> {
     for (const path of paths) {
         switch (path[0].blockchainType) {
         case 'eos':
@@ -69,7 +72,7 @@ async function getRateByPath(paths: Token[][], amount: string) {
     return amount;
 }
 
-async function getRate(sourceToken: Token, targetToken: Token, amount: string) {
+async function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<string> {
     const paths = await generatePath(sourceToken, targetToken);
     return await getRateByPath(paths, amount);
 }
@@ -80,7 +83,7 @@ async function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amoun
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 
-async function retrieveConverterVersion(converter: Converter) {
+async function retrieveConverterVersion(converter: Converter): Promise<{type: string; value: string;}> {
     if (converter.blockchainType == 'ethereum')
         return await ethereum.retrieveConverterVersion(converter.blockchainId);
     throw new Error(converter.blockchainType + ' blockchain not supported');
@@ -98,33 +101,33 @@ async function fetchConversionEventsByTimestamp(token: Token, fromTimestamp, toT
     throw new Error(token.blockchainType + ' blockchain not supported');
 }
 
-async function buildPathsFile() {
+async function buildPathsFile(): Promise<void> {
     await eos.buildPathsFile();
 }
 
-function getEthShortestPath(paths: string[][], rates: string[]) {
+function getEthShortestPath(paths: string[][], rates: string[]): string[] {
     let index = 0;
     for (let i = 1; i < paths.length; i++) {
-        if (shorterPath(paths, index, i) || (equalPath(paths, index, i) && cheaperRate(rates, index, i)))
+        if (betterPath(paths, index, i) || (equalPath(paths, index, i) && betterRate(rates, index, i)))
             index = i;
     }
     return paths[index];
 }
 
-function getEthCheapestPath(paths: string[][], rates: string[]) {
+function getEthCheapestPath(paths: string[][], rates: string[]): string[] {
     let index = 0;
     for (let i = 1; i < rates.length; i++) {
-        if (cheaperRate(rates, index, i) || (equalRate(rates, index, i) && shorterPath(paths, index, i)))
+        if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
             index = i;
     }
     return paths[index];
 }
 
-function shorterPath(paths: string[][], index1: number, index2: number) {
+function betterPath(paths: string[][], index1: number, index2: number): boolean {
     return paths[index1].length > paths[index2].length;
 }
 
-function cheaperRate(rates: string[], index1: number, index2: number) {
+function betterRate(rates: string[], index1: number, index2: number): boolean {
     // return Number(rates[index1]) < Number(rates[index2]);
     const rate1 = rates[index1].split('.').concat('');
     const rate2 = rates[index2].split('.').concat('');
@@ -135,10 +138,10 @@ function cheaperRate(rates: string[], index1: number, index2: number) {
     return rate1.join('') < rate2.join('');
 }
 
-function equalPath(paths: string[][], index1: number, index2: number) {
+function equalPath(paths: string[][], index1: number, index2: number): boolean {
     return paths[index1].length == paths[index2].length;
 }
 
-function equalRate(rates: string[], index1: number, index2: number) {
+function equalRate(rates: string[], index1: number, index2: number): boolean {
     return rates[index1] == rates[index2];
 }
