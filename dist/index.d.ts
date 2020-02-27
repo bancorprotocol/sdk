@@ -13,8 +13,8 @@ export declare function calculateRateFromPath(paths: ConversionPaths, amount: an
 export declare const getRateByPath: (paths: ConversionPaths, amount: any) => Promise<any>;
 export declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<any>;
 export declare function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount?: string): Promise<any[]>;
-export declare function getEthShortestPath(paths: string[][], rates: string[]): string[];
-export declare function getEthCheapestPath(paths: string[][], rates: string[]): string[];
+declare function getEthShortestPath(paths: string[][], rates: string[]): string[];
+declare function getEthCheapestPath(paths: string[][], rates: string[]): string[];
 declare const _default: {
     init: typeof init;
     generateEosPaths: typeof generateEosPaths;
