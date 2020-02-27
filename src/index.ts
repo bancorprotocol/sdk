@@ -77,7 +77,7 @@ async function getRate(sourceToken: Token, targetToken: Token, amount: string): 
     return await getRateByPath(paths, amount);
 }
 
-async function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1') {
+async function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<Array<[string[][], string[]]>> {
     if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')
         return await ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');

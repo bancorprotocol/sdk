@@ -8,7 +8,7 @@ declare function init(args: Settings): Promise<void>;
 declare function generatePath(sourceToken: Token, targetToken: Token, amount?: string, getEthBestPath?: (paths: string[][], rates: string[]) => string[]): Promise<Token[][]>;
 declare function getRateByPath(paths: Token[][], amount: string): Promise<string>;
 declare function getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<string>;
-declare function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount?: string): Promise<any[]>;
+declare function getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount?: string): Promise<Array<[string[][], string[]]>>;
 declare function retrieveConverterVersion(converter: Converter): Promise<{
     type: string;
     value: string;
