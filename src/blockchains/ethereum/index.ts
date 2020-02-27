@@ -39,6 +39,7 @@ let web3;
 let networkType;
 let bancorNetworkAddress;
 let converterRegistryAddress;
+const decimals = {};
 
 async function init(nodeAddress) {
     web3 = new Web3(new Web3.providers.HttpProvider(nodeAddress));
@@ -107,8 +108,11 @@ export const getReturn = async function(path, amount) {
 };
 
 export const getDecimals = async function(token) {
-    const tokenContract = new web3.eth.Contract(ERC20Token, token);
-    return await tokenContract.methods.decimals().call();
+    if (decimals[token] == undefined) {
+        const tokenContract = new web3.eth.Contract(ERC20Token, token);
+        decimals[token] = await tokenContract.methods.decimals().call();
+    }
+    return decimals[token];
 };
 
 export const getRates = async function(paths, amount) {

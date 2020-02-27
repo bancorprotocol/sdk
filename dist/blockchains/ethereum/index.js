@@ -78,6 +78,7 @@ var web3;
 var networkType;
 var bancorNetworkAddress;
 var converterRegistryAddress;
+var decimals = {};
 function init(nodeAddress) {
     return __awaiter(this, void 0, void 0, function () {
         var contractRegistry;
@@ -238,13 +239,19 @@ exports.getReturn = function (path, amount) {
 };
 exports.getDecimals = function (token) {
     return __awaiter(this, void 0, void 0, function () {
-        var tokenContract;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var tokenContract, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
+                    if (!(decimals[token] == undefined)) return [3 /*break*/, 2];
                     tokenContract = new web3.eth.Contract(ERC20Token_1.ERC20Token, token);
+                    _a = decimals;
+                    _b = token;
                     return [4 /*yield*/, tokenContract.methods.decimals().call()];
-                case 1: return [2 /*return*/, _a.sent()];
+                case 1:
+                    _a[_b] = _c.sent();
+                    _c.label = 2;
+                case 2: return [2 /*return*/, decimals[token]];
             }
         });
     });
