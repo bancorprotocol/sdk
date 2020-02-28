@@ -11,9 +11,3 @@ export interface Converter {
     blockchainId: string;
     symbol?: string;
 }
-
-export interface ConversionStep {
-    converter: Converter;
-    fromToken: Token;
-    toToken: Token;
-}

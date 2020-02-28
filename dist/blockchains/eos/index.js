@@ -110,7 +110,7 @@ var EOS = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         if (!(i < path.length - 1)) return [3 /*break*/, 4];
-                        return [4 /*yield*/, getConversionRate(this.jsonRpc, { converter: __assign({}, path[i + 1]), fromToken: path[i], toToken: path[i + 2] }, amount)];
+                        return [4 /*yield*/, getConversionRate(this.jsonRpc, __assign({}, path[i + 1]), path[i], path[i + 2], amount)];
                     case 2:
                         amount = _a.sent();
                         _a.label = 3;
@@ -251,20 +251,20 @@ function getSymbol(string) {
 function isMultiConverter(blockchhainId) {
     return paths_1.Paths.smartTokens[blockchhainId] && paths_1.Paths.smartTokens[blockchhainId].isMultiConverter;
 }
-function getConversionRate(jsonRpc, step, amount) {
+function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var toTokenBlockchainId, fromTokenBlockchainId, fromTokenSymbol, toTokenSymbol, isFromTokenMultiToken, isToTokenMultiToken, converterBlockchainId, reserveSymbol, reserves, reservesContacts, conversionFee, isConversionFromSmartToken, isConversionToSmartToken, balanceFrom, balanceTo, balanceObject, converterReserves, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amountWithoutFee;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    toTokenBlockchainId = step.toToken.blockchainId;
-                    fromTokenBlockchainId = step.fromToken.blockchainId;
-                    fromTokenSymbol = step.fromToken.symbol;
-                    toTokenSymbol = step.toToken.symbol;
+                    toTokenBlockchainId = toToken.blockchainId;
+                    fromTokenBlockchainId = fromToken.blockchainId;
+                    fromTokenSymbol = fromToken.symbol;
+                    toTokenSymbol = toToken.symbol;
                     isFromTokenMultiToken = isMultiConverter(fromTokenBlockchainId);
                     isToTokenMultiToken = isMultiConverter(toTokenBlockchainId);
-                    converterBlockchainId = step.converter.blockchainId;
+                    converterBlockchainId = converter.blockchainId;
                     if (isFromTokenMultiToken)
                         reserveSymbol = fromTokenSymbol;
                     if (isToTokenMultiToken)
@@ -276,8 +276,8 @@ function getConversionRate(jsonRpc, step, amount) {
                     return [4 /*yield*/, exports.getConverterSettings(jsonRpc, converterBlockchainId)];
                 case 2:
                     conversionFee = (_b.sent()).rows[0].fee;
-                    isConversionFromSmartToken = !reservesContacts.includes(step.fromToken.blockchainId);
-                    isConversionToSmartToken = !reservesContacts.includes(step.toToken.blockchainId);
+                    isConversionFromSmartToken = !reservesContacts.includes(fromToken.blockchainId);
+                    isConversionToSmartToken = !reservesContacts.includes(toToken.blockchainId);
                     if (!isToTokenMultiToken) return [3 /*break*/, 4];
                     return [4 /*yield*/, exports.getReserveBalances(jsonRpc, converterBlockchainId, toTokenSymbol, 'reserves')];
                 case 3:

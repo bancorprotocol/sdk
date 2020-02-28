@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { converterBlockchainIds } from './converter_blockchain_ids';
 import fs from 'fs';
 import * as formulas from './formulas';
-import { ConversionStep, Token } from '../../path_generation';
+import { Token, Converter } from '../../path_generation';
 import { Paths } from './paths';
 
 interface Reserve {
@@ -40,7 +40,7 @@ export class EOS {
 
     async getRateByPath(path, amount) {
         for (let i = 0; i < path.length - 1; i += 2)
-            amount = await getConversionRate(this.jsonRpc, {converter: {...path[i + 1]}, fromToken: path[i], toToken: path[i + 2]}, amount);
+            amount = await getConversionRate(this.jsonRpc, {...path[i + 1]}, path[i], path[i + 2], amount);
         return amount;
     }
 
@@ -132,14 +132,14 @@ function isMultiConverter(blockchhainId) {
     return Paths.smartTokens[blockchhainId] && Paths.smartTokens[blockchhainId].isMultiConverter;
 }
 
-async function getConversionRate(jsonRpc: JsonRpc, step: ConversionStep, amount: string) {
-    const toTokenBlockchainId = step.toToken.blockchainId;
-    const fromTokenBlockchainId = step.fromToken.blockchainId;
-    const fromTokenSymbol = step.fromToken.symbol;
-    const toTokenSymbol = step.toToken.symbol;
+async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromToken: Token, toToken: Token, amount: string) {
+    const toTokenBlockchainId = toToken.blockchainId;
+    const fromTokenBlockchainId = fromToken.blockchainId;
+    const fromTokenSymbol = fromToken.symbol;
+    const toTokenSymbol = toToken.symbol;
     const isFromTokenMultiToken = isMultiConverter(fromTokenBlockchainId);
     const isToTokenMultiToken = isMultiConverter(toTokenBlockchainId);
-    const converterBlockchainId = step.converter.blockchainId;
+    const converterBlockchainId = converter.blockchainId;
 
     let reserveSymbol;
     if (isFromTokenMultiToken)
@@ -150,8 +150,8 @@ async function getConversionRate(jsonRpc: JsonRpc, step: ConversionStep, amount:
     const reserves = await getReservesFromCode(jsonRpc, converterBlockchainId, reserveSymbol);
     const reservesContacts = reserves.rows.map(res => res.contract);
     const conversionFee = (await getConverterSettings(jsonRpc, converterBlockchainId)).rows[0].fee;
-    const isConversionFromSmartToken = !reservesContacts.includes(step.fromToken.blockchainId);
-    const isConversionToSmartToken = !reservesContacts.includes(step.toToken.blockchainId);
+    const isConversionFromSmartToken = !reservesContacts.includes(fromToken.blockchainId);
+    const isConversionToSmartToken = !reservesContacts.includes(toToken.blockchainId);
 
     let balanceFrom;
     if (isToTokenMultiToken)
