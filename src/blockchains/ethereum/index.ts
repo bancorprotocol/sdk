@@ -45,8 +45,16 @@ export class ETH {
     multicallContract: Web3.eth.Contract;
     decimals = {};
 
-    async init(nodeAddress) {
-        this.web3 = new Web3(new Web3.providers.HttpProvider(nodeAddress));
+    constructor(nodeAddress) {
+        this.web3 = new Web3(nodeAddress);
+    }
+
+    close() {
+        if (this.web3.currentProvider.constructor.name == "WebsocketProvider")
+            this.web3.currentProvider.connection.close();
+    }
+
+    async init() {
         this.networkType = await this.web3.eth.net.getNetworkType();
         const contractRegistry = new this.web3.eth.Contract(ContractRegistry, getContractAddresses(this).registry);
         const bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();

@@ -32,13 +32,14 @@ describe('price tests', () => {
             more: false,
             next_key: ''
         };
+
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
             .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
 
-        const spyGetConverterFeeFromSettings = jest
-            .spyOn(eos, 'getConverterFeeFromSettings')
-            .mockImplementation(() => Promise.resolve(2500));
+        const spyGetConverterSettings = jest
+            .spyOn(eos, 'getConverterSettings')
+            .mockImplementation(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
 
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
@@ -63,7 +64,7 @@ describe('price tests', () => {
 
         expect(response).toEqual('0.0001829844683988806288491891575274667939632319964962791587405424143483339543408806225565348501066514424');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
-        expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
+        expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
     });
 
@@ -91,9 +92,9 @@ describe('price tests', () => {
             .spyOn(eos, 'getReservesFromCode')
             .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
 
-        const spyGetConverterFeeFromSettings = jest
-            .spyOn(eos, 'getConverterFeeFromSettings')
-            .mockImplementation(() => Promise.resolve(0));
+        const spyGetConverterSettings = jest
+            .spyOn(eos, 'getConverterSettings')
+            .mockImplementation(() => Promise.resolve({ rows: [{ fee: 0 }] }));
 
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
@@ -132,7 +133,7 @@ describe('price tests', () => {
 
         expect(response).toEqual('1.149089903558139448418865873613390739346612635233348491398249012803478588145961828615748552277965966');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
-        expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
+        expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
         expect(spyGetSmartTokenSupply).toHaveBeenCalledTimes(1);
     });
@@ -161,9 +162,9 @@ describe('price tests', () => {
             .spyOn(eos, 'getReservesFromCode')
             .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
 
-        const spyGetConverterFeeFromSettings = jest
-            .spyOn(eos, 'getConverterFeeFromSettings')
-            .mockImplementation(() => Promise.resolve(0));
+        const spyGetConverterSettings = jest
+            .spyOn(eos, 'getConverterSettings')
+            .mockImplementation(() => Promise.resolve({ rows: [{ fee: 0 }] }));
 
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
@@ -202,7 +203,7 @@ describe('price tests', () => {
 
         expect(response).toEqual('0.8702237365064194480241051027460314579651378541409636737891154514561671227625262785751104664761440822');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
-        expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
+        expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
         expect(spyGetSmartTokenSupply).toHaveBeenCalledTimes(1);
     });
@@ -256,9 +257,9 @@ describe('price tests', () => {
             .spyOn(eos, 'getReservesFromCode')
             .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
 
-        const spyGetConverterFeeFromSettings = jest
-            .spyOn(eos, 'getConverterFeeFromSettings')
-            .mockImplementation(() => Promise.resolve(2500));
+        const spyGetConverterSettings = jest
+            .spyOn(eos, 'getConverterSettings')
+            .mockImplementation(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
 
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
@@ -297,7 +298,7 @@ describe('price tests', () => {
 
         expect(response).toEqual('0.000000274802734836');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
-        expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
+        expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetReturn).toHaveBeenCalledTimes(1);
@@ -331,9 +332,10 @@ describe('price tests', () => {
             more: false,
             next_key: ''
         };
-        const spyGetConverterFeeFromSettings = jest
-            .spyOn(eos, 'getConverterFeeFromSettings')
-            .mockImplementation(() => Promise.resolve(2500));
+
+        const spyGetConverterSettings = jest
+            .spyOn(eos, 'getConverterSettings')
+            .mockImplementation(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
@@ -367,7 +369,7 @@ describe('price tests', () => {
 
         expect(response).toEqual('3226688.084642570529407094055738289769947463047257618333877712134072470684667713285913835113451935283');
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
-        expect(spyGetConverterFeeFromSettings).toHaveBeenCalledTimes(1);
+        expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetReturn).toHaveBeenCalledTimes(1);

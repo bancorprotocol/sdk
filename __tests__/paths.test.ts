@@ -76,13 +76,14 @@ describe('Path finder tests', () => {
             .spyOn(ethereum, 'getRates')
             .mockImplementationOnce(() => Promise.resolve(['0']));
 
-        const spyGetConversionPath = jest
-            .spyOn(eos, 'getConversionPath')
-            .mockResolvedValueOnce([
-                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
-                { blockchainType: 'eos', blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-                { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' }
-            ]);
+        const spyGetReservesFromCode = jest
+            .spyOn(eos, 'getReservesFromCode')
+            .mockResolvedValueOnce({
+                rows: [{
+                    contract: 'bntbntbntbnt',
+                    currency: '0.0000000000 BNT'
+                }]
+            });
 
         const response = await sdk.generatePath(
             {blockchainType: 'ethereum', blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
@@ -106,7 +107,7 @@ describe('Path finder tests', () => {
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetRates).toHaveBeenCalledTimes(1);
-        expect(spyGetConversionPath).toHaveBeenCalledTimes(1);
+        expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(1);
     });
 });

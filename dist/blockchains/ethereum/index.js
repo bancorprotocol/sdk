@@ -86,16 +86,20 @@ var MulticallContract = [
     { "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }
 ];
 var ETH = /** @class */ (function () {
-    function ETH() {
+    function ETH(nodeAddress) {
         this.decimals = {};
+        this.web3 = new web3_1.default(nodeAddress);
     }
-    ETH.prototype.init = function (nodeAddress) {
+    ETH.prototype.close = function () {
+        if (this.web3.currentProvider.constructor.name == "WebsocketProvider")
+            this.web3.currentProvider.connection.close();
+    };
+    ETH.prototype.init = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, contractRegistry, bancorNetworkAddress, converterRegistryAddress;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        this.web3 = new web3_1.default(new web3_1.default.providers.HttpProvider(nodeAddress));
                         _a = this;
                         return [4 /*yield*/, this.web3.eth.net.getNetworkType()];
                     case 1:

@@ -6,7 +6,9 @@ export declare class ETH {
     converterRegistry: Web3.eth.Contract;
     multicallContract: Web3.eth.Contract;
     decimals: {};
-    init(nodeAddress: any): Promise<void>;
+    constructor(nodeAddress: any);
+    close(): void;
+    init(): Promise<void>;
     getAnchorToken(): any;
     getRateByPath(path: any, amount: any): Promise<any>;
     getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;

@@ -1,12 +1,14 @@
+import { EOS } from './blockchains/eos/index';
 import { ETH } from './blockchains/ethereum/index';
 import { Token, Converter } from './path_generation';
-interface Settings {
-    ethereumNodeEndpoint: string;
-    eosNodeEndpoint: string;
-}
 export declare class SDK {
     eth: ETH;
-    init(args: Settings): Promise<void>;
+    eos: EOS;
+    constructor({ eosNodeAddress, ethNodeAddress }?: {
+        eosNodeAddress?: string;
+        ethNodeAddress?: string;
+    });
+    init(): Promise<void>;
     generatePath(sourceToken: Token, targetToken: Token, { amount, getEthBestPath }?: {
         amount?: string;
         getEthBestPath?: (paths: string[][], rates: string[]) => string[];
@@ -27,4 +29,3 @@ export declare class SDK {
     getEthShortestPath(paths: string[][], rates: string[]): string[];
     getEthCheapestPath(paths: string[][], rates: string[]): string[];
 }
-export {};

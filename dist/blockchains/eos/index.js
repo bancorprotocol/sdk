@@ -70,135 +70,178 @@ var converter_blockchain_ids_1 = require("./converter_blockchain_ids");
 var fs_1 = __importDefault(require("fs"));
 var formulas = __importStar(require("./formulas"));
 var paths_1 = require("./paths");
-var pathJson = paths_1.Paths;
-var jsonRpc;
 var anchorToken = {
     blockchainType: 'eos',
     blockchainId: 'bntbntbntbnt',
     symbol: 'BNT'
 };
-function init(endpoint) {
-    jsonRpc = new eosjs_1.JsonRpc(endpoint, { fetch: node_fetch_1.default });
-}
-exports.init = init;
-function getAnchorToken() {
-    return anchorToken;
-}
-exports.getAnchorToken = getAnchorToken;
-function isAnchorToken(token) {
-    return token.blockchainId == anchorToken.blockchainId && token.symbol == anchorToken.symbol;
-}
-exports.isAnchorToken = isAnchorToken;
-function getTokenBlockchainId(token) {
-    var _a;
-    return _a = {}, _a[token.symbol] = token.blockchainId, _a;
-}
-exports.getTokenBlockchainId = getTokenBlockchainId;
-function getEosjsRpc() {
-    return jsonRpc;
-}
-exports.getEosjsRpc = getEosjsRpc;
-exports.getReservesFromCode = function (code, symbol) { return __awaiter(void 0, void 0, void 0, function () {
-    var scope, rpc;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                scope = symbol ? symbol : code;
-                rpc = getEosjsRpc();
-                return [4 /*yield*/, rpc.get_table_rows({
-                        json: true,
-                        code: code,
-                        scope: scope,
-                        table: 'reserves',
-                        limit: 10
-                    })];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
-    });
-}); };
-exports.getConverterSettings = function (code) { return __awaiter(void 0, void 0, void 0, function () {
-    var rpc;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                rpc = getEosjsRpc();
-                return [4 /*yield*/, rpc.get_table_rows({
-                        json: true,
-                        code: code,
-                        scope: code,
-                        table: 'settings',
-                        limit: 10
-                    })];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
-    });
-}); };
-exports.getConverterFeeFromSettings = function (code) { return __awaiter(void 0, void 0, void 0, function () {
-    var settings;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, exports.getConverterSettings(code)];
-            case 1:
-                settings = _a.sent();
-                return [2 /*return*/, settings.rows[0].fee];
-        }
-    });
-}); };
-function getSmartToken(code) {
-    return __awaiter(this, void 0, void 0, function () {
-        var rpc;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    rpc = getEosjsRpc();
-                    return [4 /*yield*/, rpc.get_table_rows({
-                            json: true,
-                            code: code,
-                            scope: code,
-                            table: 'settings',
-                            limit: 10
-                        })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
+var EOS = /** @class */ (function () {
+    function EOS(nodeAddress) {
+        this.jsonRpc = new eosjs_1.JsonRpc(nodeAddress, { fetch: node_fetch_1.default });
+    }
+    EOS.prototype.getAnchorToken = function () {
+        return anchorToken;
+    };
+    EOS.prototype.getConversionPath = function (from, to) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sourcePath, targetPath;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, getPathToAnchor(this.jsonRpc, from)];
+                    case 1:
+                        sourcePath = _a.sent();
+                        return [4 /*yield*/, getPathToAnchor(this.jsonRpc, to)];
+                    case 2:
+                        targetPath = _a.sent();
+                        return [2 /*return*/, getShortestPath(sourcePath, targetPath)];
+                }
+            });
         });
-    });
-}
-exports.getSmartToken = getSmartToken;
-exports.getSmartTokenSupply = function (account, code) { return __awaiter(void 0, void 0, void 0, function () {
-    var rpc;
+    };
+    EOS.prototype.getRateByPath = function (path, amount) {
+        return __awaiter(this, void 0, void 0, function () {
+            var i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        i = 0;
+                        _a.label = 1;
+                    case 1:
+                        if (!(i < path.length - 1)) return [3 /*break*/, 4];
+                        return [4 /*yield*/, getConversionRate(this.jsonRpc, { converter: __assign({}, path[i + 1]), fromToken: path[i], toToken: path[i + 2] }, amount)];
+                    case 2:
+                        amount = _a.sent();
+                        _a.label = 3;
+                    case 3:
+                        i += 2;
+                        return [3 /*break*/, 1];
+                    case 4: return [2 /*return*/, amount];
+                }
+            });
+        });
+    };
+    EOS.prototype.buildPathsFile = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var tokens, smartTokens;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        tokens = {};
+                        smartTokens = {};
+                        return [4 /*yield*/, Promise.all(converter_blockchain_ids_1.converterBlockchainIds.map(function (converterBlockchainId) { return __awaiter(_this, void 0, void 0, function () {
+                                var smartToken, smartTokenContract, smartTokenName, reservesObject, reserves;
+                                var _a, _b;
+                                return __generator(this, function (_c) {
+                                    switch (_c.label) {
+                                        case 0: return [4 /*yield*/, exports.getSmartToken(this.jsonRpc, converterBlockchainId)];
+                                        case 1:
+                                            smartToken = _c.sent();
+                                            smartTokenContract = smartToken.rows[0].smart_contract;
+                                            smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
+                                            return [4 /*yield*/, exports.getReservesFromCode(this.jsonRpc, converterBlockchainId)];
+                                        case 2:
+                                            reservesObject = _c.sent();
+                                            reserves = Object.values(reservesObject.rows);
+                                            smartTokens[smartTokenContract] = (_a = {}, _a[smartTokenName] = (_b = {}, _b[smartTokenName] = converterBlockchainId, _b), _a);
+                                            reserves.map(function (reserveObj) {
+                                                var _a, _b;
+                                                var reserveSymbol = exports.getReserveTokenSymbol(reserveObj);
+                                                var existingRecord = tokens[reserveObj.contract];
+                                                if (existingRecord)
+                                                    existingRecord[reserveSymbol][smartTokenName] = converterBlockchainId;
+                                                tokens[reserveObj.contract] = existingRecord ? existingRecord : (_a = {}, _a[reserveSymbol] = (_b = {}, _b[smartTokenName] = converterBlockchainId, _b), _a);
+                                            });
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }))];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, fs_1.default.writeFile('./src/blockchains/eos/paths.ts', "export const Paths = \n{convertibleTokens:" + JSON.stringify(tokens) + ", \n smartTokens: " + JSON.stringify(smartTokens) + "}", 'utf8', 
+                            // eslint-disable-next-line no-console
+                            function () { return console.log('Done making paths json'); })];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return EOS;
+}());
+exports.EOS = EOS;
+exports.getReservesFromCode = function (jsonRpc, code, symbol) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                rpc = getEosjsRpc();
-                return [4 /*yield*/, rpc.get_table_rows({
-                        json: true,
-                        code: account,
-                        scope: code,
-                        table: 'stat',
-                        limit: 10
-                    })];
+            case 0: return [4 /*yield*/, jsonRpc.jsonRpc.get_table_rows({
+                    json: true,
+                    code: code,
+                    scope: symbol ? symbol : code,
+                    table: 'reserves',
+                    limit: 10
+                })];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
+    });
+}); };
+exports.getConverterSettings = function (jsonRpc, code) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, jsonRpc.get_table_rows({
+                    json: true,
+                    code: code,
+                    scope: code,
+                    table: 'settings',
+                    limit: 10
+                })];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
+    });
+}); };
+exports.getSmartToken = function (jsonRpc, code) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, jsonRpc.get_table_rows({
+                    json: true,
+                    code: code,
+                    scope: code,
+                    table: 'settings',
+                    limit: 10
+                })];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
+    });
+}); };
+exports.getSmartTokenSupply = function (jsonRpc, account, code) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, jsonRpc.get_table_rows({
+                    json: true,
+                    code: account,
+                    scope: code,
+                    table: 'stat',
+                    limit: 10
+                })];
             case 1: return [2 /*return*/, _a.sent()];
         }
     });
 }); };
 exports.isMultiConverter = function (blockchhainId) {
-    return pathJson.smartTokens[blockchhainId] && pathJson.smartTokens[blockchhainId].isMultiConverter;
+    return paths_1.Paths.smartTokens[blockchhainId] && paths_1.Paths.smartTokens[blockchhainId].isMultiConverter;
 };
-exports.getReserveBalances = function (code, scope, table) {
+exports.getReserveBalances = function (jsonRpc, code, scope, table) {
     if (table === void 0) { table = 'accounts'; }
     return __awaiter(void 0, void 0, void 0, function () {
-        var rpc;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    rpc = getEosjsRpc();
-                    return [4 /*yield*/, rpc.get_table_rows({
-                            json: true,
-                            code: code,
-                            scope: scope,
-                            table: table,
-                            limit: 10
-                        })];
+                case 0: return [4 /*yield*/, jsonRpc.get_table_rows({
+                        json: true,
+                        code: code,
+                        scope: scope,
+                        table: table,
+                        limit: 10
+                    })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -215,99 +258,13 @@ function getBalance(string) {
     return string.split(' ')[0];
 }
 exports.getBalance = getBalance;
-function buildPathsFile() {
-    return __awaiter(this, void 0, void 0, function () {
-        var tokens, smartTokens;
-        var _this = this;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    tokens = {};
-                    smartTokens = {};
-                    return [4 /*yield*/, Promise.all(converter_blockchain_ids_1.converterBlockchainIds.map(function (converterBlockchainId) { return __awaiter(_this, void 0, void 0, function () {
-                            var smartToken, smartTokenContract, smartTokenName, reservesObject, reserves;
-                            var _a, _b;
-                            return __generator(this, function (_c) {
-                                switch (_c.label) {
-                                    case 0: return [4 /*yield*/, getSmartToken(converterBlockchainId)];
-                                    case 1:
-                                        smartToken = _c.sent();
-                                        smartTokenContract = smartToken.rows[0].smart_contract;
-                                        smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
-                                        return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId)];
-                                    case 2:
-                                        reservesObject = _c.sent();
-                                        reserves = Object.values(reservesObject.rows);
-                                        smartTokens[smartTokenContract] = (_a = {}, _a[smartTokenName] = (_b = {}, _b[smartTokenName] = converterBlockchainId, _b), _a);
-                                        reserves.map(function (reserveObj) {
-                                            var _a, _b;
-                                            var reserveSymbol = exports.getReserveTokenSymbol(reserveObj);
-                                            var existingRecord = tokens[reserveObj.contract];
-                                            if (existingRecord)
-                                                existingRecord[reserveSymbol][smartTokenName] = converterBlockchainId;
-                                            tokens[reserveObj.contract] = existingRecord ? existingRecord : (_a = {}, _a[reserveSymbol] = (_b = {}, _b[smartTokenName] = converterBlockchainId, _b), _a);
-                                        });
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); }))];
-                case 1:
-                    _a.sent();
-                    return [4 /*yield*/, fs_1.default.writeFile('./src/blockchains/eos/paths.ts', "export const Paths = \n{convertibleTokens:" + JSON.stringify(tokens) + ", \n smartTokens: " + JSON.stringify(smartTokens) + "}", 'utf8', 
-                        // eslint-disable-next-line no-console
-                        function () { return console.log('Done making paths json'); })];
-                case 2:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.buildPathsFile = buildPathsFile;
 function isFromSmartToken(step, reserves) {
     return !reserves.includes(step.fromToken.blockchainId);
 }
 function isToSmartToken(step, reserves) {
     return !reserves.includes(step.toToken.blockchainId);
 }
-function getConversionSteps(path) {
-    return __awaiter(this, void 0, void 0, function () {
-        var steps, i;
-        return __generator(this, function (_a) {
-            if (path.length == 1 && exports.isMultiConverter(path[0]))
-                return [2 /*return*/, [{ converter: __assign({}, path[0]), fromToken: path[0], toToken: path[0] }]];
-            steps = [];
-            for (i = 0; i < path.length - 1; i += 2)
-                steps.push({ converter: __assign({}, path[i + 1]), fromToken: path[i], toToken: path[i + 2] });
-            return [2 /*return*/, steps];
-        });
-    });
-}
-exports.getConversionSteps = getConversionSteps;
-function getRateByPath(path, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        var i;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    i = 0;
-                    _a.label = 1;
-                case 1:
-                    if (!(i < path.length - 1)) return [3 /*break*/, 4];
-                    return [4 /*yield*/, getConversionRate({ converter: __assign({}, path[i + 1]), fromToken: path[i], toToken: path[i + 2] }, amount)];
-                case 2:
-                    amount = _a.sent();
-                    _a.label = 3;
-                case 3:
-                    i += 2;
-                    return [3 /*break*/, 1];
-                case 4: return [2 /*return*/, amount];
-            }
-        });
-    });
-}
-exports.getRateByPath = getRateByPath;
-function getConversionRate(step, amount) {
+function getConversionRate(jsonRpc, step, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var toTokenBlockchainId, fromTokenBlockchainId, fromTokenSymbol, toTokenSymbol, isFromTokenMultiToken, isToTokenMultiToken, converterBlockchainId, reserveSymbol, reserves, reservesContacts, conversionFee, isConversionFromSmartToken, balanceFrom, balanceTo, isConversionToSmartToken, balanceObject, converterReserves, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, token, tokenSymbol, tokenSupplyObj, supply, reserveBalance, reserveRatio, amountWithoutFee, fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amountWithoutFee;
         var _a;
@@ -325,30 +282,30 @@ function getConversionRate(step, amount) {
                         reserveSymbol = fromTokenSymbol;
                     if (isToTokenMultiToken)
                         reserveSymbol = toTokenSymbol;
-                    return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId, reserveSymbol)];
+                    return [4 /*yield*/, exports.getReservesFromCode(jsonRpc, converterBlockchainId, reserveSymbol)];
                 case 1:
                     reserves = _b.sent();
                     reservesContacts = reserves.rows.map(function (res) { return res.contract; });
-                    return [4 /*yield*/, exports.getConverterFeeFromSettings(converterBlockchainId)];
+                    return [4 /*yield*/, exports.getConverterSettings(jsonRpc, converterBlockchainId)];
                 case 2:
-                    conversionFee = _b.sent();
+                    conversionFee = (_b.sent()).rows[0].fee;
                     isConversionFromSmartToken = isFromSmartToken(step, reservesContacts);
                     if (!isToTokenMultiToken) return [3 /*break*/, 4];
-                    return [4 /*yield*/, exports.getReserveBalances(converterBlockchainId, toTokenSymbol, 'reserves')];
+                    return [4 /*yield*/, exports.getReserveBalances(jsonRpc, converterBlockchainId, toTokenSymbol, 'reserves')];
                 case 3:
                     balanceFrom = _b.sent();
                     return [3 /*break*/, 6];
-                case 4: return [4 /*yield*/, exports.getReserveBalances(fromTokenBlockchainId, converterBlockchainId)];
+                case 4: return [4 /*yield*/, exports.getReserveBalances(jsonRpc, fromTokenBlockchainId, converterBlockchainId)];
                 case 5:
                     balanceFrom = _b.sent();
                     _b.label = 6;
                 case 6:
                     if (!isFromTokenMultiToken) return [3 /*break*/, 8];
-                    return [4 /*yield*/, exports.getReserveBalances(converterBlockchainId, fromTokenSymbol, 'reserves')];
+                    return [4 /*yield*/, exports.getReserveBalances(jsonRpc, converterBlockchainId, fromTokenSymbol, 'reserves')];
                 case 7:
                     balanceTo = _b.sent();
                     return [3 /*break*/, 10];
-                case 8: return [4 /*yield*/, exports.getReserveBalances(toTokenBlockchainId, converterBlockchainId)];
+                case 8: return [4 /*yield*/, exports.getReserveBalances(jsonRpc, toTokenBlockchainId, converterBlockchainId)];
                 case 9:
                     balanceTo = _b.sent();
                     _b.label = 10;
@@ -363,9 +320,9 @@ function getConversionRate(step, amount) {
                     });
                     formulas.init();
                     if (!isConversionFromSmartToken) return [3 /*break*/, 12];
-                    token = pathJson.smartTokens[fromTokenBlockchainId] || pathJson.convertibleTokens[fromTokenBlockchainId];
+                    token = paths_1.Paths.smartTokens[fromTokenBlockchainId] || paths_1.Paths.convertibleTokens[fromTokenBlockchainId];
                     tokenSymbol = Object.keys(token[fromTokenSymbol])[0];
-                    return [4 /*yield*/, exports.getSmartTokenSupply(fromTokenBlockchainId, tokenSymbol)];
+                    return [4 /*yield*/, exports.getSmartTokenSupply(jsonRpc, fromTokenBlockchainId, tokenSymbol)];
                 case 11:
                     tokenSupplyObj = _b.sent();
                     supply = getBalance(tokenSupplyObj.rows[0].supply);
@@ -375,9 +332,9 @@ function getConversionRate(step, amount) {
                     return [2 /*return*/, formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed()];
                 case 12:
                     if (!isConversionToSmartToken) return [3 /*break*/, 14];
-                    token = pathJson.smartTokens[toTokenBlockchainId] || pathJson.convertibleTokens[toTokenBlockchainId];
+                    token = paths_1.Paths.smartTokens[toTokenBlockchainId] || paths_1.Paths.convertibleTokens[toTokenBlockchainId];
                     tokenSymbol = Object.keys(token[toTokenSymbol])[0];
-                    return [4 /*yield*/, exports.getSmartTokenSupply(toTokenBlockchainId, tokenSymbol)];
+                    return [4 /*yield*/, exports.getSmartTokenSupply(jsonRpc, toTokenBlockchainId, tokenSymbol)];
                 case 13:
                     tokenSupplyObj = _b.sent();
                     supply = getBalance(tokenSupplyObj.rows[0].supply);
@@ -397,78 +354,39 @@ function getConversionRate(step, amount) {
     });
 }
 function getConverterBlockchainId(token) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            if (pathJson.convertibleTokens[token.blockchainId])
-                return [2 /*return*/, pathJson.convertibleTokens[token.blockchainId][token.symbol]];
-            return [2 /*return*/, pathJson.smartTokens[token.blockchainId][token.symbol]];
-        });
-    });
+    if (paths_1.Paths.convertibleTokens[token.blockchainId])
+        return paths_1.Paths.convertibleTokens[token.blockchainId][token.symbol];
+    return paths_1.Paths.smartTokens[token.blockchainId][token.symbol];
 }
 exports.getConverterBlockchainId = getConverterBlockchainId;
-function getReserveTokens(converterBlockchainId, symbol, isMulti) {
+function getPathToAnchor(jsonRpc, token) {
     return __awaiter(this, void 0, void 0, function () {
-        var reserves;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, exports.getReservesFromCode(converterBlockchainId, isMulti ? symbol : null)];
-                case 1:
-                    reserves = _a.sent();
-                    return [2 /*return*/, reserves.rows.map(function (reserve) { return ({
-                            blockchainType: 'eos',
-                            blockchainId: reserve.contract,
-                            symbol: getSymbol(reserve.currency)
-                        }); })];
-            }
-        });
-    });
-}
-function getConversionPath(from, to) {
-    return __awaiter(this, void 0, void 0, function () {
-        var sourcePath, targetPath;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getPathToAnchor(from)];
-                case 1:
-                    sourcePath = _a.sent();
-                    return [4 /*yield*/, getPathToAnchor(to)];
-                case 2:
-                    targetPath = _a.sent();
-                    return [2 /*return*/, getShortestPath(sourcePath, targetPath)];
-            }
-        });
-    });
-}
-exports.getConversionPath = getConversionPath;
-function getPathToAnchor(token) {
-    return __awaiter(this, void 0, void 0, function () {
-        var blockchainId, reserveTokens, _i, _a, reserveToken, path;
+        var blockchainId, symbol, reserves, _i, _a, reserve, path;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    if (isAnchorToken(token))
-                        return [2 /*return*/, [getTokenBlockchainId(token)]];
-                    return [4 /*yield*/, getConverterBlockchainId(token)];
+                    if (token.blockchainId == anchorToken.blockchainId && token.symbol == anchorToken.symbol)
+                        return [2 /*return*/, [token]];
+                    blockchainId = getConverterBlockchainId(token);
+                    symbol = exports.isMultiConverter(token.blockchainId) ? token.symbol : null;
+                    return [4 /*yield*/, exports.getReservesFromCode(jsonRpc, Object.values(blockchainId)[0], symbol)];
                 case 1:
-                    blockchainId = _b.sent();
-                    return [4 /*yield*/, getReserveTokens(Object.values(blockchainId)[0], token.symbol, exports.isMultiConverter(token.blockchainId))];
+                    reserves = _b.sent();
+                    _i = 0, _a = reserves.rows.filter(function (reserve) { return reserve.contract != token.blockchainId; });
+                    _b.label = 2;
                 case 2:
-                    reserveTokens = _b.sent();
-                    _i = 0, _a = reserveTokens.filter(function (reserveToken) { return reserveToken.blockchainId != token.blockchainId; });
-                    _b.label = 3;
+                    if (!(_i < _a.length)) return [3 /*break*/, 5];
+                    reserve = _a[_i];
+                    return [4 /*yield*/, getPathToAnchor(jsonRpc, { blockchainType: 'eos', blockchainId: reserve.contract, symbol: getSymbol(reserve.currency) })];
                 case 3:
-                    if (!(_i < _a.length)) return [3 /*break*/, 6];
-                    reserveToken = _a[_i];
-                    return [4 /*yield*/, getPathToAnchor(reserveToken)];
-                case 4:
                     path = _b.sent();
                     if (path.length > 0)
-                        return [2 /*return*/, __spreadArrays([getTokenBlockchainId(token), blockchainId], path)];
-                    _b.label = 5;
-                case 5:
+                        return [2 /*return*/, __spreadArrays([token, { blockchainType: 'eos', blockchainId: Object.values(blockchainId)[0], symbol: Object.keys(blockchainId)[0] }], path)];
+                    _b.label = 4;
+                case 4:
                     _i++;
-                    return [3 /*break*/, 3];
-                case 6: return [2 /*return*/, []];
+                    return [3 /*break*/, 2];
+                case 5: return [2 /*return*/, []];
             }
         });
     });

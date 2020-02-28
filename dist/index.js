@@ -35,33 +35,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var eos = __importStar(require("./blockchains/eos/index"));
-var index_1 = require("./blockchains/ethereum/index");
+var index_1 = require("./blockchains/eos/index");
+var index_2 = require("./blockchains/ethereum/index");
 var SDK = /** @class */ (function () {
-    function SDK() {
-        this.eth = new index_1.ETH();
+    function SDK(_a) {
+        var _b = _a === void 0 ? {} : _a, _c = _b.eosNodeAddress, eosNodeAddress = _c === void 0 ? "" : _c, _d = _b.ethNodeAddress, ethNodeAddress = _d === void 0 ? "" : _d;
+        this.eos = new index_1.EOS(eosNodeAddress);
+        this.eth = new index_2.ETH(ethNodeAddress);
     }
-    SDK.prototype.init = function (args) {
+    SDK.prototype.init = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (args.eosNodeEndpoint)
-                            eos.init(args.eosNodeEndpoint);
-                        if (!args.ethereumNodeEndpoint) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.eth.init(args.ethereumNodeEndpoint)];
+                    case 0: return [4 /*yield*/, this.eth.init()];
                     case 1:
                         _a.sent();
-                        _a.label = 2;
-                    case 2: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
         });
@@ -82,7 +72,7 @@ var SDK = /** @class */ (function () {
                             case 'ethereum,eos': return [3 /*break*/, 8];
                         }
                         return [3 /*break*/, 11];
-                    case 1: return [4 /*yield*/, eos.getConversionPath(sourceToken, targetToken)];
+                    case 1: return [4 /*yield*/, this.eos.getConversionPath(sourceToken, targetToken)];
                     case 2:
                         eosPath = _j.sent();
                         return [2 /*return*/, [eosPath]];
@@ -90,7 +80,7 @@ var SDK = /** @class */ (function () {
                     case 4:
                         _f = _j.sent(), ethPaths = _f[0], ethRates = _f[1];
                         return [2 /*return*/, [getEthBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); })]];
-                    case 5: return [4 /*yield*/, eos.getConversionPath(sourceToken, eos.getAnchorToken())];
+                    case 5: return [4 /*yield*/, this.eos.getConversionPath(sourceToken, this.eos.getAnchorToken())];
                     case 6:
                         eosPath = _j.sent();
                         return [4 /*yield*/, this.eth.getAllPathsAndRates(this.eth.getAnchorToken(), targetToken.blockchainId, amount)];
@@ -100,7 +90,7 @@ var SDK = /** @class */ (function () {
                     case 8: return [4 /*yield*/, this.eth.getAllPathsAndRates(sourceToken.blockchainId, this.eth.getAnchorToken(), amount)];
                     case 9:
                         _h = _j.sent(), ethPaths = _h[0], ethRates = _h[1];
-                        return [4 /*yield*/, eos.getConversionPath(eos.getAnchorToken(), targetToken)];
+                        return [4 /*yield*/, this.eos.getConversionPath(this.eos.getAnchorToken(), targetToken)];
                     case 10:
                         eosPath = _j.sent();
                         return [2 /*return*/, [getEthBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); }), eosPath]];
@@ -126,7 +116,7 @@ var SDK = /** @class */ (function () {
                             case 'ethereum': return [3 /*break*/, 4];
                         }
                         return [3 /*break*/, 6];
-                    case 2: return [4 /*yield*/, eos.getRateByPath(path, amount)];
+                    case 2: return [4 /*yield*/, this.eos.getRateByPath(path, amount)];
                     case 3:
                         amount = _b.sent();
                         return [3 /*break*/, 7];
@@ -217,7 +207,7 @@ var SDK = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, eos.buildPathsFile()];
+                    case 0: return [4 /*yield*/, this.eos.buildPathsFile()];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
