@@ -148,7 +148,7 @@ var EOS = /** @class */ (function () {
                                             smartTokens[smartTokenContract] = (_a = {}, _a[smartTokenName] = (_b = {}, _b[smartTokenName] = converterBlockchainId, _b), _a);
                                             reserves.map(function (reserveObj) {
                                                 var _a, _b;
-                                                var reserveSymbol = exports.getReserveTokenSymbol(reserveObj);
+                                                var reserveSymbol = getSymbol(reserveObj.currency);
                                                 var existingRecord = tokens[reserveObj.contract];
                                                 if (existingRecord)
                                                     existingRecord[reserveSymbol][smartTokenName] = converterBlockchainId;
@@ -160,11 +160,7 @@ var EOS = /** @class */ (function () {
                             }); }))];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, fs_1.default.writeFile('./src/blockchains/eos/paths.ts', "export const Paths = \n{convertibleTokens:" + JSON.stringify(tokens) + ", \n smartTokens: " + JSON.stringify(smartTokens) + "}", 'utf8', 
-                            // eslint-disable-next-line no-console
-                            function () { return console.log('Done making paths json'); })];
-                    case 2:
-                        _a.sent();
+                        fs_1.default.writeFileSync('./src/blockchains/eos/paths.ts', "export const Paths = \n{convertibleTokens:" + JSON.stringify(tokens) + ", \n smartTokens: " + JSON.stringify(smartTokens) + "}", { encoding: "utf8" });
                         return [2 /*return*/];
                 }
             });
@@ -229,9 +225,6 @@ exports.getSmartTokenSupply = function (jsonRpc, account, code) { return __await
         }
     });
 }); };
-exports.isMultiConverter = function (blockchhainId) {
-    return paths_1.Paths.smartTokens[blockchhainId] && paths_1.Paths.smartTokens[blockchhainId].isMultiConverter;
-};
 exports.getReserveBalances = function (jsonRpc, code, scope, table) {
     if (table === void 0) { table = 'accounts'; }
     return __awaiter(void 0, void 0, void 0, function () {
@@ -249,22 +242,14 @@ exports.getReserveBalances = function (jsonRpc, code, scope, table) {
         });
     });
 };
-exports.getReserveTokenSymbol = function (reserve) {
-    return getSymbol(reserve.currency);
-};
-function getSymbol(string) {
-    return string.split(' ')[1];
-}
-exports.getSymbol = getSymbol;
 function getBalance(string) {
     return string.split(' ')[0];
 }
-exports.getBalance = getBalance;
-function isFromSmartToken(step, reserves) {
-    return !reserves.includes(step.fromToken.blockchainId);
+function getSymbol(string) {
+    return string.split(' ')[1];
 }
-function isToSmartToken(step, reserves) {
-    return !reserves.includes(step.toToken.blockchainId);
+function isMultiConverter(blockchhainId) {
+    return paths_1.Paths.smartTokens[blockchhainId] && paths_1.Paths.smartTokens[blockchhainId].isMultiConverter;
 }
 function getConversionRate(jsonRpc, step, amount) {
     return __awaiter(this, void 0, void 0, function () {
@@ -277,8 +262,8 @@ function getConversionRate(jsonRpc, step, amount) {
                     fromTokenBlockchainId = step.fromToken.blockchainId;
                     fromTokenSymbol = step.fromToken.symbol;
                     toTokenSymbol = step.toToken.symbol;
-                    isFromTokenMultiToken = exports.isMultiConverter(fromTokenBlockchainId);
-                    isToTokenMultiToken = exports.isMultiConverter(toTokenBlockchainId);
+                    isFromTokenMultiToken = isMultiConverter(fromTokenBlockchainId);
+                    isToTokenMultiToken = isMultiConverter(toTokenBlockchainId);
                     converterBlockchainId = step.converter.blockchainId;
                     if (isFromTokenMultiToken)
                         reserveSymbol = fromTokenSymbol;
@@ -291,7 +276,7 @@ function getConversionRate(jsonRpc, step, amount) {
                     return [4 /*yield*/, exports.getConverterSettings(jsonRpc, converterBlockchainId)];
                 case 2:
                     conversionFee = (_b.sent()).rows[0].fee;
-                    isConversionFromSmartToken = isFromSmartToken(step, reservesContacts);
+                    isConversionFromSmartToken = !reservesContacts.includes(step.fromToken.blockchainId);
                     if (!isToTokenMultiToken) return [3 /*break*/, 4];
                     return [4 /*yield*/, exports.getReserveBalances(jsonRpc, converterBlockchainId, toTokenSymbol, 'reserves')];
                 case 3:
@@ -312,7 +297,7 @@ function getConversionRate(jsonRpc, step, amount) {
                     balanceTo = _b.sent();
                     _b.label = 10;
                 case 10:
-                    isConversionToSmartToken = isToSmartToken(step, reservesContacts);
+                    isConversionToSmartToken = !reservesContacts.includes(step.toToken.blockchainId);
                     balanceObject = (_a = {}, _a[fromTokenBlockchainId] = balanceFrom.rows[0].balance, _a[toTokenBlockchainId] = balanceTo.rows[0].balance, _a);
                     converterReserves = {};
                     reserves.rows.map(function (reserve) {
@@ -360,7 +345,6 @@ function getConverterBlockchainId(token) {
         return paths_1.Paths.convertibleTokens[token.blockchainId][token.symbol];
     return paths_1.Paths.smartTokens[token.blockchainId][token.symbol];
 }
-exports.getConverterBlockchainId = getConverterBlockchainId;
 function getPathToAnchor(jsonRpc, token) {
     return __awaiter(this, void 0, void 0, function () {
         var blockchainId, symbol, reserves, _i, _a, reserve, path;
@@ -370,7 +354,7 @@ function getPathToAnchor(jsonRpc, token) {
                     if (token.blockchainId == anchorToken.blockchainId && token.symbol == anchorToken.symbol)
                         return [2 /*return*/, [token]];
                     blockchainId = getConverterBlockchainId(token);
-                    symbol = exports.isMultiConverter(token.blockchainId) ? token.symbol : null;
+                    symbol = isMultiConverter(token.blockchainId) ? token.symbol : null;
                     return [4 /*yield*/, exports.getReservesFromCode(jsonRpc, Object.values(blockchainId)[0], symbol)];
                 case 1:
                     reserves = _b.sent();
