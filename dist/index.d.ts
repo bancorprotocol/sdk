@@ -8,6 +8,7 @@ export declare class SDK {
         eosNodeAddress?: string;
         ethNodeAddress?: string;
     });
+    close(): void;
     init(): Promise<void>;
     generatePath(sourceToken: Token, targetToken: Token, { amount, getEthBestPath }?: {
         amount?: string;

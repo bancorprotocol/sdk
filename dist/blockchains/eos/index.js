@@ -79,6 +79,8 @@ var EOS = /** @class */ (function () {
     function EOS(nodeAddress) {
         this.jsonRpc = new eosjs_1.JsonRpc(nodeAddress, { fetch: node_fetch_1.default });
     }
+    EOS.prototype.close = function () {
+    };
     EOS.prototype.getAnchorToken = function () {
         return anchorToken;
     };

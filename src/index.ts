@@ -11,6 +11,11 @@ export class SDK {
         this.eth = new ETH(ethNodeAddress);
     }
 
+    close() {
+        this.eos.close();
+        this.eth.close();
+    }
+
     async init() {
         await this.eth.init();
     }

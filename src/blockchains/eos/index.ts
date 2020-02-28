@@ -25,6 +25,9 @@ export class EOS {
         this.jsonRpc = new JsonRpc(nodeAddress, { fetch });
     }
 
+    close() {
+    }
+
     getAnchorToken() {
         return anchorToken;
     }

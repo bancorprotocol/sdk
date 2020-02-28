@@ -8,6 +8,7 @@ interface Reserve {
 export declare class EOS {
     jsonRpc: JsonRpc;
     constructor(nodeAddress: string);
+    close(): void;
     getAnchorToken(): Token;
     getConversionPath(from: Token, to: Token): Promise<any[]>;
     getRateByPath(path: any, amount: any): Promise<any>;

@@ -44,6 +44,10 @@ var SDK = /** @class */ (function () {
         this.eos = new index_1.EOS(eosNodeAddress);
         this.eth = new index_2.ETH(ethNodeAddress);
     }
+    SDK.prototype.close = function () {
+        this.eos.close();
+        this.eth.close();
+    };
     SDK.prototype.init = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
