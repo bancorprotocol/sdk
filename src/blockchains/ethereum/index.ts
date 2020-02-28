@@ -1,14 +1,7 @@
 import Web3 from 'web3';
-
-import { ContractRegistry } from './contracts/ContractRegistry';
-import { BancorNetwork } from './contracts/BancorNetwork';
-import { BancorConverterRegistry } from './contracts/BancorConverterRegistry';
-import { ERC20Token } from './contracts/ERC20Token';
-import { SmartToken } from './contracts/SmartToken';
-
 import * as utils from './utils';
-import * as retrieve_converter_version from './retrieve_converter_version';
 import * as fetch_conversion_events from './fetch_conversion_events';
+import * as retrieve_converter_version from './retrieve_converter_version';
 
 const CONTRACT_ADDRESSES = {
     main: {
@@ -23,7 +16,26 @@ const CONTRACT_ADDRESSES = {
     }
 };
 
-const MULTICALL_CONTRACT_ABI = [{"constant":false,"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes","name":"callData","type":"bytes"}],"internalType":"struct Multicall.Call[]","name":"calls","type":"tuple[]"},{"internalType":"bool","name":"strict","type":"bool"}],"name":"aggregate","outputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"components":[{"internalType":"bool","name":"success","type":"bool"},{"internalType":"bytes","name":"data","type":"bytes"}],"internalType":"struct Multicall.Return[]","name":"returnData","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
+const ContractRegistry = [
+    {"constant":true,"inputs":[{"name":"_contractName","type":"bytes32"}],"name":"addressOf","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"}
+];
+
+const BancorNetwork = [
+    {"constant":true,"inputs":[{"name":"_path","type":"address[]"},{"name":"_amount","type":"uint256"}],"name":"getReturnByPath","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}
+];
+
+const BancorConverterRegistry = [
+    {"constant":true,"inputs":[],"name":"getConvertibleTokens","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},
+    {"constant":true,"inputs":[{"name":"_convertibleToken","type":"address"}],"name":"getConvertibleTokenSmartTokens","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"}
+];
+
+const ERC20Token = [
+    {"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"}
+];
+
+const MulticallContract = [
+    {"constant":false,"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes","name":"callData","type":"bytes"}],"internalType":"struct Multicall.Call[]","name":"calls","type":"tuple[]"},{"internalType":"bool","name":"strict","type":"bool"}],"name":"aggregate","outputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"components":[{"internalType":"bool","name":"success","type":"bool"},{"internalType":"bytes","name":"data","type":"bytes"}],"internalType":"struct Multicall.Return[]","name":"returnData","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"}
+];
 
 export class ETH {
     web3: Web3;
@@ -41,7 +53,7 @@ export class ETH {
         const converterRegistryAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
         this.bancorNetwork = new this.web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
         this.converterRegistry = new this.web3.eth.Contract(BancorConverterRegistry, converterRegistryAddress);
-        this.multicallContract = new this.web3.eth.Contract(MULTICALL_CONTRACT_ABI, getContractAddresses(this).multicall);
+        this.multicallContract = new this.web3.eth.Contract(MulticallContract, getContractAddresses(this).multicall);
     }
 
     getAnchorToken() {
