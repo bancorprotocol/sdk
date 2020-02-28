@@ -19,53 +19,53 @@ const anchorToken: Token = {
 };
 
 export class EOS {
-jsonRpc: JsonRpc;
+    jsonRpc: JsonRpc;
 
-constructor(nodeAddress: string) {
-    this.jsonRpc = new JsonRpc(nodeAddress, { fetch });
-}
+    constructor(nodeAddress: string) {
+        this.jsonRpc = new JsonRpc(nodeAddress, { fetch });
+    }
 
-getAnchorToken() {
-    return anchorToken;
-}
+    getAnchorToken() {
+        return anchorToken;
+    }
 
-async getConversionPath(from: Token, to: Token) {
-    const sourcePath = await getPathToAnchor(this.jsonRpc, from);
-    const targetPath = await getPathToAnchor(this.jsonRpc, to);
-    return getShortestPath(sourcePath, targetPath);
-}
+    async getConversionPath(from: Token, to: Token) {
+        const sourcePath = await getPathToAnchor(this.jsonRpc, from);
+        const targetPath = await getPathToAnchor(this.jsonRpc, to);
+        return getShortestPath(sourcePath, targetPath);
+    }
 
-async getRateByPath(path, amount) {
-    for (let i = 0; i < path.length - 1; i += 2)
-        amount = await getConversionRate(this.jsonRpc, {converter: {...path[i + 1]}, fromToken: path[i], toToken: path[i + 2]}, amount);
-    return amount;
-}
+    async getRateByPath(path, amount) {
+        for (let i = 0; i < path.length - 1; i += 2)
+            amount = await getConversionRate(this.jsonRpc, {converter: {...path[i + 1]}, fromToken: path[i], toToken: path[i + 2]}, amount);
+        return amount;
+    }
 
-async buildPathsFile() {
-    const tokens = {};
-    const smartTokens = {};
-    await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
-        const smartToken = await getSmartToken(this.jsonRpc, converterBlockchainId);
-        const smartTokenContract = smartToken.rows[0].smart_contract;
-        const smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
-        const reservesObject = await getReservesFromCode(this.jsonRpc, converterBlockchainId);
-        const reserves = Object.values(reservesObject.rows);
-        smartTokens[smartTokenContract] = { [smartTokenName]: { [smartTokenName]: converterBlockchainId } };
-        reserves.map((reserveObj: Reserve) => {
-            const reserveSymbol = getReserveTokenSymbol(reserveObj);
-            const existingRecord = tokens[reserveObj.contract];
-            if (existingRecord)
-                existingRecord[reserveSymbol][smartTokenName] = converterBlockchainId;
+    async buildPathsFile() {
+        const tokens = {};
+        const smartTokens = {};
+        await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
+            const smartToken = await getSmartToken(this.jsonRpc, converterBlockchainId);
+            const smartTokenContract = smartToken.rows[0].smart_contract;
+            const smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
+            const reservesObject = await getReservesFromCode(this.jsonRpc, converterBlockchainId);
+            const reserves = Object.values(reservesObject.rows);
+            smartTokens[smartTokenContract] = { [smartTokenName]: { [smartTokenName]: converterBlockchainId } };
+            reserves.map((reserveObj: Reserve) => {
+                const reserveSymbol = getReserveTokenSymbol(reserveObj);
+                const existingRecord = tokens[reserveObj.contract];
+                if (existingRecord)
+                    existingRecord[reserveSymbol][smartTokenName] = converterBlockchainId;
 
-            tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: { [smartTokenName]: converterBlockchainId } };
-        });
-    }));
-    await fs.writeFile('./src/blockchains/eos/paths.ts',
-        `export const Paths = \n{convertibleTokens:${JSON.stringify(tokens)}, \n smartTokens: ${JSON.stringify(smartTokens)}}`,
-        'utf8',
-        // eslint-disable-next-line no-console
-        () => console.log('Done making paths json'));
-}
+                tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: { [smartTokenName]: converterBlockchainId } };
+            });
+        }));
+        await fs.writeFile('./src/blockchains/eos/paths.ts',
+            `export const Paths = \n{convertibleTokens:${JSON.stringify(tokens)}, \n smartTokens: ${JSON.stringify(smartTokens)}}`,
+            'utf8',
+            // eslint-disable-next-line no-console
+            () => console.log('Done making paths json'));
+    }
 }
 
 export const getReservesFromCode = async (jsonRpc, code, symbol?) => {
