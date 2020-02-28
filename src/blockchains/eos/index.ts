@@ -151,6 +151,7 @@ async function getConversionRate(jsonRpc: JsonRpc, step: ConversionStep, amount:
     const reservesContacts = reserves.rows.map(res => res.contract);
     const conversionFee = (await getConverterSettings(jsonRpc, converterBlockchainId)).rows[0].fee;
     const isConversionFromSmartToken = !reservesContacts.includes(step.fromToken.blockchainId);
+    const isConversionToSmartToken = !reservesContacts.includes(step.toToken.blockchainId);
 
     let balanceFrom;
     if (isToTokenMultiToken)
@@ -164,8 +165,10 @@ async function getConversionRate(jsonRpc: JsonRpc, step: ConversionStep, amount:
     else
         balanceTo = await getReserveBalances(jsonRpc, toTokenBlockchainId, converterBlockchainId);
 
-    const isConversionToSmartToken = !reservesContacts.includes(step.toToken.blockchainId);
-    const balanceObject = { [fromTokenBlockchainId]: balanceFrom.rows[0].balance, [toTokenBlockchainId]: balanceTo.rows[0].balance };
+    const balanceObject = {
+        [fromTokenBlockchainId]: balanceFrom.rows[0].balance,
+        [toTokenBlockchainId]: balanceTo.rows[0].balance
+    };
 
     const converterReserves = {};
     reserves.rows.map((reserve: Reserve) => {
