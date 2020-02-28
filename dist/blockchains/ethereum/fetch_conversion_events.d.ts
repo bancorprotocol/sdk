@@ -1,1 +1,1 @@
-export declare function run(web3: any, tokenAddress: any, fromBlock: any, toBlock: any): Promise<any[]>;
+export declare function run(_this: any, token: any, fromBlock: any, toBlock: any): Promise<any[]>;

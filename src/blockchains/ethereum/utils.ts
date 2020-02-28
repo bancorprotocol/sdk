@@ -9,10 +9,10 @@ export function toWei(number, decimalDigits = 18) {
     return new Decimal(`${number}e+${decimalDigits}`).toFixed();
 }
 
-export async function timestampToBlockNumber(web3, timestamp) {
-    const lo = await getBlock(web3, 1);
-    const hi = await getBlock(web3, "latest");
-    const block = await searchBlock(web3, lo, hi, timestamp);
+export async function timestampToBlockNumber(_this, timestamp) {
+    const lo = await getBlock(_this.web3, 1);
+    const hi = await getBlock(_this.web3, "latest");
+    const block = await searchBlock(_this.web3, lo, hi, timestamp);
     return block.number;
 }
 

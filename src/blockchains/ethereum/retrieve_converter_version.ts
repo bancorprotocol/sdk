@@ -25,10 +25,10 @@ function parse(type, data) {
     return data;
 }
 
-export async function run(web3, address) {
+export async function run(_this, address) {
     for (const type of ["string", "bytes32", "uint16"]) {
         const abi = [{"constant":true,"inputs":[],"name":"version","outputs":[{"name":"","type":type}],"payable":false,"stateMutability":"view","type":"function"}];
-        const contract = new web3.eth.Contract(abi , address);
+        const contract = new _this.web3.eth.Contract(abi , address);
         const version = await rpc(contract.methods.version());
         const value = parse(type, version);
         if (value)

@@ -74,198 +74,195 @@ var CONTRACT_ADDRESSES = {
     }
 };
 var MULTICALL_CONTRACT_ABI = [{ "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
-var web3;
-var networkType;
-var bancorNetworkAddress;
-var converterRegistryAddress;
-var decimals = {};
-function init(nodeAddress) {
-    return __awaiter(this, void 0, void 0, function () {
-        var contractRegistry;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    web3 = new web3_1.default(new web3_1.default.providers.HttpProvider(nodeAddress));
-                    return [4 /*yield*/, web3.eth.net.getNetworkType()];
-                case 1:
-                    networkType = _a.sent();
-                    contractRegistry = new web3.eth.Contract(ContractRegistry_1.ContractRegistry, exports.getContractAddresses().registry);
-                    return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorNetwork')).call()];
-                case 2:
-                    bancorNetworkAddress = _a.sent();
-                    return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
-                case 3:
-                    converterRegistryAddress = _a.sent();
-                    return [2 /*return*/];
-            }
+var ETH = /** @class */ (function () {
+    function ETH() {
+        this.decimals = {};
+    }
+    ETH.prototype.init = function (nodeAddress) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, contractRegistry, bancorNetworkAddress, converterRegistryAddress;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.web3 = new web3_1.default(new web3_1.default.providers.HttpProvider(nodeAddress));
+                        _a = this;
+                        return [4 /*yield*/, this.web3.eth.net.getNetworkType()];
+                    case 1:
+                        _a.networkType = _b.sent();
+                        contractRegistry = new this.web3.eth.Contract(ContractRegistry_1.ContractRegistry, exports.getContractAddresses(this).registry);
+                        return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorNetwork')).call()];
+                    case 2:
+                        bancorNetworkAddress = _b.sent();
+                        return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
+                    case 3:
+                        converterRegistryAddress = _b.sent();
+                        this.bancorNetwork = new this.web3.eth.Contract(BancorNetwork_1.BancorNetwork, bancorNetworkAddress);
+                        this.converterRegistry = new this.web3.eth.Contract(BancorConverterRegistry_1.BancorConverterRegistry, converterRegistryAddress);
+                        this.multicallContract = new this.web3.eth.Contract(MULTICALL_CONTRACT_ABI, exports.getContractAddresses(this).multicall);
+                        return [2 /*return*/];
+                }
+            });
         });
-    });
-}
-exports.init = init;
-function getAnchorToken() {
-    return exports.getContractAddresses().anchorToken;
-}
-exports.getAnchorToken = getAnchorToken;
-function getRateByPath(path, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, exports.toWei(path[0], amount)];
-                case 1:
-                    amount = _a.sent();
-                    return [4 /*yield*/, exports.getReturn(path, amount)];
-                case 2:
-                    amount = _a.sent();
-                    return [4 /*yield*/, exports.fromWei(path[path.length - 1], amount)];
-                case 3:
-                    amount = _a.sent();
-                    return [2 /*return*/, amount];
-            }
+    };
+    ETH.prototype.getAnchorToken = function () {
+        return exports.getContractAddresses(this).anchorToken;
+    };
+    ETH.prototype.getRateByPath = function (path, amount) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, exports.toWei(this, path[0], amount)];
+                    case 1:
+                        amount = _a.sent();
+                        return [4 /*yield*/, exports.getReturn(this, path, amount)];
+                    case 2:
+                        amount = _a.sent();
+                        return [4 /*yield*/, exports.fromWei(this, path[path.length - 1], amount)];
+                    case 3:
+                        amount = _a.sent();
+                        return [2 /*return*/, amount];
+                }
+            });
         });
-    });
-}
-exports.getRateByPath = getRateByPath;
-function getAllPathsAndRates(sourceToken, targetToken, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        var paths, graph, tokens, destToken, sourceDecimals, targetDecimals, rates;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    paths = [];
-                    return [4 /*yield*/, exports.getGraph()];
-                case 1:
-                    graph = _a.sent();
-                    tokens = [web3_1.default.utils.toChecksumAddress(sourceToken)];
-                    destToken = web3_1.default.utils.toChecksumAddress(targetToken);
-                    getAllPathsRecursive(paths, graph, tokens, destToken);
-                    return [4 /*yield*/, exports.getDecimals(sourceToken)];
-                case 2:
-                    sourceDecimals = _a.sent();
-                    return [4 /*yield*/, exports.getDecimals(targetToken)];
-                case 3:
-                    targetDecimals = _a.sent();
-                    return [4 /*yield*/, exports.getRates(paths, utils.toWei(amount, sourceDecimals))];
-                case 4:
-                    rates = _a.sent();
-                    return [2 /*return*/, [paths, rates.map(function (rate) { return utils.fromWei(rate, targetDecimals); })]];
-            }
+    };
+    ETH.prototype.getAllPathsAndRates = function (sourceToken, targetToken, amount) {
+        return __awaiter(this, void 0, void 0, function () {
+            var paths, graph, tokens, destToken, sourceDecimals, targetDecimals, rates;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        paths = [];
+                        return [4 /*yield*/, exports.getGraph(this)];
+                    case 1:
+                        graph = _a.sent();
+                        tokens = [web3_1.default.utils.toChecksumAddress(sourceToken)];
+                        destToken = web3_1.default.utils.toChecksumAddress(targetToken);
+                        getAllPathsRecursive(paths, graph, tokens, destToken);
+                        return [4 /*yield*/, exports.getDecimals(this, sourceToken)];
+                    case 2:
+                        sourceDecimals = _a.sent();
+                        return [4 /*yield*/, exports.getDecimals(this, targetToken)];
+                    case 3:
+                        targetDecimals = _a.sent();
+                        return [4 /*yield*/, exports.getRates(this, paths, utils.toWei(amount, sourceDecimals))];
+                    case 4:
+                        rates = _a.sent();
+                        return [2 /*return*/, [paths, rates.map(function (rate) { return utils.fromWei(rate, targetDecimals); })]];
+                }
+            });
         });
-    });
-}
-exports.getAllPathsAndRates = getAllPathsAndRates;
-function retrieveConverterVersion(converter) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, retrieve_converter_version.run(web3, converter)];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
+    };
+    ETH.prototype.retrieveConverterVersion = function (converter) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, retrieve_converter_version.run(this, converter)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
         });
-    });
-}
-exports.retrieveConverterVersion = retrieveConverterVersion;
-function fetchConversionEvents(token, fromBlock, toBlock) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, fetch_conversion_events.run(web3, token, fromBlock, toBlock)];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
+    };
+    ETH.prototype.fetchConversionEvents = function (token, fromBlock, toBlock) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, fetch_conversion_events.run(this, token, fromBlock, toBlock)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
         });
-    });
-}
-exports.fetchConversionEvents = fetchConversionEvents;
-function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
-    return __awaiter(this, void 0, void 0, function () {
-        var fromBlock, toBlock;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, utils.timestampToBlockNumber(web3, fromTimestamp)];
-                case 1:
-                    fromBlock = _a.sent();
-                    return [4 /*yield*/, utils.timestampToBlockNumber(web3, toTimestamp)];
-                case 2:
-                    toBlock = _a.sent();
-                    return [4 /*yield*/, fetch_conversion_events.run(web3, token, fromBlock, toBlock)];
-                case 3: return [2 /*return*/, _a.sent()];
-            }
+    };
+    ETH.prototype.fetchConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
+        return __awaiter(this, void 0, void 0, function () {
+            var fromBlock, toBlock;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, utils.timestampToBlockNumber(this, fromTimestamp)];
+                    case 1:
+                        fromBlock = _a.sent();
+                        return [4 /*yield*/, utils.timestampToBlockNumber(this, toTimestamp)];
+                    case 2:
+                        toBlock = _a.sent();
+                        return [4 /*yield*/, fetch_conversion_events.run(this, token, fromBlock, toBlock)];
+                    case 3: return [2 /*return*/, _a.sent()];
+                }
+            });
         });
-    });
-}
-exports.fetchConversionEventsByTimestamp = fetchConversionEventsByTimestamp;
-exports.getContractAddresses = function () {
-    if (CONTRACT_ADDRESSES.hasOwnProperty(networkType))
-        return CONTRACT_ADDRESSES[networkType];
-    throw new Error(networkType + ' network not supported');
+    };
+    return ETH;
+}());
+exports.ETH = ETH;
+;
+exports.getContractAddresses = function (_this) {
+    if (CONTRACT_ADDRESSES.hasOwnProperty(_this.networkType))
+        return CONTRACT_ADDRESSES[_this.networkType];
+    throw new Error(_this.networkType + ' network not supported');
 };
-exports.toWei = function (token, amount) {
+exports.toWei = function (_this, token, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var decimals;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, exports.getDecimals(token)];
-                case 1:
-                    decimals = _a.sent();
-                    return [2 /*return*/, utils.toWei(amount, decimals)];
-            }
-        });
-    });
-};
-exports.fromWei = function (token, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        var decimals;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, exports.getDecimals(token)];
-                case 1:
-                    decimals = _a.sent();
-                    return [2 /*return*/, utils.fromWei(amount, decimals)];
+        var _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    _b = (_a = utils).toWei;
+                    _c = [amount];
+                    return [4 /*yield*/, exports.getDecimals(_this, token)];
+                case 1: return [2 /*return*/, _b.apply(_a, _c.concat([_d.sent()]))];
             }
         });
     });
 };
-exports.getReturn = function (path, amount) {
+exports.fromWei = function (_this, token, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var bancorNetworkContract;
+        var _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    _b = (_a = utils).fromWei;
+                    _c = [amount];
+                    return [4 /*yield*/, exports.getDecimals(_this, token)];
+                case 1: return [2 /*return*/, _b.apply(_a, _c.concat([_d.sent()]))];
+            }
+        });
+    });
+};
+exports.getReturn = function (_this, path, amount) {
+    return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    bancorNetworkContract = new web3.eth.Contract(BancorNetwork_1.BancorNetwork, bancorNetworkAddress);
-                    return [4 /*yield*/, bancorNetworkContract.methods.getReturnByPath(path, amount).call()];
+                case 0: return [4 /*yield*/, _this.bancorNetwork.methods.getReturnByPath(path, amount).call()];
                 case 1: return [2 /*return*/, (_a.sent())['0']];
             }
         });
     });
 };
-exports.getDecimals = function (token) {
+exports.getDecimals = function (_this, token) {
     return __awaiter(this, void 0, void 0, function () {
         var tokenContract, _a, _b;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
-                    if (!(decimals[token] == undefined)) return [3 /*break*/, 2];
-                    tokenContract = new web3.eth.Contract(ERC20Token_1.ERC20Token, token);
-                    _a = decimals;
+                    if (!(_this.decimals[token] == undefined)) return [3 /*break*/, 2];
+                    tokenContract = new _this.web3.eth.Contract(ERC20Token_1.ERC20Token, token);
+                    _a = _this.decimals;
                     _b = token;
                     return [4 /*yield*/, tokenContract.methods.decimals().call()];
                 case 1:
                     _a[_b] = _c.sent();
                     _c.label = 2;
-                case 2: return [2 /*return*/, decimals[token]];
+                case 2: return [2 /*return*/, _this.decimals[token]];
             }
         });
     });
 };
-exports.getRates = function (paths, amount) {
+exports.getRates = function (_this, paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var bancorNetworkContract, multicallContract, calls, _a, blockNumber, returnData;
+        var calls, _a, blockNumber, returnData;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    bancorNetworkContract = new web3.eth.Contract(BancorNetwork_1.BancorNetwork, bancorNetworkAddress);
-                    multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, exports.getContractAddresses().multicall);
-                    calls = paths.map(function (path) { return [bancorNetworkAddress, bancorNetworkContract.methods.getReturnByPath(path, amount).encodeABI()]; });
-                    return [4 /*yield*/, multicallContract.methods.aggregate(calls, false).call()];
+                    calls = paths.map(function (path) { return [_this.bancorNetwork._address, _this.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]; });
+                    return [4 /*yield*/, _this.multicallContract.methods.aggregate(calls, false).call()];
                 case 1:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
                     return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : "0"; })];
@@ -273,20 +270,18 @@ exports.getRates = function (paths, amount) {
         });
     });
 };
-exports.getGraph = function () {
+exports.getGraph = function (_this) {
     return __awaiter(this, void 0, void 0, function () {
-        var graph, multicallContract, converterRegistry, convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
+        var graph, convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     graph = {};
-                    multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, exports.getContractAddresses().multicall);
-                    converterRegistry = new web3.eth.Contract(BancorConverterRegistry_1.BancorConverterRegistry, converterRegistryAddress);
-                    return [4 /*yield*/, converterRegistry.methods.getConvertibleTokens().call()];
+                    return [4 /*yield*/, _this.converterRegistry.methods.getConvertibleTokens().call()];
                 case 1:
                     convertibleTokens = _b.sent();
-                    calls = convertibleTokens.map(function (convertibleToken) { return [converterRegistry._address, converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
-                    return [4 /*yield*/, multicallContract.methods.aggregate(calls, true).call()];
+                    calls = convertibleTokens.map(function (convertibleToken) { return [_this.converterRegistry._address, _this.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
+                    return [4 /*yield*/, _this.multicallContract.methods.aggregate(calls, true).call()];
                 case 2:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
                     _loop_1 = function (i) {

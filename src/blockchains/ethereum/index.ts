@@ -25,115 +25,100 @@ const CONTRACT_ADDRESSES = {
 
 const MULTICALL_CONTRACT_ABI = [{"constant":false,"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes","name":"callData","type":"bytes"}],"internalType":"struct Multicall.Call[]","name":"calls","type":"tuple[]"},{"internalType":"bool","name":"strict","type":"bool"}],"name":"aggregate","outputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"components":[{"internalType":"bool","name":"success","type":"bool"},{"internalType":"bytes","name":"data","type":"bytes"}],"internalType":"struct Multicall.Return[]","name":"returnData","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
 
-export {
-    init,
-    getAnchorToken,
-    getRateByPath,
-    getAllPathsAndRates,
-    retrieveConverterVersion,
-    fetchConversionEvents,
-    fetchConversionEventsByTimestamp
-};
-
-let web3;
-let networkType;
-let bancorNetworkAddress;
-let converterRegistryAddress;
-const decimals = {};
-
-async function init(nodeAddress) {
-    web3 = new Web3(new Web3.providers.HttpProvider(nodeAddress));
-    networkType = await web3.eth.net.getNetworkType();
-    const contractRegistry = new web3.eth.Contract(ContractRegistry, getContractAddresses().registry);
-    bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
-    converterRegistryAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
+export class ETH {
+web3: Web3;
+networkType: string;
+bancorNetwork: Web3.eth.Contract;
+converterRegistry: Web3.eth.Contract;
+multicallContract: Web3.eth.Contract;
+decimals = {};
+async init(nodeAddress) {
+    this.web3 = new Web3(new Web3.providers.HttpProvider(nodeAddress));
+    this.networkType = await this.web3.eth.net.getNetworkType();
+    const contractRegistry = new this.web3.eth.Contract(ContractRegistry, getContractAddresses(this).registry);
+    const bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
+    const converterRegistryAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
+    this.bancorNetwork = new this.web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
+    this.converterRegistry = new this.web3.eth.Contract(BancorConverterRegistry, converterRegistryAddress);
+    this.multicallContract = new this.web3.eth.Contract(MULTICALL_CONTRACT_ABI, getContractAddresses(this).multicall);
 }
 
-function getAnchorToken() {
-    return getContractAddresses().anchorToken;
+getAnchorToken() {
+    return getContractAddresses(this).anchorToken;
 }
 
-async function getRateByPath(path, amount) {
-    amount = await toWei(path[0], amount);
-    amount = await getReturn(path, amount);
-    amount = await fromWei(path[path.length - 1], amount);
+async getRateByPath(path, amount) {
+    amount = await toWei(this, path[0], amount);
+    amount = await getReturn(this, path, amount);
+    amount = await fromWei(this, path[path.length - 1], amount);
     return amount;
 }
 
-async function getAllPathsAndRates(sourceToken, targetToken, amount) {
+async getAllPathsAndRates(sourceToken, targetToken, amount) {
     const paths = [];
-    const graph = await getGraph();
+    const graph = await getGraph(this);
     const tokens = [Web3.utils.toChecksumAddress(sourceToken)];
     const destToken = Web3.utils.toChecksumAddress(targetToken);
     getAllPathsRecursive(paths, graph, tokens, destToken);
-    const sourceDecimals = await getDecimals(sourceToken);
-    const targetDecimals = await getDecimals(targetToken);
-    const rates = await getRates(paths, utils.toWei(amount, sourceDecimals));
+    const sourceDecimals = await getDecimals(this, sourceToken);
+    const targetDecimals = await getDecimals(this, targetToken);
+    const rates = await getRates(this, paths, utils.toWei(amount, sourceDecimals));
     return [paths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
 }
 
-async function retrieveConverterVersion(converter) {
-    return await retrieve_converter_version.run(web3, converter);
+async retrieveConverterVersion(converter) {
+    return await retrieve_converter_version.run(this, converter);
 }
 
-async function fetchConversionEvents(token, fromBlock, toBlock) {
-    return await fetch_conversion_events.run(web3, token, fromBlock, toBlock);
+async fetchConversionEvents(token, fromBlock, toBlock) {
+    return await fetch_conversion_events.run(this, token, fromBlock, toBlock);
 }
 
-async function fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
-    const fromBlock = await utils.timestampToBlockNumber(web3, fromTimestamp);
-    const toBlock = await utils.timestampToBlockNumber(web3, toTimestamp);
-    return await fetch_conversion_events.run(web3, token, fromBlock, toBlock);
+async fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
+    const fromBlock = await utils.timestampToBlockNumber(this, fromTimestamp);
+    const toBlock = await utils.timestampToBlockNumber(this, toTimestamp);
+    return await fetch_conversion_events.run(this, token, fromBlock, toBlock);
 }
-
-export const getContractAddresses = function() {
-    if (CONTRACT_ADDRESSES.hasOwnProperty(networkType))
-        return CONTRACT_ADDRESSES[networkType];
-    throw new Error(networkType + ' network not supported');
 };
 
-export const toWei = async function(token, amount) {
-    const decimals = await getDecimals(token);
-    return utils.toWei(amount, decimals);
+export const getContractAddresses = function(_this) {
+    if (CONTRACT_ADDRESSES.hasOwnProperty(_this.networkType))
+        return CONTRACT_ADDRESSES[_this.networkType];
+    throw new Error(_this.networkType + ' network not supported');
 };
 
-export const fromWei = async function(token, amount) {
-    const decimals = await getDecimals(token);
-    return utils.fromWei(amount, decimals);
+export const toWei = async function(_this, token, amount) {
+    return utils.toWei(amount, await getDecimals(_this, token));
 };
 
-export const getReturn = async function(path, amount) {
-    const bancorNetworkContract = new web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
-    return (await bancorNetworkContract.methods.getReturnByPath(path, amount).call())['0'];
+export const fromWei = async function(_this, token, amount) {
+    return utils.fromWei(amount, await getDecimals(_this, token));
 };
 
-export const getDecimals = async function(token) {
-    if (decimals[token] == undefined) {
-        const tokenContract = new web3.eth.Contract(ERC20Token, token);
-        decimals[token] = await tokenContract.methods.decimals().call();
+export const getReturn = async function(_this, path, amount) {
+    return (await _this.bancorNetwork.methods.getReturnByPath(path, amount).call())['0'];
+};
+
+export const getDecimals = async function(_this, token) {
+    if (_this.decimals[token] == undefined) {
+        const tokenContract = new _this.web3.eth.Contract(ERC20Token, token);
+        _this.decimals[token] = await tokenContract.methods.decimals().call();
     }
-    return decimals[token];
+    return _this.decimals[token];
 };
 
-export const getRates = async function(paths, amount) {
-    const bancorNetworkContract = new web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
-    const multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, getContractAddresses().multicall);
-
-    const calls = paths.map(path => [bancorNetworkAddress, bancorNetworkContract.methods.getReturnByPath(path, amount).encodeABI()]);
-    const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, false).call();
-
+export const getRates = async function(_this, paths, amount) {
+    const calls = paths.map(path => [_this.bancorNetwork._address, _this.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]);
+    const [blockNumber, returnData] = await _this.multicallContract.methods.aggregate(calls, false).call();
     return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : "0");
 };
 
-export const getGraph = async function() {
+export const getGraph = async function(_this) {
     const graph = {};
 
-    const multicallContract = new web3.eth.Contract(MULTICALL_CONTRACT_ABI, getContractAddresses().multicall);
-    const converterRegistry = new web3.eth.Contract(BancorConverterRegistry, converterRegistryAddress);
-
-    const convertibleTokens = await converterRegistry.methods.getConvertibleTokens().call();
-    const calls = convertibleTokens.map(convertibleToken => [converterRegistry._address, converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]);
-    const [blockNumber, returnData] = await multicallContract.methods.aggregate(calls, true).call();
+    const convertibleTokens = await _this.converterRegistry.methods.getConvertibleTokens().call();
+    const calls = convertibleTokens.map(convertibleToken => [_this.converterRegistry._address, _this.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]);
+    const [blockNumber, returnData] = await _this.multicallContract.methods.aggregate(calls, true).call();
 
     for (let i = 0; i < returnData.length; i++) {
         for (const smartToken of Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(n => Web3.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)))) {

@@ -1,8 +1,10 @@
-import * as sdk from '../src/index';
+import { SDK } from '../src/index';
 import * as eos from '../src/blockchains/eos';
 import * as ethereum from '../src/blockchains/ethereum';
 
 describe('price tests', () => {
+    const sdk = new SDK();
+
     beforeEach(() => {
         jest.restoreAllMocks();
     });

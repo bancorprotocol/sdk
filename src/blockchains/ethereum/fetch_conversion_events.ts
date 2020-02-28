@@ -15,8 +15,6 @@ const TOKEN_ABI = [
     {"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"}
 ];
 
-const decimals = {};
-
 function parseOwnerUpdateEvent(log) {
     const indexed = log.topics.length > 1;
     return {
@@ -26,15 +24,15 @@ function parseOwnerUpdateEvent(log) {
     };
 }
 
-async function getTokenAmount(web3, tokenAddress, weiAmount) {
-    if (weiAmount == undefined || weiAmount == "0") {
-        return weiAmount;
+async function getTokenAmount(_this, token, amount) {
+    if (amount == undefined || amount == "0") {
+        return amount;
     }
-    if (decimals[tokenAddress] == undefined) {
-        const token = new web3.eth.Contract(TOKEN_ABI, tokenAddress);
-        decimals[tokenAddress] = await token.methods.decimals().call();
+    if (_this.decimals[token] == undefined) {
+        const tokenContract = new _this.web3.eth.Contract(TOKEN_ABI, token);
+        _this.decimals[token] = await tokenContract.methods.decimals().call();
     }
-    return new Decimal(weiAmount + "e-" + decimals[tokenAddress]).toFixed();
+    return new Decimal(amount + "e-" + _this.decimals[token]).toFixed();
 }
 
 async function getPastLogs(web3, address, topic0, fromBlock, toBlock) {
@@ -67,21 +65,21 @@ async function getPastEvents(contract, eventName, fromBlock, toBlock) {
     return [];
 }
 
-async function getOwnerUpdateEvents(web3, tokenAddress, fromBlock, toBlock) {
-    const logs = await getPastLogs(web3, tokenAddress, OWNER_UPDATE_EVENT_HASH, fromBlock, toBlock);
+async function getOwnerUpdateEvents(web3, token, fromBlock, toBlock) {
+    const logs = await getPastLogs(web3, token, OWNER_UPDATE_EVENT_HASH, fromBlock, toBlock);
     if (logs.length > 0)
         return logs.map(log => parseOwnerUpdateEvent(log));
-    const prelogs = await getPastLogs(web3, tokenAddress, OWNER_UPDATE_EVENT_HASH, GENESIS_BLOCK_NUMBER, fromBlock - 1);
+    const prelogs = await getPastLogs(web3, token, OWNER_UPDATE_EVENT_HASH, GENESIS_BLOCK_NUMBER, fromBlock - 1);
     if (prelogs.length > 0)
         return [parseOwnerUpdateEvent(prelogs[prelogs.length - 1])];
     throw new Error("Inactive Token");
 }
 
-export async function run(web3, tokenAddress, fromBlock, toBlock) {
+export async function run(_this, token, fromBlock, toBlock) {
     const result = [];
 
     const batches = [{fromBlock: fromBlock, toBlock: undefined, owner: undefined}];
-    const events = await getOwnerUpdateEvents(web3, tokenAddress, fromBlock, toBlock);
+    const events = await getOwnerUpdateEvents(_this.web3, token, fromBlock, toBlock);
     for (const event of events.filter(event => event.blockNumber > fromBlock)) {
         batches[batches.length - 1].toBlock = event.blockNumber - 1;
         batches[batches.length - 1].owner = event.prevOwner;
@@ -93,7 +91,7 @@ export async function run(web3, tokenAddress, fromBlock, toBlock) {
     let index = 0;
     for (const batch of batches) {
         for (const abi of CONVERSION_EVENT_LEGACY.slice(index)) {
-            const converter = new web3.eth.Contract([abi], batch.owner);
+            const converter = new _this.web3.eth.Contract([abi], batch.owner);
             const events = await getPastEvents(converter, abi.name, batch.fromBlock, batch.toBlock);
             if (events.length > 0) {
                 for (const event of events) {
@@ -101,9 +99,9 @@ export async function run(web3, tokenAddress, fromBlock, toBlock) {
                         fromToken    : event.returnValues.fromToken,
                         toToken      : event.returnValues.toToken,
                         trader       : event.returnValues.trader,
-                        inputAmount  : await getTokenAmount(web3, event.returnValues.fromToken, event.returnValues.inputAmount),
-                        outputAmount : await getTokenAmount(web3, event.returnValues.toToken  , event.returnValues.outputAmount),
-                        conversionFee: await getTokenAmount(web3, event.returnValues.toToken  , event.returnValues.conversionFee),
+                        inputAmount  : await getTokenAmount(_this, event.returnValues.fromToken, event.returnValues.inputAmount),
+                        outputAmount : await getTokenAmount(_this, event.returnValues.toToken  , event.returnValues.outputAmount),
+                        conversionFee: await getTokenAmount(_this, event.returnValues.toToken  , event.returnValues.conversionFee),
                         blockNumber  : event.blockNumber
                     });
                 }
