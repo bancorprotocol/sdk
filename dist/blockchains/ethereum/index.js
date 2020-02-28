@@ -208,7 +208,7 @@ var ETH = /** @class */ (function () {
 }());
 exports.ETH = ETH;
 exports.getContractAddresses = function (_this) {
-    if (CONTRACT_ADDRESSES.hasOwnProperty(_this.networkType))
+    if (CONTRACT_ADDRESSES[_this.networkType])
         return CONTRACT_ADDRESSES[_this.networkType];
     throw new Error(_this.networkType + ' network not supported');
 };
