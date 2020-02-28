@@ -17,9 +17,7 @@ export class SDK {
             await this.ethereum.init(args.ethereumNodeEndpoint);
     }
 
-    async generatePath(sourceToken: Token,
-                                targetToken: Token,
-                                {amount = '1', getEthBestPath = this.getEthCheapestPath} = {}): Promise<Token[][]> {
+    async generatePath(sourceToken: Token, targetToken: Token, {amount = '1', getEthBestPath = this.getEthCheapestPath} = {}): Promise<Token[][]> {
         let eosPath;
         let ethPaths;
         let ethRates;

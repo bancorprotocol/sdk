@@ -1,12 +1,12 @@
 import Web3 from 'web3';
 import Decimal from 'decimal.js';
 
-export function fromWei(number, decimalDigits = 18) {
-    return new Decimal(`${number}e-${decimalDigits}`).toFixed();
+export function fromWei(number, decimals = 18) {
+    return new Decimal(`${number}e-${decimals}`).toFixed();
 }
 
-export function toWei(number, decimalDigits = 18) {
-    return new Decimal(`${number}e+${decimalDigits}`).toFixed();
+export function toWei(number, decimals = 18) {
+    return new Decimal(`${number}e+${decimals}`).toFixed();
 }
 
 export async function timestampToBlockNumber(_this, timestamp) {

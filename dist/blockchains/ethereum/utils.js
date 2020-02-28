@@ -40,14 +40,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var decimal_js_1 = __importDefault(require("decimal.js"));
-function fromWei(number, decimalDigits) {
-    if (decimalDigits === void 0) { decimalDigits = 18; }
-    return new decimal_js_1.default(number + "e-" + decimalDigits).toFixed();
+function fromWei(number, decimals) {
+    if (decimals === void 0) { decimals = 18; }
+    return new decimal_js_1.default(number + "e-" + decimals).toFixed();
 }
 exports.fromWei = fromWei;
-function toWei(number, decimalDigits) {
-    if (decimalDigits === void 0) { decimalDigits = 18; }
-    return new decimal_js_1.default(number + "e+" + decimalDigits).toFixed();
+function toWei(number, decimals) {
+    if (decimals === void 0) { decimals = 18; }
+    return new decimal_js_1.default(number + "e+" + decimals).toFixed();
 }
 exports.toWei = toWei;
 function timestampToBlockNumber(_this, timestamp) {
