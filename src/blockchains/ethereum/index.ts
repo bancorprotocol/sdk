@@ -92,7 +92,7 @@ export class ETH {
         const toBlock = await utils.timestampToBlockNumber(this, toTimestamp);
         return await fetch_conversion_events.run(this, token, fromBlock, toBlock);
     }
-};
+}
 
 export const getContractAddresses = function(_this) {
     if (CONTRACT_ADDRESSES.hasOwnProperty(_this.networkType))

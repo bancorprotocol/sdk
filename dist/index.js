@@ -244,7 +244,6 @@ var SDK = /** @class */ (function () {
     return SDK;
 }());
 exports.SDK = SDK;
-;
 function betterPath(paths, index1, index2) {
     return paths[index1].length > paths[index2].length;
 }

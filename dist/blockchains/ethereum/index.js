@@ -203,7 +203,6 @@ var ETH = /** @class */ (function () {
     return ETH;
 }());
 exports.ETH = ETH;
-;
 exports.getContractAddresses = function (_this) {
     if (CONTRACT_ADDRESSES.hasOwnProperty(_this.networkType))
         return CONTRACT_ADDRESSES[_this.networkType];

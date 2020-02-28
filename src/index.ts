@@ -110,7 +110,7 @@ export class SDK {
         }
         return paths[index];
     }
-};
+}
 
 function betterPath(paths: string[][], index1: number, index2: number): boolean {
     return paths[index1].length > paths[index2].length;
