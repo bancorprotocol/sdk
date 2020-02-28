@@ -8,13 +8,13 @@ interface Settings {
 }
 
 export class SDK {
-    ethereum = new ETH();
+    eth = new ETH();
 
     async init(args: Settings) {
         if (args.eosNodeEndpoint)
             eos.init(args.eosNodeEndpoint);
         if (args.ethereumNodeEndpoint)
-            await this.ethereum.init(args.ethereumNodeEndpoint);
+            await this.eth.init(args.ethereumNodeEndpoint);
     }
 
     async generatePath(sourceToken: Token, targetToken: Token, {amount = '1', getEthBestPath = this.getEthCheapestPath} = {}): Promise<Token[][]> {
@@ -27,14 +27,14 @@ export class SDK {
             eosPath = await eos.getConversionPath(sourceToken, targetToken);
             return [eosPath];
         case 'ethereum,ethereum':
-            [ethPaths, ethRates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
+            [ethPaths, ethRates] = await this.eth.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
             return [getEthBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
         case 'eos,ethereum':
             eosPath = await eos.getConversionPath(sourceToken, eos.getAnchorToken());
-            [ethPaths, ethRates] = await this.ethereum.getAllPathsAndRates(this.ethereum.getAnchorToken(), targetToken.blockchainId, amount);
+            [ethPaths, ethRates] = await this.eth.getAllPathsAndRates(this.eth.getAnchorToken(), targetToken.blockchainId, amount);
             return [eosPath, getEthBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
         case 'ethereum,eos':
-            [ethPaths, ethRates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, this.ethereum.getAnchorToken(), amount);
+            [ethPaths, ethRates] = await this.eth.getAllPathsAndRates(sourceToken.blockchainId, this.eth.getAnchorToken(), amount);
             eosPath = await eos.getConversionPath(eos.getAnchorToken(), targetToken);
             return [getEthBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), eosPath];
         }
@@ -49,7 +49,7 @@ export class SDK {
                 amount = await eos.getRateByPath(path, amount);
                 break;
             case 'ethereum':
-                amount = await this.ethereum.getRateByPath(path.map(token => token.blockchainId), amount);
+                amount = await this.eth.getRateByPath(path.map(token => token.blockchainId), amount);
                 break;
             default:
                 throw new Error(path[0].blockchainType + ' blockchain not supported');
@@ -65,7 +65,7 @@ export class SDK {
 
     async getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
         if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum') {
-            const [paths, rates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
+            const [paths, rates] = await this.eth.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
             return paths.map((path, i) => ({path: path.map(x => ({blockchainType: 'ethereum', blockchainId: x})), rate: rates[i]}));
         }
         throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
@@ -73,19 +73,19 @@ export class SDK {
 
     async retrieveConverterVersion(converter: Converter): Promise<{type: string; value: string;}> {
         if (converter.blockchainType == 'ethereum')
-            return await this.ethereum.retrieveConverterVersion(converter.blockchainId);
+            return await this.eth.retrieveConverterVersion(converter.blockchainId);
         throw new Error(converter.blockchainType + ' blockchain not supported');
     }
 
     async fetchConversionEvents(token: Token, fromBlock, toBlock) {
         if (token.blockchainType == 'ethereum')
-            return await this.ethereum.fetchConversionEvents(token.blockchainId, fromBlock, toBlock);
+            return await this.eth.fetchConversionEvents(token.blockchainId, fromBlock, toBlock);
         throw new Error(token.blockchainType + ' blockchain not supported');
     }
 
     async fetchConversionEventsByTimestamp(token: Token, fromTimestamp, toTimestamp) {
         if (token.blockchainType == 'ethereum')
-            return await this.ethereum.fetchConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp);
+            return await this.eth.fetchConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp);
         throw new Error(token.blockchainType + ' blockchain not supported');
     }
 

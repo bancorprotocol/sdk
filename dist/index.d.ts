@@ -5,7 +5,7 @@ interface Settings {
     eosNodeEndpoint: string;
 }
 export declare class SDK {
-    ethereum: ETH;
+    eth: ETH;
     init(args: Settings): Promise<void>;
     generatePath(sourceToken: Token, targetToken: Token, { amount, getEthBestPath }?: {
         amount?: string;
