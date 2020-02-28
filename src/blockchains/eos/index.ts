@@ -140,6 +140,7 @@ async function getConversionRate(jsonRpc: JsonRpc, step: ConversionStep, amount:
     const isFromTokenMultiToken = isMultiConverter(fromTokenBlockchainId);
     const isToTokenMultiToken = isMultiConverter(toTokenBlockchainId);
     const converterBlockchainId = step.converter.blockchainId;
+
     let reserveSymbol;
     if (isFromTokenMultiToken)
         reserveSymbol = fromTokenSymbol;
@@ -150,11 +151,13 @@ async function getConversionRate(jsonRpc: JsonRpc, step: ConversionStep, amount:
     const reservesContacts = reserves.rows.map(res => res.contract);
     const conversionFee = (await getConverterSettings(jsonRpc, converterBlockchainId)).rows[0].fee;
     const isConversionFromSmartToken = !reservesContacts.includes(step.fromToken.blockchainId);
+
     let balanceFrom;
     if (isToTokenMultiToken)
         balanceFrom = await getReserveBalances(jsonRpc, converterBlockchainId, toTokenSymbol, 'reserves');
     else
         balanceFrom = await getReserveBalances(jsonRpc, fromTokenBlockchainId, converterBlockchainId);
+
     let balanceTo;
     if (isFromTokenMultiToken)
         balanceTo = await getReserveBalances(jsonRpc, converterBlockchainId, fromTokenSymbol, 'reserves');
@@ -163,6 +166,7 @@ async function getConversionRate(jsonRpc: JsonRpc, step: ConversionStep, amount:
 
     const isConversionToSmartToken = !reservesContacts.includes(step.toToken.blockchainId);
     const balanceObject = { [fromTokenBlockchainId]: balanceFrom.rows[0].balance, [toTokenBlockchainId]: balanceTo.rows[0].balance };
+
     const converterReserves = {};
     reserves.rows.map((reserve: Reserve) => {
         converterReserves[reserve.contract] = {
@@ -193,6 +197,7 @@ async function getConversionRate(jsonRpc: JsonRpc, step: ConversionStep, amount:
         const amountWithoutFee = formulas.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
         return formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed();
     }
+
     else {
         const fromReserveBalance = getBalance(balanceFrom.rows[0].balance);
         const fromReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
