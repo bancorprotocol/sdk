@@ -20,8 +20,6 @@ export declare class ETH {
     getConversionEventsByTimestamp(token: any, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
 }
 export declare const getContractAddresses: (_this: any) => any;
-export declare const toWei: (_this: any, token: any, amount: any) => Promise<string>;
-export declare const fromWei: (_this: any, token: any, amount: any) => Promise<string>;
 export declare const getReturn: (_this: any, path: any, amount: any) => Promise<any>;
 export declare const getDecimals: (_this: any, token: any) => Promise<any>;
 export declare const getRates: (_this: any, paths: any, amount: any) => Promise<any>;

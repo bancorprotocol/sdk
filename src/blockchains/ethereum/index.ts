@@ -69,9 +69,11 @@ export class ETH {
     }
 
     async getRateByPath(path, amount) {
-        amount = await toWei(this, path[0], amount);
+        const sourceDecimals = await getDecimals(this, path[0]);
+        const targetDecimals = await getDecimals(this, path[path.length - 1]);
+        amount = utils.toWei(amount, sourceDecimals);
         amount = await getReturn(this, path, amount);
-        amount = await fromWei(this, path[path.length - 1], amount);
+        amount = utils.fromWei(amount, targetDecimals);
         return amount;
     }
 
@@ -106,14 +108,6 @@ export const getContractAddresses = function(_this) {
     if (CONTRACT_ADDRESSES[_this.networkType])
         return CONTRACT_ADDRESSES[_this.networkType];
     throw new Error(_this.networkType + ' network not supported');
-};
-
-export const toWei = async function(_this, token, amount) {
-    return utils.toWei(amount, await getDecimals(_this, token));
-};
-
-export const fromWei = async function(_this, token, amount) {
-    return utils.fromWei(amount, await getDecimals(_this, token));
 };
 
 export const getReturn = async function(_this, path, amount) {

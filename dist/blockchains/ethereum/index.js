@@ -124,17 +124,20 @@ var ETH = /** @class */ (function () {
     };
     ETH.prototype.getRateByPath = function (path, amount) {
         return __awaiter(this, void 0, void 0, function () {
+            var sourceDecimals, targetDecimals;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, exports.toWei(this, path[0], amount)];
+                    case 0: return [4 /*yield*/, exports.getDecimals(this, path[0])];
                     case 1:
-                        amount = _a.sent();
-                        return [4 /*yield*/, exports.getReturn(this, path, amount)];
+                        sourceDecimals = _a.sent();
+                        return [4 /*yield*/, exports.getDecimals(this, path[path.length - 1])];
                     case 2:
-                        amount = _a.sent();
-                        return [4 /*yield*/, exports.fromWei(this, path[path.length - 1], amount)];
+                        targetDecimals = _a.sent();
+                        amount = utils.toWei(amount, sourceDecimals);
+                        return [4 /*yield*/, exports.getReturn(this, path, amount)];
                     case 3:
                         amount = _a.sent();
+                        amount = utils.fromWei(amount, targetDecimals);
                         return [2 /*return*/, amount];
                 }
             });
@@ -211,34 +214,6 @@ exports.getContractAddresses = function (_this) {
     if (CONTRACT_ADDRESSES[_this.networkType])
         return CONTRACT_ADDRESSES[_this.networkType];
     throw new Error(_this.networkType + ' network not supported');
-};
-exports.toWei = function (_this, token, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0:
-                    _b = (_a = utils).toWei;
-                    _c = [amount];
-                    return [4 /*yield*/, exports.getDecimals(_this, token)];
-                case 1: return [2 /*return*/, _b.apply(_a, _c.concat([_d.sent()]))];
-            }
-        });
-    });
-};
-exports.fromWei = function (_this, token, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0:
-                    _b = (_a = utils).fromWei;
-                    _c = [amount];
-                    return [4 /*yield*/, exports.getDecimals(_this, token)];
-                case 1: return [2 /*return*/, _b.apply(_a, _c.concat([_d.sent()]))];
-            }
-        });
-    });
 };
 exports.getReturn = function (_this, path, amount) {
     return __awaiter(this, void 0, void 0, function () {
