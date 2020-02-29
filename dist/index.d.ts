@@ -24,8 +24,8 @@ export declare class SDK {
         type: string;
         value: string;
     }>;
-    getConversionEvents(token: Token, fromBlock: any, toBlock: any): Promise<any[]>;
-    getConversionEventsByTimestamp(token: Token, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
+    getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]>;
+    getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]>;
     buildPathsFile(): Promise<void>;
     getShortestPath(paths: string[][], rates: string[]): string[];
     getCheapestPath(paths: string[][], rates: string[]): string[];
