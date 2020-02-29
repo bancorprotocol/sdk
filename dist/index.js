@@ -61,7 +61,7 @@ var SDK = /** @class */ (function () {
         });
     };
     SDK.prototype.generatePath = function (sourceToken, targetToken, _a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.amount, amount = _c === void 0 ? '1' : _c, _d = _b.getEthBestPath, getEthBestPath = _d === void 0 ? this.getEthCheapestPath : _d;
+        var _b = _a === void 0 ? {} : _a, _c = _b.amount, amount = _c === void 0 ? '1' : _c, _d = _b.getBestPath, getBestPath = _d === void 0 ? this.getCheapestPath : _d;
         return __awaiter(this, void 0, void 0, function () {
             var eosPath, ethPaths, ethRates, _e;
             var _f, _g, _h;
@@ -83,21 +83,21 @@ var SDK = /** @class */ (function () {
                     case 3: return [4 /*yield*/, this.eth.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
                     case 4:
                         _f = _j.sent(), ethPaths = _f[0], ethRates = _f[1];
-                        return [2 /*return*/, [getEthBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); })]];
+                        return [2 /*return*/, [getBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); })]];
                     case 5: return [4 /*yield*/, this.eos.getConversionPath(sourceToken, this.eos.getAnchorToken())];
                     case 6:
                         eosPath = _j.sent();
                         return [4 /*yield*/, this.eth.getAllPathsAndRates(this.eth.getAnchorToken(), targetToken.blockchainId, amount)];
                     case 7:
                         _g = _j.sent(), ethPaths = _g[0], ethRates = _g[1];
-                        return [2 /*return*/, [eosPath, getEthBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); })]];
+                        return [2 /*return*/, [eosPath, getBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); })]];
                     case 8: return [4 /*yield*/, this.eth.getAllPathsAndRates(sourceToken.blockchainId, this.eth.getAnchorToken(), amount)];
                     case 9:
                         _h = _j.sent(), ethPaths = _h[0], ethRates = _h[1];
                         return [4 /*yield*/, this.eos.getConversionPath(this.eos.getAnchorToken(), targetToken)];
                     case 10:
                         eosPath = _j.sent();
-                        return [2 /*return*/, [getEthBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); }), eosPath]];
+                        return [2 /*return*/, [getBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); }), eosPath]];
                     case 11: throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
                 }
             });
@@ -219,7 +219,7 @@ var SDK = /** @class */ (function () {
             });
         });
     };
-    SDK.prototype.getEthShortestPath = function (paths, rates) {
+    SDK.prototype.getShortestPath = function (paths, rates) {
         var index = 0;
         for (var i = 1; i < paths.length; i++) {
             if (betterPath(paths, index, i) || (equalPath(paths, index, i) && betterRate(rates, index, i)))
@@ -227,7 +227,7 @@ var SDK = /** @class */ (function () {
         }
         return paths[index];
     };
-    SDK.prototype.getEthCheapestPath = function (paths, rates) {
+    SDK.prototype.getCheapestPath = function (paths, rates) {
         var index = 0;
         for (var i = 1; i < rates.length; i++) {
             if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
