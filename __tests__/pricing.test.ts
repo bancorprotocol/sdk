@@ -13,7 +13,7 @@ describe('price tests', () => {
         jest.restoreAllMocks();
     });
 
-    it('EOS to EOS short convert', async () => {
+    it('getRateByPath from eos token to eos token (convert)', async () => {
         const reserveFromCodeResult = {
             rows: [
                 {
@@ -68,7 +68,7 @@ describe('price tests', () => {
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
     });
 
-    it('EOS buy smart token', async () => {
+    it('getRateByPath from eos token to eos token (buy)', async () => {
         const reserveFromCodeResult = {
             rows: [
                 {
@@ -138,7 +138,7 @@ describe('price tests', () => {
         expect(spyGetSmartTokenSupply).toHaveBeenCalledTimes(1);
     });
 
-    it('EOS sell smart token', async () => {
+    it('getRateByPath from eos token to eos token (sell)', async () => {
         const reserveFromCodeResult = {
             rows: [
                 {
@@ -208,7 +208,7 @@ describe('price tests', () => {
         expect(spyGetSmartTokenSupply).toHaveBeenCalledTimes(1);
     });
 
-    it('Eth to eth token', async () => {
+    it('getRateByPath from ethereum token to ethereum token', async () => {
         const spyGetDecimals = jest
             .spyOn(ethereum, 'getDecimals')
             .mockImplementationOnce(() => Promise.resolve('18'))
@@ -233,7 +233,7 @@ describe('price tests', () => {
         expect(spyGetReturn).toHaveBeenCalledTimes(1);
     });
 
-    it('Eos token to Eth', async () => {
+    it('getRateByPath from eos token to ethereum token', async () => {
         const reserveFromCodeResult = {
             rows: [
                 {
@@ -304,7 +304,7 @@ describe('price tests', () => {
         expect(spyGetReturn).toHaveBeenCalledTimes(1);
     });
 
-    it('Eth EOS token', async () => {
+    it('getRateByPath from ethereum token to eos token', async () => {
         const spyGetDecimals = jest
             .spyOn(ethereum, 'getDecimals')
             .mockImplementationOnce(() => Promise.resolve('18'))
