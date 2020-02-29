@@ -159,7 +159,7 @@ function getOwnerUpdateEvents(web3, token, fromBlock, toBlock) {
         });
     });
 }
-function run(_this, token, fromBlock, toBlock) {
+function get(_this, token, fromBlock, toBlock) {
     return __awaiter(this, void 0, void 0, function () {
         var result, batches, events, _i, _a, event_1, index, _b, batches_1, batch, _c, _d, abi, converter, events_2, _e, events_1, event_2, _f, _g, _h;
         return __generator(this, function (_j) {
@@ -234,4 +234,4 @@ function run(_this, token, fromBlock, toBlock) {
         });
     });
 }
-exports.run = run;
+exports.get = get;

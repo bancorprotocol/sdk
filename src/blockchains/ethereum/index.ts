@@ -88,17 +88,17 @@ export class ETH {
     }
 
     async getConverterVersion(converter) {
-        return await converter_version.run(this, converter);
+        return await converter_version.get(this, converter);
     }
 
     async getConversionEvents(token, fromBlock, toBlock) {
-        return await conversion_events.run(this, token, fromBlock, toBlock);
+        return await conversion_events.get(this, token, fromBlock, toBlock);
     }
 
     async getConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
         const fromBlock = await utils.timestampToBlockNumber(this, fromTimestamp);
         const toBlock = await utils.timestampToBlockNumber(this, toTimestamp);
-        return await conversion_events.run(this, token, fromBlock, toBlock);
+        return await conversion_events.get(this, token, fromBlock, toBlock);
     }
 }
 

@@ -25,7 +25,7 @@ function parse(type, data) {
     return data;
 }
 
-export async function run(_this, address) {
+export async function get(_this, address) {
     for (const type of ["string", "bytes32", "uint16"]) {
         const abi = [{"constant":true,"inputs":[],"name":"version","outputs":[{"name":"","type":type}],"payable":false,"stateMutability":"view","type":"function"}];
         const contract = new _this.web3.eth.Contract(abi , address);

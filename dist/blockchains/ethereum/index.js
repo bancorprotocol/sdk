@@ -171,7 +171,7 @@ var ETH = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, converter_version.run(this, converter)];
+                    case 0: return [4 /*yield*/, converter_version.get(this, converter)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -181,7 +181,7 @@ var ETH = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, conversion_events.run(this, token, fromBlock, toBlock)];
+                    case 0: return [4 /*yield*/, conversion_events.get(this, token, fromBlock, toBlock)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -198,7 +198,7 @@ var ETH = /** @class */ (function () {
                         return [4 /*yield*/, utils.timestampToBlockNumber(this, toTimestamp)];
                     case 2:
                         toBlock = _a.sent();
-                        return [4 /*yield*/, conversion_events.run(this, token, fromBlock, toBlock)];
+                        return [4 /*yield*/, conversion_events.get(this, token, fromBlock, toBlock)];
                     case 3: return [2 /*return*/, _a.sent()];
                 }
             });

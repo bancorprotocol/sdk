@@ -73,7 +73,7 @@ function parse(type, data) {
     }
     return data;
 }
-function run(_this, address) {
+function get(_this, address) {
     return __awaiter(this, void 0, void 0, function () {
         var _i, _a, type, abi, contract, version, value;
         return __generator(this, function (_b) {
@@ -101,4 +101,4 @@ function run(_this, address) {
         });
     });
 }
-exports.run = run;
+exports.get = get;

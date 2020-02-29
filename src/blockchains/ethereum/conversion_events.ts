@@ -75,7 +75,7 @@ async function getOwnerUpdateEvents(web3, token, fromBlock, toBlock) {
     throw new Error("Inactive Token");
 }
 
-export async function run(_this, token, fromBlock, toBlock) {
+export async function get(_this, token, fromBlock, toBlock) {
     const result = [];
 
     const batches = [{fromBlock: fromBlock, toBlock: undefined, owner: undefined}];

@@ -1,4 +1,4 @@
-export declare function run(_this: any, address: any): Promise<{
+export declare function get(_this: any, address: any): Promise<{
     type: string;
     value: any;
 }>;
