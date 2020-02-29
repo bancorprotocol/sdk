@@ -20,12 +20,12 @@ export declare class SDK {
         path: Token[];
         rate: string;
     }>;
-    retrieveConverterVersion(converter: Converter): Promise<{
+    getConverterVersion(converter: Converter): Promise<{
         type: string;
         value: string;
     }>;
-    fetchConversionEvents(token: Token, fromBlock: any, toBlock: any): Promise<any[]>;
-    fetchConversionEventsByTimestamp(token: Token, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
+    getConversionEvents(token: Token, fromBlock: any, toBlock: any): Promise<any[]>;
+    getConversionEventsByTimestamp(token: Token, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
     buildPathsFile(): Promise<void>;
     getShortestPath(paths: string[][], rates: string[]): string[];
     getCheapestPath(paths: string[][], rates: string[]): string[];

@@ -55,8 +55,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var web3_1 = __importDefault(require("web3"));
 var utils = __importStar(require("./utils"));
-var fetch_conversion_events = __importStar(require("./fetch_conversion_events"));
-var retrieve_converter_version = __importStar(require("./retrieve_converter_version"));
+var conversion_events = __importStar(require("./conversion_events"));
+var converter_version = __importStar(require("./converter_version"));
 var CONTRACT_ADDRESSES = {
     main: {
         registry: '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4',
@@ -167,27 +167,27 @@ var ETH = /** @class */ (function () {
             });
         });
     };
-    ETH.prototype.retrieveConverterVersion = function (converter) {
+    ETH.prototype.getConverterVersion = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, retrieve_converter_version.run(this, converter)];
+                    case 0: return [4 /*yield*/, converter_version.run(this, converter)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    ETH.prototype.fetchConversionEvents = function (token, fromBlock, toBlock) {
+    ETH.prototype.getConversionEvents = function (token, fromBlock, toBlock) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, fetch_conversion_events.run(this, token, fromBlock, toBlock)];
+                    case 0: return [4 /*yield*/, conversion_events.run(this, token, fromBlock, toBlock)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    ETH.prototype.fetchConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
+    ETH.prototype.getConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
         return __awaiter(this, void 0, void 0, function () {
             var fromBlock, toBlock;
             return __generator(this, function (_a) {
@@ -198,7 +198,7 @@ var ETH = /** @class */ (function () {
                         return [4 /*yield*/, utils.timestampToBlockNumber(this, toTimestamp)];
                     case 2:
                         toBlock = _a.sent();
-                        return [4 /*yield*/, fetch_conversion_events.run(this, token, fromBlock, toBlock)];
+                        return [4 /*yield*/, conversion_events.run(this, token, fromBlock, toBlock)];
                     case 3: return [2 /*return*/, _a.sent()];
                 }
             });

@@ -168,39 +168,39 @@ var SDK = /** @class */ (function () {
             });
         });
     };
-    SDK.prototype.retrieveConverterVersion = function (converter) {
+    SDK.prototype.getConverterVersion = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!(converter.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.eth.retrieveConverterVersion(converter.blockchainId)];
+                        return [4 /*yield*/, this.eth.getConverterVersion(converter.blockchainId)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2: throw new Error(converter.blockchainType + ' blockchain not supported');
                 }
             });
         });
     };
-    SDK.prototype.fetchConversionEvents = function (token, fromBlock, toBlock) {
+    SDK.prototype.getConversionEvents = function (token, fromBlock, toBlock) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.eth.fetchConversionEvents(token.blockchainId, fromBlock, toBlock)];
+                        return [4 /*yield*/, this.eth.getConversionEvents(token.blockchainId, fromBlock, toBlock)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2: throw new Error(token.blockchainType + ' blockchain not supported');
                 }
             });
         });
     };
-    SDK.prototype.fetchConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
+    SDK.prototype.getConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.eth.fetchConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp)];
+                        return [4 /*yield*/, this.eth.getConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2: throw new Error(token.blockchainType + ' blockchain not supported');
                 }

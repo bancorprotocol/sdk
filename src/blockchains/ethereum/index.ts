@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import * as utils from './utils';
-import * as fetch_conversion_events from './fetch_conversion_events';
-import * as retrieve_converter_version from './retrieve_converter_version';
+import * as conversion_events from './conversion_events';
+import * as converter_version from './converter_version';
 
 const CONTRACT_ADDRESSES = {
     main: {
@@ -87,18 +87,18 @@ export class ETH {
         return [paths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
     }
 
-    async retrieveConverterVersion(converter) {
-        return await retrieve_converter_version.run(this, converter);
+    async getConverterVersion(converter) {
+        return await converter_version.run(this, converter);
     }
 
-    async fetchConversionEvents(token, fromBlock, toBlock) {
-        return await fetch_conversion_events.run(this, token, fromBlock, toBlock);
+    async getConversionEvents(token, fromBlock, toBlock) {
+        return await conversion_events.run(this, token, fromBlock, toBlock);
     }
 
-    async fetchConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
+    async getConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
         const fromBlock = await utils.timestampToBlockNumber(this, fromTimestamp);
         const toBlock = await utils.timestampToBlockNumber(this, toTimestamp);
-        return await fetch_conversion_events.run(this, token, fromBlock, toBlock);
+        return await conversion_events.run(this, token, fromBlock, toBlock);
     }
 }
 

@@ -74,21 +74,21 @@ export class SDK {
         throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
     }
 
-    async retrieveConverterVersion(converter: Converter): Promise<{type: string; value: string;}> {
+    async getConverterVersion(converter: Converter): Promise<{type: string; value: string;}> {
         if (converter.blockchainType == 'ethereum')
-            return await this.eth.retrieveConverterVersion(converter.blockchainId);
+            return await this.eth.getConverterVersion(converter.blockchainId);
         throw new Error(converter.blockchainType + ' blockchain not supported');
     }
 
-    async fetchConversionEvents(token: Token, fromBlock, toBlock) {
+    async getConversionEvents(token: Token, fromBlock, toBlock) {
         if (token.blockchainType == 'ethereum')
-            return await this.eth.fetchConversionEvents(token.blockchainId, fromBlock, toBlock);
+            return await this.eth.getConversionEvents(token.blockchainId, fromBlock, toBlock);
         throw new Error(token.blockchainType + ' blockchain not supported');
     }
 
-    async fetchConversionEventsByTimestamp(token: Token, fromTimestamp, toTimestamp) {
+    async getConversionEventsByTimestamp(token: Token, fromTimestamp, toTimestamp) {
         if (token.blockchainType == 'ethereum')
-            return await this.eth.fetchConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp);
+            return await this.eth.getConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp);
         throw new Error(token.blockchainType + ' blockchain not supported');
     }
 

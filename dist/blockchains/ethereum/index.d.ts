@@ -12,12 +12,12 @@ export declare class ETH {
     getAnchorToken(): any;
     getRateByPath(path: any, amount: any): Promise<any>;
     getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;
-    retrieveConverterVersion(converter: any): Promise<{
+    getConverterVersion(converter: any): Promise<{
         type: string;
         value: any;
     }>;
-    fetchConversionEvents(token: any, fromBlock: any, toBlock: any): Promise<any[]>;
-    fetchConversionEventsByTimestamp(token: any, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
+    getConversionEvents(token: any, fromBlock: any, toBlock: any): Promise<any[]>;
+    getConversionEventsByTimestamp(token: any, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
 }
 export declare const getContractAddresses: (_this: any) => any;
 export declare const toWei: (_this: any, token: any, amount: any) => Promise<string>;
