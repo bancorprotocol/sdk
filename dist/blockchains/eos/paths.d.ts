@@ -1,4 +1,6 @@
-export declare const Paths: {
+export declare const anchorTokenId = "bntbntbntbnt";
+export declare const anchorTokenSymbol = "BNT";
+export declare const registry: {
     convertibleTokens: {
         bntbntbntbnt: {
             BNT: {

@@ -76,18 +76,34 @@ describe('Path finder tests', () => {
             .spyOn(ethereum, 'getRates')
             .mockImplementationOnce(() => Promise.resolve(['0']));
 
+        const spyGetAnchorToken = jest
+            .spyOn(eos, 'getAnchorToken')
+            .mockImplementation(() => ({blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA'}));
+
+        const spyGetRegistry = jest
+            .spyOn(eos, 'getRegistry')
+            .mockImplementation(() => ({
+                convertibleTokens: {
+                    aaaaaaaaaaaa: { AAA: { AAACCC: 'aaacccaaaccc' } },
+                    cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
+                },
+                smartTokens: {
+                    yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
+                }
+            }));
+
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
             .mockResolvedValueOnce({
                 rows: [{
-                    contract: 'bntbntbntbnt',
-                    currency: '0.0000000000 BNT'
+                    contract: 'aaaaaaaaaaaa',
+                    currency: '0.0 AAA'
                 }]
             });
 
         const response = await sdk.generatePath(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
-            { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' }
+            { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
         );
 
         const expectedResult = [
@@ -97,9 +113,9 @@ describe('Path finder tests', () => {
                 { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' }
             ],
             [
-                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
-                { blockchainType: 'eos', blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-                { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' }
+                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
+                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
             ]
         ];
 
@@ -107,6 +123,8 @@ describe('Path finder tests', () => {
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetRates).toHaveBeenCalledTimes(1);
+        expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
+        expect(spyGetRegistry).toHaveBeenCalledTimes(3);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(1);
     });
@@ -133,25 +151,41 @@ describe('Path finder tests', () => {
             .spyOn(ethereum, 'getRates')
             .mockImplementationOnce(() => Promise.resolve(['0']));
 
+        const spyGetAnchorToken = jest
+            .spyOn(eos, 'getAnchorToken')
+            .mockImplementation(() => ({blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA'}));
+
+        const spyGetRegistry = jest
+            .spyOn(eos, 'getRegistry')
+            .mockImplementation(() => ({
+                convertibleTokens: {
+                    aaaaaaaaaaaa: { AAA: { AAACCC: 'aaacccaaaccc' } },
+                    cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
+                },
+                smartTokens: {
+                    yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
+                }
+            }));
+
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
             .mockResolvedValueOnce({
                 rows: [{
-                    contract: 'bntbntbntbnt',
-                    currency: '0.0000000000 BNT'
+                    contract: 'aaaaaaaaaaaa',
+                    currency: '0.0 AAA'
                 }]
             });
 
         const response = await sdk.generatePath(
-            { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' },
+            { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
         );
 
         const expectedResult = [
             [
-                { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' },
-                { blockchainType: 'eos', blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
+                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ],
             [
                 { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
@@ -164,34 +198,54 @@ describe('Path finder tests', () => {
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetRates).toHaveBeenCalledTimes(1);
+        expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
+        expect(spyGetRegistry).toHaveBeenCalledTimes(3);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(1);
     });
 
     it('generatePath from eos token to eos token', async () => {
+        const spyGetAnchorToken = jest
+            .spyOn(eos, 'getAnchorToken')
+            .mockImplementation(() => ({blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA'}));
+
+        const spyGetRegistry = jest
+            .spyOn(eos, 'getRegistry')
+            .mockImplementation(() => ({
+                convertibleTokens: {
+                    aaaaaaaaaaaa: { AAA: { AAACCC: 'aaacccaaaccc' } },
+                    cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
+                },
+                smartTokens: {
+                    yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
+                }
+            }));
+
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
             .mockResolvedValueOnce({
                 rows: [{
-                    contract: 'bntbntbntbnt',
-                    currency: '0.0000000000 BNT'
+                    contract: 'aaaaaaaaaaaa',
+                    currency: '0.0 AAA'
                 }]
             });
 
         const response = await sdk.generatePath(
-            { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' },
-            { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+            { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
+            { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
         );
 
         const expectedResult = [
             [
-                { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' },
-                { blockchainType: 'eos', blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
+                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ]
         ];
 
         expect(response).toEqual(expectedResult);
+        expect(spyGetAnchorToken).toHaveBeenCalledTimes(1);
+        expect(spyGetRegistry).toHaveBeenCalledTimes(3);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
     });
 });

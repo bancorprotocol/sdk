@@ -4,19 +4,13 @@ import { converterBlockchainIds } from './converter_blockchain_ids';
 import fs from 'fs';
 import * as formulas from './formulas';
 import { Token, Converter } from '../../path_generation';
-import { Paths } from './paths';
+import * as paths from './paths';
 
 interface Reserve {
     contract: string;
     currency: string;
     ratio: number;
 }
-
-const anchorToken: Token = {
-    blockchainType: 'eos',
-    blockchainId: 'bntbntbntbnt',
-    symbol: 'BNT'
-};
 
 export class EOS {
     jsonRpc: JsonRpc;
@@ -29,12 +23,13 @@ export class EOS {
     }
 
     getAnchorToken() {
-        return anchorToken;
+        return getAnchorToken(); // calling global function
     }
 
     async getConversionPath(from: Token, to: Token) {
-        const sourcePath = await getPathToAnchor(this.jsonRpc, from);
-        const targetPath = await getPathToAnchor(this.jsonRpc, to);
+        const anchorToken = this.getAnchorToken();
+        const sourcePath = await getPathToAnchor(this.jsonRpc, from, anchorToken);
+        const targetPath = await getPathToAnchor(this.jsonRpc, to, anchorToken);
         return getShortestPath(sourcePath, targetPath);
     }
 
@@ -64,7 +59,9 @@ export class EOS {
             });
         }));
         fs.writeFileSync('./src/blockchains/eos/paths.ts',
-            `export const Paths = \n{convertibleTokens:${JSON.stringify(tokens)}, \n smartTokens: ${JSON.stringify(smartTokens)}}`,
+            `export const anchorTokenId = '${paths.anchorTokenId}';\n` +
+            `export const anchorTokenSymbol = '${paths.anchorTokenSymbol}';\n` +
+            `export const registry = ${JSON.stringify(paths.registry, null, 4)}`,
             { encoding: "utf8" }
         );
     }
@@ -120,6 +117,18 @@ export const getReserveBalances = async (jsonRpc, code, scope, table = 'accounts
     });
 };
 
+export const getAnchorToken = (): Token => {
+    return {
+        blockchainType: 'eos',
+        blockchainId: paths.anchorTokenId,
+        symbol: paths.anchorTokenSymbol
+    };
+};
+
+export const getRegistry = (): {convertibleTokens: object, smartTokens: object} => {
+    return paths.registry;
+};
+
 function getBalance(string) {
     return string.split(' ')[0];
 }
@@ -129,7 +138,7 @@ function getSymbol(string) {
 }
 
 function isMultiConverter(blockchhainId) {
-    return Paths.smartTokens[blockchhainId] && Paths.smartTokens[blockchhainId].isMultiConverter;
+    return getRegistry().smartTokens[blockchhainId] && getRegistry().smartTokens[blockchhainId].isMultiConverter;
 }
 
 async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromToken: Token, toToken: Token, amount: string) {
@@ -180,7 +189,7 @@ async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromTok
     formulas.init();
 
     if (isConversionFromSmartToken) {
-        const token = Paths.smartTokens[fromTokenBlockchainId] || Paths.convertibleTokens[fromTokenBlockchainId];
+        const token = getRegistry().smartTokens[fromTokenBlockchainId] || getRegistry().convertibleTokens[fromTokenBlockchainId];
         const tokenSymbol = Object.keys(token[fromTokenSymbol])[0];
         const tokenSupplyObj = await getSmartTokenSupply(jsonRpc, fromTokenBlockchainId, tokenSymbol);
         const supply = getBalance(tokenSupplyObj.rows[0].supply);
@@ -191,7 +200,7 @@ async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromTok
     }
 
     else if (isConversionToSmartToken) {
-        const token = Paths.smartTokens[toTokenBlockchainId] || Paths.convertibleTokens[toTokenBlockchainId];
+        const token = getRegistry().smartTokens[toTokenBlockchainId] || getRegistry().convertibleTokens[toTokenBlockchainId];
         const tokenSymbol = Object.keys(token[toTokenSymbol])[0];
         const tokenSupplyObj = await getSmartTokenSupply(jsonRpc, toTokenBlockchainId, tokenSymbol);
         const supply = getBalance(tokenSupplyObj.rows[0].supply);
@@ -212,12 +221,12 @@ async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromTok
 }
 
 function getConverterBlockchainId(token: Token) {
-    if (Paths.convertibleTokens[token.blockchainId])
-        return Paths.convertibleTokens[token.blockchainId][token.symbol];
-    return Paths.smartTokens[token.blockchainId][token.symbol];
+    if (getRegistry().convertibleTokens[token.blockchainId])
+        return getRegistry().convertibleTokens[token.blockchainId][token.symbol];
+    return getRegistry().smartTokens[token.blockchainId][token.symbol];
 }
 
-async function getPathToAnchor(jsonRpc: JsonRpc, token: Token) {
+async function getPathToAnchor(jsonRpc: JsonRpc, token: Token, anchorToken: Token) {
     if (token.blockchainId == anchorToken.blockchainId && token.symbol == anchorToken.symbol)
         return [token];
 
@@ -226,9 +235,12 @@ async function getPathToAnchor(jsonRpc: JsonRpc, token: Token) {
     const reserves = await getReservesFromCode(jsonRpc, Object.values(blockchainId)[0], symbol);
 
     for (const reserve of reserves.rows.filter(reserve => reserve.contract != token.blockchainId)) {
-        const path = await getPathToAnchor(jsonRpc, { blockchainType: 'eos', blockchainId: reserve.contract, symbol: getSymbol(reserve.currency) });
-        if (path.length > 0)
-            return [token, { blockchainType: 'eos', blockchainId: Object.values(blockchainId)[0], symbol: Object.keys(blockchainId)[0] }, ...path];
+        const reserveToken: Token = { blockchainType: 'eos', blockchainId: reserve.contract, symbol: getSymbol(reserve.currency) };
+        const path = await getPathToAnchor(jsonRpc, reserveToken, anchorToken);
+        if (path.length > 0) {
+            const smartToken: Token = { blockchainType: 'eos', blockchainId: Object.values(blockchainId)[0].toString(), symbol: Object.keys(blockchainId)[0].toString() };
+            return [token, smartToken, ...path];
+        }
     }
 
     return [];

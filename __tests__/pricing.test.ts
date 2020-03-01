@@ -14,17 +14,27 @@ describe('price tests', () => {
     });
 
     it('getRateByPath from eos token to eos token (convert)', async () => {
+        const paths = {
+            convertibleTokens: {
+                aaaaaaaaaaaa: { AAA: { AAABBB: 'aaabbbaaabbb', AAACCC: 'aaacccaaaccc' } },
+                cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
+            },
+            smartTokens: {
+                yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
+            }
+        };
+
         const reserveFromCodeResult = {
             rows: [
                 {
-                    contract: 'bntbntbntbnt',
-                    currency: '0.0000000000 BNT',
+                    contract: 'aaaaaaaaaaaa',
+                    currency: '0.0 AAA',
                     ratio: 500000,
                     p_enabled: 1
                 },
                 {
-                    contract: 'therealkarma',
-                    currency: '0.0000 KARMA',
+                    contract: 'cccccccccccc',
+                    currency: '0.0 CCC',
                     ratio: 500000,
                     p_enabled: 1
                 }
@@ -32,6 +42,10 @@ describe('price tests', () => {
             more: false,
             next_key: ''
         };
+
+        const spyGetRegistry = jest
+            .spyOn(eos, 'getRegistry')
+            .mockImplementation(() => paths);
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
@@ -44,42 +58,53 @@ describe('price tests', () => {
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
             .mockImplementationOnce(() => Promise.resolve({
-                rows: [{ balance: '32355343.8280 KARMA' }],
+                rows: [{ balance: '32355343.8280 CCC' }],
                 more: false,
                 next_key: ''
             }))
             .mockImplementationOnce(() => Promise.resolve({
-                rows: [{ balance: '5950.2395821273 BNT' }],
+                rows: [{ balance: '5950.2395821273 AAA' }],
                 more: false,
                 next_key: ''
             }));
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' },
-                { blockchainType: 'eos', blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
+                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ]
         ], '1');
 
         expect(response).toEqual('0.0001829844683988806288491891575274667939632319964962791587405424143483339543408806225565348501066514424');
+        expect(spyGetRegistry).toHaveBeenCalledTimes(2);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
     });
 
     it('getRateByPath from eos token to eos token (buy)', async () => {
+        const paths = {
+            convertibleTokens: {
+                aaaaaaaaaaaa: { AAA: { AAABBB: 'aaabbbaaabbb', AAACCC: 'aaacccaaaccc' } },
+                bbbbbbbbbbbb: { BBB: { AAABBB: 'aaabbbaaabbb' } }
+            },
+            smartTokens: {
+                xxxxxxxxxxxx: { AAABBB: { AAABBB: 'aaabbbaaabbb' } }
+            }
+        };
+
         const reserveFromCodeResult = {
             rows: [
                 {
-                    contract: 'octtothemoon',
-                    currency: '0.0000 OCT',
+                    contract: 'bbbbbbbbbbbb',
+                    currency: '0.0 BBB',
                     ratio: 500000,
                     p_enabled: 1
                 },
                 {
-                    contract: 'bntbntbntbnt',
-                    currency: '0.0000000000 BNT',
+                    contract: 'aaaaaaaaaaaa',
+                    currency: '0.0 AAA',
                     ratio: 500000,
                     p_enabled: 1
                 }
@@ -87,6 +112,10 @@ describe('price tests', () => {
             more: false,
             next_key: ''
         };
+
+        const spyGetRegistry = jest
+            .spyOn(eos, 'getRegistry')
+            .mockImplementation(() => paths);
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
@@ -99,12 +128,12 @@ describe('price tests', () => {
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
             .mockImplementationOnce(() => Promise.resolve({
-                rows: [{ balance: '13477.6248720288 BNT' }],
+                rows: [{ balance: '13477.6248720288 AAA' }],
                 more: false,
                 next_key: ''
             }))
             .mockImplementationOnce(() => Promise.resolve({
-                rows: [{ balance: '0.0000000000 BNTOCT' }],
+                rows: [{ balance: '0.0 AAABBB' }],
                 more: false,
                 next_key: ''
             }));
@@ -114,9 +143,9 @@ describe('price tests', () => {
             .mockImplementationOnce(() => Promise.resolve({
                 rows: [
                     {
-                        supply: '30974.5798630795 BNTOCT',
-                        max_supply: '250000000.0000000000 BNTOCT',
-                        issuer: 'bancorc11132'
+                        supply: '30974.5798630795 AAABBB',
+                        max_supply: '250000000.0 AAABBB',
+                        issuer: 'aaabbbaaabbb'
                     }
                 ],
                 more: false,
@@ -125,13 +154,14 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
-                { blockchainType: 'eos', blockchainId: 'bancorc11132', symbol: 'BNTOCT' },
-                { blockchainType: 'eos', blockchainId: 'bancorr11132', symbol: 'BNTOCT' }
+                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
+                { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
+                { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' }
             ]
         ], '1');
 
         expect(response).toEqual('1.149089903558139448418865873613390739346612635233348491398249012803478588145961828615748552277965966');
+        expect(spyGetRegistry).toHaveBeenCalledTimes(4);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
@@ -139,17 +169,27 @@ describe('price tests', () => {
     });
 
     it('getRateByPath from eos token to eos token (sell)', async () => {
+        const paths = {
+            convertibleTokens: {
+                aaaaaaaaaaaa: { AAA: { AAABBB: 'aaabbbaaabbb', AAACCC: 'aaacccaaaccc' } },
+                bbbbbbbbbbbb: { BBB: { AAABBB: 'aaabbbaaabbb' } }
+            },
+            smartTokens: {
+                xxxxxxxxxxxx: { AAABBB: { AAABBB: 'aaabbbaaabbb' } }
+            }
+        };
+
         const reserveFromCodeResult = {
             rows: [
                 {
-                    contract: 'octtothemoon',
-                    currency: '0.0000 OCT',
+                    contract: 'bbbbbbbbbbbb',
+                    currency: '0.0 BBB',
                     ratio: 500000,
                     p_enabled: 1
                 },
                 {
-                    contract: 'bntbntbntbnt',
-                    currency: '0.0000000000 BNT',
+                    contract: 'aaaaaaaaaaaa',
+                    currency: '0.0 AAA',
                     ratio: 500000,
                     p_enabled: 1
                 }
@@ -157,6 +197,10 @@ describe('price tests', () => {
             more: false,
             next_key: ''
         };
+
+        const spyGetRegistry = jest
+            .spyOn(eos, 'getRegistry')
+            .mockImplementation(() => paths);
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
@@ -169,12 +213,12 @@ describe('price tests', () => {
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
             .mockImplementationOnce(() => Promise.resolve({
-                rows: [{ balance: '0.0000000000 BNTOCT' }],
+                rows: [{ balance: '0.0 AAABBB' }],
                 more: false,
                 next_key: ''
             }))
             .mockImplementationOnce(() => Promise.resolve({
-                rows: [{ balance: '13477.6248720288 BNT' }],
+                rows: [{ balance: '13477.6248720288 AAA' }],
                 more: false,
                 next_key: ''
             }));
@@ -184,9 +228,9 @@ describe('price tests', () => {
             .mockImplementationOnce(() => Promise.resolve({
                 rows: [
                     {
-                        supply: '30974.5798630795 BNTOCT',
-                        max_supply: '250000000.0000000000 BNTOCT',
-                        issuer: 'bancorc11132'
+                        supply: '30974.5798630795 AAABBB',
+                        max_supply: '250000000.0 AAABBB',
+                        issuer: 'aaabbbaaabbb'
                     }
                 ],
                 more: false,
@@ -195,13 +239,14 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'eos', blockchainId: 'bancorr11132', symbol: 'BNTOCT' },
-                { blockchainType: 'eos', blockchainId: 'bancorc11132', symbol: 'BNTOCT' },
-                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+                { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' },
+                { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
+                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ]
         ], '1');
 
         expect(response).toEqual('0.8702237365064194480241051027460314579651378541409636737891154514561671227625262785751104664761440822');
+        expect(spyGetRegistry).toHaveBeenCalledTimes(4);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
@@ -234,17 +279,29 @@ describe('price tests', () => {
     });
 
     it('getRateByPath from eos token to ethereum token', async () => {
+        const paths = {
+            convertibleTokens: {
+                aaaaaaaaaaaa: { AAA: { AAABBB: 'aaabbbaaabbb', AAACCC: 'aaacccaaaccc' } },
+                bbbbbbbbbbbb: { BBB: { AAABBB: 'aaabbbaaabbb' } },
+                cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
+            },
+            smartTokens: {
+                xxxxxxxxxxxx: { AAABBB: { AAABBB: 'aaabbbaaabbb' } },
+                yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
+            }
+        };
+
         const reserveFromCodeResult = {
             rows: [
                 {
-                    contract: 'bntbntbntbnt',
-                    currency: '0.0000000000 BNT',
+                    contract: 'aaaaaaaaaaaa',
+                    currency: '0.0 AAA',
                     ratio: 500000,
                     p_enabled: 1
                 },
                 {
-                    contract: 'therealkarma',
-                    currency: '0.0000 KARMA',
+                    contract: 'cccccccccccc',
+                    currency: '0.0 CCC',
                     ratio: 500000,
                     p_enabled: 1
                 }
@@ -252,6 +309,10 @@ describe('price tests', () => {
             more: false,
             next_key: ''
         };
+
+        const spyGetRegistry = jest
+            .spyOn(eos, 'getRegistry')
+            .mockImplementation(() => paths);
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
@@ -264,12 +325,12 @@ describe('price tests', () => {
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
             .mockImplementationOnce(() => Promise.resolve({
-                rows: [{ balance: '32355343.8280 KARMA' }],
+                rows: [{ balance: '32355343.8280 CCC' }],
                 more: false,
                 next_key: ''
             }))
             .mockImplementationOnce(() => Promise.resolve({
-                rows: [{ balance: '5950.2395821273 BNT' }],
+                rows: [{ balance: '5950.2395821273 AAA' }],
                 more: false,
                 next_key: ''
             }));
@@ -285,9 +346,9 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' },
-                { blockchainType: 'eos', blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
+                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
+                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ],
             [
                 { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333'},
@@ -297,6 +358,7 @@ describe('price tests', () => {
         ], '1');
 
         expect(response).toEqual('0.000000274802734836');
+        expect(spyGetRegistry).toHaveBeenCalledTimes(2);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
@@ -314,17 +376,29 @@ describe('price tests', () => {
             .spyOn(ethereum, 'getReturn')
             .mockImplementationOnce(() => Promise.resolve('662806411110393058533'));
 
+        const paths = {
+            convertibleTokens: {
+                aaaaaaaaaaaa: { AAA: { AAABBB: 'aaabbbaaabbb', AAACCC: 'aaacccaaaccc' } },
+                bbbbbbbbbbbb: { BBB: { AAABBB: 'aaabbbaaabbb' } },
+                cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
+            },
+            smartTokens: {
+                xxxxxxxxxxxx: { AAABBB: { AAABBB: 'aaabbbaaabbb' } },
+                yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
+            }
+        };
+
         const reserveFromCodeResult = {
             rows: [
                 {
-                    contract: 'bntbntbntbnt',
-                    currency: '0.0000000000 BNT',
+                    contract: 'aaaaaaaaaaaa',
+                    currency: '0.0 AAA',
                     ratio: 500000,
                     p_enabled: 1
                 },
                 {
-                    contract: 'therealkarma',
-                    currency: '0.0000 KARMA',
+                    contract: 'cccccccccccc',
+                    currency: '0.0 CCC',
                     ratio: 500000,
                     p_enabled: 1
                 }
@@ -337,6 +411,10 @@ describe('price tests', () => {
             .spyOn(eos, 'getConverterSettings')
             .mockImplementation(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
 
+        const spyGetRegistry = jest
+            .spyOn(eos, 'getRegistry')
+            .mockImplementation(() => paths);
+
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
             .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
@@ -344,12 +422,12 @@ describe('price tests', () => {
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
             .mockImplementationOnce(() => Promise.resolve({
-                rows: [{ balance: '5950.2395821273 BNT' }],
+                rows: [{ balance: '5950.2395821273 AAA' }],
                 more: false,
                 next_key: ''
             }))
             .mockImplementationOnce(() => Promise.resolve({
-                rows: [{ balance: '32355343.8280 KARMA' }],
+                rows: [{ balance: '32355343.8280 CCC' }],
                 more: false,
                 next_key: ''
             }));
@@ -361,13 +439,14 @@ describe('price tests', () => {
                 { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333'}
             ],
             [
-                { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
-                { blockchainType: 'eos', blockchainId: 'bancorc11112', symbol: 'BNTKRM' },
-                { blockchainType: 'eos', blockchainId: 'therealkarma', symbol: 'KARMA' }
+                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
+                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
             ]
         ], '1');
 
         expect(response).toEqual('3226688.084642570529407094055738289769947463047257618333877712134072470684667713285913835113451935283');
+        expect(spyGetRegistry).toHaveBeenCalledTimes(2);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
