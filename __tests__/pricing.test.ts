@@ -225,31 +225,6 @@ describe('price tests', () => {
         expect(spyGetSmartTokenSupply).toHaveBeenCalledTimes(1);
     });
 
-    it('getRateByPath from ethereum token to ethereum token', async () => {
-        const spyGetDecimals = jest
-            .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('18'))
-            .mockImplementationOnce(() => Promise.resolve('18'));
-
-        const spyGetReturn = jest
-            .spyOn(ethereum, 'getReturn')
-            .mockImplementationOnce(() => Promise.resolve('209035338725170038366'));
-
-        const response = await sdk.getRateByPath([
-            [
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
-                { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' },
-                { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
-            ]
-        ], '1');
-
-        expect(response).toEqual('209.035338725170038366');
-        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetReturn).toHaveBeenCalledTimes(1);
-    });
-
     it('getRateByPath from eos token to ethereum token', async () => {
         const spyGetSmartTokens = jest
             .spyOn(eos, 'getSmartTokens')
@@ -394,6 +369,31 @@ describe('price tests', () => {
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
+        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
+        expect(spyGetReturn).toHaveBeenCalledTimes(1);
+    });
+
+    it('getRateByPath from ethereum token to ethereum token', async () => {
+        const spyGetDecimals = jest
+            .spyOn(ethereum, 'getDecimals')
+            .mockImplementationOnce(() => Promise.resolve('18'))
+            .mockImplementationOnce(() => Promise.resolve('18'));
+
+        const spyGetReturn = jest
+            .spyOn(ethereum, 'getReturn')
+            .mockImplementationOnce(() => Promise.resolve('209035338725170038366'));
+
+        const response = await sdk.getRateByPath([
+            [
+                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+                { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' },
+                { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
+            ]
+        ], '1');
+
+        expect(response).toEqual('209.035338725170038366');
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetReturn).toHaveBeenCalledTimes(1);
     });
