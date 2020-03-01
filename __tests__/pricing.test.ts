@@ -220,11 +220,11 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'ethereum', blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
-                { blockchainType: 'ethereum', blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
-                { blockchainType: 'ethereum', blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
-                { blockchainType: 'ethereum', blockchainId: '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340'},
-                { blockchainType: 'ethereum', blockchainId: '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07'}
+                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111'},
+                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222'},
+                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333'},
+                { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444'},
+                { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555'}
             ]
         ], '1');
 
@@ -290,9 +290,9 @@ describe('price tests', () => {
                 { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' }
             ],
             [
-                { blockchainType: 'ethereum', blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'},
-                { blockchainType: 'ethereum', blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
-                { blockchainType: 'ethereum', blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'}
+                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333'},
+                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222'},
+                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111'}
             ]
         ], '1');
 
@@ -356,9 +356,9 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'ethereum', blockchainId: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315'},
-                { blockchainType: 'ethereum', blockchainId: '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533'},
-                { blockchainType: 'ethereum', blockchainId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'}
+                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111'},
+                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222'},
+                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333'}
             ],
             [
                 { blockchainType: 'eos', blockchainId: 'bntbntbntbnt', symbol: 'BNT' },
