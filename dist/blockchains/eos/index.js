@@ -159,8 +159,8 @@ var EOS = /** @class */ (function () {
                         _a.sent();
                         fs_1.default.writeFileSync('./src/blockchains/eos/registry.ts', "export const anchorTokenId = '" + registry.anchorTokenId + "';\n\n" +
                             ("export const anchorTokenSymbol = '" + registry.anchorTokenSymbol + "';\n\n") +
-                            ("export const convertibleTokens = {\n    " + JSON.stringify(registry.convertibleTokens) + ";\n\n") +
-                            ("export const smartTokens = {\n    " + JSON.stringify(registry.smartTokens) + ";\n"), { encoding: "utf8" });
+                            ("export const convertibleTokens = " + JSON.stringify(registry.convertibleTokens, null, 4) + ";\n\n") +
+                            ("export const smartTokens = " + JSON.stringify(registry.smartTokens, null, 4) + ";\n"), { encoding: "utf8" });
                         return [2 /*return*/];
                 }
             });

@@ -58,11 +58,12 @@ export class EOS {
                 tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: { [smartTokenName]: converterBlockchainId } };
             });
         }));
-        fs.writeFileSync('./src/blockchains/eos/registry.ts',
+        fs.writeFileSync(
+            './src/blockchains/eos/registry.ts',
             `export const anchorTokenId = '${registry.anchorTokenId}';\n\n` +
             `export const anchorTokenSymbol = '${registry.anchorTokenSymbol}';\n\n` +
-            `export const convertibleTokens = {\n    ${JSON.stringify(registry.convertibleTokens)};\n\n` +
-            `export const smartTokens = {\n    ${JSON.stringify(registry.smartTokens)};\n`,
+            `export const convertibleTokens = ${JSON.stringify(registry.convertibleTokens, null, 4)};\n\n` +
+            `export const smartTokens = ${JSON.stringify(registry.smartTokens, null, 4)};\n`,
             { encoding: "utf8" }
         );
     }
