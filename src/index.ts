@@ -19,7 +19,7 @@ export async function generateEosPaths() {
     await buildPathsFile();
 }
 
-export async function generatePath(sourceToken: Token, targetToken: Token, amount: string = '1', getBestPath: (paths: string[][], rates: string[]) => string[] = getEthCheapestPath) {
+export async function generatePath(sourceToken: Token, targetToken: Token, amount = '1', getBestPath = getCheapestPath) {
     return await generatePathByBlockchainIds(sourceToken, targetToken, amount, getBestPath);
 }
 
@@ -70,7 +70,7 @@ export async function getAllPathsAndRates(sourceToken: Token, targetToken: Token
     throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 
-function getEthShortestPath(paths: string[][], rates: string[]): string[] {
+function getShortestPath(paths: string[][], rates: string[]): string[] {
     let index = 0;
     for (let i = 1; i < paths.length; i++) {
         if (betterPath(paths, index, i) || (equalPath(paths, index, i) && betterRate(rates, index, i)))
@@ -79,7 +79,7 @@ function getEthShortestPath(paths: string[][], rates: string[]): string[] {
     return paths[index];
 }
 
-function getEthCheapestPath(paths: string[][], rates: string[]): string[] {
+function getCheapestPath(paths: string[][], rates: string[]): string[] {
     let index = 0;
     for (let i = 1; i < rates.length; i++) {
         if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
@@ -119,6 +119,6 @@ export default {
     getRateByPath,
     buildPathsFile,
     getAllPathsAndRates,
-    getEthShortestPath,
-    getEthCheapestPath
+    getShortestPath,
+    getCheapestPath
 };

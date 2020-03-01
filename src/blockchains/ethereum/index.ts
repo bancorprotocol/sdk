@@ -25,8 +25,8 @@ let network;
 export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6') {
     web3 = new Web3(new Web3.providers.HttpProvider(ethereumNodeUrl));
     const contractRegistryContract = new web3.eth.Contract(contractRegistry, ethereumContractRegistryAddress);
-    const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call(); // '0x85e27A5718382F32238497e78b4A40DD778ab847'
-    const networkBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call(); // '0x85e27A5718382F32238497e78b4A40DD778ab847'
+    const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
+    const networkBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
     network = new web3.eth.Contract(networkAbi, networkBlockchainId);
 }

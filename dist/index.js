@@ -72,7 +72,7 @@ function generateEosPaths() {
 exports.generateEosPaths = generateEosPaths;
 function generatePath(sourceToken, targetToken, amount, getBestPath) {
     if (amount === void 0) { amount = '1'; }
-    if (getBestPath === void 0) { getBestPath = getEthCheapestPath; }
+    if (getBestPath === void 0) { getBestPath = getCheapestPath; }
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -206,7 +206,7 @@ function getAllPathsAndRates(sourceToken, targetToken, amount) {
     });
 }
 exports.getAllPathsAndRates = getAllPathsAndRates;
-function getEthShortestPath(paths, rates) {
+function getShortestPath(paths, rates) {
     var index = 0;
     for (var i = 1; i < paths.length; i++) {
         if (betterPath(paths, index, i) || (equalPath(paths, index, i) && betterRate(rates, index, i)))
@@ -214,7 +214,7 @@ function getEthShortestPath(paths, rates) {
     }
     return paths[index];
 }
-function getEthCheapestPath(paths, rates) {
+function getCheapestPath(paths, rates) {
     var index = 0;
     for (var i = 1; i < rates.length; i++) {
         if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
@@ -249,6 +249,6 @@ exports.default = {
     getRateByPath: exports.getRateByPath,
     buildPathsFile: eos_1.buildPathsFile,
     getAllPathsAndRates: getAllPathsAndRates,
-    getEthShortestPath: getEthShortestPath,
-    getEthCheapestPath: getEthCheapestPath
+    getShortestPath: getShortestPath,
+    getCheapestPath: getCheapestPath
 };
