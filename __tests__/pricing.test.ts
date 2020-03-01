@@ -14,42 +14,30 @@ describe('price tests', () => {
     });
 
     it('getRateByPath from eos token to eos token (convert)', async () => {
-        const paths = {
-            convertibleTokens: {
-                aaaaaaaaaaaa: { AAA: { AAABBB: 'aaabbbaaabbb', AAACCC: 'aaacccaaaccc' } },
-                cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
-            },
-            smartTokens: {
-                yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
-            }
-        };
-
-        const reserveFromCodeResult = {
-            rows: [
-                {
-                    contract: 'aaaaaaaaaaaa',
-                    currency: '0.0 AAA',
-                    ratio: 500000,
-                    p_enabled: 1
-                },
-                {
-                    contract: 'cccccccccccc',
-                    currency: '0.0 CCC',
-                    ratio: 500000,
-                    p_enabled: 1
-                }
-            ],
-            more: false,
-            next_key: ''
-        };
-
-        const spyGetRegistry = jest
-            .spyOn(eos, 'getRegistry')
-            .mockImplementation(() => paths);
+        const spyGetSmartTokens = jest
+            .spyOn(eos, 'getSmartTokens')
+            .mockImplementation(() => ({ }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
-            .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
+            .mockImplementation(() => Promise.resolve({
+                rows: [
+                    {
+                        contract: 'aaaaaaaaaaaa',
+                        currency: '0.0 AAA',
+                        ratio: 500000,
+                        p_enabled: 1
+                    },
+                    {
+                        contract: 'cccccccccccc',
+                        currency: '0.0 CCC',
+                        ratio: 500000,
+                        p_enabled: 1
+                    }
+                ],
+                more: false,
+                next_key: ''
+            }));
 
         const spyGetConverterSettings = jest
             .spyOn(eos, 'getConverterSettings')
@@ -77,49 +65,41 @@ describe('price tests', () => {
         ], '1');
 
         expect(response).toEqual('0.0001829844683988806288491891575274667939632319964962791587405424143483339543408806225565348501066514424');
-        expect(spyGetRegistry).toHaveBeenCalledTimes(2);
+        expect(spyGetSmartTokens).toHaveBeenCalledTimes(4);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
     });
 
     it('getRateByPath from eos token to eos token (buy)', async () => {
-        const paths = {
-            convertibleTokens: {
-                aaaaaaaaaaaa: { AAA: { AAABBB: 'aaabbbaaabbb', AAACCC: 'aaacccaaaccc' } },
-                bbbbbbbbbbbb: { BBB: { AAABBB: 'aaabbbaaabbb' } }
-            },
-            smartTokens: {
-                xxxxxxxxxxxx: { AAABBB: { AAABBB: 'aaabbbaaabbb' } }
-            }
-        };
-
-        const reserveFromCodeResult = {
-            rows: [
-                {
-                    contract: 'bbbbbbbbbbbb',
-                    currency: '0.0 BBB',
-                    ratio: 500000,
-                    p_enabled: 1
-                },
-                {
-                    contract: 'aaaaaaaaaaaa',
-                    currency: '0.0 AAA',
-                    ratio: 500000,
-                    p_enabled: 1
-                }
-            ],
-            more: false,
-            next_key: ''
-        };
-
-        const spyGetRegistry = jest
-            .spyOn(eos, 'getRegistry')
-            .mockImplementation(() => paths);
+        const spyGetSmartTokens = jest
+            .spyOn(eos, 'getSmartTokens')
+            .mockImplementationOnce(() => ({  }))
+            .mockImplementationOnce(() => ({  }))
+            .mockImplementationOnce(() => ({ AAABBB: { AAABBB: 'aaabbbaaabbb' } }))
+            .mockImplementationOnce(() => ({ AAABBB: { AAABBB: 'aaabbbaaabbb' } }))
+            .mockImplementationOnce(() => ({ AAABBB: { AAABBB: 'aaabbbaaabbb' } }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
-            .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
+            .mockImplementation(() => Promise.resolve({
+                rows: [
+                    {
+                        contract: 'bbbbbbbbbbbb',
+                        currency: '0.0 BBB',
+                        ratio: 500000,
+                        p_enabled: 1
+                    },
+                    {
+                        contract: 'aaaaaaaaaaaa',
+                        currency: '0.0 AAA',
+                        ratio: 500000,
+                        p_enabled: 1
+                    }
+                ],
+                more: false,
+                next_key: ''
+            }));
 
         const spyGetConverterSettings = jest
             .spyOn(eos, 'getConverterSettings')
@@ -161,7 +141,7 @@ describe('price tests', () => {
         ], '1');
 
         expect(response).toEqual('1.149089903558139448418865873613390739346612635233348491398249012803478588145961828615748552277965966');
-        expect(spyGetRegistry).toHaveBeenCalledTimes(4);
+        expect(spyGetSmartTokens).toHaveBeenCalledTimes(5);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
@@ -169,42 +149,34 @@ describe('price tests', () => {
     });
 
     it('getRateByPath from eos token to eos token (sell)', async () => {
-        const paths = {
-            convertibleTokens: {
-                aaaaaaaaaaaa: { AAA: { AAABBB: 'aaabbbaaabbb', AAACCC: 'aaacccaaaccc' } },
-                bbbbbbbbbbbb: { BBB: { AAABBB: 'aaabbbaaabbb' } }
-            },
-            smartTokens: {
-                xxxxxxxxxxxx: { AAABBB: { AAABBB: 'aaabbbaaabbb' } }
-            }
-        };
-
-        const reserveFromCodeResult = {
-            rows: [
-                {
-                    contract: 'bbbbbbbbbbbb',
-                    currency: '0.0 BBB',
-                    ratio: 500000,
-                    p_enabled: 1
-                },
-                {
-                    contract: 'aaaaaaaaaaaa',
-                    currency: '0.0 AAA',
-                    ratio: 500000,
-                    p_enabled: 1
-                }
-            ],
-            more: false,
-            next_key: ''
-        };
-
-        const spyGetRegistry = jest
-            .spyOn(eos, 'getRegistry')
-            .mockImplementation(() => paths);
+        const spyGetSmartTokens = jest
+            .spyOn(eos, 'getSmartTokens')
+            .mockImplementationOnce(() => ({ AAABBB: { AAABBB: 'aaabbbaaabbb' } }))
+            .mockImplementationOnce(() => ({ AAABBB: { AAABBB: 'aaabbbaaabbb' } }))
+            .mockImplementationOnce(() => ({  }))
+            .mockImplementationOnce(() => ({  }))
+            .mockImplementationOnce(() => ({ AAABBB: { AAABBB: 'aaabbbaaabbb' } }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
-            .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
+            .mockImplementation(() => Promise.resolve({
+                rows: [
+                    {
+                        contract: 'bbbbbbbbbbbb',
+                        currency: '0.0 BBB',
+                        ratio: 500000,
+                        p_enabled: 1
+                    },
+                    {
+                        contract: 'aaaaaaaaaaaa',
+                        currency: '0.0 AAA',
+                        ratio: 500000,
+                        p_enabled: 1
+                    }
+                ],
+                more: false,
+                next_key: ''
+            }));
 
         const spyGetConverterSettings = jest
             .spyOn(eos, 'getConverterSettings')
@@ -246,7 +218,7 @@ describe('price tests', () => {
         ], '1');
 
         expect(response).toEqual('0.8702237365064194480241051027460314579651378541409636737891154514561671227625262785751104664761440822');
-        expect(spyGetRegistry).toHaveBeenCalledTimes(4);
+        expect(spyGetSmartTokens).toHaveBeenCalledTimes(5);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
@@ -265,11 +237,11 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111'},
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222'},
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333'},
-                { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444'},
-                { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555'}
+                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+                { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' },
+                { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
             ]
         ], '1');
 
@@ -279,44 +251,30 @@ describe('price tests', () => {
     });
 
     it('getRateByPath from eos token to ethereum token', async () => {
-        const paths = {
-            convertibleTokens: {
-                aaaaaaaaaaaa: { AAA: { AAABBB: 'aaabbbaaabbb', AAACCC: 'aaacccaaaccc' } },
-                bbbbbbbbbbbb: { BBB: { AAABBB: 'aaabbbaaabbb' } },
-                cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
-            },
-            smartTokens: {
-                xxxxxxxxxxxx: { AAABBB: { AAABBB: 'aaabbbaaabbb' } },
-                yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
-            }
-        };
-
-        const reserveFromCodeResult = {
-            rows: [
-                {
-                    contract: 'aaaaaaaaaaaa',
-                    currency: '0.0 AAA',
-                    ratio: 500000,
-                    p_enabled: 1
-                },
-                {
-                    contract: 'cccccccccccc',
-                    currency: '0.0 CCC',
-                    ratio: 500000,
-                    p_enabled: 1
-                }
-            ],
-            more: false,
-            next_key: ''
-        };
-
-        const spyGetRegistry = jest
-            .spyOn(eos, 'getRegistry')
-            .mockImplementation(() => paths);
+        const spyGetSmartTokens = jest
+            .spyOn(eos, 'getSmartTokens')
+            .mockImplementation(() => ({ }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
-            .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
+            .mockImplementation(() => Promise.resolve({
+                rows: [
+                    {
+                        contract: 'aaaaaaaaaaaa',
+                        currency: '0.0 AAA',
+                        ratio: 500000,
+                        p_enabled: 1
+                    },
+                    {
+                        contract: 'cccccccccccc',
+                        currency: '0.0 CCC',
+                        ratio: 500000,
+                        p_enabled: 1
+                    }
+                ],
+                more: false,
+                next_key: ''
+            }));
 
         const spyGetConverterSettings = jest
             .spyOn(eos, 'getConverterSettings')
@@ -351,14 +309,14 @@ describe('price tests', () => {
                 { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ],
             [
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333'},
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222'},
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111'}
+                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
             ]
         ], '1');
 
         expect(response).toEqual('0.000000274802734836');
-        expect(spyGetRegistry).toHaveBeenCalledTimes(2);
+        expect(spyGetSmartTokens).toHaveBeenCalledTimes(4);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);
@@ -376,48 +334,34 @@ describe('price tests', () => {
             .spyOn(ethereum, 'getReturn')
             .mockImplementationOnce(() => Promise.resolve('662806411110393058533'));
 
-        const paths = {
-            convertibleTokens: {
-                aaaaaaaaaaaa: { AAA: { AAABBB: 'aaabbbaaabbb', AAACCC: 'aaacccaaaccc' } },
-                bbbbbbbbbbbb: { BBB: { AAABBB: 'aaabbbaaabbb' } },
-                cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
-            },
-            smartTokens: {
-                xxxxxxxxxxxx: { AAABBB: { AAABBB: 'aaabbbaaabbb' } },
-                yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
-            }
-        };
-
-        const reserveFromCodeResult = {
-            rows: [
-                {
-                    contract: 'aaaaaaaaaaaa',
-                    currency: '0.0 AAA',
-                    ratio: 500000,
-                    p_enabled: 1
-                },
-                {
-                    contract: 'cccccccccccc',
-                    currency: '0.0 CCC',
-                    ratio: 500000,
-                    p_enabled: 1
-                }
-            ],
-            more: false,
-            next_key: ''
-        };
-
         const spyGetConverterSettings = jest
             .spyOn(eos, 'getConverterSettings')
             .mockImplementation(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
 
-        const spyGetRegistry = jest
-            .spyOn(eos, 'getRegistry')
-            .mockImplementation(() => paths);
+        const spyGetSmartTokens = jest
+            .spyOn(eos, 'getSmartTokens')
+            .mockImplementation(() => ({ }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
-            .mockImplementation(() => Promise.resolve(reserveFromCodeResult));
+            .mockImplementation(() => Promise.resolve({
+                rows: [
+                    {
+                        contract: 'aaaaaaaaaaaa',
+                        currency: '0.0 AAA',
+                        ratio: 500000,
+                        p_enabled: 1
+                    },
+                    {
+                        contract: 'cccccccccccc',
+                        currency: '0.0 CCC',
+                        ratio: 500000,
+                        p_enabled: 1
+                    }
+                ],
+                more: false,
+                next_key: ''
+            }));
 
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
@@ -434,9 +378,9 @@ describe('price tests', () => {
 
         const response = await sdk.getRateByPath([
             [
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111'},
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222'},
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333'}
+                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' }
             ],
             [
                 { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
@@ -446,7 +390,7 @@ describe('price tests', () => {
         ], '1');
 
         expect(response).toEqual('3226688.084642570529407094055738289769947463047257618333877712134072470684667713285913835113451935283');
-        expect(spyGetRegistry).toHaveBeenCalledTimes(2);
+        expect(spyGetSmartTokens).toHaveBeenCalledTimes(4);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetConverterSettings).toHaveBeenCalledTimes(1);
         expect(spyGetReserveBalances).toHaveBeenCalledTimes(2);

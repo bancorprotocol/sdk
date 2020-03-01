@@ -15,7 +15,5 @@ export declare const getSmartToken: (jsonRpc: any, code: any) => Promise<any>;
 export declare const getSmartTokenSupply: (jsonRpc: any, account: any, code: any) => Promise<any>;
 export declare const getReserveBalances: (jsonRpc: any, code: any, scope: any, table?: string) => Promise<any>;
 export declare const getAnchorToken: () => Token;
-export declare const getRegistry: () => {
-    convertibleTokens: object;
-    smartTokens: object;
-};
+export declare const getConvertibleTokens: (blockchainId: any) => any;
+export declare const getSmartTokens: (blockchainId: any) => any;

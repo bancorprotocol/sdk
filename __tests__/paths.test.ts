@@ -57,7 +57,7 @@ describe('Path finder tests', () => {
     it('generatePath from ethereum token to eos token', async () => {
         const spyGetContractAddresses = jest
             .spyOn(ethereum, 'getContractAddresses')
-            .mockImplementation(() => ({anchorToken: '0x3333333333333333333333333333333333333333'}));
+            .mockImplementation(() => ({ anchorToken: '0x3333333333333333333333333333333333333333' }));
 
         const spyGetGraph = jest
             .spyOn(ethereum, 'getGraph')
@@ -78,19 +78,17 @@ describe('Path finder tests', () => {
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
-            .mockImplementation(() => ({blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA'}));
+            .mockImplementation(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
-        const spyGetRegistry = jest
-            .spyOn(eos, 'getRegistry')
-            .mockImplementation(() => ({
-                convertibleTokens: {
-                    aaaaaaaaaaaa: { AAA: { AAACCC: 'aaacccaaaccc' } },
-                    cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
-                },
-                smartTokens: {
-                    yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
-                }
-            }));
+        const spyGetConvertibleTokens = jest
+            .spyOn(eos, 'getConvertibleTokens')
+            .mockImplementationOnce(() => ({ AAA: { AAACCC: 'aaacccaaaccc' } }))
+            .mockImplementationOnce(() => ({ CCC: { AAACCC: 'aaacccaaaccc' } }));
+
+        const spyGetSmartTokens = jest
+            .spyOn(eos, 'getSmartTokens')
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
@@ -124,7 +122,8 @@ describe('Path finder tests', () => {
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetRates).toHaveBeenCalledTimes(1);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
-        expect(spyGetRegistry).toHaveBeenCalledTimes(3);
+        expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
+        expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(1);
     });
@@ -132,7 +131,7 @@ describe('Path finder tests', () => {
     it('generatePath from eos token to ethereum token', async () => {
         const spyGetContractAddresses = jest
             .spyOn(ethereum, 'getContractAddresses')
-            .mockImplementation(() => ({anchorToken: '0x3333333333333333333333333333333333333333'}));
+            .mockImplementation(() => ({ anchorToken: '0x3333333333333333333333333333333333333333' }));
 
         const spyGetGraph = jest
             .spyOn(ethereum, 'getGraph')
@@ -153,19 +152,17 @@ describe('Path finder tests', () => {
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
-            .mockImplementation(() => ({blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA'}));
+            .mockImplementation(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
-        const spyGetRegistry = jest
-            .spyOn(eos, 'getRegistry')
-            .mockImplementation(() => ({
-                convertibleTokens: {
-                    aaaaaaaaaaaa: { AAA: { AAACCC: 'aaacccaaaccc' } },
-                    cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
-                },
-                smartTokens: {
-                    yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
-                }
-            }));
+        const spyGetConvertibleTokens = jest
+            .spyOn(eos, 'getConvertibleTokens')
+            .mockImplementationOnce(() => ({ AAA: { AAACCC: 'aaacccaaaccc' } }))
+            .mockImplementationOnce(() => ({ CCC: { AAACCC: 'aaacccaaaccc' } }));
+
+        const spyGetSmartTokens = jest
+            .spyOn(eos, 'getSmartTokens')
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
@@ -199,7 +196,8 @@ describe('Path finder tests', () => {
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetRates).toHaveBeenCalledTimes(1);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
-        expect(spyGetRegistry).toHaveBeenCalledTimes(3);
+        expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
+        expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(1);
     });
@@ -207,19 +205,17 @@ describe('Path finder tests', () => {
     it('generatePath from eos token to eos token', async () => {
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
-            .mockImplementation(() => ({blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA'}));
+            .mockImplementation(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
-        const spyGetRegistry = jest
-            .spyOn(eos, 'getRegistry')
-            .mockImplementation(() => ({
-                convertibleTokens: {
-                    aaaaaaaaaaaa: { AAA: { AAACCC: 'aaacccaaaccc' } },
-                    cccccccccccc: { CCC: { AAACCC: 'aaacccaaaccc' } }
-                },
-                smartTokens: {
-                    yyyyyyyyyyyy: { AAACCC: { AAACCC: 'aaacccaaaccc' } }
-                }
-            }));
+        const spyGetConvertibleTokens = jest
+            .spyOn(eos, 'getConvertibleTokens')
+            .mockImplementationOnce(() => ({ AAA: { AAACCC: 'aaacccaaaccc' } }))
+            .mockImplementationOnce(() => ({ CCC: { AAACCC: 'aaacccaaaccc' } }));
+
+        const spyGetSmartTokens = jest
+            .spyOn(eos, 'getSmartTokens')
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
@@ -245,7 +241,8 @@ describe('Path finder tests', () => {
 
         expect(response).toEqual(expectedResult);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(1);
-        expect(spyGetRegistry).toHaveBeenCalledTimes(3);
+        expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
+        expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
     });
 });

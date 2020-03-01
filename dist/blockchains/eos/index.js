@@ -69,7 +69,7 @@ var node_fetch_1 = __importDefault(require("node-fetch"));
 var converter_blockchain_ids_1 = require("./converter_blockchain_ids");
 var fs_1 = __importDefault(require("fs"));
 var formulas = __importStar(require("./formulas"));
-var paths = __importStar(require("./paths"));
+var registry = __importStar(require("./registry"));
 var EOS = /** @class */ (function () {
     function EOS(nodeAddress) {
         this.jsonRpc = new eosjs_1.JsonRpc(nodeAddress, { fetch: node_fetch_1.default });
@@ -157,9 +157,10 @@ var EOS = /** @class */ (function () {
                             }); }))];
                     case 1:
                         _a.sent();
-                        fs_1.default.writeFileSync('./src/blockchains/eos/paths.ts', "export const anchorTokenId = '" + paths.anchorTokenId + "';\n" +
-                            ("export const anchorTokenSymbol = '" + paths.anchorTokenSymbol + "';\n") +
-                            ("export const registry = " + JSON.stringify(paths.registry, null, 4)), { encoding: "utf8" });
+                        fs_1.default.writeFileSync('./src/blockchains/eos/registry.ts', "export const anchorTokenId = '" + registry.anchorTokenId + "';\n\n" +
+                            ("export const anchorTokenSymbol = '" + registry.anchorTokenSymbol + "';\n\n") +
+                            ("export const convertibleTokens = {\n    " + JSON.stringify(registry.convertibleTokens) + ";\n\n") +
+                            ("export const smartTokens = {\n    " + JSON.stringify(registry.smartTokens) + ";\n"), { encoding: "utf8" });
                         return [2 /*return*/];
                 }
             });
@@ -244,12 +245,15 @@ exports.getReserveBalances = function (jsonRpc, code, scope, table) {
 exports.getAnchorToken = function () {
     return {
         blockchainType: 'eos',
-        blockchainId: paths.anchorTokenId,
-        symbol: paths.anchorTokenSymbol
+        blockchainId: registry.anchorTokenId,
+        symbol: registry.anchorTokenSymbol
     };
 };
-exports.getRegistry = function () {
-    return paths.registry;
+exports.getConvertibleTokens = function (blockchainId) {
+    return registry.convertibleTokens[blockchainId];
+};
+exports.getSmartTokens = function (blockchainId) {
+    return registry.smartTokens[blockchainId];
 };
 function getBalance(string) {
     return string.split(' ')[0];
@@ -258,7 +262,7 @@ function getSymbol(string) {
     return string.split(' ')[1];
 }
 function isMultiConverter(blockchhainId) {
-    return exports.getRegistry().smartTokens[blockchhainId] && exports.getRegistry().smartTokens[blockchhainId].isMultiConverter;
+    return exports.getSmartTokens(blockchhainId) && exports.getSmartTokens(blockchhainId).isMultiConverter;
 }
 function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
     return __awaiter(this, void 0, void 0, function () {
@@ -319,7 +323,7 @@ function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
                     });
                     formulas.init();
                     if (!isConversionFromSmartToken) return [3 /*break*/, 12];
-                    token = exports.getRegistry().smartTokens[fromTokenBlockchainId] || exports.getRegistry().convertibleTokens[fromTokenBlockchainId];
+                    token = exports.getSmartTokens(fromTokenBlockchainId) || exports.getConvertibleTokens(fromTokenBlockchainId);
                     tokenSymbol = Object.keys(token[fromTokenSymbol])[0];
                     return [4 /*yield*/, exports.getSmartTokenSupply(jsonRpc, fromTokenBlockchainId, tokenSymbol)];
                 case 11:
@@ -331,7 +335,7 @@ function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
                     return [2 /*return*/, formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed()];
                 case 12:
                     if (!isConversionToSmartToken) return [3 /*break*/, 14];
-                    token = exports.getRegistry().smartTokens[toTokenBlockchainId] || exports.getRegistry().convertibleTokens[toTokenBlockchainId];
+                    token = exports.getSmartTokens(toTokenBlockchainId) || exports.getConvertibleTokens(toTokenBlockchainId);
                     tokenSymbol = Object.keys(token[toTokenSymbol])[0];
                     return [4 /*yield*/, exports.getSmartTokenSupply(jsonRpc, toTokenBlockchainId, tokenSymbol)];
                 case 13:
@@ -353,9 +357,9 @@ function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
     });
 }
 function getConverterBlockchainId(token) {
-    if (exports.getRegistry().convertibleTokens[token.blockchainId])
-        return exports.getRegistry().convertibleTokens[token.blockchainId][token.symbol];
-    return exports.getRegistry().smartTokens[token.blockchainId][token.symbol];
+    if (exports.getConvertibleTokens(token.blockchainId))
+        return exports.getConvertibleTokens(token.blockchainId)[token.symbol];
+    return exports.getSmartTokens(token.blockchainId)[token.symbol];
 }
 function getPathToAnchor(jsonRpc, token, anchorToken) {
     return __awaiter(this, void 0, void 0, function () {
