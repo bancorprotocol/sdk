@@ -56,8 +56,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var web3_1 = __importDefault(require("web3"));
 var abis = __importStar(require("./abis"));
 var utils = __importStar(require("./utils"));
-var conversion_events = __importStar(require("./conversion_events"));
-var converter_version = __importStar(require("./converter_version"));
+var conversionEvents = __importStar(require("./conversion_events"));
+var converterVersion = __importStar(require("./converter_version"));
 var CONTRACT_ADDRESSES = {
     main: {
         registry: '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4',
@@ -159,7 +159,7 @@ var ETH = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, converter_version.get(this, converter)];
+                    case 0: return [4 /*yield*/, converterVersion.get(this, converter)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -169,7 +169,7 @@ var ETH = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, conversion_events.get(this, token, fromBlock, toBlock)];
+                    case 0: return [4 /*yield*/, conversionEvents.get(this, token, fromBlock, toBlock)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -186,7 +186,7 @@ var ETH = /** @class */ (function () {
                         return [4 /*yield*/, utils.timestampToBlockNumber(this, toTimestamp)];
                     case 2:
                         toBlock = _a.sent();
-                        return [4 /*yield*/, conversion_events.get(this, token, fromBlock, toBlock)];
+                        return [4 /*yield*/, conversionEvents.get(this, token, fromBlock, toBlock)];
                     case 3: return [2 /*return*/, _a.sent()];
                 }
             });

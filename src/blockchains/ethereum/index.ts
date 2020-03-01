@@ -1,8 +1,8 @@
 import Web3 from 'web3';
 import * as abis from './abis';
 import * as utils from './utils';
-import * as conversion_events from './conversion_events';
-import * as converter_version from './converter_version';
+import * as conversionEvents from './conversion_events';
+import * as converterVersion from './converter_version';
 
 const CONTRACT_ADDRESSES = {
     main: {
@@ -70,17 +70,17 @@ export class ETH {
     }
 
     async getConverterVersion(converter) {
-        return await converter_version.get(this, converter);
+        return await converterVersion.get(this, converter);
     }
 
     async getConversionEvents(token, fromBlock, toBlock) {
-        return await conversion_events.get(this, token, fromBlock, toBlock);
+        return await conversionEvents.get(this, token, fromBlock, toBlock);
     }
 
     async getConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
         const fromBlock = await utils.timestampToBlockNumber(this, fromTimestamp);
         const toBlock = await utils.timestampToBlockNumber(this, toTimestamp);
-        return await conversion_events.get(this, token, fromBlock, toBlock);
+        return await conversionEvents.get(this, token, fromBlock, toBlock);
     }
 }
 
