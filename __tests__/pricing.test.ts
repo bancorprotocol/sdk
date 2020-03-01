@@ -387,9 +387,7 @@ describe('price tests', () => {
             [
                 { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
                 { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
-                { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' },
-                { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
+                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' }
             ]
         ], '1');
 
