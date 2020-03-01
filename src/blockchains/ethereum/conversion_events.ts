@@ -1,5 +1,6 @@
-const Web3 = require("web3");
-const Decimal = require("decimal.js");
+import Web3 from 'web3';
+import Decimal from 'decimal.js';
+import { ERC20Token } from './abis';
 
 const GENESIS_BLOCK_NUMBER = 3851136;
 
@@ -9,10 +10,6 @@ const CONVERSION_EVENT_LEGACY = [
     {"anonymous":false,"inputs":[{"indexed":true,"name":"fromToken","type":"address"},{"indexed":true,"name":"toToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"inputAmount","type":"uint256"},{"indexed":false,"name":"outputAmount","type":"uint256"}],"name":"Change","type":"event"},
     {"anonymous":false,"inputs":[{"indexed":true,"name":"fromToken","type":"address"},{"indexed":true,"name":"toToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"inputAmount","type":"uint256"},{"indexed":false,"name":"outputAmount","type":"uint256"},{"indexed":false,"name":"_currentPriceN","type":"uint256"},{"indexed":false,"name":"_currentPriceD","type":"uint256"}],"name":"Conversion","type":"event"},
     {"anonymous":false,"inputs":[{"indexed":true,"name":"fromToken","type":"address"},{"indexed":true,"name":"toToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"inputAmount","type":"uint256"},{"indexed":false,"name":"outputAmount","type":"uint256"},{"indexed":false,"name":"conversionFee","type":"int256"}],"name":"Conversion","type":"event"}
-];
-
-const TOKEN_ABI = [
-    {"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"}
 ];
 
 function parseOwnerUpdateEvent(log) {
@@ -29,7 +26,7 @@ async function getTokenAmount(_this, token, amount) {
         return amount;
     }
     if (_this.decimals[token] == undefined) {
-        const tokenContract = new _this.web3.eth.Contract(TOKEN_ABI, token);
+        const tokenContract = new _this.web3.eth.Contract(ERC20Token, token);
         _this.decimals[token] = await tokenContract.methods.decimals().call();
     }
     return new Decimal(amount + "e-" + _this.decimals[token]).toFixed();

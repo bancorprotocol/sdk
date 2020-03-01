@@ -54,6 +54,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var web3_1 = __importDefault(require("web3"));
+var abis = __importStar(require("./abis"));
 var utils = __importStar(require("./utils"));
 var conversion_events = __importStar(require("./conversion_events"));
 var converter_version = __importStar(require("./converter_version"));
@@ -69,22 +70,6 @@ var CONTRACT_ADDRESSES = {
         anchorToken: '0x62bd9D98d4E188e281D7B78e29334969bbE1053c',
     }
 };
-var ContractRegistry = [
-    { "constant": true, "inputs": [{ "name": "_contractName", "type": "bytes32" }], "name": "addressOf", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }
-];
-var BancorNetwork = [
-    { "constant": true, "inputs": [{ "name": "_path", "type": "address[]" }, { "name": "_amount", "type": "uint256" }], "name": "getReturnByPath", "outputs": [{ "name": "", "type": "uint256" }, { "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }
-];
-var BancorConverterRegistry = [
-    { "constant": true, "inputs": [], "name": "getConvertibleTokens", "outputs": [{ "name": "", "type": "address[]" }], "payable": false, "stateMutability": "view", "type": "function" },
-    { "constant": true, "inputs": [{ "name": "_convertibleToken", "type": "address" }], "name": "getConvertibleTokenSmartTokens", "outputs": [{ "name": "", "type": "address[]" }], "payable": false, "stateMutability": "view", "type": "function" }
-];
-var ERC20Token = [
-    { "constant": true, "inputs": [], "name": "decimals", "outputs": [{ "name": "", "type": "uint8" }], "payable": false, "stateMutability": "view", "type": "function" }
-];
-var MulticallContract = [
-    { "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }
-];
 var ETH = /** @class */ (function () {
     function ETH(nodeAddress) {
         this.decimals = {};
@@ -104,16 +89,16 @@ var ETH = /** @class */ (function () {
                         return [4 /*yield*/, this.web3.eth.net.getNetworkType()];
                     case 1:
                         _a.networkType = _b.sent();
-                        contractRegistry = new this.web3.eth.Contract(ContractRegistry, exports.getContractAddresses(this).registry);
+                        contractRegistry = new this.web3.eth.Contract(abis.ContractRegistry, exports.getContractAddresses(this).registry);
                         return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorNetwork')).call()];
                     case 2:
                         bancorNetworkAddress = _b.sent();
                         return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
                     case 3:
                         converterRegistryAddress = _b.sent();
-                        this.bancorNetwork = new this.web3.eth.Contract(BancorNetwork, bancorNetworkAddress);
-                        this.converterRegistry = new this.web3.eth.Contract(BancorConverterRegistry, converterRegistryAddress);
-                        this.multicallContract = new this.web3.eth.Contract(MulticallContract, exports.getContractAddresses(this).multicall);
+                        this.bancorNetwork = new this.web3.eth.Contract(abis.BancorNetwork, bancorNetworkAddress);
+                        this.converterRegistry = new this.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
+                        this.multicallContract = new this.web3.eth.Contract(abis.MulticallContract, exports.getContractAddresses(this).multicall);
                         return [2 /*return*/];
                 }
             });
@@ -232,7 +217,7 @@ exports.getDecimals = function (_this, token) {
             switch (_c.label) {
                 case 0:
                     if (!(_this.decimals[token] == undefined)) return [3 /*break*/, 2];
-                    tokenContract = new _this.web3.eth.Contract(ERC20Token, token);
+                    tokenContract = new _this.web3.eth.Contract(abis.ERC20Token, token);
                     _a = _this.decimals;
                     _b = token;
                     return [4 /*yield*/, tokenContract.methods.decimals().call()];

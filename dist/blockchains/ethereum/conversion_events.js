@@ -42,25 +42,26 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Web3 = require("web3");
-var Decimal = require("decimal.js");
+var web3_1 = __importDefault(require("web3"));
+var decimal_js_1 = __importDefault(require("decimal.js"));
+var abis_1 = require("./abis");
 var GENESIS_BLOCK_NUMBER = 3851136;
-var OWNER_UPDATE_EVENT_HASH = Web3.utils.keccak256("OwnerUpdate(address,address)");
+var OWNER_UPDATE_EVENT_HASH = web3_1.default.utils.keccak256("OwnerUpdate(address,address)");
 var CONVERSION_EVENT_LEGACY = [
     { "anonymous": false, "inputs": [{ "indexed": true, "name": "fromToken", "type": "address" }, { "indexed": true, "name": "toToken", "type": "address" }, { "indexed": true, "name": "trader", "type": "address" }, { "indexed": false, "name": "inputAmount", "type": "uint256" }, { "indexed": false, "name": "outputAmount", "type": "uint256" }], "name": "Change", "type": "event" },
     { "anonymous": false, "inputs": [{ "indexed": true, "name": "fromToken", "type": "address" }, { "indexed": true, "name": "toToken", "type": "address" }, { "indexed": true, "name": "trader", "type": "address" }, { "indexed": false, "name": "inputAmount", "type": "uint256" }, { "indexed": false, "name": "outputAmount", "type": "uint256" }, { "indexed": false, "name": "_currentPriceN", "type": "uint256" }, { "indexed": false, "name": "_currentPriceD", "type": "uint256" }], "name": "Conversion", "type": "event" },
     { "anonymous": false, "inputs": [{ "indexed": true, "name": "fromToken", "type": "address" }, { "indexed": true, "name": "toToken", "type": "address" }, { "indexed": true, "name": "trader", "type": "address" }, { "indexed": false, "name": "inputAmount", "type": "uint256" }, { "indexed": false, "name": "outputAmount", "type": "uint256" }, { "indexed": false, "name": "conversionFee", "type": "int256" }], "name": "Conversion", "type": "event" }
 ];
-var TOKEN_ABI = [
-    { "constant": true, "inputs": [], "name": "decimals", "outputs": [{ "name": "", "type": "uint8" }], "payable": false, "stateMutability": "view", "type": "function" }
-];
 function parseOwnerUpdateEvent(log) {
     var indexed = log.topics.length > 1;
     return {
         blockNumber: log.blockNumber,
-        prevOwner: Web3.utils.toChecksumAddress(indexed ? log.topics[1].slice(-40) : log.data.slice(26, 66)),
-        currOwner: Web3.utils.toChecksumAddress(indexed ? log.topics[2].slice(-40) : log.data.slice(90, 130))
+        prevOwner: web3_1.default.utils.toChecksumAddress(indexed ? log.topics[1].slice(-40) : log.data.slice(26, 66)),
+        currOwner: web3_1.default.utils.toChecksumAddress(indexed ? log.topics[2].slice(-40) : log.data.slice(90, 130))
     };
 }
 function getTokenAmount(_this, token, amount) {
@@ -73,14 +74,14 @@ function getTokenAmount(_this, token, amount) {
                         return [2 /*return*/, amount];
                     }
                     if (!(_this.decimals[token] == undefined)) return [3 /*break*/, 2];
-                    tokenContract = new _this.web3.eth.Contract(TOKEN_ABI, token);
+                    tokenContract = new _this.web3.eth.Contract(abis_1.ERC20Token, token);
                     _a = _this.decimals;
                     _b = token;
                     return [4 /*yield*/, tokenContract.methods.decimals().call()];
                 case 1:
                     _a[_b] = _c.sent();
                     _c.label = 2;
-                case 2: return [2 /*return*/, new Decimal(amount + "e-" + _this.decimals[token]).toFixed()];
+                case 2: return [2 /*return*/, new decimal_js_1.default(amount + "e-" + _this.decimals[token]).toFixed()];
             }
         });
     });
