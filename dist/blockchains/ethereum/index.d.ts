@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-export declare class ETH {
+export declare class Ethereum {
     web3: Web3;
     networkType: string;
     bancorNetwork: Web3.eth.Contract;

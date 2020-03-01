@@ -1,9 +1,9 @@
 import { EOS } from './blockchains/eos/index';
-import { ETH } from './blockchains/ethereum/index';
+import { Ethereum } from './blockchains/ethereum/index';
 import { Token, Converter } from './path_generation';
 export declare class SDK {
-    eth: ETH;
     eos: EOS;
+    ethereum: Ethereum;
     constructor({ eosNodeAddress, ethNodeAddress }?: {
         eosNodeAddress?: string;
         ethNodeAddress?: string;

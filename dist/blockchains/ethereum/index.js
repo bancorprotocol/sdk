@@ -70,16 +70,16 @@ var CONTRACT_ADDRESSES = {
         anchorToken: '0x62bd9D98d4E188e281D7B78e29334969bbE1053c',
     }
 };
-var ETH = /** @class */ (function () {
-    function ETH(nodeAddress) {
+var Ethereum = /** @class */ (function () {
+    function Ethereum(nodeAddress) {
         this.decimals = {};
         this.web3 = new web3_1.default(nodeAddress);
     }
-    ETH.prototype.close = function () {
+    Ethereum.prototype.close = function () {
         if (this.web3.currentProvider.constructor.name == "WebsocketProvider")
             this.web3.currentProvider.connection.close();
     };
-    ETH.prototype.init = function () {
+    Ethereum.prototype.init = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, contractRegistry, bancorNetworkAddress, converterRegistryAddress;
             return __generator(this, function (_b) {
@@ -104,10 +104,10 @@ var ETH = /** @class */ (function () {
             });
         });
     };
-    ETH.prototype.getAnchorToken = function () {
+    Ethereum.prototype.getAnchorToken = function () {
         return exports.getContractAddresses(this).anchorToken;
     };
-    ETH.prototype.getRateByPath = function (path, amount) {
+    Ethereum.prototype.getRateByPath = function (path, amount) {
         return __awaiter(this, void 0, void 0, function () {
             var sourceDecimals, targetDecimals;
             return __generator(this, function (_a) {
@@ -128,7 +128,7 @@ var ETH = /** @class */ (function () {
             });
         });
     };
-    ETH.prototype.getAllPathsAndRates = function (sourceToken, targetToken, amount) {
+    Ethereum.prototype.getAllPathsAndRates = function (sourceToken, targetToken, amount) {
         return __awaiter(this, void 0, void 0, function () {
             var paths, graph, tokens, destToken, sourceDecimals, targetDecimals, rates;
             return __generator(this, function (_a) {
@@ -155,7 +155,7 @@ var ETH = /** @class */ (function () {
             });
         });
     };
-    ETH.prototype.getConverterVersion = function (converter) {
+    Ethereum.prototype.getConverterVersion = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -165,7 +165,7 @@ var ETH = /** @class */ (function () {
             });
         });
     };
-    ETH.prototype.getConversionEvents = function (token, fromBlock, toBlock) {
+    Ethereum.prototype.getConversionEvents = function (token, fromBlock, toBlock) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -175,7 +175,7 @@ var ETH = /** @class */ (function () {
             });
         });
     };
-    ETH.prototype.getConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
+    Ethereum.prototype.getConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
         return __awaiter(this, void 0, void 0, function () {
             var fromBlock, toBlock;
             return __generator(this, function (_a) {
@@ -192,9 +192,9 @@ var ETH = /** @class */ (function () {
             });
         });
     };
-    return ETH;
+    return Ethereum;
 }());
-exports.ETH = ETH;
+exports.Ethereum = Ethereum;
 exports.getContractAddresses = function (_this) {
     if (CONTRACT_ADDRESSES[_this.networkType])
         return CONTRACT_ADDRESSES[_this.networkType];

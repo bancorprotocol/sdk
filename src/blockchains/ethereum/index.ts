@@ -17,7 +17,7 @@ const CONTRACT_ADDRESSES = {
     }
 };
 
-export class ETH {
+export class Ethereum {
     web3: Web3;
     networkType: string;
     bancorNetwork: Web3.eth.Contract;

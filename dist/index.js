@@ -42,17 +42,17 @@ var SDK = /** @class */ (function () {
     function SDK(_a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.eosNodeAddress, eosNodeAddress = _c === void 0 ? "" : _c, _d = _b.ethNodeAddress, ethNodeAddress = _d === void 0 ? "" : _d;
         this.eos = new index_1.EOS(eosNodeAddress);
-        this.eth = new index_2.ETH(ethNodeAddress);
+        this.ethereum = new index_2.Ethereum(ethNodeAddress);
     }
     SDK.prototype.close = function () {
         this.eos.close();
-        this.eth.close();
+        this.ethereum.close();
     };
     SDK.prototype.init = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.eth.init()];
+                    case 0: return [4 /*yield*/, this.ethereum.init()];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -80,18 +80,18 @@ var SDK = /** @class */ (function () {
                     case 2:
                         eosPath = _j.sent();
                         return [2 /*return*/, [eosPath]];
-                    case 3: return [4 /*yield*/, this.eth.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
+                    case 3: return [4 /*yield*/, this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
                     case 4:
                         _f = _j.sent(), ethPaths = _f[0], ethRates = _f[1];
                         return [2 /*return*/, [getBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); })]];
                     case 5: return [4 /*yield*/, this.eos.getConversionPath(sourceToken, this.eos.getAnchorToken())];
                     case 6:
                         eosPath = _j.sent();
-                        return [4 /*yield*/, this.eth.getAllPathsAndRates(this.eth.getAnchorToken(), targetToken.blockchainId, amount)];
+                        return [4 /*yield*/, this.ethereum.getAllPathsAndRates(this.ethereum.getAnchorToken(), targetToken.blockchainId, amount)];
                     case 7:
                         _g = _j.sent(), ethPaths = _g[0], ethRates = _g[1];
                         return [2 /*return*/, [eosPath, getBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); })]];
-                    case 8: return [4 /*yield*/, this.eth.getAllPathsAndRates(sourceToken.blockchainId, this.eth.getAnchorToken(), amount)];
+                    case 8: return [4 /*yield*/, this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, this.ethereum.getAnchorToken(), amount)];
                     case 9:
                         _h = _j.sent(), ethPaths = _h[0], ethRates = _h[1];
                         return [4 /*yield*/, this.eos.getConversionPath(this.eos.getAnchorToken(), targetToken)];
@@ -124,7 +124,7 @@ var SDK = /** @class */ (function () {
                     case 3:
                         amount = _b.sent();
                         return [3 /*break*/, 7];
-                    case 4: return [4 /*yield*/, this.eth.getRateByPath(path.map(function (token) { return token.blockchainId; }), amount)];
+                    case 4: return [4 /*yield*/, this.ethereum.getRateByPath(path.map(function (token) { return token.blockchainId; }), amount)];
                     case 5:
                         amount = _b.sent();
                         return [3 /*break*/, 7];
@@ -159,7 +159,7 @@ var SDK = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         if (!(sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.eth.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
+                        return [4 /*yield*/, this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
                     case 1:
                         _a = _b.sent(), paths = _a[0], rates_1 = _a[1];
                         return [2 /*return*/, paths.map(function (path, i) { return ({ path: path.map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); }), rate: rates_1[i] }); })];
@@ -174,7 +174,7 @@ var SDK = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         if (!(converter.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.eth.getConverterVersion(converter.blockchainId)];
+                        return [4 /*yield*/, this.ethereum.getConverterVersion(converter.blockchainId)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2: throw new Error(converter.blockchainType + ' blockchain not supported');
                 }
@@ -187,7 +187,7 @@ var SDK = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.eth.getConversionEvents(token.blockchainId, fromBlock, toBlock)];
+                        return [4 /*yield*/, this.ethereum.getConversionEvents(token.blockchainId, fromBlock, toBlock)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2: throw new Error(token.blockchainType + ' blockchain not supported');
                 }
@@ -200,7 +200,7 @@ var SDK = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.eth.getConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp)];
+                        return [4 /*yield*/, this.ethereum.getConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2: throw new Error(token.blockchainType + ' blockchain not supported');
                 }
