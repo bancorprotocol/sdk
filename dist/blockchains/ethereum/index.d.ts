@@ -6,7 +6,7 @@ export declare class Ethereum {
     converterRegistry: Web3.eth.Contract;
     multicallContract: Web3.eth.Contract;
     decimals: {};
-    constructor(nodeAddress: any);
+    constructor(nodeEndpoint: any);
     close(): void;
     init(): Promise<void>;
     getAnchorToken(): any;

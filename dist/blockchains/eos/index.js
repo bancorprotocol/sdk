@@ -71,8 +71,8 @@ var fs_1 = __importDefault(require("fs"));
 var formulas = __importStar(require("./formulas"));
 var registry = __importStar(require("./registry"));
 var EOS = /** @class */ (function () {
-    function EOS(nodeAddress) {
-        this.jsonRpc = new eosjs_1.JsonRpc(nodeAddress, { fetch: node_fetch_1.default });
+    function EOS(nodeEndpoint) {
+        this.jsonRpc = new eosjs_1.JsonRpc(nodeEndpoint, { fetch: node_fetch_1.default });
     }
     EOS.prototype.close = function () {
     };

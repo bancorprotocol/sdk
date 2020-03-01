@@ -4,9 +4,9 @@ import { Token, Converter } from './path_generation';
 export declare class SDK {
     eos: EOS;
     ethereum: Ethereum;
-    constructor({ eosNodeAddress, ethNodeAddress }?: {
-        eosNodeAddress?: string;
-        ethNodeAddress?: string;
+    constructor({ eosNodeEndpoint, ethNodeEndpoint }?: {
+        eosNodeEndpoint?: string;
+        ethNodeEndpoint?: string;
     });
     close(): void;
     init(): Promise<void>;

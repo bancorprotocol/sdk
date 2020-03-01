@@ -40,9 +40,9 @@ var index_1 = require("./blockchains/eos/index");
 var index_2 = require("./blockchains/ethereum/index");
 var SDK = /** @class */ (function () {
     function SDK(_a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.eosNodeAddress, eosNodeAddress = _c === void 0 ? "" : _c, _d = _b.ethNodeAddress, ethNodeAddress = _d === void 0 ? "" : _d;
-        this.eos = new index_1.EOS(eosNodeAddress);
-        this.ethereum = new index_2.Ethereum(ethNodeAddress);
+        var _b = _a === void 0 ? {} : _a, _c = _b.eosNodeEndpoint, eosNodeEndpoint = _c === void 0 ? "" : _c, _d = _b.ethNodeEndpoint, ethNodeEndpoint = _d === void 0 ? "" : _d;
+        this.eos = new index_1.EOS(eosNodeEndpoint);
+        this.ethereum = new index_2.Ethereum(ethNodeEndpoint);
     }
     SDK.prototype.close = function () {
         this.eos.close();

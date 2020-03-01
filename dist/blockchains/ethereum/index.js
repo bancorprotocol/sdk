@@ -71,9 +71,9 @@ var CONTRACT_ADDRESSES = {
     }
 };
 var Ethereum = /** @class */ (function () {
-    function Ethereum(nodeAddress) {
+    function Ethereum(nodeEndpoint) {
         this.decimals = {};
-        this.web3 = new web3_1.default(nodeAddress);
+        this.web3 = new web3_1.default(nodeEndpoint);
     }
     Ethereum.prototype.close = function () {
         if (this.web3.currentProvider.constructor.name == "WebsocketProvider")

@@ -2,7 +2,7 @@ import { JsonRpc } from 'eosjs';
 import { Token } from '../../path_generation';
 export declare class EOS {
     jsonRpc: JsonRpc;
-    constructor(nodeAddress: string);
+    constructor(nodeEndpoint: string);
     close(): void;
     getAnchorToken(): Token;
     getConversionPath(from: Token, to: Token): Promise<any[]>;

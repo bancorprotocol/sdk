@@ -25,8 +25,8 @@ export class Ethereum {
     multicallContract: Web3.eth.Contract;
     decimals = {};
 
-    constructor(nodeAddress) {
-        this.web3 = new Web3(nodeAddress);
+    constructor(nodeEndpoint) {
+        this.web3 = new Web3(nodeEndpoint);
     }
 
     close() {

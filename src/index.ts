@@ -6,9 +6,9 @@ export class SDK {
     eos: EOS;
     ethereum: Ethereum;
 
-    constructor({eosNodeAddress = "", ethNodeAddress = ""} = {}) {
-        this.eos = new EOS(eosNodeAddress);
-        this.ethereum = new Ethereum(ethNodeAddress);
+    constructor({eosNodeEndpoint = "", ethNodeEndpoint = ""} = {}) {
+        this.eos = new EOS(eosNodeEndpoint);
+        this.ethereum = new Ethereum(ethNodeEndpoint);
     }
 
     close() {

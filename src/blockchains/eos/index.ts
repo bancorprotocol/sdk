@@ -15,8 +15,8 @@ interface Reserve {
 export class EOS {
     jsonRpc: JsonRpc;
 
-    constructor(nodeAddress: string) {
-        this.jsonRpc = new JsonRpc(nodeAddress, { fetch });
+    constructor(nodeEndpoint: string) {
+        this.jsonRpc = new JsonRpc(nodeEndpoint, { fetch });
     }
 
     close() {
