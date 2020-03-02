@@ -12,6 +12,14 @@ function init() {
     decimal_js_1.default.set({ precision: 100, rounding: decimal_js_1.default.ROUND_DOWN });
 }
 exports.init = init;
+function toWei(number, decimals) {
+    return new decimal_js_1.default(number + "e+" + decimals).toFixed();
+}
+exports.toWei = toWei;
+function fromWei(number, decimals) {
+    return new decimal_js_1.default(number + "e-" + decimals).toFixed();
+}
+exports.fromWei = fromWei;
 function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], depositAmount = _a[3];

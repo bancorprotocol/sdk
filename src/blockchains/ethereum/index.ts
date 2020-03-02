@@ -1,8 +1,9 @@
 import Web3 from 'web3';
 import * as abis from './abis';
-import * as utils from './utils';
+import * as utils from '../../utils';
 import * as conversionEvents from './conversion_events';
 import * as converterVersion from './converter_version';
+import { timestampToBlockNumber } from './utils';
 
 const CONTRACT_ADDRESSES = {
     main: {
@@ -78,8 +79,8 @@ export class Ethereum {
     }
 
     async getConversionEventsByTimestamp(token, fromTimestamp, toTimestamp) {
-        const fromBlock = await utils.timestampToBlockNumber(this, fromTimestamp);
-        const toBlock = await utils.timestampToBlockNumber(this, toTimestamp);
+        const fromBlock = await timestampToBlockNumber(this, fromTimestamp);
+        const toBlock = await timestampToBlockNumber(this, toTimestamp);
         return await conversionEvents.get(this, token, fromBlock, toBlock);
     }
 }

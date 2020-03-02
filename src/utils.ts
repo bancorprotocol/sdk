@@ -9,6 +9,14 @@ export function init() {
     Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
 }
 
+export function toWei(number, decimals) {
+    return new Decimal(`${number}e+${decimals}`).toFixed();
+}
+
+export function fromWei(number, decimals) {
+    return new Decimal(`${number}e-${decimals}`).toFixed();
+}
+
 export function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {
     [supply, reserveBalance, reserveRatio, depositAmount] = Array.from(arguments).map(x => new Decimal(x));
 

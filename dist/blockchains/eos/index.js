@@ -68,7 +68,7 @@ var eosjs_1 = require("eosjs");
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var converter_blockchain_ids_1 = require("./converter_blockchain_ids");
 var fs_1 = __importDefault(require("fs"));
-var formulas = __importStar(require("./formulas"));
+var utils = __importStar(require("../../utils"));
 var registry = __importStar(require("./registry"));
 var EOS = /** @class */ (function () {
     function EOS(nodeEndpoint) {
@@ -321,7 +321,7 @@ function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
                             ratio: reserve.ratio, balance: balanceObject[reserve.contract]
                         };
                     });
-                    formulas.init();
+                    utils.init();
                     if (!isConversionFromSmartToken) return [3 /*break*/, 12];
                     token = exports.getSmartTokens(fromTokenBlockchainId) || exports.getConvertibleTokens(fromTokenBlockchainId);
                     tokenSymbol = Object.keys(token[fromTokenSymbol])[0];
@@ -331,8 +331,8 @@ function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
                     supply = getBalance(tokenSupplyObj.rows[0].supply);
                     reserveBalance = getBalance(balanceTo.rows[0].balance);
                     reserveRatio = converterReserves[toTokenBlockchainId].ratio;
-                    amountWithoutFee = formulas.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
-                    return [2 /*return*/, formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed()];
+                    amountWithoutFee = utils.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
+                    return [2 /*return*/, utils.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed()];
                 case 12:
                     if (!isConversionToSmartToken) return [3 /*break*/, 14];
                     token = exports.getSmartTokens(toTokenBlockchainId) || exports.getConvertibleTokens(toTokenBlockchainId);
@@ -343,15 +343,15 @@ function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
                     supply = getBalance(tokenSupplyObj.rows[0].supply);
                     reserveBalance = getBalance(balanceFrom.rows[0].balance);
                     reserveRatio = converterReserves[fromTokenBlockchainId].ratio;
-                    amountWithoutFee = formulas.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
-                    return [2 /*return*/, formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed()];
+                    amountWithoutFee = utils.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
+                    return [2 /*return*/, utils.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed()];
                 case 14:
                     fromReserveBalance = getBalance(balanceFrom.rows[0].balance);
                     fromReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
                     toReserveBalance = getBalance(balanceTo.rows[0].balance);
                     toReserveRatio = converterReserves[toTokenBlockchainId].ratio;
-                    amountWithoutFee = formulas.calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount);
-                    return [2 /*return*/, formulas.getFinalAmount(amountWithoutFee, conversionFee, 2).toFixed()];
+                    amountWithoutFee = utils.calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount);
+                    return [2 /*return*/, utils.getFinalAmount(amountWithoutFee, conversionFee, 2).toFixed()];
             }
         });
     });

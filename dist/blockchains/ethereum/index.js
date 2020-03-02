@@ -55,9 +55,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var web3_1 = __importDefault(require("web3"));
 var abis = __importStar(require("./abis"));
-var utils = __importStar(require("./utils"));
+var utils = __importStar(require("../../utils"));
 var conversionEvents = __importStar(require("./conversion_events"));
 var converterVersion = __importStar(require("./converter_version"));
+var utils_1 = require("./utils");
 var CONTRACT_ADDRESSES = {
     main: {
         registry: '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4',
@@ -180,10 +181,10 @@ var Ethereum = /** @class */ (function () {
             var fromBlock, toBlock;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, utils.timestampToBlockNumber(this, fromTimestamp)];
+                    case 0: return [4 /*yield*/, utils_1.timestampToBlockNumber(this, fromTimestamp)];
                     case 1:
                         fromBlock = _a.sent();
-                        return [4 /*yield*/, utils.timestampToBlockNumber(this, toTimestamp)];
+                        return [4 /*yield*/, utils_1.timestampToBlockNumber(this, toTimestamp)];
                     case 2:
                         toBlock = _a.sent();
                         return [4 /*yield*/, conversionEvents.get(this, token, fromBlock, toBlock)];

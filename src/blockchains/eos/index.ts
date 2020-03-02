@@ -2,7 +2,7 @@ import { JsonRpc } from 'eosjs';
 import fetch from 'node-fetch';
 import { converterBlockchainIds } from './converter_blockchain_ids';
 import fs from 'fs';
-import * as formulas from './formulas';
+import * as utils from '../../utils';
 import { Token, Converter } from '../../path_generation';
 import * as registry from './registry';
 
@@ -192,7 +192,7 @@ async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromTok
         };
     });
 
-    formulas.init();
+    utils.init();
 
     if (isConversionFromSmartToken) {
         const token = getSmartTokens(fromTokenBlockchainId) || getConvertibleTokens(fromTokenBlockchainId);
@@ -201,8 +201,8 @@ async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromTok
         const supply = getBalance(tokenSupplyObj.rows[0].supply);
         const reserveBalance = getBalance(balanceTo.rows[0].balance);
         const reserveRatio = converterReserves[toTokenBlockchainId].ratio;
-        const amountWithoutFee = formulas.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
-        return formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed();
+        const amountWithoutFee = utils.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
+        return utils.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed();
     }
 
     else if (isConversionToSmartToken) {
@@ -212,8 +212,8 @@ async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromTok
         const supply = getBalance(tokenSupplyObj.rows[0].supply);
         const reserveBalance = getBalance(balanceFrom.rows[0].balance);
         const reserveRatio = converterReserves[fromTokenBlockchainId].ratio;
-        const amountWithoutFee = formulas.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
-        return formulas.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed();
+        const amountWithoutFee = utils.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
+        return utils.getFinalAmount(amountWithoutFee, conversionFee, 1).toFixed();
     }
 
     else {
@@ -221,8 +221,8 @@ async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromTok
         const fromReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
         const toReserveBalance = getBalance(balanceTo.rows[0].balance);
         const toReserveRatio = converterReserves[toTokenBlockchainId].ratio;
-        const amountWithoutFee = formulas.calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount);
-        return formulas.getFinalAmount(amountWithoutFee, conversionFee, 2).toFixed();
+        const amountWithoutFee = utils.calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount);
+        return utils.getFinalAmount(amountWithoutFee, conversionFee, 2).toFixed();
     }
 }
 
