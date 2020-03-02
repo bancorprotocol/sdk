@@ -3,7 +3,7 @@ import * as abis from './abis';
 import * as utils from '../../utils';
 import * as conversionEvents from './conversion_events';
 import * as converterVersion from './converter_version';
-import { timestampToBlockNumber } from './utils';
+import { timestampToBlockNumber } from './timestamp_to_block_number';
 
 const CONTRACT_ADDRESSES = {
     main: {
