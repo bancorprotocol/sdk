@@ -1,4 +1,3 @@
-export declare function init(): void;
 export declare function toWei(number: any, decimals: any): string;
 export declare function fromWei(number: any, decimals: any): string;
 export declare function calculatePurchaseReturn(supply: any, reserveBalance: any, reserveRatio: any, depositAmount: any): any;

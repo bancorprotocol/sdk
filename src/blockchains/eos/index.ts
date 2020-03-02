@@ -192,8 +192,6 @@ async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromTok
         };
     });
 
-    utils.init();
-
     if (isConversionFromSmartToken) {
         const token = getSmartTokens(fromTokenBlockchainId) || getConvertibleTokens(fromTokenBlockchainId);
         const tokenSymbol = Object.keys(token[fromTokenSymbol])[0];

@@ -321,7 +321,6 @@ function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
                             ratio: reserve.ratio, balance: balanceObject[reserve.contract]
                         };
                     });
-                    utils.init();
                     if (!isConversionFromSmartToken) return [3 /*break*/, 12];
                     token = exports.getSmartTokens(fromTokenBlockchainId) || exports.getConvertibleTokens(fromTokenBlockchainId);
                     tokenSymbol = Object.keys(token[fromTokenSymbol])[0];

@@ -47,8 +47,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var web3_1 = __importDefault(require("web3"));
-var decimal_js_1 = __importDefault(require("decimal.js"));
 var abis_1 = require("./abis");
+var utils_1 = require("../../utils");
 var GENESIS_BLOCK_NUMBER = 3851136;
 var OWNER_UPDATE_EVENT_HASH = web3_1.default.utils.keccak256("OwnerUpdate(address,address)");
 var CONVERSION_EVENT_LEGACY = [
@@ -81,7 +81,7 @@ function getTokenAmount(_this, token, amount) {
                 case 1:
                     _a[_b] = _c.sent();
                     _c.label = 2;
-                case 2: return [2 /*return*/, new decimal_js_1.default(amount + "e-" + _this.decimals[token]).toFixed()];
+                case 2: return [2 /*return*/, utils_1.fromWei(amount, _this.decimals[token])];
             }
         });
     });

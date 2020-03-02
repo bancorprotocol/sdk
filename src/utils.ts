@@ -5,9 +5,7 @@ const ONE = new Decimal(1);
 const MAX_RATIO = new Decimal(1000000);
 const MAX_FEE = new Decimal(1000000);
 
-export function init() {
-    Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
-}
+Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
 
 export function toWei(number, decimals) {
     return new Decimal(`${number}e+${decimals}`).toFixed();

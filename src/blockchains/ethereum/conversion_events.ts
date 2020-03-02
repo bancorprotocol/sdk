@@ -1,6 +1,6 @@
 import Web3 from 'web3';
-import Decimal from 'decimal.js';
 import { ERC20Token } from './abis';
+import { fromWei } from '../../utils';
 
 const GENESIS_BLOCK_NUMBER = 3851136;
 
@@ -29,7 +29,7 @@ async function getTokenAmount(_this, token, amount) {
         const tokenContract = new _this.web3.eth.Contract(ERC20Token, token);
         _this.decimals[token] = await tokenContract.methods.decimals().call();
     }
-    return new Decimal(amount + "e-" + _this.decimals[token]).toFixed();
+    return fromWei(amount, _this.decimals[token]);
 }
 
 async function getPastLogs(web3, address, topic0, fromBlock, toBlock) {
