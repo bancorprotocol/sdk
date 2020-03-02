@@ -2,7 +2,7 @@ import { SDK } from '../src/index';
 import * as eos from '../src/blockchains/eos';
 import * as ethereum from '../src/blockchains/ethereum';
 
-describe('price tests', () => {
+describe('rates test', () => {
     const sdk = new SDK();
 
     beforeEach(() => {

@@ -2,7 +2,7 @@ import { SDK } from '../src/index';
 import * as eos from '../src/blockchains/eos';
 import * as ethereum from '../src/blockchains/ethereum';
 
-describe('Path finder tests', () => {
+describe('paths test', () => {
     const sdk = new SDK();
 
     beforeEach(() => {
