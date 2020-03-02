@@ -16,7 +16,7 @@ describe('Path finder tests', () => {
     it('generatePath from ethereum token to ethereum token', async () => {
         const spyGetGraph = jest
             .spyOn(ethereum, 'getGraph')
-            .mockImplementation(() => Promise.resolve({
+            .mockImplementationOnce(() => Promise.resolve({
                 '0x1111111111111111111111111111111111111111' : ['0x2222222222222222222222222222222222222222'],
                 '0x2222222222222222222222222222222222222222' : ['0x1111111111111111111111111111111111111111', '0x3333333333333333333333333333333333333333'],
                 '0x3333333333333333333333333333333333333333' : ['0x2222222222222222222222222222222222222222', '0x4444444444444444444444444444444444444444'],
@@ -57,11 +57,11 @@ describe('Path finder tests', () => {
     it('generatePath from ethereum token to eos token', async () => {
         const spyGetContractAddresses = jest
             .spyOn(ethereum, 'getContractAddresses')
-            .mockImplementation(() => ({ anchorToken: '0x3333333333333333333333333333333333333333' }));
+            .mockImplementationOnce(() => ({ anchorToken: '0x3333333333333333333333333333333333333333' }));
 
         const spyGetGraph = jest
             .spyOn(ethereum, 'getGraph')
-            .mockImplementation(() => Promise.resolve({
+            .mockImplementationOnce(() => Promise.resolve({
                '0x1111111111111111111111111111111111111111' : ['0x2222222222222222222222222222222222222222'],
                '0x2222222222222222222222222222222222222222' : ['0x1111111111111111111111111111111111111111', '0x3333333333333333333333333333333333333333'],
                '0x3333333333333333333333333333333333333333' : ['0x2222222222222222222222222222222222222222']
@@ -78,7 +78,8 @@ describe('Path finder tests', () => {
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
-            .mockImplementation(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
+            .mockImplementationOnce(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }))
+            .mockImplementationOnce(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
         const spyGetConvertibleTokens = jest
             .spyOn(eos, 'getConvertibleTokens')
@@ -131,11 +132,11 @@ describe('Path finder tests', () => {
     it('generatePath from eos token to ethereum token', async () => {
         const spyGetContractAddresses = jest
             .spyOn(ethereum, 'getContractAddresses')
-            .mockImplementation(() => ({ anchorToken: '0x3333333333333333333333333333333333333333' }));
+            .mockImplementationOnce(() => ({ anchorToken: '0x3333333333333333333333333333333333333333' }));
 
         const spyGetGraph = jest
             .spyOn(ethereum, 'getGraph')
-            .mockImplementation(() => Promise.resolve({
+            .mockImplementationOnce(() => Promise.resolve({
                '0x1111111111111111111111111111111111111111' : ['0x2222222222222222222222222222222222222222'],
                '0x2222222222222222222222222222222222222222' : ['0x1111111111111111111111111111111111111111', '0x3333333333333333333333333333333333333333'],
                '0x3333333333333333333333333333333333333333' : ['0x2222222222222222222222222222222222222222']
@@ -152,7 +153,8 @@ describe('Path finder tests', () => {
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
-            .mockImplementation(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
+            .mockImplementationOnce(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }))
+            .mockImplementationOnce(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
         const spyGetConvertibleTokens = jest
             .spyOn(eos, 'getConvertibleTokens')
@@ -205,7 +207,7 @@ describe('Path finder tests', () => {
     it('generatePath from eos token to eos token', async () => {
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
-            .mockImplementation(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
+            .mockImplementationOnce(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
         const spyGetConvertibleTokens = jest
             .spyOn(eos, 'getConvertibleTokens')

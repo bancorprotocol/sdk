@@ -16,11 +16,14 @@ describe('price tests', () => {
     it('getRateByPath from eos token to eos token (convert)', async () => {
         const spyGetSmartTokens = jest
             .spyOn(eos, 'getSmartTokens')
-            .mockImplementation(() => ({ }));
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
-            .mockImplementation(() => Promise.resolve({
+            .mockImplementationOnce(() => Promise.resolve({
                 rows: [
                     {
                         contract: 'aaaaaaaaaaaa',
@@ -41,7 +44,7 @@ describe('price tests', () => {
 
         const spyGetConverterSettings = jest
             .spyOn(eos, 'getConverterSettings')
-            .mockImplementation(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
+            .mockImplementationOnce(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
 
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
@@ -82,7 +85,7 @@ describe('price tests', () => {
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
-            .mockImplementation(() => Promise.resolve({
+            .mockImplementationOnce(() => Promise.resolve({
                 rows: [
                     {
                         contract: 'bbbbbbbbbbbb',
@@ -103,7 +106,7 @@ describe('price tests', () => {
 
         const spyGetConverterSettings = jest
             .spyOn(eos, 'getConverterSettings')
-            .mockImplementation(() => Promise.resolve({ rows: [{ fee: 0 }] }));
+            .mockImplementationOnce(() => Promise.resolve({ rows: [{ fee: 0 }] }));
 
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
@@ -159,7 +162,7 @@ describe('price tests', () => {
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
-            .mockImplementation(() => Promise.resolve({
+            .mockImplementationOnce(() => Promise.resolve({
                 rows: [
                     {
                         contract: 'bbbbbbbbbbbb',
@@ -180,7 +183,7 @@ describe('price tests', () => {
 
         const spyGetConverterSettings = jest
             .spyOn(eos, 'getConverterSettings')
-            .mockImplementation(() => Promise.resolve({ rows: [{ fee: 0 }] }));
+            .mockImplementationOnce(() => Promise.resolve({ rows: [{ fee: 0 }] }));
 
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
@@ -228,11 +231,14 @@ describe('price tests', () => {
     it('getRateByPath from eos token to ethereum token', async () => {
         const spyGetSmartTokens = jest
             .spyOn(eos, 'getSmartTokens')
-            .mockImplementation(() => ({ }));
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
-            .mockImplementation(() => Promise.resolve({
+            .mockImplementationOnce(() => Promise.resolve({
                 rows: [
                     {
                         contract: 'aaaaaaaaaaaa',
@@ -253,7 +259,7 @@ describe('price tests', () => {
 
         const spyGetConverterSettings = jest
             .spyOn(eos, 'getConverterSettings')
-            .mockImplementation(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
+            .mockImplementationOnce(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
 
         const spyGetReserveBalances = jest
             .spyOn(eos, 'getReserveBalances')
@@ -311,15 +317,18 @@ describe('price tests', () => {
 
         const spyGetConverterSettings = jest
             .spyOn(eos, 'getConverterSettings')
-            .mockImplementation(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
+            .mockImplementationOnce(() => Promise.resolve({ rows: [{ fee: 2500 }] }));
 
         const spyGetSmartTokens = jest
             .spyOn(eos, 'getSmartTokens')
-            .mockImplementation(() => ({ }));
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }))
+            .mockImplementationOnce(() => ({ }));
 
         const spyGetReservesFromCode = jest
             .spyOn(eos, 'getReservesFromCode')
-            .mockImplementation(() => Promise.resolve({
+            .mockImplementationOnce(() => Promise.resolve({
                 rows: [
                     {
                         contract: 'aaaaaaaaaaaa',
