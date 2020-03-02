@@ -7,12 +7,12 @@ const MAX_FEE = new Decimal(1000000);
 
 Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
 
-export function toWei(number, decimals) {
-    return new Decimal(`${number}e+${decimals}`).toFixed();
+export function toWei(amount, decimals) {
+    return new Decimal(`${amount}e+${decimals}`).toFixed();
 }
 
-export function fromWei(number, decimals) {
-    return new Decimal(`${number}e-${decimals}`).toFixed();
+export function fromWei(amount, decimals) {
+    return new Decimal(`${amount}e-${decimals}`).toFixed();
 }
 
 export function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {

@@ -9,12 +9,12 @@ var ONE = new decimal_js_1.default(1);
 var MAX_RATIO = new decimal_js_1.default(1000000);
 var MAX_FEE = new decimal_js_1.default(1000000);
 decimal_js_1.default.set({ precision: 100, rounding: decimal_js_1.default.ROUND_DOWN });
-function toWei(number, decimals) {
-    return new decimal_js_1.default(number + "e+" + decimals).toFixed();
+function toWei(amount, decimals) {
+    return new decimal_js_1.default(amount + "e+" + decimals).toFixed();
 }
 exports.toWei = toWei;
-function fromWei(number, decimals) {
-    return new decimal_js_1.default(number + "e-" + decimals).toFixed();
+function fromWei(amount, decimals) {
+    return new decimal_js_1.default(amount + "e-" + decimals).toFixed();
 }
 exports.fromWei = fromWei;
 function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {

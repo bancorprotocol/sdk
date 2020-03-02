@@ -1,5 +1,5 @@
-export declare function toWei(number: any, decimals: any): string;
-export declare function fromWei(number: any, decimals: any): string;
+export declare function toWei(amount: any, decimals: any): string;
+export declare function fromWei(amount: any, decimals: any): string;
 export declare function calculatePurchaseReturn(supply: any, reserveBalance: any, reserveRatio: any, depositAmount: any): any;
 export declare function calculateSaleReturn(supply: any, reserveBalance: any, reserveRatio: any, sellAmount: any): any;
 export declare function calculateCrossReserveReturn(fromReserveBalance: any, fromReserveRatio: any, toReserveBalance: any, toReserveRatio: any, amount: any): any;
