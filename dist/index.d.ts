@@ -20,10 +20,7 @@ export declare class SDK {
         path: Token[];
         rate: string;
     }>;
-    getConverterVersion(converter: Converter): Promise<{
-        type: string;
-        value: string;
-    }>;
+    getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]>;
     buildPathsFile(): Promise<void>;

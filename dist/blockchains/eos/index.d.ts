@@ -7,6 +7,7 @@ export declare class EOS {
     getAnchorToken(): Token;
     getConversionPath(from: Token, to: Token): Promise<any[]>;
     getRateByPath(path: any, amount: any): Promise<any>;
+    getConverterVersion(converter: any): Promise<string>;
     buildPathsFile(): Promise<void>;
 }
 export declare const getReservesFromCode: (jsonRpc: any, code: any, symbol?: any) => Promise<any>;

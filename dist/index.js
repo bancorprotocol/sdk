@@ -170,13 +170,21 @@ var SDK = /** @class */ (function () {
     };
     SDK.prototype.getConverterVersion = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        if (!(converter.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.ethereum.getConverterVersion(converter.blockchainId)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                    case 2: throw new Error(converter.blockchainType + ' blockchain not supported');
+                        _a = converter.blockchainType;
+                        switch (_a) {
+                            case 'eos': return [3 /*break*/, 1];
+                            case 'ethereum': return [3 /*break*/, 3];
+                        }
+                        return [3 /*break*/, 5];
+                    case 1: return [4 /*yield*/, this.eos.getConverterVersion(converter.blockchainId)];
+                    case 2: return [2 /*return*/, _b.sent()];
+                    case 3: return [4 /*yield*/, this.ethereum.getConverterVersion(converter.blockchainId)];
+                    case 4: return [2 /*return*/, _b.sent()];
+                    case 5: throw new Error(converter.blockchainType + ' blockchain not supported');
                 }
             });
         });

@@ -71,7 +71,7 @@ export class Ethereum {
     }
 
     async getConverterVersion(converter) {
-        return await converterVersion.get(this, converter);
+        return (await converterVersion.get(this, converter)).value;
     }
 
     async getConversionEvents(token, fromBlock, toBlock) {

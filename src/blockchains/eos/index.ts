@@ -39,6 +39,10 @@ export class EOS {
         return amount;
     }
 
+    async getConverterVersion(converter) {
+        return '1.0';
+    }
+
     async buildPathsFile() {
         const convertibleTokens = {};
         const smartTokens = {};

@@ -74,9 +74,13 @@ export class SDK {
         throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
     }
 
-    async getConverterVersion(converter: Converter): Promise<{type: string; value: string;}> {
-        if (converter.blockchainType == 'ethereum')
+    async getConverterVersion(converter: Converter): Promise<string> {
+        switch (converter.blockchainType) {
+        case 'eos':
+            return await this.eos.getConverterVersion(converter.blockchainId);
+        case 'ethereum':
             return await this.ethereum.getConverterVersion(converter.blockchainId);
+        }
         throw new Error(converter.blockchainType + ' blockchain not supported');
     }
 
