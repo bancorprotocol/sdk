@@ -121,12 +121,12 @@ var EOS = /** @class */ (function () {
     };
     EOS.prototype.buildPathsFile = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var tokens, smartTokens;
+            var convertibleTokens, smartTokens;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        tokens = {};
+                        convertibleTokens = {};
                         smartTokens = {};
                         return [4 /*yield*/, Promise.all(converter_blockchain_ids_1.converterBlockchainIds.map(function (converterBlockchainId) { return __awaiter(_this, void 0, void 0, function () {
                                 var smartToken, smartTokenContract, smartTokenName, reservesObject, reserves;
@@ -146,10 +146,10 @@ var EOS = /** @class */ (function () {
                                             reserves.map(function (reserveObj) {
                                                 var _a, _b;
                                                 var reserveSymbol = getSymbol(reserveObj.currency);
-                                                var existingRecord = tokens[reserveObj.contract];
-                                                if (existingRecord)
-                                                    existingRecord[reserveSymbol][smartTokenName] = converterBlockchainId;
-                                                tokens[reserveObj.contract] = existingRecord ? existingRecord : (_a = {}, _a[reserveSymbol] = (_b = {}, _b[smartTokenName] = converterBlockchainId, _b), _a);
+                                                if (convertibleTokens[reserveObj.contract])
+                                                    convertibleTokens[reserveObj.contract][reserveSymbol][smartTokenName] = converterBlockchainId;
+                                                else
+                                                    convertibleTokens[reserveObj.contract] = (_a = {}, _a[reserveSymbol] = (_b = {}, _b[smartTokenName] = converterBlockchainId, _b), _a);
                                             });
                                             return [2 /*return*/];
                                     }
@@ -159,8 +159,8 @@ var EOS = /** @class */ (function () {
                         _a.sent();
                         fs_1.default.writeFileSync('./src/blockchains/eos/registry.ts', "export const anchorTokenId = '" + registry.anchorTokenId + "';\n\n" +
                             ("export const anchorTokenSymbol = '" + registry.anchorTokenSymbol + "';\n\n") +
-                            ("export const convertibleTokens = " + JSON.stringify(registry.convertibleTokens, null, 4) + ";\n\n") +
-                            ("export const smartTokens = " + JSON.stringify(registry.smartTokens, null, 4) + ";\n"), { encoding: "utf8" });
+                            ("export const convertibleTokens = " + JSON.stringify(convertibleTokens, null, 4) + ";\n\n") +
+                            ("export const smartTokens = " + JSON.stringify(smartTokens, null, 4) + ";\n"), { encoding: "utf8" });
                         return [2 /*return*/];
                 }
             });

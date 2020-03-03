@@ -40,7 +40,7 @@ export class EOS {
     }
 
     async buildPathsFile() {
-        const tokens = {};
+        const convertibleTokens = {};
         const smartTokens = {};
         await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
             const smartToken = await getSmartToken(this.jsonRpc, converterBlockchainId);
@@ -51,19 +51,18 @@ export class EOS {
             smartTokens[smartTokenContract] = { [smartTokenName]: { [smartTokenName]: converterBlockchainId } };
             reserves.map((reserveObj: Reserve) => {
                 const reserveSymbol = getSymbol(reserveObj.currency);
-                const existingRecord = tokens[reserveObj.contract];
-                if (existingRecord)
-                    existingRecord[reserveSymbol][smartTokenName] = converterBlockchainId;
-
-                tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: { [smartTokenName]: converterBlockchainId } };
+                if (convertibleTokens[reserveObj.contract])
+                    convertibleTokens[reserveObj.contract][reserveSymbol][smartTokenName] = converterBlockchainId;
+                else
+                    convertibleTokens[reserveObj.contract] = { [reserveSymbol]: { [smartTokenName]: converterBlockchainId } };
             });
         }));
         fs.writeFileSync(
             './src/blockchains/eos/registry.ts',
             `export const anchorTokenId = '${registry.anchorTokenId}';\n\n` +
             `export const anchorTokenSymbol = '${registry.anchorTokenSymbol}';\n\n` +
-            `export const convertibleTokens = ${JSON.stringify(registry.convertibleTokens, null, 4)};\n\n` +
-            `export const smartTokens = ${JSON.stringify(registry.smartTokens, null, 4)};\n`,
+            `export const convertibleTokens = ${JSON.stringify(convertibleTokens, null, 4)};\n\n` +
+            `export const smartTokens = ${JSON.stringify(smartTokens, null, 4)};\n`,
             { encoding: "utf8" }
         );
     }
