@@ -76,6 +76,13 @@ var EOS = /** @class */ (function () {
     }
     EOS.prototype.close = function () {
     };
+    EOS.prototype.init = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/];
+            });
+        });
+    };
     EOS.prototype.getAnchorToken = function () {
         return exports.getAnchorToken(); // calling global function
     };

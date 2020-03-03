@@ -17,6 +17,7 @@ export class SDK {
     }
 
     async init() {
+        await this.eos.init();
         await this.ethereum.init();
     }
 

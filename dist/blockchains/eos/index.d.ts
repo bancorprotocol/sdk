@@ -4,6 +4,7 @@ export declare class EOS {
     jsonRpc: JsonRpc;
     constructor(nodeEndpoint: string);
     close(): void;
+    init(): Promise<void>;
     getAnchorToken(): Token;
     getConversionPath(from: Token, to: Token): Promise<any[]>;
     getRateByPath(path: any, amount: any): Promise<any>;

@@ -22,6 +22,9 @@ export class EOS {
     close() {
     }
 
+    async init() {
+    }
+
     getAnchorToken() {
         return getAnchorToken(); // calling global function
     }
