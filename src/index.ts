@@ -30,9 +30,6 @@ export class SDK {
         case 'eos,eos':
             eosPath = await this.eos.getConversionPath(sourceToken, targetToken);
             return [eosPath];
-        case 'ethereum,ethereum':
-            [ethPaths, ethRates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
-            return [getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
         case 'eos,ethereum':
             eosPath = await this.eos.getConversionPath(sourceToken, this.eos.getAnchorToken());
             [ethPaths, ethRates] = await this.ethereum.getAllPathsAndRates(this.ethereum.getAnchorToken(), targetToken.blockchainId, amount);
@@ -41,6 +38,9 @@ export class SDK {
             [ethPaths, ethRates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, this.ethereum.getAnchorToken(), amount);
             eosPath = await this.eos.getConversionPath(this.eos.getAnchorToken(), targetToken);
             return [getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), eosPath];
+        case 'ethereum,ethereum':
+            [ethPaths, ethRates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
+            return [getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
         }
 
         throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
