@@ -8,6 +8,7 @@ import { ConversionPathStep, Token } from '../../path_generation';
 import { BancorConverter } from './contracts/BancorConverter';
 import { ContractRegistry } from './contracts/ContractRegistry';
 import { BancorConverterRegistry } from './contracts/BancorConverterRegistry';
+import { BancorNetwork } from './contracts/BancorNetwork';
 import { SmartToken } from './contracts/SmartToken';
 import { ERC20Token } from './contracts/ERC20Token';
 
@@ -17,13 +18,17 @@ let web3;
 let bancorConverter = BancorConverter;
 let contractRegistry = ContractRegistry;
 let registryAbi = BancorConverterRegistry;
+let networkAbi = BancorNetwork;
 let registry;
+let network;
 
 export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6') {
     web3 = new Web3(new Web3.providers.HttpProvider(ethereumNodeUrl));
     const contractRegistryContract = new web3.eth.Contract(contractRegistry, ethereumContractRegistryAddress);
-    const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call(); // '0x85e27A5718382F32238497e78b4A40DD778ab847'
+    const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
+    const networkBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
+    network = new web3.eth.Contract(networkAbi, networkBlockchainId);
 }
 
 export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
@@ -149,7 +154,7 @@ function getAllPathsRecursive(paths, path, targetToken, registryData) {
         getAllPathsRecursive(paths, [...path, nextToken], targetToken, registryData);
 }
 
-export async function getAllPaths(sourceToken, targetToken) {
+export async function getAllPathsAndRates(sourceToken, targetToken, amount) {
     const MULTICALL_ABI = [{"constant":false,"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes","name":"callData","type":"bytes"}],"internalType":"struct Multicall.Call[]","name":"calls","type":"tuple[]"},{"internalType":"bool","name":"strict","type":"bool"}],"name":"aggregate","outputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"components":[{"internalType":"bool","name":"success","type":"bool"},{"internalType":"bytes","name":"data","type":"bytes"}],"internalType":"struct Multicall.Return[]","name":"returnData","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
     const MULTICALL_ADDRESS = '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2';
     const multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
@@ -171,5 +176,20 @@ export async function getAllPaths(sourceToken, targetToken) {
 
     const paths = [];
     getAllPathsRecursive(paths, [Web3.utils.toChecksumAddress(sourceToken)], Web3.utils.toChecksumAddress(targetToken), registryData);
-    return paths;
+
+    const sourceDecimals = await getDecimals(sourceToken);
+    const targetDecimals = await getDecimals(targetToken);
+    const rates = await getRates(multicall, paths, toWei(amount, sourceDecimals));
+    return [paths, rates.map(rate => fromWei(rate, targetDecimals))];
 }
+
+const getDecimals = async function(token) {
+    const tokenContract = new web3.eth.Contract(ERC20Token, token);
+    return await tokenContract.methods.decimals().call();
+};
+
+const getRates = async function(multicall, paths, amount) {
+    const calls = paths.map(path => [network._address, network.methods.getReturnByPath(path, amount).encodeABI()]);
+    const [blockNumber, returnData] = await multicall.methods.aggregate(calls, false).call();
+    return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : "0");
+};

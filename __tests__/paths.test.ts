@@ -33,15 +33,15 @@ describe('Path finder tests', () => {
         const srcToken = '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315';
         const trgToken = '0xd26114cd6ee289accf82350c8d8487fedb8a0c07';
 
-        const spyGetAllPaths = jest
-            .spyOn(ethereumFunctions, 'getAllPaths')
-            .mockImplementation(() => Promise.resolve([[
+        const spyGetAllPathsAndRates = jest
+            .spyOn(ethereumFunctions, 'getAllPathsAndRates')
+            .mockImplementation(() => Promise.resolve([[[
                 '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315',
                 '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
                 '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c',
                 '0x99eBD396Ce7AA095412a4Cd1A0C959D6Fd67B340',
                 '0xd26114cd6ee289accf82350c8d8487fedb8a0c07'
-            ]]));
+            ]], ['0']]));
 
         const response = await sdk.generatePath({
             blockchainType: 'ethereum',
@@ -65,17 +65,17 @@ describe('Path finder tests', () => {
         ];
 
         expect(response.paths).toEqual(expectedResult);
-        expect(spyGetAllPaths).toHaveBeenCalledTimes(1);
+        expect(spyGetAllPathsAndRates).toHaveBeenCalledTimes(1);
     });
 
     it('ETH to KARMA path finder', async () => {
-        const spyGetAllPaths = jest
-            .spyOn(ethereumFunctions, 'getAllPaths')
-            .mockImplementation(() => Promise.resolve([[
+        const spyGetAllPathsAndRates = jest
+            .spyOn(ethereumFunctions, 'getAllPathsAndRates')
+            .mockImplementation(() => Promise.resolve([[[
                 '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315',
                 '0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533',
                 '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c'
-            ]]));
+            ]], ['0']]));
 
         const spyGetEosConverterBlockchainId = jest
             .spyOn(eosFunctions, 'getConverterBlockchainId')
@@ -125,7 +125,7 @@ describe('Path finder tests', () => {
         ];
 
         expect(response.paths).toEqual(expectedResult);
-        expect(spyGetAllPaths).toHaveBeenCalledTimes(1);
+        expect(spyGetAllPathsAndRates).toHaveBeenCalledTimes(1);
         expect(spyGetReserves).toHaveBeenCalledTimes(1);
         expect(spyGetEosConverterBlockchainId).toHaveBeenCalledTimes(1);
         expect(spyGetReserveCount).toHaveBeenCalledTimes(1);

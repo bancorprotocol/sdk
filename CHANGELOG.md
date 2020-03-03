@@ -1,3 +1,8 @@
+### 0.1.10
+* Ethereum - new path generation logic that finds the cheapest price vs. shortest path
+* Ethereum - lower number of requests to a node by utilising the Multicall contract
+
+
 ### 0.1.9
 * Fixed Ethereum non checksummed address input
 

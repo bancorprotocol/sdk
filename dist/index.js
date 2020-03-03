@@ -70,11 +70,13 @@ function generateEosPaths() {
     });
 }
 exports.generateEosPaths = generateEosPaths;
-function generatePath(sourceToken, targetToken) {
+function generatePath(sourceToken, targetToken, amount, getBestPath) {
+    if (amount === void 0) { amount = '1'; }
+    if (getBestPath === void 0) { getBestPath = getCheapestPath; }
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, path_generation_1.generatePathByBlockchainIds(sourceToken, targetToken)];
+                case 0: return [4 /*yield*/, path_generation_1.generatePathByBlockchainIds(sourceToken, targetToken, amount, getBestPath)];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -189,20 +191,56 @@ function getRate(sourceToken, targetToken, amount) {
     });
 }
 exports.getRate = getRate;
-function getAllPaths(sourceToken, targetToken) {
+function getAllPathsAndRates(sourceToken, targetToken, amount) {
+    if (amount === void 0) { amount = '1'; }
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!(sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, index_1.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId)];
+                    return [4 /*yield*/, index_1.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
                 case 1: return [2 /*return*/, _a.sent()];
                 case 2: throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
             }
         });
     });
 }
-exports.getAllPaths = getAllPaths;
+exports.getAllPathsAndRates = getAllPathsAndRates;
+function getShortestPath(paths, rates) {
+    var index = 0;
+    for (var i = 1; i < paths.length; i++) {
+        if (betterPath(paths, index, i) || (equalPath(paths, index, i) && betterRate(rates, index, i)))
+            index = i;
+    }
+    return paths[index];
+}
+function getCheapestPath(paths, rates) {
+    var index = 0;
+    for (var i = 1; i < rates.length; i++) {
+        if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
+            index = i;
+    }
+    return paths[index];
+}
+function betterPath(paths, index1, index2) {
+    return paths[index1].length > paths[index2].length;
+}
+function betterRate(rates, index1, index2) {
+    // return Number(rates[index1]) < Number(rates[index2]);
+    var rate1 = rates[index1].split('.').concat('');
+    var rate2 = rates[index2].split('.').concat('');
+    rate1[0] = rate1[0].padStart(rate2[0].length, '0');
+    rate2[0] = rate2[0].padStart(rate1[0].length, '0');
+    rate1[1] = rate1[1].padEnd(rate2[1].length, '0');
+    rate2[1] = rate2[1].padEnd(rate1[1].length, '0');
+    return rate1.join('') < rate2.join('');
+}
+function equalPath(paths, index1, index2) {
+    return paths[index1].length == paths[index2].length;
+}
+function equalRate(rates, index1, index2) {
+    return rates[index1] == rates[index2];
+}
 exports.default = {
     init: init,
     generateEosPaths: generateEosPaths,
@@ -210,5 +248,7 @@ exports.default = {
     generatePath: generatePath,
     getRateByPath: exports.getRateByPath,
     buildPathsFile: eos_1.buildPathsFile,
-    getAllPaths: getAllPaths
+    getAllPathsAndRates: getAllPathsAndRates,
+    getShortestPath: getShortestPath,
+    getCheapestPath: getCheapestPath
 };

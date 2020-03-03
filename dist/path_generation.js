@@ -157,11 +157,12 @@ function getConverterToken(blockchainId, connector, blockchainType) {
     });
 }
 exports.getConverterToken = getConverterToken;
-function generatePathByBlockchainIds(sourceToken, targetToken) {
+function generatePathByBlockchainIds(sourceToken, targetToken, amount, getBestPath) {
     return __awaiter(this, void 0, void 0, function () {
-        var pathObjects, paths, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-        return __generator(this, function (_l) {
-            switch (_l.label) {
+        var pathObjects, paths, rates, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+        var _l, _m, _o;
+        return __generator(this, function (_p) {
+            switch (_p.label) {
                 case 0:
                     pathObjects = { paths: [] };
                     _a = sourceToken.blockchainType + ',' + targetToken.blockchainType;
@@ -177,32 +178,32 @@ function generatePathByBlockchainIds(sourceToken, targetToken) {
                     _d = { type: 'eos' };
                     return [4 /*yield*/, getConversionPath(sourceToken, targetToken)];
                 case 2:
-                    _c.apply(_b, [(_d.path = _l.sent(), _d)]);
+                    _c.apply(_b, [(_d.path = _p.sent(), _d)]);
                     return [3 /*break*/, 11];
-                case 3: return [4 /*yield*/, ethereum_1.getAllPaths(sourceToken.blockchainId, targetToken.blockchainId)];
+                case 3: return [4 /*yield*/, ethereum_1.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
                 case 4:
-                    paths = _l.sent();
-                    pathObjects.paths.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
+                    _l = _p.sent(), paths = _l[0], rates = _l[1];
+                    pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
                     return [3 /*break*/, 11];
-                case 5: return [4 /*yield*/, ethereum_1.getAllPaths(EthereumAnchorToken.blockchainId, targetToken.blockchainId)];
+                case 5: return [4 /*yield*/, ethereum_1.getAllPathsAndRates(EthereumAnchorToken.blockchainId, targetToken.blockchainId, amount)];
                 case 6:
-                    paths = _l.sent();
+                    _m = _p.sent(), paths = _m[0], rates = _m[1];
                     _f = (_e = pathObjects.paths).push;
                     _g = { type: 'eos' };
                     return [4 /*yield*/, getConversionPath(sourceToken, null)];
                 case 7:
-                    _f.apply(_e, [(_g.path = _l.sent(), _g)]);
-                    pathObjects.paths.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
+                    _f.apply(_e, [(_g.path = _p.sent(), _g)]);
+                    pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
                     return [3 /*break*/, 11];
-                case 8: return [4 /*yield*/, ethereum_1.getAllPaths(sourceToken.blockchainId, EthereumAnchorToken.blockchainId)];
+                case 8: return [4 /*yield*/, ethereum_1.getAllPathsAndRates(sourceToken.blockchainId, EthereumAnchorToken.blockchainId, amount)];
                 case 9:
-                    paths = _l.sent();
-                    pathObjects.paths.push({ type: 'ethereum', path: paths.reduce(function (a, b) { return a.length < b.length ? a : b; }) });
+                    _o = _p.sent(), paths = _o[0], rates = _o[1];
+                    pathObjects.paths.push({ type: 'ethereum', path: getBestPath(paths, rates) });
                     _j = (_h = pathObjects.paths).push;
                     _k = { type: 'eos' };
                     return [4 /*yield*/, getConversionPath(null, targetToken)];
                 case 10:
-                    _j.apply(_h, [(_k.path = _l.sent(), _k)]);
+                    _j.apply(_h, [(_k.path = _p.sent(), _k)]);
                     return [3 /*break*/, 11];
                 case 11: return [2 /*return*/, pathObjects];
             }

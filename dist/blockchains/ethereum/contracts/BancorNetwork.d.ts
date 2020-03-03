@@ -1,4 +1,4 @@
-export declare const SmartToken: ({
+export declare const BancorNetwork: ({
     constant: boolean;
     inputs: {
         name: string;

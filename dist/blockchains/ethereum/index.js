@@ -55,6 +55,7 @@ var utils_1 = require("./utils");
 var BancorConverter_1 = require("./contracts/BancorConverter");
 var ContractRegistry_1 = require("./contracts/ContractRegistry");
 var BancorConverterRegistry_1 = require("./contracts/BancorConverterRegistry");
+var BancorNetwork_1 = require("./contracts/BancorNetwork");
 var SmartToken_1 = require("./contracts/SmartToken");
 var ERC20Token_1 = require("./contracts/ERC20Token");
 var ETHBlockchainId = '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315';
@@ -63,11 +64,13 @@ var web3;
 var bancorConverter = BancorConverter_1.BancorConverter;
 var contractRegistry = ContractRegistry_1.ContractRegistry;
 var registryAbi = BancorConverterRegistry_1.BancorConverterRegistry;
+var networkAbi = BancorNetwork_1.BancorNetwork;
 var registry;
+var network;
 function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
     if (ethereumContractRegistryAddress === void 0) { ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6'; }
     return __awaiter(this, void 0, void 0, function () {
-        var contractRegistryContract, registryBlockchainId;
+        var contractRegistryContract, registryBlockchainId, networkBlockchainId;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -76,7 +79,11 @@ function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
                     return [4 /*yield*/, contractRegistryContract.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
                 case 1:
                     registryBlockchainId = _a.sent();
+                    return [4 /*yield*/, contractRegistryContract.methods.addressOf(web3_1.default.utils.asciiToHex('BancorNetwork')).call()];
+                case 2:
+                    networkBlockchainId = _a.sent();
                     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
+                    network = new web3.eth.Contract(networkAbi, networkBlockchainId);
                     return [2 /*return*/];
             }
         });
@@ -325,9 +332,9 @@ function getAllPathsRecursive(paths, path, targetToken, registryData) {
             getAllPathsRecursive(paths, __spreadArrays(path, [nextToken]), targetToken, registryData);
         }
 }
-function getAllPaths(sourceToken, targetToken) {
+function getAllPathsAndRates(sourceToken, targetToken, amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var MULTICALL_ABI, MULTICALL_ADDRESS, multicall, convertibleTokens, calls, _a, blockNumber, returnData, registryData, _loop_1, i, paths;
+        var MULTICALL_ABI, MULTICALL_ADDRESS, multicall, convertibleTokens, calls, _a, blockNumber, returnData, registryData, _loop_1, i, paths, sourceDecimals, targetDecimals, rates;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -356,9 +363,46 @@ function getAllPaths(sourceToken, targetToken) {
                     }
                     paths = [];
                     getAllPathsRecursive(paths, [web3_1.default.utils.toChecksumAddress(sourceToken)], web3_1.default.utils.toChecksumAddress(targetToken), registryData);
-                    return [2 /*return*/, paths];
+                    return [4 /*yield*/, getDecimals(sourceToken)];
+                case 3:
+                    sourceDecimals = _b.sent();
+                    return [4 /*yield*/, getDecimals(targetToken)];
+                case 4:
+                    targetDecimals = _b.sent();
+                    return [4 /*yield*/, getRates(multicall, paths, utils_1.toWei(amount, sourceDecimals))];
+                case 5:
+                    rates = _b.sent();
+                    return [2 /*return*/, [paths, rates.map(function (rate) { return utils_1.fromWei(rate, targetDecimals); })]];
             }
         });
     });
 }
-exports.getAllPaths = getAllPaths;
+exports.getAllPathsAndRates = getAllPathsAndRates;
+var getDecimals = function (token) {
+    return __awaiter(this, void 0, void 0, function () {
+        var tokenContract;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    tokenContract = new web3.eth.Contract(ERC20Token_1.ERC20Token, token);
+                    return [4 /*yield*/, tokenContract.methods.decimals().call()];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+};
+var getRates = function (multicall, paths, amount) {
+    return __awaiter(this, void 0, void 0, function () {
+        var calls, _a, blockNumber, returnData;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    calls = paths.map(function (path) { return [network._address, network.methods.getReturnByPath(path, amount).encodeABI()]; });
+                    return [4 /*yield*/, multicall.methods.aggregate(calls, false).call()];
+                case 1:
+                    _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
+                    return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : "0"; })];
+            }
+        });
+    });
+};

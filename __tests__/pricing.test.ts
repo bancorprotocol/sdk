@@ -210,8 +210,8 @@ describe('price tests', () => {
 
         const spyGetAmountInTokenWei = jest
             .spyOn(ethereumFunctions, 'getAmountInTokenWei')
-            .mockImplementationOnce(() => Promise.resolve(1000000000000000000))
-            .mockImplementationOnce(() => Promise.resolve(563288093941643064061));
+            .mockImplementationOnce(() => Promise.resolve('1000000000000000000'))
+            .mockImplementationOnce(() => Promise.resolve('563288093941643064061'));
 
         const shortestPathResult = [
             '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315',
@@ -312,7 +312,7 @@ describe('price tests', () => {
         const spyGetAmountInTokenWei = jest
             .spyOn(ethereumFunctions, 'getAmountInTokenWei')
             .mockImplementationOnce(() => Promise.resolve(''))
-            .mockImplementationOnce(() => Promise.resolve(1000000000000000000));
+            .mockImplementationOnce(() => Promise.resolve('1000000000000000000'));
 
         const spyGetTokenDecimals = jest
             .spyOn(ethereumFunctions, 'getTokenDecimals')
