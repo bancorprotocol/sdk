@@ -29,17 +29,17 @@ export class EOS {
         return getAnchorToken(); // calling global function
     }
 
+    async getRateByPath(path: Token[], amount: string) {
+        for (let i = 0; i < path.length - 1; i += 2)
+            amount = await getConversionRate(this.jsonRpc, {...path[i + 1]}, path[i], path[i + 2], amount);
+        return amount;
+    }
+
     async getConversionPath(from: Token, to: Token) {
         const anchorToken = this.getAnchorToken();
         const sourcePath = await getPathToAnchor(this.jsonRpc, from, anchorToken);
         const targetPath = await getPathToAnchor(this.jsonRpc, to, anchorToken);
         return getShortestPath(sourcePath, targetPath);
-    }
-
-    async getRateByPath(path, amount) {
-        for (let i = 0; i < path.length - 1; i += 2)
-            amount = await getConversionRate(this.jsonRpc, {...path[i + 1]}, path[i], path[i + 2], amount);
-        return amount;
     }
 
     async getConverterVersion(converter) {

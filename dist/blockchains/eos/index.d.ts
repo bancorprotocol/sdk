@@ -6,8 +6,8 @@ export declare class EOS {
     close(): void;
     init(): Promise<void>;
     getAnchorToken(): Token;
+    getRateByPath(path: Token[], amount: string): Promise<string>;
     getConversionPath(from: Token, to: Token): Promise<any[]>;
-    getRateByPath(path: any, amount: any): Promise<any>;
     getConverterVersion(converter: any): Promise<string>;
     buildPathsFile(): Promise<void>;
 }
