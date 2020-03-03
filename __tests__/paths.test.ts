@@ -252,37 +252,75 @@ describe('paths test', () => {
         const spyGetGraph = jest
             .spyOn(ethereum, 'getGraph')
             .mockImplementationOnce(() => Promise.resolve({
-                '0x1111111111111111111111111111111111111111' : ['0x2222222222222222222222222222222222222222'],
-                '0x2222222222222222222222222222222222222222' : ['0x1111111111111111111111111111111111111111', '0x3333333333333333333333333333333333333333'],
-                '0x3333333333333333333333333333333333333333' : ['0x2222222222222222222222222222222222222222', '0x4444444444444444444444444444444444444444'],
-                '0x4444444444444444444444444444444444444444' : ['0x3333333333333333333333333333333333333333', '0x5555555555555555555555555555555555555555'],
-                '0x5555555555555555555555555555555555555555' : ['0x4444444444444444444444444444444444444444']
+                '0x1111111111111111111111111111111111111111' : ['0x2222222222222222222222222222222222222222', '0x3333333333333333333333333333333333333333', '0x4444444444444444444444444444444444444444'],
+                '0x2222222222222222222222222222222222222222' : ['0x3333333333333333333333333333333333333333', '0x4444444444444444444444444444444444444444', '0x1111111111111111111111111111111111111111'],
+                '0x3333333333333333333333333333333333333333' : ['0x4444444444444444444444444444444444444444', '0x1111111111111111111111111111111111111111', '0x2222222222222222222222222222222222222222'],
+                '0x4444444444444444444444444444444444444444' : ['0x1111111111111111111111111111111111111111', '0x2222222222222222222222222222222222222222', '0x3333333333333333333333333333333333333333'],
             }));
 
         const spyGetDecimals = jest
             .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('4'))
-            .mockImplementationOnce(() => Promise.resolve('4'));
+            .mockImplementationOnce(() => Promise.resolve('10'))
+            .mockImplementationOnce(() => Promise.resolve('10'))
 
         const spyGetRates = jest
             .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve(['12345678']));
+            .mockImplementationOnce(() => Promise.resolve([
+                '1111111111',
+                '2222222222',
+                '3333333333',
+                '4444444444',
+                '5555555555'
+            ]));
 
         const response = await sdk.getAllPathsAndRates(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
-            { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
+            { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' }
         );
 
-        const expectedResult = [{
-            path: [
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
-                { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' },
-                { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
-            ],
-            rate: '1234.5678'
-        }];
+        const expectedResult = [
+            {
+                path: [
+                    { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+                    { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+                    { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+                    { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' }
+                ],
+                rate: '0.1111111111'
+            },
+            {
+                path: [
+                    { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+                    { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+                    { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' }
+                ],
+                rate: '0.2222222222'
+            },
+            {
+                path: [
+                    { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+                    { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+                    { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' }
+                ],
+                rate: '0.3333333333'
+            },
+            {
+                path: [
+                    { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+                    { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+                    { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+                    { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' }
+                ],
+                rate: '0.4444444444'
+            },
+            {
+                path: [
+                    { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+                    { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' }
+                ],
+                rate: '0.5555555555'
+            }
+        ];
 
         expect(response).toEqual(expectedResult);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
