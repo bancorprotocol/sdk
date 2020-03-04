@@ -43,11 +43,9 @@ describe('paths test', () => {
         );
 
         const expectedResult = [
-            [
-                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
-                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
-                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
-            ]
+            { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
+            { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+            { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
         ];
 
         expect(response).toEqual(expectedResult);
@@ -109,16 +107,12 @@ describe('paths test', () => {
         );
 
         const expectedResult = [
-            [
-                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
-                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
-                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
-            ],
-            [
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
-            ]
+            { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
+            { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+            { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
+            { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+            { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+            { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
         ];
 
         expect(response).toEqual(expectedResult);
@@ -184,16 +178,12 @@ describe('paths test', () => {
         );
 
         const expectedResult = [
-            [
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' }
-            ],
-            [
-                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
-                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
-                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
-            ]
+            { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+            { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+            { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+            { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
+            { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+            { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
         ];
 
         expect(response).toEqual(expectedResult);
@@ -233,13 +223,11 @@ describe('paths test', () => {
         );
 
         const expectedResult = [
-            [
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
-                { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' },
-                { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
-            ]
+            { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+            { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+            { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+            { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' },
+            { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
         ];
 
         expect(response).toEqual(expectedResult);

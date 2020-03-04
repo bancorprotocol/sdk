@@ -13,8 +13,8 @@ export declare class SDK {
     generatePath(sourceToken: Token, targetToken: Token, { amount, getBestPath }?: {
         amount?: string;
         getBestPath?: (paths: string[][], rates: string[]) => string[];
-    }): Promise<Token[][]>;
-    getRateByPath(paths: Token[][], amount: string): Promise<string>;
+    }): Promise<Token[]>;
+    getRateByPath(path: Token[], amount: string): Promise<string>;
     getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<string>;
     getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount?: string): Promise<{
         path: Token[];

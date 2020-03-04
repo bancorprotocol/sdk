@@ -21,7 +21,7 @@ export class SDK {
         await this.ethereum.init();
     }
 
-    async generatePath(sourceToken: Token, targetToken: Token, {amount = '1', getBestPath = this.getCheapestPath} = {}): Promise<Token[][]> {
+    async generatePath(sourceToken: Token, targetToken: Token, {amount = '1', getBestPath = this.getCheapestPath} = {}): Promise<Token[]> {
         let eosPath;
         let ethPaths;
         let ethRates;
@@ -29,42 +29,45 @@ export class SDK {
         switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
         case 'eos,eos':
             eosPath = await this.eos.getConversionPath(sourceToken, targetToken);
-            return [eosPath];
+            return eosPath;
         case 'eos,ethereum':
             eosPath = await this.eos.getConversionPath(sourceToken, this.eos.getAnchorToken());
             [ethPaths, ethRates] = await this.ethereum.getAllPathsAndRates(this.ethereum.getAnchorToken(), targetToken.blockchainId, amount);
-            return [eosPath, getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
+            return [...eosPath, ...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
         case 'ethereum,eos':
             [ethPaths, ethRates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, this.ethereum.getAnchorToken(), amount);
             eosPath = await this.eos.getConversionPath(this.eos.getAnchorToken(), targetToken);
-            return [getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), eosPath];
+            return [...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), ...eosPath];
         case 'ethereum,ethereum':
             [ethPaths, ethRates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
-            return [getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
+            return getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}));
         }
 
         throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
     }
 
-    async getRateByPath(paths: Token[][], amount: string): Promise<string> {
-        for (const path of paths) {
-            switch (path[0].blockchainType) {
+    async getRateByPath(path: Token[], amount: string): Promise<string> {
+        let bgn = 0;
+        while (bgn < path.length) {
+            const end = path.slice(bgn).findIndex(token => token.blockchainType != path[bgn].blockchainType) >>> 0;
+            switch (path[bgn].blockchainType) {
             case 'eos':
-                amount = await this.eos.getRateByPath(path, amount);
+                amount = await this.eos.getRateByPath(path.slice(bgn, end), amount);
                 break;
             case 'ethereum':
-                amount = await this.ethereum.getRateByPath(path.map(token => token.blockchainId), amount);
+                amount = await this.ethereum.getRateByPath(path.slice(bgn, end).map(token => token.blockchainId), amount);
                 break;
             default:
-                throw new Error(path[0].blockchainType + ' blockchain not supported');
+                throw new Error(path[bgn].blockchainType + ' blockchain not supported');
             }
+            bgn = end;
         }
         return amount;
     }
 
     async getRate(sourceToken: Token, targetToken: Token, amount: string): Promise<string> {
-        const paths = await this.generatePath(sourceToken, targetToken);
-        return await this.getRateByPath(paths, amount);
+        const path = await this.generatePath(sourceToken, targetToken);
+        return await this.getRateByPath(path, amount);
     }
 
     async getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {

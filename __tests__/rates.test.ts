@@ -60,11 +60,9 @@ describe('rates test', () => {
             }));
 
         const response = await sdk.getRateByPath([
-            [
-                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
-                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
-                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
-            ]
+            { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
+            { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+            { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
         ], '1');
 
         expect(response).toEqual('0.0001829844683988806288491891575274667939632319964962791587405424143483339543408806225565348501066514424');
@@ -136,11 +134,9 @@ describe('rates test', () => {
             }));
 
         const response = await sdk.getRateByPath([
-            [
-                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
-                { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
-                { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' }
-            ]
+            { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
+            { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
+            { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' }
         ], '1');
 
         expect(response).toEqual('1.149089903558139448418865873613390739346612635233348491398249012803478588145961828615748552277965966');
@@ -213,11 +209,9 @@ describe('rates test', () => {
             }));
 
         const response = await sdk.getRateByPath([
-            [
-                { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' },
-                { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
-                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
-            ]
+            { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' },
+            { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
+            { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
         ], '1');
 
         expect(response).toEqual('0.8702237365064194480241051027460314579651378541409636737891154514561671227625262785751104664761440822');
@@ -284,16 +278,12 @@ describe('rates test', () => {
             .mockImplementationOnce(() => Promise.resolve('274802734836'));
 
         const response = await sdk.getRateByPath([
-            [
-                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
-                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
-                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
-            ],
-            [
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
-            ]
+            { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
+            { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+            { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
+            { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+            { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+            { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
         ], '1');
 
         expect(response).toEqual('0.000000274802734836');
@@ -361,16 +351,12 @@ describe('rates test', () => {
             }));
 
         const response = await sdk.getRateByPath([
-            [
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' }
-            ],
-            [
-                { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
-                { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
-                { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
-            ]
+            { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+            { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+            { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
+            { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
+            { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+            { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
         ], '1');
 
         expect(response).toEqual('3226688.084642570529407094055738289769947463047257618333877712134072470684667713285913835113451935283');
@@ -393,11 +379,9 @@ describe('rates test', () => {
             .mockImplementationOnce(() => Promise.resolve('209035338725170038366'));
 
         const response = await sdk.getRateByPath([
-            [
-                { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
-                { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
-                { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' }
-            ]
+            { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
+            { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
+            { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' }
         ], '1');
 
         expect(response).toEqual('209.035338725170038366');
