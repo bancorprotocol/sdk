@@ -133,6 +133,20 @@ var EOS = /** @class */ (function () {
             });
         });
     };
+    EOS.prototype.getConversionEvents = function (token, fromBlock, toBlock) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                throw new Error('getConversionEvents not supported on EOS');
+            });
+        });
+    };
+    EOS.prototype.getConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                throw new Error('getConversionEventsByTimestamp not supported on EOS');
+            });
+        });
+    };
     EOS.prototype.buildPathsFile = function () {
         return __awaiter(this, void 0, void 0, function () {
             var convertibleTokens, smartTokens;

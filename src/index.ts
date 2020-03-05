@@ -83,15 +83,11 @@ export class SDK {
     }
 
     async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]> {
-        if (token.blockchainType == 'ethereum')
-            return await this.ethereum.getConversionEvents(token.blockchainId, fromBlock, toBlock);
-        throw new Error(token.blockchainType + ' blockchain not supported');
+        return await this[token.blockchainType].getConversionEvents(token.blockchainId, fromBlock, toBlock);
     }
 
     async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]> {
-        if (token.blockchainType == 'ethereum')
-            return await this.ethereum.getConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp);
-        throw new Error(token.blockchainType + ' blockchain not supported');
+        return await this[token.blockchainType].getConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp);
     }
 
     async buildPathsFile(): Promise<void> {

@@ -192,11 +192,8 @@ var SDK = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.ethereum.getConversionEvents(token.blockchainId, fromBlock, toBlock)];
+                    case 0: return [4 /*yield*/, this[token.blockchainType].getConversionEvents(token.blockchainId, fromBlock, toBlock)];
                     case 1: return [2 /*return*/, _a.sent()];
-                    case 2: throw new Error(token.blockchainType + ' blockchain not supported');
                 }
             });
         });
@@ -205,11 +202,8 @@ var SDK = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (!(token.blockchainType == 'ethereum')) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.ethereum.getConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp)];
+                    case 0: return [4 /*yield*/, this[token.blockchainType].getConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp)];
                     case 1: return [2 /*return*/, _a.sent()];
-                    case 2: throw new Error(token.blockchainType + ' blockchain not supported');
                 }
             });
         });

@@ -46,6 +46,14 @@ export class EOS {
         return '1.0';
     }
 
+    async getConversionEvents(token: string, fromBlock: number, toBlock: number): Promise<object[]> {
+        throw new Error('getConversionEvents not supported on EOS');
+    }
+
+    async getConversionEventsByTimestamp(token: string, fromTimestamp: number, toTimestamp: number): Promise<object[]> {
+        throw new Error('getConversionEventsByTimestamp not supported on EOS');
+    }
+
     async buildPathsFile(): Promise<void> {
         const convertibleTokens = {};
         const smartTokens = {};

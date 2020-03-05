@@ -13,8 +13,8 @@ export declare class Ethereum {
     getRateByPath(path: any, amount: any): Promise<any>;
     getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;
     getConverterVersion(converter: string): Promise<string>;
-    getConversionEvents(token: any, fromBlock: any, toBlock: any): Promise<any[]>;
-    getConversionEventsByTimestamp(token: any, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
+    getConversionEvents(token: string, fromBlock: number, toBlock: number): Promise<object[]>;
+    getConversionEventsByTimestamp(token: string, fromTimestamp: number, toTimestamp: number): Promise<object[]>;
 }
 export declare const getContractAddresses: (_this: any) => any;
 export declare const getReturn: (_this: any, path: any, amount: any) => Promise<any>;
