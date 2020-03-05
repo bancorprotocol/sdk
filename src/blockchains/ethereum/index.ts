@@ -70,7 +70,7 @@ export class Ethereum {
         return [paths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
     }
 
-    async getConverterVersion(converter) {
+    async getConverterVersion(converter: string): Promise<string> {
         return (await converterVersion.get(this, converter)).value;
     }
 

@@ -12,7 +12,7 @@ export declare class Ethereum {
     getAnchorToken(): any;
     getRateByPath(path: any, amount: any): Promise<any>;
     getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;
-    getConverterVersion(converter: any): Promise<any>;
+    getConverterVersion(converter: string): Promise<string>;
     getConversionEvents(token: any, fromBlock: any, toBlock: any): Promise<any[]>;
     getConversionEventsByTimestamp(token: any, fromTimestamp: any, toTimestamp: any): Promise<any[]>;
 }

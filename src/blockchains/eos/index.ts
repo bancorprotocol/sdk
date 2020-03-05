@@ -29,24 +29,24 @@ export class EOS {
         return getAnchorToken(); // calling global function
     }
 
-    async getRateByPath(path: Token[], amount: string) {
+    async getRateByPath(path: Token[], amount: string): Promise<string> {
         for (let i = 0; i < path.length - 1; i += 2)
             amount = await getConversionRate(this.jsonRpc, {...path[i + 1]}, path[i], path[i + 2], amount);
         return amount;
     }
 
-    async getConversionPath(from: Token, to: Token) {
+    async getConversionPath(from: Token, to: Token): Promise<Token[]> {
         const anchorToken = this.getAnchorToken();
         const sourcePath = await getPathToAnchor(this.jsonRpc, from, anchorToken);
         const targetPath = await getPathToAnchor(this.jsonRpc, to, anchorToken);
         return getShortestPath(sourcePath, targetPath);
     }
 
-    async getConverterVersion(converter) {
+    async getConverterVersion(converter: string): Promise<string> {
         return '1.0';
     }
 
-    async buildPathsFile() {
+    async buildPathsFile(): Promise<void> {
         const convertibleTokens = {};
         const smartTokens = {};
         await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
