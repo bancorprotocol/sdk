@@ -50,16 +50,7 @@ export class SDK {
         let bgn = 0;
         while (bgn < path.length) {
             const end = path.slice(bgn).findIndex(token => token.blockchainType != path[bgn].blockchainType) >>> 0;
-            switch (path[bgn].blockchainType) {
-            case 'eos':
-                amount = await this.eos.getRateByPath(path.slice(bgn, end), amount);
-                break;
-            case 'ethereum':
-                amount = await this.ethereum.getRateByPath(path.slice(bgn, end).map(token => token.blockchainId), amount);
-                break;
-            default:
-                throw new Error(path[bgn].blockchainType + ' blockchain not supported');
-            }
+            amount = await this[path[bgn].blockchainType].getRateByPath(path.slice(bgn, end), amount);
             bgn = end;
         }
         return amount;

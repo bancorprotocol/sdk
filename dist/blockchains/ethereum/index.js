@@ -110,17 +110,19 @@ var Ethereum = /** @class */ (function () {
     };
     Ethereum.prototype.getRateByPath = function (path, amount) {
         return __awaiter(this, void 0, void 0, function () {
-            var sourceDecimals, targetDecimals;
+            var tokens, sourceDecimals, targetDecimals;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, exports.getDecimals(this, path[0])];
+                    case 0:
+                        tokens = path.map(function (token) { return token.blockchainId; });
+                        return [4 /*yield*/, exports.getDecimals(this, tokens[0])];
                     case 1:
                         sourceDecimals = _a.sent();
-                        return [4 /*yield*/, exports.getDecimals(this, path[path.length - 1])];
+                        return [4 /*yield*/, exports.getDecimals(this, tokens[tokens.length - 1])];
                     case 2:
                         targetDecimals = _a.sent();
                         amount = utils.toWei(amount, sourceDecimals);
-                        return [4 /*yield*/, exports.getReturn(this, path, amount)];
+                        return [4 /*yield*/, exports.getReturn(this, tokens, amount)];
                     case 3:
                         amount = _a.sent();
                         amount = utils.fromWei(amount, targetDecimals);

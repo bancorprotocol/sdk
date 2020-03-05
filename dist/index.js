@@ -115,34 +115,21 @@ var SDK = /** @class */ (function () {
     };
     SDK.prototype.getRateByPath = function (path, amount) {
         return __awaiter(this, void 0, void 0, function () {
-            var bgn, end, _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var bgn, end;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         bgn = 0;
-                        _b.label = 1;
+                        _a.label = 1;
                     case 1:
-                        if (!(bgn < path.length)) return [3 /*break*/, 8];
+                        if (!(bgn < path.length)) return [3 /*break*/, 3];
                         end = path.slice(bgn).findIndex(function (token) { return token.blockchainType != path[bgn].blockchainType; }) >>> 0;
-                        _a = path[bgn].blockchainType;
-                        switch (_a) {
-                            case 'eos': return [3 /*break*/, 2];
-                            case 'ethereum': return [3 /*break*/, 4];
-                        }
-                        return [3 /*break*/, 6];
-                    case 2: return [4 /*yield*/, this.eos.getRateByPath(path.slice(bgn, end), amount)];
-                    case 3:
-                        amount = _b.sent();
-                        return [3 /*break*/, 7];
-                    case 4: return [4 /*yield*/, this.ethereum.getRateByPath(path.slice(bgn, end).map(function (token) { return token.blockchainId; }), amount)];
-                    case 5:
-                        amount = _b.sent();
-                        return [3 /*break*/, 7];
-                    case 6: throw new Error(path[bgn].blockchainType + ' blockchain not supported');
-                    case 7:
+                        return [4 /*yield*/, this[path[bgn].blockchainType].getRateByPath(path.slice(bgn, end), amount)];
+                    case 2:
+                        amount = _a.sent();
                         bgn = end;
                         return [3 /*break*/, 1];
-                    case 8: return [2 /*return*/, amount];
+                    case 3: return [2 /*return*/, amount];
                 }
             });
         });

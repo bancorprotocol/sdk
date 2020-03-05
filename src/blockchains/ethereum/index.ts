@@ -50,11 +50,12 @@ export class Ethereum {
         return getContractAddresses(this).anchorToken;
     }
 
-    async getRateByPath(path, amount) {
-        const sourceDecimals = await getDecimals(this, path[0]);
-        const targetDecimals = await getDecimals(this, path[path.length - 1]);
+    async getRateByPath(path: Token[], amount: string): Promise<string> {
+        const tokens = path.map(token => token.blockchainId);
+        const sourceDecimals = await getDecimals(this, tokens[0]);
+        const targetDecimals = await getDecimals(this, tokens[tokens.length - 1]);
         amount = utils.toWei(amount, sourceDecimals);
-        amount = await getReturn(this, path, amount);
+        amount = await getReturn(this, tokens, amount);
         amount = utils.fromWei(amount, targetDecimals);
         return amount;
     }
