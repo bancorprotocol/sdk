@@ -38,8 +38,8 @@ describe('rates test', () => {
         for (const offset of [-1, 0, +1]) {
             it('getConversionEvents on ethereum', async () => {
                 setConverterVersionGetter(sdk, logs, events);
-                const response = await sdk.getConversionEvents({ blockchainType: 'ethereum', blockchainId: '0x'.padEnd(42, '1') }, 1, event.blockNumber + offset);
-                expect(response.length).toEqual(events.filter(e => 1 <= e.blockNumber && e.blockNumber <= event.blockNumber + offset).length);
+                const received = await sdk.getConversionEvents({ blockchainType: 'ethereum', blockchainId: '0x'.padEnd(42, '1') }, 1, event.blockNumber + offset);
+                expect(received.length).toEqual(events.filter(e => 1 <= e.blockNumber && e.blockNumber <= event.blockNumber + offset).length);
             });
         }
     }

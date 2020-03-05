@@ -37,18 +37,18 @@ describe('paths test', () => {
                 }]
             });
 
-        const response = await sdk.generatePath(
+        const received = await sdk.generatePath(
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
         );
 
-        const expectedResult = [
+        const expected = [
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
         ];
 
-        expect(response).toEqual(expectedResult);
+        expect(received).toEqual(expected);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(1);
         expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
         expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
@@ -101,12 +101,12 @@ describe('paths test', () => {
                 }]
             });
 
-        const response = await sdk.generatePath(
+        const received = await sdk.generatePath(
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
         );
 
-        const expectedResult = [
+        const expected = [
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
@@ -115,7 +115,7 @@ describe('paths test', () => {
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
         ];
 
-        expect(response).toEqual(expectedResult);
+        expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetRates).toHaveBeenCalledTimes(1);
@@ -172,12 +172,12 @@ describe('paths test', () => {
                 }]
             });
 
-        const response = await sdk.generatePath(
+        const received = await sdk.generatePath(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
         );
 
-        const expectedResult = [
+        const expected = [
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
             { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
@@ -186,7 +186,7 @@ describe('paths test', () => {
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
         ];
 
-        expect(response).toEqual(expectedResult);
+        expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetRates).toHaveBeenCalledTimes(1);
@@ -217,12 +217,12 @@ describe('paths test', () => {
             .spyOn(ethereum, 'getRates')
             .mockImplementationOnce(() => Promise.resolve(['0']));
 
-        const response = await sdk.generatePath(
+        const received = await sdk.generatePath(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
         );
 
-        const expectedResult = [
+        const expected = [
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
             { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' },
@@ -230,7 +230,7 @@ describe('paths test', () => {
             { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
         ];
 
-        expect(response).toEqual(expectedResult);
+        expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetRates).toHaveBeenCalledTimes(1);
@@ -261,12 +261,12 @@ describe('paths test', () => {
                 '5555555555'
             ]));
 
-        const response = await sdk.getAllPathsAndRates(
+        const received = await sdk.getAllPathsAndRates(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: 'ethereum', blockchainId: '0x4444444444444444444444444444444444444444' }
         );
 
-        const expectedResult = [
+        const expected = [
             {
                 path: [
                     { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
@@ -310,7 +310,7 @@ describe('paths test', () => {
             }
         ];
 
-        expect(response).toEqual(expectedResult);
+        expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetRates).toHaveBeenCalledTimes(1);
