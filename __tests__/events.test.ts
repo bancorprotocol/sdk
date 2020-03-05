@@ -54,7 +54,7 @@ function setConverterVersionGetter(sdk, logs, events) {
             Contract: function(abi, address) {
                 return {
                     getPastEvents: function(eventName, {fromBlock: fromBlock, toBlock: toBlock}) {
-                    return events.filter(event => fromBlock <= event.blockNumber && event.blockNumber <= toBlock);
+                        return events.filter(event => fromBlock <= event.blockNumber && event.blockNumber <= toBlock);
                     },
                     methods: {
                         decimals: function() {
@@ -66,7 +66,7 @@ function setConverterVersionGetter(sdk, logs, events) {
                         }
                     }
                 };
-            },
+            }
         }
     };
 }
