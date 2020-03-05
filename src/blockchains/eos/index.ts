@@ -19,13 +19,13 @@ export class EOS {
         this.jsonRpc = new JsonRpc(nodeEndpoint, { fetch });
     }
 
-    close() {
+    close(): void {
     }
 
-    async init() {
+    async init(): Promise<void> {
     }
 
-    getAnchorToken() {
+    getAnchorToken(): Token {
         return getAnchorToken(); // calling global function
     }
 

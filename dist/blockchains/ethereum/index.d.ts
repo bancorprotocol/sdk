@@ -10,7 +10,7 @@ export declare class Ethereum {
     constructor(nodeEndpoint: any);
     close(): void;
     init(): Promise<void>;
-    getAnchorToken(): any;
+    getAnchorToken(): string;
     getRateByPath(path: Token[], amount: string): Promise<string>;
     getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;
     getConverterVersion(converter: Converter): Promise<string>;

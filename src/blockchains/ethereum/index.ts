@@ -31,7 +31,7 @@ export class Ethereum {
         this.web3 = new Web3(nodeEndpoint);
     }
 
-    close() {
+    close(): void {
         if (this.web3.currentProvider.constructor.name == "WebsocketProvider")
             this.web3.currentProvider.connection.close();
     }
@@ -46,7 +46,7 @@ export class Ethereum {
         this.multicallContract = new this.web3.eth.Contract(abis.MulticallContract, getContractAddresses(this).multicall);
     }
 
-    getAnchorToken() {
+    getAnchorToken(): string {
         return getContractAddresses(this).anchorToken;
     }
 

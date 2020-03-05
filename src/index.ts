@@ -11,7 +11,7 @@ export class SDK {
         this.ethereum = new Ethereum(ethNodeEndpoint);
     }
 
-    close() {
+    close(): void {
         this.eos.close();
         this.ethereum.close();
     }
