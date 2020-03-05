@@ -36,7 +36,7 @@ export class Ethereum {
             this.web3.currentProvider.connection.close();
     }
 
-    async init() {
+    async init(): Promise<void> {
         this.networkType = await this.web3.eth.net.getNetworkType();
         const contractRegistry = new this.web3.eth.Contract(abis.ContractRegistry, getContractAddresses(this).registry);
         const bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();

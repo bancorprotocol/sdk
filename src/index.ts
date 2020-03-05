@@ -16,7 +16,7 @@ export class SDK {
         this.ethereum.close();
     }
 
-    async init() {
+    async init(): Promise<void> {
         await this.eos.init();
         await this.ethereum.init();
     }
