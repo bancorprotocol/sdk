@@ -79,15 +79,15 @@ export class SDK {
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {
-        return await this[converter.blockchainType].getConverterVersion(converter.blockchainId);
+        return await this[converter.blockchainType].getConverterVersion(converter);
     }
 
     async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]> {
-        return await this[token.blockchainType].getConversionEvents(token.blockchainId, fromBlock, toBlock);
+        return await this[token.blockchainType].getConversionEvents(token, fromBlock, toBlock);
     }
 
     async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]> {
-        return await this[token.blockchainType].getConversionEventsByTimestamp(token.blockchainId, fromTimestamp, toTimestamp);
+        return await this[token.blockchainType].getConversionEventsByTimestamp(token, fromTimestamp, toTimestamp);
     }
 
     async buildPathsFile(): Promise<void> {

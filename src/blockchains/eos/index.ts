@@ -42,15 +42,15 @@ export class EOS {
         return getShortestPath(sourcePath, targetPath);
     }
 
-    async getConverterVersion(converter: string): Promise<string> {
+    async getConverterVersion(converter: Converter): Promise<string> {
         return '1.0';
     }
 
-    async getConversionEvents(token: string, fromBlock: number, toBlock: number): Promise<object[]> {
+    async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]> {
         throw new Error('getConversionEvents not supported on EOS');
     }
 
-    async getConversionEventsByTimestamp(token: string, fromTimestamp: number, toTimestamp: number): Promise<object[]> {
+    async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]> {
         throw new Error('getConversionEventsByTimestamp not supported on EOS');
     }
 

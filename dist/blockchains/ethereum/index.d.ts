@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { Token, Converter } from '../../path_generation';
 export declare class Ethereum {
     web3: Web3;
     networkType: string;
@@ -12,9 +13,9 @@ export declare class Ethereum {
     getAnchorToken(): any;
     getRateByPath(path: any, amount: any): Promise<any>;
     getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;
-    getConverterVersion(converter: string): Promise<string>;
-    getConversionEvents(token: string, fromBlock: number, toBlock: number): Promise<object[]>;
-    getConversionEventsByTimestamp(token: string, fromTimestamp: number, toTimestamp: number): Promise<object[]>;
+    getConverterVersion(converter: Converter): Promise<string>;
+    getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]>;
+    getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]>;
 }
 export declare const getContractAddresses: (_this: any) => any;
 export declare const getReturn: (_this: any, path: any, amount: any) => Promise<any>;

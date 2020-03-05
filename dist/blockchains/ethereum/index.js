@@ -160,7 +160,7 @@ var Ethereum = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, converterVersion.get(this, converter)];
+                    case 0: return [4 /*yield*/, converterVersion.get(this, converter.blockchainId)];
                     case 1: return [2 /*return*/, (_a.sent()).value];
                 }
             });
@@ -170,7 +170,7 @@ var Ethereum = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, conversionEvents.get(this, token, fromBlock, toBlock)];
+                    case 0: return [4 /*yield*/, conversionEvents.get(this, token.blockchainId, fromBlock, toBlock)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -187,7 +187,7 @@ var Ethereum = /** @class */ (function () {
                         return [4 /*yield*/, timestamp_to_block_number_1.timestampToBlockNumber(this, toTimestamp)];
                     case 2:
                         toBlock = _a.sent();
-                        return [4 /*yield*/, conversionEvents.get(this, token, fromBlock, toBlock)];
+                        return [4 /*yield*/, conversionEvents.get(this, token.blockchainId, fromBlock, toBlock)];
                     case 3: return [2 /*return*/, _a.sent()];
                 }
             });

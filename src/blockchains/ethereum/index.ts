@@ -3,6 +3,7 @@ import * as abis from './abis';
 import * as utils from '../../utils';
 import * as conversionEvents from './conversion_events';
 import * as converterVersion from './converter_version';
+import { Token, Converter } from '../../path_generation';
 import { timestampToBlockNumber } from './timestamp_to_block_number';
 
 const CONTRACT_ADDRESSES = {
@@ -70,18 +71,18 @@ export class Ethereum {
         return [paths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
     }
 
-    async getConverterVersion(converter: string): Promise<string> {
-        return (await converterVersion.get(this, converter)).value;
+    async getConverterVersion(converter: Converter): Promise<string> {
+        return (await converterVersion.get(this, converter.blockchainId)).value;
     }
 
-    async getConversionEvents(token: string, fromBlock: number, toBlock: number): Promise<object[]> {
-        return await conversionEvents.get(this, token, fromBlock, toBlock);
+    async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]> {
+        return await conversionEvents.get(this, token.blockchainId, fromBlock, toBlock);
     }
 
-    async getConversionEventsByTimestamp(token: string, fromTimestamp: number, toTimestamp: number): Promise<object[]> {
+    async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]> {
         const fromBlock = await timestampToBlockNumber(this, fromTimestamp);
         const toBlock = await timestampToBlockNumber(this, toTimestamp);
-        return await conversionEvents.get(this, token, fromBlock, toBlock);
+        return await conversionEvents.get(this, token.blockchainId, fromBlock, toBlock);
     }
 }
 
