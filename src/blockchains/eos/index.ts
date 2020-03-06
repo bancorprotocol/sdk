@@ -149,12 +149,12 @@ export const getSmartTokens = (blockchainId): any => {
     return registry.smartTokens[blockchainId];
 };
 
-function getBalance(string) {
-    return string.split(' ')[0];
+function getBalance(str) {
+    return str.split(' ')[0];
 }
 
-function getSymbol(string) {
-    return string.split(' ')[1];
+function getSymbol(str) {
+    return str.split(' ')[1];
 }
 
 function isMultiConverter(blockchhainId) {
