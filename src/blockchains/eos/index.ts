@@ -61,7 +61,7 @@ export class EOS {
             const smartToken = await getSmartToken(this.jsonRpc, converterBlockchainId);
             const smartTokenContract = smartToken.rows[0].smart_contract;
             const smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
-            const reservesObject = await getReservesFromCode(this.jsonRpc, converterBlockchainId);
+            const reservesObject = await getReservesFromCode(this.jsonRpc, converterBlockchainId, converterBlockchainId);
             const reserves = Object.values(reservesObject.rows);
             smartTokens[smartTokenContract] = { [smartTokenName]: { [smartTokenName]: converterBlockchainId } };
             reserves.map((reserveObj: Reserve) => {
@@ -83,11 +83,11 @@ export class EOS {
     }
 }
 
-export const getReservesFromCode = async (jsonRpc, code, symbol?) => {
+export const getReservesFromCode = async (jsonRpc, code, symbol) => {
     return await jsonRpc.jsonRpc.get_table_rows({
         json: true,
         code: code,
-        scope: symbol ? symbol : code,
+        scope: symbol,
         table: 'reserves',
         limit: 10
     });
@@ -123,7 +123,7 @@ export const getSmartTokenSupply = async (jsonRpc, account, code) => {
     });
 };
 
-export const getReserveBalances = async (jsonRpc, code, scope, table = 'accounts') => {
+export const getReserveBalances = async (jsonRpc, code, scope, table) => {
     return await jsonRpc.get_table_rows({
         json: true,
         code: code,
@@ -181,13 +181,13 @@ async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromTok
     if (isToTokenMultiToken)
         balanceFrom = await getReserveBalances(jsonRpc, converter.blockchainId, toToken.symbol, 'reserves');
     else
-        balanceFrom = await getReserveBalances(jsonRpc, fromToken.blockchainId, converter.blockchainId);
+        balanceFrom = await getReserveBalances(jsonRpc, fromToken.blockchainId, converter.blockchainId, 'accounts');
 
     let balanceTo;
     if (isFromTokenMultiToken)
         balanceTo = await getReserveBalances(jsonRpc, converter.blockchainId, fromToken.symbol, 'reserves');
     else
-        balanceTo = await getReserveBalances(jsonRpc, toToken.blockchainId, converter.blockchainId);
+        balanceTo = await getReserveBalances(jsonRpc, toToken.blockchainId, converter.blockchainId, 'accounts');
 
     const balanceObject = {
         [fromToken.blockchainId]: balanceFrom.rows[0].balance,

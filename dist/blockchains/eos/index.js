@@ -166,7 +166,7 @@ var EOS = /** @class */ (function () {
                                             smartToken = _c.sent();
                                             smartTokenContract = smartToken.rows[0].smart_contract;
                                             smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
-                                            return [4 /*yield*/, exports.getReservesFromCode(this.jsonRpc, converterBlockchainId)];
+                                            return [4 /*yield*/, exports.getReservesFromCode(this.jsonRpc, converterBlockchainId, converterBlockchainId)];
                                         case 2:
                                             reservesObject = _c.sent();
                                             reserves = Object.values(reservesObject.rows);
@@ -203,7 +203,7 @@ exports.getReservesFromCode = function (jsonRpc, code, symbol) { return __awaite
             case 0: return [4 /*yield*/, jsonRpc.jsonRpc.get_table_rows({
                     json: true,
                     code: code,
-                    scope: symbol ? symbol : code,
+                    scope: symbol,
                     table: 'reserves',
                     limit: 10
                 })];
@@ -253,23 +253,20 @@ exports.getSmartTokenSupply = function (jsonRpc, account, code) { return __await
         }
     });
 }); };
-exports.getReserveBalances = function (jsonRpc, code, scope, table) {
-    if (table === void 0) { table = 'accounts'; }
-    return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, jsonRpc.get_table_rows({
-                        json: true,
-                        code: code,
-                        scope: scope,
-                        table: table,
-                        limit: 10
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
+exports.getReserveBalances = function (jsonRpc, code, scope, table) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, jsonRpc.get_table_rows({
+                    json: true,
+                    code: code,
+                    scope: scope,
+                    table: table,
+                    limit: 10
+                })];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
     });
-};
+}); };
 exports.getAnchorToken = function () {
     return {
         blockchainType: 'eos',
@@ -319,7 +316,7 @@ function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
                 case 3:
                     balanceFrom = _b.sent();
                     return [3 /*break*/, 6];
-                case 4: return [4 /*yield*/, exports.getReserveBalances(jsonRpc, fromToken.blockchainId, converter.blockchainId)];
+                case 4: return [4 /*yield*/, exports.getReserveBalances(jsonRpc, fromToken.blockchainId, converter.blockchainId, 'accounts')];
                 case 5:
                     balanceFrom = _b.sent();
                     _b.label = 6;
@@ -329,7 +326,7 @@ function getConversionRate(jsonRpc, converter, fromToken, toToken, amount) {
                 case 7:
                     balanceTo = _b.sent();
                     return [3 /*break*/, 10];
-                case 8: return [4 /*yield*/, exports.getReserveBalances(jsonRpc, toToken.blockchainId, converter.blockchainId)];
+                case 8: return [4 /*yield*/, exports.getReserveBalances(jsonRpc, toToken.blockchainId, converter.blockchainId, 'accounts')];
                 case 9:
                     balanceTo = _b.sent();
                     _b.label = 10;
