@@ -93,6 +93,7 @@ var SDK = /** @class */ (function () {
         });
     };
     SDK.prototype.getRateByPath = function (path, amount) {
+        if (amount === void 0) { amount = '1'; }
         return __awaiter(this, void 0, void 0, function () {
             var bgn, end;
             return __generator(this, function (_a) {

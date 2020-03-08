@@ -29,7 +29,7 @@ export class SDK {
         return await getPath(this, sourceToken, targetToken, amount, getCheapestPath);
     }
 
-    async getRateByPath(path: Token[], amount: string): Promise<string> {
+    async getRateByPath(path: Token[], amount: string = '1'): Promise<string> {
         let bgn = 0;
         while (bgn < path.length) {
             const end = path.slice(bgn).findIndex(token => token.blockchainType != path[bgn].blockchainType) >>> 0;
