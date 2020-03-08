@@ -3,7 +3,7 @@ import * as eos from '../src/blockchains/eos/index';
 import * as ethereum from '../src/blockchains/ethereum/index';
 import * as ethereumMocks from '../src/blockchains/ethereum/mocks';
 
-describe('rates test', () => {
+describe('events test', () => {
     let sdk: SDK;
 
     beforeEach(async () => {
