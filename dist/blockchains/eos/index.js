@@ -80,8 +80,7 @@ var EOS = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         eos = new EOS();
-                        eos.jsonRpc = new eosjs_1.JsonRpc(nodeEndpoint, { fetch: node_fetch_1.default });
-                        return [4 /*yield*/, exports.init(eos)];
+                        return [4 /*yield*/, exports.init(eos, nodeEndpoint)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/, eos];
@@ -215,9 +214,10 @@ var EOS = /** @class */ (function () {
     return EOS;
 }());
 exports.EOS = EOS;
-exports.init = function (eos) {
+exports.init = function (eos, nodeEndpoint) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
+            eos.jsonRpc = new eosjs_1.JsonRpc(nodeEndpoint, { fetch: node_fetch_1.default });
             return [2 /*return*/];
         });
     });

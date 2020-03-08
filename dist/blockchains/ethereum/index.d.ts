@@ -16,7 +16,7 @@ export declare class Ethereum {
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]>;
 }
-export declare const init: (ethereum: any) => Promise<void>;
+export declare const init: (ethereum: any, nodeEndpoint: any) => Promise<void>;
 export declare const free: (ethereum: any) => Promise<void>;
 export declare const getContractAddresses: (ethereum: any) => any;
 export declare const getReturn: (ethereum: any, path: any, amount: any) => Promise<any>;

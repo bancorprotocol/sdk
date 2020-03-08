@@ -82,8 +82,7 @@ var Ethereum = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         ethereum = new Ethereum();
-                        ethereum.web3 = new web3_1.default(nodeEndpoint);
-                        return [4 /*yield*/, exports.init(ethereum)];
+                        return [4 /*yield*/, exports.init(ethereum, nodeEndpoint)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/, ethereum];
@@ -95,10 +94,7 @@ var Ethereum = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == "WebsocketProvider")
-                            ethereum.web3.currentProvider.connection.close();
-                        return [4 /*yield*/, exports.free(ethereum)];
+                    case 0: return [4 /*yield*/, exports.free(ethereum)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -199,12 +195,13 @@ var Ethereum = /** @class */ (function () {
     return Ethereum;
 }());
 exports.Ethereum = Ethereum;
-exports.init = function (ethereum) {
+exports.init = function (ethereum, nodeEndpoint) {
     return __awaiter(this, void 0, void 0, function () {
         var _a, contractRegistry, bancorNetworkAddress, converterRegistryAddress;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
+                    ethereum.web3 = new web3_1.default(nodeEndpoint);
                     _a = ethereum;
                     return [4 /*yield*/, ethereum.web3.eth.net.getNetworkType()];
                 case 1:
@@ -227,6 +224,8 @@ exports.init = function (ethereum) {
 exports.free = function (ethereum) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
+            if (ethereum.web3 && ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == "WebsocketProvider")
+                ethereum.web3.currentProvider.connection.close();
             return [2 /*return*/];
         });
     });

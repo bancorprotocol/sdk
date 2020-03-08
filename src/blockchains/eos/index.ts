@@ -17,8 +17,7 @@ export class EOS {
 
     static async create(nodeEndpoint: string): Promise<EOS> {
         const eos = new EOS();
-        eos.jsonRpc = new JsonRpc(nodeEndpoint, { fetch });
-        await init(eos);
+        await init(eos, nodeEndpoint);
         return eos;
     }
 
@@ -84,7 +83,8 @@ export class EOS {
     }
 }
 
-export const init = async function(eos) {
+export const init = async function(eos, nodeEndpoint) {
+    eos.jsonRpc = new JsonRpc(nodeEndpoint, { fetch });
 };
 
 export const free = async function(eos) {

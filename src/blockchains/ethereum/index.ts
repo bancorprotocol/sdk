@@ -29,14 +29,11 @@ export class Ethereum {
 
     static async create(nodeEndpoint: string): Promise<Ethereum> {
         const ethereum = new Ethereum();
-        ethereum.web3 = new Web3(nodeEndpoint);
-        await init(ethereum);
+        await init(ethereum, nodeEndpoint);
         return ethereum;
     }
 
     static async destroy(ethereum: Ethereum): Promise<void> {
-        if (ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == "WebsocketProvider")
-            ethereum.web3.currentProvider.connection.close();
         await free(ethereum);
     }
 
@@ -81,7 +78,8 @@ export class Ethereum {
     }
 }
 
-export const init = async function(ethereum) {
+export const init = async function(ethereum, nodeEndpoint) {
+    ethereum.web3 = new Web3(nodeEndpoint);
     ethereum.networkType = await ethereum.web3.eth.net.getNetworkType();
     const contractRegistry = new ethereum.web3.eth.Contract(abis.ContractRegistry, getContractAddresses(ethereum).registry);
     const bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
@@ -92,6 +90,8 @@ export const init = async function(ethereum) {
 };
 
 export const free = async function(ethereum) {
+    if (ethereum.web3 && ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == "WebsocketProvider")
+        ethereum.web3.currentProvider.connection.close();
 };
 
 export const getContractAddresses = function(ethereum) {

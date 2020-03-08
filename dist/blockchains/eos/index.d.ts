@@ -12,7 +12,7 @@ export declare class EOS {
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]>;
     buildPathsFile(): Promise<void>;
 }
-export declare const init: (eos: any) => Promise<void>;
+export declare const init: (eos: any, nodeEndpoint: any) => Promise<void>;
 export declare const free: (eos: any) => Promise<void>;
 export declare const getReservesFromCode: (jsonRpc: any, code: any, symbol: any) => Promise<any>;
 export declare const getConverterSettings: (jsonRpc: any, code: any) => Promise<any>;
