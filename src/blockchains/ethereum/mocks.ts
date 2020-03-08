@@ -1,5 +1,14 @@
 export function newWeb3() {
     return {
+        currentProvider: {
+            constructor: {
+                name: 'WebsocketProvider'
+            },
+            connection: {
+                close: function() {
+                }
+            }
+        },
         eth: {
             net: {
                 getNetworkType: function () {
