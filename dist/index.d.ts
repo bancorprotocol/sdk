@@ -4,12 +4,11 @@ import { Token, Converter } from './path_generation';
 export declare class SDK {
     eos: EOS;
     ethereum: Ethereum;
-    constructor({ eosNodeEndpoint, ethNodeEndpoint }?: {
+    static create({ eosNodeEndpoint, ethNodeEndpoint }?: {
         eosNodeEndpoint?: string;
         ethNodeEndpoint?: string;
-    });
-    close(): void;
-    init(): Promise<void>;
+    }): Promise<SDK>;
+    static destroy(sdk: SDK): Promise<void>;
     getShortestPath(sourceToken: Token, targetToken: Token, amount?: string): Promise<Token[]>;
     getCheapestPath(sourceToken: Token, targetToken: Token, amount?: string): Promise<Token[]>;
     getShortestPathRate(sourceToken: Token, targetToken: Token, amount?: string): Promise<string>;

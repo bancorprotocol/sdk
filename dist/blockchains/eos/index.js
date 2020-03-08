@@ -71,15 +71,33 @@ var fs_1 = __importDefault(require("fs"));
 var utils = __importStar(require("../../utils"));
 var registry = __importStar(require("./registry"));
 var EOS = /** @class */ (function () {
-    function EOS(nodeEndpoint) {
-        this.jsonRpc = new eosjs_1.JsonRpc(nodeEndpoint, { fetch: node_fetch_1.default });
+    function EOS() {
     }
-    EOS.prototype.close = function () {
+    EOS.create = function (nodeEndpoint) {
+        return __awaiter(this, void 0, void 0, function () {
+            var eos;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        eos = new EOS();
+                        eos.jsonRpc = new eosjs_1.JsonRpc(nodeEndpoint, { fetch: node_fetch_1.default });
+                        return [4 /*yield*/, exports.init(eos)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, eos];
+                }
+            });
+        });
     };
-    EOS.prototype.init = function () {
+    EOS.destroy = function (eos) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, exports.free(eos)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
             });
         });
     };
@@ -197,6 +215,20 @@ var EOS = /** @class */ (function () {
     return EOS;
 }());
 exports.EOS = EOS;
+exports.init = function (eos) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/];
+        });
+    });
+};
+exports.free = function (eos) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/];
+        });
+    });
+};
 exports.getReservesFromCode = function (jsonRpc, code, symbol) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {

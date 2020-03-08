@@ -46,23 +46,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./blockchains/eos/index");
 var index_2 = require("./blockchains/ethereum/index");
 var SDK = /** @class */ (function () {
-    function SDK(_a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.eosNodeEndpoint, eosNodeEndpoint = _c === void 0 ? "" : _c, _d = _b.ethNodeEndpoint, ethNodeEndpoint = _d === void 0 ? "" : _d;
-        this.eos = new index_1.EOS(eosNodeEndpoint);
-        this.ethereum = new index_2.Ethereum(ethNodeEndpoint);
+    function SDK() {
     }
-    SDK.prototype.close = function () {
-        this.eos.close();
-        this.ethereum.close();
+    SDK.create = function (_a) {
+        var _b = _a === void 0 ? {} : _a, _c = _b.eosNodeEndpoint, eosNodeEndpoint = _c === void 0 ? "" : _c, _d = _b.ethNodeEndpoint, ethNodeEndpoint = _d === void 0 ? "" : _d;
+        return __awaiter(this, void 0, void 0, function () {
+            var sdk, _e, _f;
+            return __generator(this, function (_g) {
+                switch (_g.label) {
+                    case 0:
+                        sdk = new SDK();
+                        _e = sdk;
+                        return [4 /*yield*/, index_1.EOS.create(eosNodeEndpoint)];
+                    case 1:
+                        _e.eos = _g.sent();
+                        _f = sdk;
+                        return [4 /*yield*/, index_2.Ethereum.create(ethNodeEndpoint)];
+                    case 2:
+                        _f.ethereum = _g.sent();
+                        return [2 /*return*/, sdk];
+                }
+            });
+        });
     };
-    SDK.prototype.init = function () {
+    SDK.destroy = function (sdk) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.eos.init()];
+                    case 0: return [4 /*yield*/, index_1.EOS.destroy(sdk.eos)];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, this.ethereum.init()];
+                        return [4 /*yield*/, index_2.Ethereum.destroy(sdk.ethereum)];
                     case 2:
                         _a.sent();
                         return [2 /*return*/];

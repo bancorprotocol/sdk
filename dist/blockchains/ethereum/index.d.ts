@@ -7,9 +7,8 @@ export declare class Ethereum {
     converterRegistry: Web3.eth.Contract;
     multicallContract: Web3.eth.Contract;
     decimals: {};
-    constructor(nodeEndpoint: any);
-    close(): void;
-    init(): Promise<void>;
+    static create(nodeEndpoint: string): Promise<Ethereum>;
+    static destroy(ethereum: Ethereum): Promise<void>;
     getAnchorToken(): string;
     getRateByPath(path: Token[], amount: string): Promise<string>;
     getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;
@@ -17,6 +16,8 @@ export declare class Ethereum {
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]>;
 }
+export declare const init: (ethereum: any) => Promise<void>;
+export declare const free: (ethereum: any) => Promise<void>;
 export declare const getContractAddresses: (ethereum: any) => any;
 export declare const getReturn: (ethereum: any, path: any, amount: any) => Promise<any>;
 export declare const getDecimals: (ethereum: any, token: any) => Promise<any>;

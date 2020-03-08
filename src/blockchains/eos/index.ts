@@ -15,14 +15,15 @@ interface Reserve {
 export class EOS {
     jsonRpc: JsonRpc;
 
-    constructor(nodeEndpoint: string) {
-        this.jsonRpc = new JsonRpc(nodeEndpoint, { fetch });
+    static async create(nodeEndpoint: string): Promise<EOS> {
+        const eos = new EOS();
+        eos.jsonRpc = new JsonRpc(nodeEndpoint, { fetch });
+        await init(eos);
+        return eos;
     }
 
-    close(): void {
-    }
-
-    async init(): Promise<void> {
+    static async destroy(eos: EOS): Promise<void> {
+        await free(eos);
     }
 
     getAnchorToken(): Token {
@@ -82,6 +83,12 @@ export class EOS {
         );
     }
 }
+
+export const init = async function(eos) {
+};
+
+export const free = async function(eos) {
+};
 
 export const getReservesFromCode = async (jsonRpc, code, symbol) => {
     return await jsonRpc.jsonRpc.get_table_rows({

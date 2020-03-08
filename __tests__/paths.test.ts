@@ -3,13 +3,19 @@ import * as eos from '../src/blockchains/eos';
 import * as ethereum from '../src/blockchains/ethereum';
 
 describe('paths test', () => {
-    const sdk = new SDK();
+    let sdk: SDK;
 
     beforeEach(async () => {
+        jest.spyOn(eos, 'init').mockImplementationOnce(() => Promise.resolve());
+        jest.spyOn(ethereum, 'init').mockImplementationOnce(() => Promise.resolve());
+        sdk = await SDK.create();
         jest.restoreAllMocks();
     });
 
     afterEach(async () => {
+        jest.spyOn(eos, 'free').mockImplementationOnce(() => Promise.resolve());
+        jest.spyOn(ethereum, 'free').mockImplementationOnce(() => Promise.resolve());
+        await SDK.destroy(sdk);
         jest.restoreAllMocks();
     });
 

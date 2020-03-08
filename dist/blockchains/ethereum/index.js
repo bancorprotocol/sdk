@@ -72,34 +72,35 @@ var CONTRACT_ADDRESSES = {
     }
 };
 var Ethereum = /** @class */ (function () {
-    function Ethereum(nodeEndpoint) {
+    function Ethereum() {
         this.decimals = {};
-        this.web3 = new web3_1.default(nodeEndpoint);
     }
-    Ethereum.prototype.close = function () {
-        if (this.web3.currentProvider.constructor.name == "WebsocketProvider")
-            this.web3.currentProvider.connection.close();
-    };
-    Ethereum.prototype.init = function () {
+    Ethereum.create = function (nodeEndpoint) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, contractRegistry, bancorNetworkAddress, converterRegistryAddress;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var ethereum;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
-                        _a = this;
-                        return [4 /*yield*/, this.web3.eth.net.getNetworkType()];
+                        ethereum = new Ethereum();
+                        ethereum.web3 = new web3_1.default(nodeEndpoint);
+                        return [4 /*yield*/, exports.init(ethereum)];
                     case 1:
-                        _a.networkType = _b.sent();
-                        contractRegistry = new this.web3.eth.Contract(abis.ContractRegistry, exports.getContractAddresses(this).registry);
-                        return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorNetwork')).call()];
-                    case 2:
-                        bancorNetworkAddress = _b.sent();
-                        return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
-                    case 3:
-                        converterRegistryAddress = _b.sent();
-                        this.bancorNetwork = new this.web3.eth.Contract(abis.BancorNetwork, bancorNetworkAddress);
-                        this.converterRegistry = new this.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
-                        this.multicallContract = new this.web3.eth.Contract(abis.MulticallContract, exports.getContractAddresses(this).multicall);
+                        _a.sent();
+                        return [2 /*return*/, ethereum];
+                }
+            });
+        });
+    };
+    Ethereum.destroy = function (ethereum) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == "WebsocketProvider")
+                            ethereum.web3.currentProvider.connection.close();
+                        return [4 /*yield*/, exports.free(ethereum)];
+                    case 1:
+                        _a.sent();
                         return [2 /*return*/];
                 }
             });
@@ -198,6 +199,38 @@ var Ethereum = /** @class */ (function () {
     return Ethereum;
 }());
 exports.Ethereum = Ethereum;
+exports.init = function (ethereum) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, contractRegistry, bancorNetworkAddress, converterRegistryAddress;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _a = ethereum;
+                    return [4 /*yield*/, ethereum.web3.eth.net.getNetworkType()];
+                case 1:
+                    _a.networkType = _b.sent();
+                    contractRegistry = new ethereum.web3.eth.Contract(abis.ContractRegistry, exports.getContractAddresses(ethereum).registry);
+                    return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorNetwork')).call()];
+                case 2:
+                    bancorNetworkAddress = _b.sent();
+                    return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
+                case 3:
+                    converterRegistryAddress = _b.sent();
+                    ethereum.bancorNetwork = new ethereum.web3.eth.Contract(abis.BancorNetwork, bancorNetworkAddress);
+                    ethereum.converterRegistry = new ethereum.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
+                    ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, exports.getContractAddresses(ethereum).multicall);
+                    return [2 /*return*/];
+            }
+        });
+    });
+};
+exports.free = function (ethereum) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/];
+        });
+    });
+};
 exports.getContractAddresses = function (ethereum) {
     if (CONTRACT_ADDRESSES[ethereum.networkType])
         return CONTRACT_ADDRESSES[ethereum.networkType];
