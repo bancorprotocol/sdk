@@ -70,12 +70,12 @@ describe('paths test', () => {
 
         const spyGetDecimals = jest
             .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('18'))
-            .mockImplementationOnce(() => Promise.resolve('18'));
+            .mockImplementationOnce(() => Promise.resolve('10'))
+            .mockImplementationOnce(() => Promise.resolve('10'));
 
         const spyGetRates = jest
             .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve(['0']));
+            .mockImplementationOnce(() => Promise.resolve(['123123123']));
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
@@ -141,12 +141,12 @@ describe('paths test', () => {
 
         const spyGetDecimals = jest
             .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('18'))
-            .mockImplementationOnce(() => Promise.resolve('18'));
+            .mockImplementationOnce(() => Promise.resolve('10'))
+            .mockImplementationOnce(() => Promise.resolve('10'));
 
         const spyGetRates = jest
             .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve(['0']));
+            .mockImplementationOnce(() => Promise.resolve(['123123123']));
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
@@ -295,12 +295,12 @@ describe('paths test', () => {
 
         const spyGetDecimals = jest
             .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('18'))
-            .mockImplementationOnce(() => Promise.resolve('18'));
+            .mockImplementationOnce(() => Promise.resolve('10'))
+            .mockImplementationOnce(() => Promise.resolve('10'));
 
         const spyGetRates = jest
             .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve(['0']));
+            .mockImplementationOnce(() => Promise.resolve(['123123123']));
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
@@ -366,12 +366,12 @@ describe('paths test', () => {
 
         const spyGetDecimals = jest
             .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('18'))
-            .mockImplementationOnce(() => Promise.resolve('18'));
+            .mockImplementationOnce(() => Promise.resolve('10'))
+            .mockImplementationOnce(() => Promise.resolve('10'));
 
         const spyGetRates = jest
             .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve(['0']));
+            .mockImplementationOnce(() => Promise.resolve(['123123123']));
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
