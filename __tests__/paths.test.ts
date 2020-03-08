@@ -13,7 +13,7 @@ describe('paths test', () => {
         jest.restoreAllMocks();
     });
 
-    it('generatePath from eos token to eos token', async () => {
+    it('getCheapestPath from eos token to eos token', async () => {
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
@@ -37,7 +37,7 @@ describe('paths test', () => {
                 }]
             });
 
-        const received = await sdk.generatePath(
+        const received = await sdk.getCheapestPath(
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
         );
@@ -55,7 +55,7 @@ describe('paths test', () => {
         expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
     });
 
-    it('generatePath from eos token to ethereum token', async () => {
+    it('getCheapestPath from eos token to ethereum token', async () => {
         const spyGetContractAddresses = jest
             .spyOn(ethereum, 'getContractAddresses')
             .mockImplementationOnce(() => ({ anchorToken: '0x3333333333333333333333333333333333333333' }));
@@ -101,7 +101,7 @@ describe('paths test', () => {
                 }]
             });
 
-        const received = await sdk.generatePath(
+        const received = await sdk.getCheapestPath(
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
         );
@@ -126,7 +126,7 @@ describe('paths test', () => {
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(1);
     });
 
-    it('generatePath from ethereum token to eos token', async () => {
+    it('getCheapestPath from ethereum token to eos token', async () => {
         const spyGetContractAddresses = jest
             .spyOn(ethereum, 'getContractAddresses')
             .mockImplementationOnce(() => ({ anchorToken: '0x3333333333333333333333333333333333333333' }));
@@ -172,7 +172,7 @@ describe('paths test', () => {
                 }]
             });
 
-        const received = await sdk.generatePath(
+        const received = await sdk.getCheapestPath(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
         );
@@ -197,7 +197,7 @@ describe('paths test', () => {
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(1);
     });
 
-    it('generatePath from ethereum token to ethereum token', async () => {
+    it('getCheapestPath from ethereum token to ethereum token', async () => {
         const spyGetGraph = jest
             .spyOn(ethereum, 'getGraph')
             .mockImplementationOnce(() => Promise.resolve({
@@ -217,7 +217,7 @@ describe('paths test', () => {
             .spyOn(ethereum, 'getRates')
             .mockImplementationOnce(() => Promise.resolve(['0']));
 
-        const received = await sdk.generatePath(
+        const received = await sdk.getCheapestPath(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: 'ethereum', blockchainId: '0x5555555555555555555555555555555555555555' }
         );
