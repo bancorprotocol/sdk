@@ -74,25 +74,25 @@ export class SDK {
     }
 }
 
-async function getPath(_this: SDK, sourceToken: Token, targetToken: Token, amount: string, getBestPath: (paths: string[][], rates: string[]) => string[]): Promise<Token[]> {
+async function getPath(sdk: SDK, sourceToken: Token, targetToken: Token, amount: string, getBestPath: (paths: string[][], rates: string[]) => string[]): Promise<Token[]> {
     let eosPath;
     let ethPaths;
     let ethRates;
 
     switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
     case 'eos,eos':
-        eosPath = await _this.eos.getPath(sourceToken, targetToken);
+        eosPath = await sdk.eos.getPath(sourceToken, targetToken);
         return eosPath;
     case 'eos,ethereum':
-        eosPath = await _this.eos.getPath(sourceToken, _this.eos.getAnchorToken());
-        [ethPaths, ethRates] = await _this.ethereum.getAllPathsAndRates(_this.ethereum.getAnchorToken(), targetToken.blockchainId, amount);
+        eosPath = await sdk.eos.getPath(sourceToken, sdk.eos.getAnchorToken());
+        [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sdk.ethereum.getAnchorToken(), targetToken.blockchainId, amount);
         return [...eosPath, ...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
     case 'ethereum,eos':
-        [ethPaths, ethRates] = await _this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, _this.ethereum.getAnchorToken(), amount);
-        eosPath = await _this.eos.getPath(_this.eos.getAnchorToken(), targetToken);
+        [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, sdk.ethereum.getAnchorToken(), amount);
+        eosPath = await sdk.eos.getPath(sdk.eos.getAnchorToken(), targetToken);
         return [...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), ...eosPath];
     case 'ethereum,ethereum':
-        [ethPaths, ethRates] = await _this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
+        [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
         return getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}));
     }
 

@@ -206,7 +206,7 @@ var SDK = /** @class */ (function () {
     return SDK;
 }());
 exports.SDK = SDK;
-function getPath(_this, sourceToken, targetToken, amount, getBestPath) {
+function getPath(sdk, sourceToken, targetToken, amount, getBestPath) {
     return __awaiter(this, void 0, void 0, function () {
         var eosPath, ethPaths, ethRates, _a;
         var _b, _c, _d;
@@ -221,25 +221,25 @@ function getPath(_this, sourceToken, targetToken, amount, getBestPath) {
                         case 'ethereum,ethereum': return [3 /*break*/, 9];
                     }
                     return [3 /*break*/, 11];
-                case 1: return [4 /*yield*/, _this.eos.getPath(sourceToken, targetToken)];
+                case 1: return [4 /*yield*/, sdk.eos.getPath(sourceToken, targetToken)];
                 case 2:
                     eosPath = _e.sent();
                     return [2 /*return*/, eosPath];
-                case 3: return [4 /*yield*/, _this.eos.getPath(sourceToken, _this.eos.getAnchorToken())];
+                case 3: return [4 /*yield*/, sdk.eos.getPath(sourceToken, sdk.eos.getAnchorToken())];
                 case 4:
                     eosPath = _e.sent();
-                    return [4 /*yield*/, _this.ethereum.getAllPathsAndRates(_this.ethereum.getAnchorToken(), targetToken.blockchainId, amount)];
+                    return [4 /*yield*/, sdk.ethereum.getAllPathsAndRates(sdk.ethereum.getAnchorToken(), targetToken.blockchainId, amount)];
                 case 5:
                     _b = _e.sent(), ethPaths = _b[0], ethRates = _b[1];
                     return [2 /*return*/, __spreadArrays(eosPath, getBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); }))];
-                case 6: return [4 /*yield*/, _this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, _this.ethereum.getAnchorToken(), amount)];
+                case 6: return [4 /*yield*/, sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, sdk.ethereum.getAnchorToken(), amount)];
                 case 7:
                     _c = _e.sent(), ethPaths = _c[0], ethRates = _c[1];
-                    return [4 /*yield*/, _this.eos.getPath(_this.eos.getAnchorToken(), targetToken)];
+                    return [4 /*yield*/, sdk.eos.getPath(sdk.eos.getAnchorToken(), targetToken)];
                 case 8:
                     eosPath = _e.sent();
                     return [2 /*return*/, __spreadArrays(getBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); }), eosPath)];
-                case 9: return [4 /*yield*/, _this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
+                case 9: return [4 /*yield*/, sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
                 case 10:
                     _d = _e.sent(), ethPaths = _d[0], ethRates = _d[1];
                     return [2 /*return*/, getBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); })];
