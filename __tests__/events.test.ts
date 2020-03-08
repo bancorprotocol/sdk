@@ -5,6 +5,14 @@ import * as ethereum from '../src/blockchains/ethereum';
 describe('rates test', () => {
     const sdk = new SDK();
 
+    beforeEach(async () => {
+        jest.restoreAllMocks();
+    });
+
+    afterEach(async () => {
+        jest.restoreAllMocks();
+    });
+
     const logs = Array.from(Array(10).keys()).map(n => ({
         blockNumber: 500 + 1000 * n,
         topics: [
@@ -25,14 +33,6 @@ describe('rates test', () => {
             conversionFee: `${789 * n + 1}`
         }
     }));
-
-    beforeEach(() => {
-        jest.restoreAllMocks();
-    });
-
-    afterEach(() => {
-        jest.restoreAllMocks();
-    });
 
     for (const event of events) {
         for (const offset of [-1, 0, +1]) {

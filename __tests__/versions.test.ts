@@ -5,11 +5,11 @@ import * as ethereum from '../src/blockchains/ethereum';
 describe('rates test', () => {
     const sdk = new SDK();
 
-    beforeEach(() => {
+    beforeEach(async () => {
         jest.restoreAllMocks();
     });
 
-    afterEach(() => {
+    afterEach(async () => {
         jest.restoreAllMocks();
     });
 
