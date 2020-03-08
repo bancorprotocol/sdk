@@ -1,7 +1,7 @@
 import { SDK } from '../src/index';
 import * as eos from '../src/blockchains/eos/index';
 import * as ethereum from '../src/blockchains/ethereum/index';
-import { newWeb3, converterVersionGetter } from '../src/blockchains/ethereum/mocks';
+import { newWeb3, setConverterVersionGetter } from '../src/blockchains/ethereum/mocks';
 
 describe('rates test', () => {
     let sdk: SDK;
@@ -22,25 +22,25 @@ describe('rates test', () => {
     });
 
     it('getConverterVersion of ethereum converter with a "string" version type', async () => {
-        sdk.ethereum.web3 = { ...sdk.ethereum.web3, ...converterVersionGetter(['1.1']) };
+        setConverterVersionGetter(sdk, ['1.1']);
         const received = await sdk.getConverterVersion({ blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' });
         expect(received).toEqual('1.1');
     });
 
     it('getConverterVersion of ethereum converter with a "bytes32" version type', async () => {
-        sdk.ethereum.web3 = { ...sdk.ethereum.web3, ...converterVersionGetter(['', '0x' + '2.2'.split('').map(c => c.charCodeAt(0).toString(16)).join('')]) };
+        setConverterVersionGetter(sdk, ['', '0x' + '2.2'.split('').map(c => c.charCodeAt(0).toString(16)).join('')]);
         const received = await sdk.getConverterVersion({ blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' });
         expect(received).toEqual('2.2');
     });
 
     it('getConverterVersion of ethereum converter with a "uint16" version type', async () => {
-        sdk.ethereum.web3 = { ...sdk.ethereum.web3, ...converterVersionGetter(['', '', '3.3']) };
+        setConverterVersionGetter(sdk, ['', '', '3.3']);
         const received = await sdk.getConverterVersion({ blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' });
         expect(received).toEqual('3.3');
     });
 
     it('getConverterVersion of ethereum converter with an unknown version type', async () => {
-        sdk.ethereum.web3 = { ...sdk.ethereum.web3, ...converterVersionGetter(['', '', '', '4.4']) };
+        setConverterVersionGetter(sdk, ['', '', '', '4.4']);
         const received = await sdk.getConverterVersion({ blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' });
         expect(received).toEqual('unknown');
     });

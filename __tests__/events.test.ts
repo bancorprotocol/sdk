@@ -1,7 +1,7 @@
 import { SDK } from '../src/index';
 import * as eos from '../src/blockchains/eos/index';
 import * as ethereum from '../src/blockchains/ethereum/index';
-import { newWeb3, converterEventsGetter } from '../src/blockchains/ethereum/mocks';
+import { newWeb3, setConverterEventsGetter } from '../src/blockchains/ethereum/mocks';
 
 describe('rates test', () => {
     let sdk: SDK;
@@ -40,7 +40,7 @@ describe('rates test', () => {
     for (const event of events) {
         for (const offset of [-1, 0, +1]) {
             it('getConversionEvents on ethereum', async () => {
-                sdk.ethereum.web3 = { ...sdk.ethereum.web3, ...converterEventsGetter(logs, events) };
+                setConverterEventsGetter(sdk, logs, events);
                 const received = await sdk.getConversionEvents({ blockchainType: 'ethereum', blockchainId: '0x'.padEnd(42, '1') }, 1, event.blockNumber + offset);
                 expect(received.length).toEqual(events.filter(e => 1 <= e.blockNumber && e.blockNumber <= event.blockNumber + offset).length);
             });
@@ -50,7 +50,7 @@ describe('rates test', () => {
     for (const event of events) {
         for (const offset of [-1, 0, +1]) {
             it('getConversionEventsByTimestamp on ethereum', async () => {
-                sdk.ethereum.web3 = { ...sdk.ethereum.web3, ...converterEventsGetter(logs, events) };
+                setConverterEventsGetter(sdk, logs, events);
                 const received = await sdk.getConversionEventsByTimestamp({ blockchainType: 'ethereum', blockchainId: '0x'.padEnd(42, '1') }, 1, event.blockNumber + offset);
                 expect(received.length).toEqual(events.filter(e => 1 <= e.blockNumber && e.blockNumber <= event.blockNumber + offset).length);
             });
