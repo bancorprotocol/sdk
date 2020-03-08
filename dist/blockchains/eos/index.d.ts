@@ -6,8 +6,8 @@ export declare class EOS {
     close(): void;
     init(): Promise<void>;
     getAnchorToken(): Token;
+    getPath(from: Token, to: Token): Promise<Token[]>;
     getRateByPath(path: Token[], amount: string): Promise<string>;
-    getConversionPath(from: Token, to: Token): Promise<Token[]>;
     getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]>;

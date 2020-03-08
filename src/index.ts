@@ -29,16 +29,6 @@ export class SDK {
         return await getPath(this, sourceToken, targetToken, amount, getCheapestPath);
     }
 
-    async getRateByPath(path: Token[], amount: string = '1'): Promise<string> {
-        let bgn = 0;
-        while (bgn < path.length) {
-            const end = path.slice(bgn).findIndex(token => token.blockchainType != path[bgn].blockchainType) >>> 0;
-            amount = await this[path[bgn].blockchainType].getRateByPath(path.slice(bgn, end), amount);
-            bgn = end;
-        }
-        return amount;
-    }
-
     async getShortestPathRate(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<string> {
         const path = await this.getShortestPath(sourceToken, targetToken, amount);
         return await this.getRateByPath(path, amount);
@@ -47,6 +37,16 @@ export class SDK {
     async getCheapestPathRate(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<string> {
         const path = await this.getCheapestPath(sourceToken, targetToken, amount);
         return await this.getRateByPath(path, amount);
+    }
+
+    async getRateByPath(path: Token[], amount: string = '1'): Promise<string> {
+        let bgn = 0;
+        while (bgn < path.length) {
+            const end = path.slice(bgn).findIndex(token => token.blockchainType != path[bgn].blockchainType) >>> 0;
+            amount = await this[path[bgn].blockchainType].getRateByPath(path.slice(bgn, end), amount);
+            bgn = end;
+        }
+        return amount;
     }
 
     async getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
@@ -74,48 +74,48 @@ export class SDK {
     }
 }
 
-    async function getPath(_this: SDK, sourceToken: Token, targetToken: Token, amount: string, getBestPath: (paths: string[][], rates: string[]) => string[]): Promise<Token[]> {
-        let eosPath;
-        let ethPaths;
-        let ethRates;
+async function getPath(_this: SDK, sourceToken: Token, targetToken: Token, amount: string, getBestPath: (paths: string[][], rates: string[]) => string[]): Promise<Token[]> {
+    let eosPath;
+    let ethPaths;
+    let ethRates;
 
-        switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
-        case 'eos,eos':
-            eosPath = await _this.eos.getConversionPath(sourceToken, targetToken);
-            return eosPath;
-        case 'eos,ethereum':
-            eosPath = await _this.eos.getConversionPath(sourceToken, _this.eos.getAnchorToken());
-            [ethPaths, ethRates] = await _this.ethereum.getAllPathsAndRates(_this.ethereum.getAnchorToken(), targetToken.blockchainId, amount);
-            return [...eosPath, ...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
-        case 'ethereum,eos':
-            [ethPaths, ethRates] = await _this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, _this.ethereum.getAnchorToken(), amount);
-            eosPath = await _this.eos.getConversionPath(_this.eos.getAnchorToken(), targetToken);
-            return [...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), ...eosPath];
-        case 'ethereum,ethereum':
-            [ethPaths, ethRates] = await _this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
-            return getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}));
-        }
-
-        throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
+    switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
+    case 'eos,eos':
+        eosPath = await _this.eos.getPath(sourceToken, targetToken);
+        return eosPath;
+    case 'eos,ethereum':
+        eosPath = await _this.eos.getPath(sourceToken, _this.eos.getAnchorToken());
+        [ethPaths, ethRates] = await _this.ethereum.getAllPathsAndRates(_this.ethereum.getAnchorToken(), targetToken.blockchainId, amount);
+        return [...eosPath, ...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
+    case 'ethereum,eos':
+        [ethPaths, ethRates] = await _this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, _this.ethereum.getAnchorToken(), amount);
+        eosPath = await _this.eos.getPath(_this.eos.getAnchorToken(), targetToken);
+        return [...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), ...eosPath];
+    case 'ethereum,ethereum':
+        [ethPaths, ethRates] = await _this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
+        return getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}));
     }
 
-    function getShortestPath(paths: string[][], rates: string[]): string[] {
-        let index = 0;
-        for (let i = 1; i < paths.length; i++) {
-            if (betterPath(paths, index, i) || (equalPath(paths, index, i) && betterRate(rates, index, i)))
-                index = i;
-        }
-        return paths[index];
-    }
+    throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
+}
 
-    function getCheapestPath(paths: string[][], rates: string[]): string[] {
-        let index = 0;
-        for (let i = 1; i < rates.length; i++) {
-            if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
-                index = i;
-        }
-        return paths[index];
+function getShortestPath(paths: string[][], rates: string[]): string[] {
+    let index = 0;
+    for (let i = 1; i < paths.length; i++) {
+        if (betterPath(paths, index, i) || (equalPath(paths, index, i) && betterRate(rates, index, i)))
+            index = i;
     }
+    return paths[index];
+}
+
+function getCheapestPath(paths: string[][], rates: string[]): string[] {
+    let index = 0;
+    for (let i = 1; i < rates.length; i++) {
+        if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
+            index = i;
+    }
+    return paths[index];
+}
 
 function betterPath(paths: string[][], index1: number, index2: number): boolean {
     return paths[index1].length > paths[index2].length;

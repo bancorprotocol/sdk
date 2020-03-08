@@ -92,28 +92,6 @@ var SDK = /** @class */ (function () {
             });
         });
     };
-    SDK.prototype.getRateByPath = function (path, amount) {
-        if (amount === void 0) { amount = '1'; }
-        return __awaiter(this, void 0, void 0, function () {
-            var bgn, end;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        bgn = 0;
-                        _a.label = 1;
-                    case 1:
-                        if (!(bgn < path.length)) return [3 /*break*/, 3];
-                        end = path.slice(bgn).findIndex(function (token) { return token.blockchainType != path[bgn].blockchainType; }) >>> 0;
-                        return [4 /*yield*/, this[path[bgn].blockchainType].getRateByPath(path.slice(bgn, end), amount)];
-                    case 2:
-                        amount = _a.sent();
-                        bgn = end;
-                        return [3 /*break*/, 1];
-                    case 3: return [2 /*return*/, amount];
-                }
-            });
-        });
-    };
     SDK.prototype.getShortestPathRate = function (sourceToken, targetToken, amount) {
         if (amount === void 0) { amount = '1'; }
         return __awaiter(this, void 0, void 0, function () {
@@ -140,6 +118,28 @@ var SDK = /** @class */ (function () {
                         path = _a.sent();
                         return [4 /*yield*/, this.getRateByPath(path, amount)];
                     case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    SDK.prototype.getRateByPath = function (path, amount) {
+        if (amount === void 0) { amount = '1'; }
+        return __awaiter(this, void 0, void 0, function () {
+            var bgn, end;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        bgn = 0;
+                        _a.label = 1;
+                    case 1:
+                        if (!(bgn < path.length)) return [3 /*break*/, 3];
+                        end = path.slice(bgn).findIndex(function (token) { return token.blockchainType != path[bgn].blockchainType; }) >>> 0;
+                        return [4 /*yield*/, this[path[bgn].blockchainType].getRateByPath(path.slice(bgn, end), amount)];
+                    case 2:
+                        amount = _a.sent();
+                        bgn = end;
+                        return [3 /*break*/, 1];
+                    case 3: return [2 /*return*/, amount];
                 }
             });
         });
@@ -221,11 +221,11 @@ function getPath(_this, sourceToken, targetToken, amount, getBestPath) {
                         case 'ethereum,ethereum': return [3 /*break*/, 9];
                     }
                     return [3 /*break*/, 11];
-                case 1: return [4 /*yield*/, _this.eos.getConversionPath(sourceToken, targetToken)];
+                case 1: return [4 /*yield*/, _this.eos.getPath(sourceToken, targetToken)];
                 case 2:
                     eosPath = _e.sent();
                     return [2 /*return*/, eosPath];
-                case 3: return [4 /*yield*/, _this.eos.getConversionPath(sourceToken, _this.eos.getAnchorToken())];
+                case 3: return [4 /*yield*/, _this.eos.getPath(sourceToken, _this.eos.getAnchorToken())];
                 case 4:
                     eosPath = _e.sent();
                     return [4 /*yield*/, _this.ethereum.getAllPathsAndRates(_this.ethereum.getAnchorToken(), targetToken.blockchainId, amount)];
@@ -235,7 +235,7 @@ function getPath(_this, sourceToken, targetToken, amount, getBestPath) {
                 case 6: return [4 /*yield*/, _this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, _this.ethereum.getAnchorToken(), amount)];
                 case 7:
                     _c = _e.sent(), ethPaths = _c[0], ethRates = _c[1];
-                    return [4 /*yield*/, _this.eos.getConversionPath(_this.eos.getAnchorToken(), targetToken)];
+                    return [4 /*yield*/, _this.eos.getPath(_this.eos.getAnchorToken(), targetToken)];
                 case 8:
                     eosPath = _e.sent();
                     return [2 /*return*/, __spreadArrays(getBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); }), eosPath)];

@@ -86,6 +86,24 @@ var EOS = /** @class */ (function () {
     EOS.prototype.getAnchorToken = function () {
         return exports.getAnchorToken(); // calling global function
     };
+    EOS.prototype.getPath = function (from, to) {
+        return __awaiter(this, void 0, void 0, function () {
+            var anchorToken, sourcePath, targetPath;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        anchorToken = this.getAnchorToken();
+                        return [4 /*yield*/, getPathToAnchor(this.jsonRpc, from, anchorToken)];
+                    case 1:
+                        sourcePath = _a.sent();
+                        return [4 /*yield*/, getPathToAnchor(this.jsonRpc, to, anchorToken)];
+                    case 2:
+                        targetPath = _a.sent();
+                        return [2 /*return*/, getShortestPath(sourcePath, targetPath)];
+                }
+            });
+        });
+    };
     EOS.prototype.getRateByPath = function (path, amount) {
         return __awaiter(this, void 0, void 0, function () {
             var i;
@@ -104,24 +122,6 @@ var EOS = /** @class */ (function () {
                         i += 2;
                         return [3 /*break*/, 1];
                     case 4: return [2 /*return*/, amount];
-                }
-            });
-        });
-    };
-    EOS.prototype.getConversionPath = function (from, to) {
-        return __awaiter(this, void 0, void 0, function () {
-            var anchorToken, sourcePath, targetPath;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        anchorToken = this.getAnchorToken();
-                        return [4 /*yield*/, getPathToAnchor(this.jsonRpc, from, anchorToken)];
-                    case 1:
-                        sourcePath = _a.sent();
-                        return [4 /*yield*/, getPathToAnchor(this.jsonRpc, to, anchorToken)];
-                    case 2:
-                        targetPath = _a.sent();
-                        return [2 /*return*/, getShortestPath(sourcePath, targetPath)];
                 }
             });
         });
