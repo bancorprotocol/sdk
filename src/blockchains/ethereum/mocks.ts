@@ -32,9 +32,9 @@ export function getWeb3() {
     };
 }
 
-export function setConverterVersionGetter(sdk, versions) {
-    sdk.ethereum.web3 = {
-        ...sdk.ethereum.web3,
+export function setConverterVersionGetter(ethereum, versions) {
+    ethereum.web3 = {
+        ...ethereum.web3,
         eth: {
             Contract: function(abi, address) {
                 return {
@@ -53,9 +53,9 @@ export function setConverterVersionGetter(sdk, versions) {
     };
 }
 
-export function setConverterEventsGetter(sdk, logs, events) {
-    sdk.ethereum.web3 = {
-        ...sdk.ethereum.web3,
+export function setConverterEventsGetter(ethereum, logs, events) {
+    ethereum.web3 = {
+        ...ethereum.web3,
         eth: {
             getBlock: function(number) {
                 if (number == "latest")

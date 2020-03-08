@@ -1,13 +1,13 @@
 import { SDK } from '../src/index';
 import * as eos from '../src/blockchains/eos/index';
 import * as ethereum from '../src/blockchains/ethereum/index';
-import { getWeb3 } from '../src/blockchains/ethereum/mocks';
+import * as ethereumMocks from '../src/blockchains/ethereum/mocks';
 
 describe('rates test', () => {
     let sdk: SDK;
 
     beforeEach(async () => {
-        jest.spyOn(ethereum, 'getWeb3').mockImplementationOnce(getWeb3);
+        jest.spyOn(ethereum, 'getWeb3').mockImplementationOnce(ethereumMocks.getWeb3);
         sdk = await SDK.create();
     });
 
