@@ -77,26 +77,16 @@ var EOS = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var eos;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        eos = new EOS();
-                        return [4 /*yield*/, exports.init(eos, nodeEndpoint)];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/, eos];
-                }
+                eos = new EOS();
+                eos.jsonRpc = new eosjs_1.JsonRpc(nodeEndpoint, { fetch: node_fetch_1.default });
+                return [2 /*return*/, eos];
             });
         });
     };
     EOS.destroy = function (eos) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, exports.free(eos)];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                return [2 /*return*/];
             });
         });
     };
@@ -214,21 +204,6 @@ var EOS = /** @class */ (function () {
     return EOS;
 }());
 exports.EOS = EOS;
-exports.init = function (eos, nodeEndpoint) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            eos.jsonRpc = new eosjs_1.JsonRpc(nodeEndpoint, { fetch: node_fetch_1.default });
-            return [2 /*return*/];
-        });
-    });
-};
-exports.free = function (eos) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/];
-        });
-    });
-};
 exports.getReservesFromCode = function (jsonRpc, code, symbol) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {

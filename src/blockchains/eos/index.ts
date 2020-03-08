@@ -17,12 +17,11 @@ export class EOS {
 
     static async create(nodeEndpoint: string): Promise<EOS> {
         const eos = new EOS();
-        await init(eos, nodeEndpoint);
+        eos.jsonRpc = new JsonRpc(nodeEndpoint, { fetch });
         return eos;
     }
 
     static async destroy(eos: EOS): Promise<void> {
-        await free(eos);
     }
 
     getAnchorToken(): Token {
@@ -82,13 +81,6 @@ export class EOS {
         );
     }
 }
-
-export const init = async function(eos, nodeEndpoint) {
-    eos.jsonRpc = new JsonRpc(nodeEndpoint, { fetch });
-};
-
-export const free = async function(eos) {
-};
 
 export const getReservesFromCode = async (jsonRpc, code, symbol) => {
     return await jsonRpc.jsonRpc.get_table_rows({

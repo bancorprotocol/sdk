@@ -6,15 +6,15 @@ describe('paths test', () => {
     let sdk: SDK;
 
     beforeEach(async () => {
-        jest.spyOn(eos, 'init').mockImplementationOnce(() => Promise.resolve());
-        jest.spyOn(ethereum, 'init').mockImplementationOnce(() => Promise.resolve());
+        jest.spyOn(eos.EOS, 'create').mockImplementationOnce(() => Promise.resolve(new eos.EOS()));
+        jest.spyOn(ethereum.Ethereum, 'create').mockImplementationOnce(() => Promise.resolve(new ethereum.Ethereum()));
         sdk = await SDK.create();
         jest.restoreAllMocks();
     });
 
     afterEach(async () => {
-        jest.spyOn(eos, 'free').mockImplementationOnce(() => Promise.resolve());
-        jest.spyOn(ethereum, 'free').mockImplementationOnce(() => Promise.resolve());
+        jest.spyOn(eos.EOS, 'destroy').mockImplementationOnce(() => Promise.resolve());
+        jest.spyOn(ethereum.Ethereum, 'destroy').mockImplementationOnce(() => Promise.resolve());
         await SDK.destroy(sdk);
         jest.restoreAllMocks();
     });

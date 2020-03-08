@@ -29,12 +29,20 @@ export class Ethereum {
 
     static async create(nodeEndpoint: string): Promise<Ethereum> {
         const ethereum = new Ethereum();
-        await init(ethereum, nodeEndpoint);
+        ethereum.web3 = new Web3(nodeEndpoint);
+        ethereum.networkType = await ethereum.web3.eth.net.getNetworkType();
+        const contractRegistry = new ethereum.web3.eth.Contract(abis.ContractRegistry, getContractAddresses(ethereum).registry);
+        const bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
+        const converterRegistryAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
+        ethereum.bancorNetwork = new ethereum.web3.eth.Contract(abis.BancorNetwork, bancorNetworkAddress);
+        ethereum.converterRegistry = new ethereum.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
+        ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, getContractAddresses(ethereum).multicall);
         return ethereum;
     }
 
     static async destroy(ethereum: Ethereum): Promise<void> {
-        await free(ethereum);
+        if (ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == "WebsocketProvider")
+            ethereum.web3.currentProvider.connection.close();
     }
 
     getAnchorToken(): string {
@@ -77,22 +85,6 @@ export class Ethereum {
         return await conversionEvents.get(this, token.blockchainId, fromBlock, toBlock);
     }
 }
-
-export const init = async function(ethereum, nodeEndpoint) {
-    ethereum.web3 = new Web3(nodeEndpoint);
-    ethereum.networkType = await ethereum.web3.eth.net.getNetworkType();
-    const contractRegistry = new ethereum.web3.eth.Contract(abis.ContractRegistry, getContractAddresses(ethereum).registry);
-    const bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
-    const converterRegistryAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
-    ethereum.bancorNetwork = new ethereum.web3.eth.Contract(abis.BancorNetwork, bancorNetworkAddress);
-    ethereum.converterRegistry = new ethereum.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
-    ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, getContractAddresses(ethereum).multicall);
-};
-
-export const free = async function(ethereum) {
-    if (ethereum.web3 && ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == "WebsocketProvider")
-        ethereum.web3.currentProvider.connection.close();
-};
 
 export const getContractAddresses = function(ethereum) {
     if (CONTRACT_ADDRESSES[ethereum.networkType])
