@@ -82,7 +82,7 @@ var Ethereum = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         ethereum = new Ethereum();
-                        ethereum.web3 = exports.newWeb3(nodeEndpoint);
+                        ethereum.web3 = exports.getWeb3(nodeEndpoint);
                         _a = ethereum;
                         return [4 /*yield*/, ethereum.web3.eth.net.getNetworkType()];
                     case 1:
@@ -204,7 +204,7 @@ var Ethereum = /** @class */ (function () {
     return Ethereum;
 }());
 exports.Ethereum = Ethereum;
-exports.newWeb3 = function (nodeEndpoint) {
+exports.getWeb3 = function (nodeEndpoint) {
     return new web3_1.default(nodeEndpoint);
 };
 exports.getContractAddresses = function (ethereum) {

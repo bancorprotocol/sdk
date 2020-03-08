@@ -1,4 +1,4 @@
-export function newWeb3() {
+export function getWeb3() {
     return {
         currentProvider: {
             constructor: {
