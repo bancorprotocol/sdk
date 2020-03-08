@@ -87,36 +87,36 @@ export class Ethereum {
     }
 }
 
-export const getContractAddresses = function(_this) {
-    if (CONTRACT_ADDRESSES[_this.networkType])
-        return CONTRACT_ADDRESSES[_this.networkType];
-    throw new Error(_this.networkType + ' network not supported');
+export const getContractAddresses = function(ethereum) {
+    if (CONTRACT_ADDRESSES[ethereum.networkType])
+        return CONTRACT_ADDRESSES[ethereum.networkType];
+    throw new Error(ethereum.networkType + ' network not supported');
 };
 
-export const getReturn = async function(_this, path, amount) {
-    return (await _this.bancorNetwork.methods.getReturnByPath(path, amount).call())['0'];
+export const getReturn = async function(ethereum, path, amount) {
+    return (await ethereum.bancorNetwork.methods.getReturnByPath(path, amount).call())['0'];
 };
 
-export const getDecimals = async function(_this, token) {
-    if (_this.decimals[token] == undefined) {
-        const tokenContract = new _this.web3.eth.Contract(abis.ERC20Token, token);
-        _this.decimals[token] = await tokenContract.methods.decimals().call();
+export const getDecimals = async function(ethereum, token) {
+    if (ethereum.decimals[token] == undefined) {
+        const tokenContract = new ethereum.web3.eth.Contract(abis.ERC20Token, token);
+        ethereum.decimals[token] = await tokenContract.methods.decimals().call();
     }
-    return _this.decimals[token];
+    return ethereum.decimals[token];
 };
 
-export const getRates = async function(_this, paths, amount) {
-    const calls = paths.map(path => [_this.bancorNetwork._address, _this.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]);
-    const [blockNumber, returnData] = await _this.multicallContract.methods.aggregate(calls, false).call();
+export const getRates = async function(ethereum, paths, amount) {
+    const calls = paths.map(path => [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]);
+    const [blockNumber, returnData] = await ethereum.multicallContract.methods.aggregate(calls, false).call();
     return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : "0");
 };
 
-export const getGraph = async function(_this) {
+export const getGraph = async function(ethereum) {
     const graph = {};
 
-    const convertibleTokens = await _this.converterRegistry.methods.getConvertibleTokens().call();
-    const calls = convertibleTokens.map(convertibleToken => [_this.converterRegistry._address, _this.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]);
-    const [blockNumber, returnData] = await _this.multicallContract.methods.aggregate(calls, true).call();
+    const convertibleTokens = await ethereum.converterRegistry.methods.getConvertibleTokens().call();
+    const calls = convertibleTokens.map(convertibleToken => [ethereum.converterRegistry._address, ethereum.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]);
+    const [blockNumber, returnData] = await ethereum.multicallContract.methods.aggregate(calls, true).call();
 
     for (let i = 0; i < returnData.length; i++) {
         for (const smartToken of Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(n => Web3.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)))) {

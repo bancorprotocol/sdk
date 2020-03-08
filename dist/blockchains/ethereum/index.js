@@ -198,48 +198,48 @@ var Ethereum = /** @class */ (function () {
     return Ethereum;
 }());
 exports.Ethereum = Ethereum;
-exports.getContractAddresses = function (_this) {
-    if (CONTRACT_ADDRESSES[_this.networkType])
-        return CONTRACT_ADDRESSES[_this.networkType];
-    throw new Error(_this.networkType + ' network not supported');
+exports.getContractAddresses = function (ethereum) {
+    if (CONTRACT_ADDRESSES[ethereum.networkType])
+        return CONTRACT_ADDRESSES[ethereum.networkType];
+    throw new Error(ethereum.networkType + ' network not supported');
 };
-exports.getReturn = function (_this, path, amount) {
+exports.getReturn = function (ethereum, path, amount) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, _this.bancorNetwork.methods.getReturnByPath(path, amount).call()];
+                case 0: return [4 /*yield*/, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).call()];
                 case 1: return [2 /*return*/, (_a.sent())['0']];
             }
         });
     });
 };
-exports.getDecimals = function (_this, token) {
+exports.getDecimals = function (ethereum, token) {
     return __awaiter(this, void 0, void 0, function () {
         var tokenContract, _a, _b;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
-                    if (!(_this.decimals[token] == undefined)) return [3 /*break*/, 2];
-                    tokenContract = new _this.web3.eth.Contract(abis.ERC20Token, token);
-                    _a = _this.decimals;
+                    if (!(ethereum.decimals[token] == undefined)) return [3 /*break*/, 2];
+                    tokenContract = new ethereum.web3.eth.Contract(abis.ERC20Token, token);
+                    _a = ethereum.decimals;
                     _b = token;
                     return [4 /*yield*/, tokenContract.methods.decimals().call()];
                 case 1:
                     _a[_b] = _c.sent();
                     _c.label = 2;
-                case 2: return [2 /*return*/, _this.decimals[token]];
+                case 2: return [2 /*return*/, ethereum.decimals[token]];
             }
         });
     });
 };
-exports.getRates = function (_this, paths, amount) {
+exports.getRates = function (ethereum, paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var calls, _a, blockNumber, returnData;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    calls = paths.map(function (path) { return [_this.bancorNetwork._address, _this.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]; });
-                    return [4 /*yield*/, _this.multicallContract.methods.aggregate(calls, false).call()];
+                    calls = paths.map(function (path) { return [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]; });
+                    return [4 /*yield*/, ethereum.multicallContract.methods.aggregate(calls, false).call()];
                 case 1:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
                     return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : "0"; })];
@@ -247,18 +247,18 @@ exports.getRates = function (_this, paths, amount) {
         });
     });
 };
-exports.getGraph = function (_this) {
+exports.getGraph = function (ethereum) {
     return __awaiter(this, void 0, void 0, function () {
         var graph, convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     graph = {};
-                    return [4 /*yield*/, _this.converterRegistry.methods.getConvertibleTokens().call()];
+                    return [4 /*yield*/, ethereum.converterRegistry.methods.getConvertibleTokens().call()];
                 case 1:
                     convertibleTokens = _b.sent();
-                    calls = convertibleTokens.map(function (convertibleToken) { return [_this.converterRegistry._address, _this.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
-                    return [4 /*yield*/, _this.multicallContract.methods.aggregate(calls, true).call()];
+                    calls = convertibleTokens.map(function (convertibleToken) { return [ethereum.converterRegistry._address, ethereum.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
+                    return [4 /*yield*/, ethereum.multicallContract.methods.aggregate(calls, true).call()];
                 case 2:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
                     _loop_1 = function (i) {
