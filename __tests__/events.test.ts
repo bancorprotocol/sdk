@@ -9,7 +9,6 @@ describe('rates test', () => {
     beforeEach(async () => {
         jest.spyOn(ethereum, 'newWeb3').mockImplementationOnce(newWeb3);
         sdk = await SDK.create();
-        jest.restoreAllMocks();
     });
 
     afterEach(async () => {
