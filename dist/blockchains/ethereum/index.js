@@ -105,7 +105,7 @@ var Ethereum = /** @class */ (function () {
     Ethereum.destroy = function (ethereum) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                if (ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == "WebsocketProvider")
+                if (ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == 'WebsocketProvider')
                     ethereum.web3.currentProvider.connection.close();
                 return [2 /*return*/];
             });
@@ -251,7 +251,7 @@ exports.getRates = function (ethereum, paths, amount) {
                     return [4 /*yield*/, ethereum.multicallContract.methods.aggregate(calls, false).call()];
                 case 1:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
-                    return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : "0"; })];
+                    return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : '0'; })];
             }
         });
     });

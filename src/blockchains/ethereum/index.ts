@@ -41,7 +41,7 @@ export class Ethereum {
     }
 
     static async destroy(ethereum: Ethereum): Promise<void> {
-        if (ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == "WebsocketProvider")
+        if (ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == 'WebsocketProvider')
             ethereum.web3.currentProvider.connection.close();
     }
 
@@ -111,7 +111,7 @@ export const getDecimals = async function(ethereum, token) {
 export const getRates = async function(ethereum, paths, amount) {
     const calls = paths.map(path => [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]);
     const [blockNumber, returnData] = await ethereum.multicallContract.methods.aggregate(calls, false).call();
-    return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : "0");
+    return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : '0');
 };
 
 export const getGraph = async function(ethereum) {
