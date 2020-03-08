@@ -1,20 +1,18 @@
 import { SDK } from '../src/index';
-import * as eos from '../src/blockchains/eos';
-import * as ethereum from '../src/blockchains/ethereum';
+import * as eos from '../src/blockchains/eos/index';
+import * as ethereum from '../src/blockchains/ethereum/index';
+import { newWeb3 } from '../src/blockchains/ethereum/mocks';
 
 describe('rates test', () => {
     let sdk: SDK;
 
     beforeEach(async () => {
-        jest.spyOn(eos.EOS, 'create').mockImplementationOnce(() => Promise.resolve(new eos.EOS()));
-        jest.spyOn(ethereum.Ethereum, 'create').mockImplementationOnce(() => Promise.resolve(new ethereum.Ethereum()));
+        jest.spyOn(ethereum, 'newWeb3').mockImplementationOnce(newWeb3);
         sdk = await SDK.create();
         jest.restoreAllMocks();
     });
 
     afterEach(async () => {
-        jest.spyOn(eos.EOS, 'destroy').mockImplementationOnce(() => Promise.resolve());
-        jest.spyOn(ethereum.Ethereum, 'destroy').mockImplementationOnce(() => Promise.resolve());
         await SDK.destroy(sdk);
         jest.restoreAllMocks();
     });

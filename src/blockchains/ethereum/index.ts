@@ -29,7 +29,7 @@ export class Ethereum {
 
     static async create(nodeEndpoint: string): Promise<Ethereum> {
         const ethereum = new Ethereum();
-        ethereum.web3 = new Web3(nodeEndpoint);
+        ethereum.web3 = newWeb3(nodeEndpoint);
         ethereum.networkType = await ethereum.web3.eth.net.getNetworkType();
         const contractRegistry = new ethereum.web3.eth.Contract(abis.ContractRegistry, getContractAddresses(ethereum).registry);
         const bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
@@ -85,6 +85,10 @@ export class Ethereum {
         return await conversionEvents.get(this, token.blockchainId, fromBlock, toBlock);
     }
 }
+
+export const newWeb3 = function(nodeEndpoint) {
+    return new Web3(nodeEndpoint);
+};
 
 export const getContractAddresses = function(ethereum) {
     if (CONTRACT_ADDRESSES[ethereum.networkType])

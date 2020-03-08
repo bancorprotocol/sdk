@@ -1,20 +1,18 @@
 import { SDK } from '../src/index';
-import * as eos from '../src/blockchains/eos';
-import * as ethereum from '../src/blockchains/ethereum';
+import * as eos from '../src/blockchains/eos/index';
+import * as ethereum from '../src/blockchains/ethereum/index';
+import { newWeb3, converterEventsGetter } from '../src/blockchains/ethereum/mocks';
 
 describe('rates test', () => {
     let sdk: SDK;
 
     beforeEach(async () => {
-        jest.spyOn(eos.EOS, 'create').mockImplementationOnce(() => Promise.resolve(new eos.EOS()));
-        jest.spyOn(ethereum.Ethereum, 'create').mockImplementationOnce(() => Promise.resolve(new ethereum.Ethereum()));
+        jest.spyOn(ethereum, 'newWeb3').mockImplementationOnce(newWeb3);
         sdk = await SDK.create();
         jest.restoreAllMocks();
     });
 
     afterEach(async () => {
-        jest.spyOn(eos.EOS, 'destroy').mockImplementationOnce(() => Promise.resolve());
-        jest.spyOn(ethereum.Ethereum, 'destroy').mockImplementationOnce(() => Promise.resolve());
         await SDK.destroy(sdk);
         jest.restoreAllMocks();
     });
@@ -43,7 +41,7 @@ describe('rates test', () => {
     for (const event of events) {
         for (const offset of [-1, 0, +1]) {
             it('getConversionEvents on ethereum', async () => {
-                setConverterVersionGetter(sdk, logs, events);
+                sdk.ethereum.web3 = { ...sdk.ethereum.web3, ...converterEventsGetter(logs, events) };
                 const received = await sdk.getConversionEvents({ blockchainType: 'ethereum', blockchainId: '0x'.padEnd(42, '1') }, 1, event.blockNumber + offset);
                 expect(received.length).toEqual(events.filter(e => 1 <= e.blockNumber && e.blockNumber <= event.blockNumber + offset).length);
             });
@@ -53,41 +51,10 @@ describe('rates test', () => {
     for (const event of events) {
         for (const offset of [-1, 0, +1]) {
             it('getConversionEventsByTimestamp on ethereum', async () => {
-                setConverterVersionGetter(sdk, logs, events);
+                sdk.ethereum.web3 = { ...sdk.ethereum.web3, ...converterEventsGetter(logs, events) };
                 const received = await sdk.getConversionEventsByTimestamp({ blockchainType: 'ethereum', blockchainId: '0x'.padEnd(42, '1') }, 1, event.blockNumber + offset);
                 expect(received.length).toEqual(events.filter(e => 1 <= e.blockNumber && e.blockNumber <= event.blockNumber + offset).length);
             });
         }
     }
 });
-
-function setConverterVersionGetter(sdk, logs, events) {
-    sdk.ethereum.web3 = {
-        eth: {
-            getBlock: function(number) {
-                if (number == "latest")
-                    number = Number.MAX_SAFE_INTEGER;
-                return {number: number, timestamp: number};
-            },
-            getPastLogs: function({address: address, topics: [topic0], fromBlock: fromBlock, toBlock: toBlock}) {
-                return logs.filter(log => fromBlock <= log.blockNumber && log.blockNumber <= toBlock);
-            },
-            Contract: function(abi, address) {
-                return {
-                    getPastEvents: function(eventName, {fromBlock: fromBlock, toBlock: toBlock}) {
-                        return events.filter(event => fromBlock <= event.blockNumber && event.blockNumber <= toBlock);
-                    },
-                    methods: {
-                        decimals: function() {
-                            return {
-                                call: function() {
-                                    return '18';
-                                }
-                            };
-                        }
-                    }
-                };
-            }
-        }
-    };
-}
