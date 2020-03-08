@@ -58,7 +58,7 @@ export function setConverterEventsGetter(ethereum, logs, events) {
         ...ethereum.web3,
         eth: {
             getBlock: function(number) {
-                if (number == "latest")
+                if (number == 'latest')
                     number = Number.MAX_SAFE_INTEGER;
                 return {number: number, timestamp: number};
             },
