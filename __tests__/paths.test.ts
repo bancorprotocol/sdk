@@ -76,9 +76,7 @@ describe('paths test', () => {
             .mockImplementationOnce(() => Promise.resolve('10'))
             .mockImplementationOnce(() => Promise.resolve('10'));
 
-        const spyGetRates = jest
-            .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve(['123123123']));
+        ethereumMocks.setRatesGetter(sdk.ethereum, ['123123123']);
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
@@ -121,7 +119,6 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetRates).toHaveBeenCalledTimes(1);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
         expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
         expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
@@ -147,9 +144,7 @@ describe('paths test', () => {
             .mockImplementationOnce(() => Promise.resolve('10'))
             .mockImplementationOnce(() => Promise.resolve('10'));
 
-        const spyGetRates = jest
-            .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve(['123123123']));
+        ethereumMocks.setRatesGetter(sdk.ethereum, ['123123123']);
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
@@ -192,7 +187,6 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetRates).toHaveBeenCalledTimes(1);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
         expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
         expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
@@ -215,15 +209,7 @@ describe('paths test', () => {
             .mockImplementationOnce(() => Promise.resolve('10'))
             .mockImplementationOnce(() => Promise.resolve('10'));
 
-        const spyGetRates = jest
-            .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve([
-                '5555555555',
-                '4444444444',
-                '3333333333',
-                '2222222222',
-                '1111111111'
-            ]));
+        ethereumMocks.setRatesGetter(sdk.ethereum, ['5555555555', '4444444444', '3333333333', '2222222222', '1111111111']);
 
         const received = await sdk.getShortestPath(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
@@ -238,7 +224,6 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetRates).toHaveBeenCalledTimes(1);
     });
 
     it('getCheapestPath from eos token to eos token', async () => {
@@ -301,9 +286,7 @@ describe('paths test', () => {
             .mockImplementationOnce(() => Promise.resolve('10'))
             .mockImplementationOnce(() => Promise.resolve('10'));
 
-        const spyGetRates = jest
-            .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve(['123123123']));
+        ethereumMocks.setRatesGetter(sdk.ethereum, ['123123123']);
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
@@ -346,7 +329,6 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetRates).toHaveBeenCalledTimes(1);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
         expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
         expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
@@ -372,9 +354,7 @@ describe('paths test', () => {
             .mockImplementationOnce(() => Promise.resolve('10'))
             .mockImplementationOnce(() => Promise.resolve('10'));
 
-        const spyGetRates = jest
-            .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve(['123123123']));
+        ethereumMocks.setRatesGetter(sdk.ethereum, ['123123123']);
 
         const spyGetAnchorToken = jest
             .spyOn(eos, 'getAnchorToken')
@@ -417,7 +397,6 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetRates).toHaveBeenCalledTimes(1);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
         expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
         expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
@@ -440,15 +419,7 @@ describe('paths test', () => {
             .mockImplementationOnce(() => Promise.resolve('10'))
             .mockImplementationOnce(() => Promise.resolve('10'));
 
-        const spyGetRates = jest
-            .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve([
-                '5555555555',
-                '4444444444',
-                '3333333333',
-                '2222222222',
-                '1111111111'
-            ]));
+        ethereumMocks.setRatesGetter(sdk.ethereum, ['5555555555', '4444444444', '3333333333', '2222222222', '1111111111']);
 
         const received = await sdk.getCheapestPath(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
@@ -465,7 +436,6 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetRates).toHaveBeenCalledTimes(1);
     });
 
     it('getAllPathsAndRates from ethereum token to ethereum token', async () => {
@@ -483,15 +453,7 @@ describe('paths test', () => {
             .mockImplementationOnce(() => Promise.resolve('10'))
             .mockImplementationOnce(() => Promise.resolve('10'));
 
-        const spyGetRates = jest
-            .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.resolve([
-                '5555555555',
-                '4444444444',
-                '3333333333',
-                '2222222222',
-                '1111111111'
-            ]));
+        ethereumMocks.setRatesGetter(sdk.ethereum, ['5555555555', '4444444444', '3333333333', '2222222222', '1111111111']);
 
         const received = await sdk.getAllPathsAndRates(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
@@ -545,6 +507,5 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetRates).toHaveBeenCalledTimes(1);
     });
 });
