@@ -183,9 +183,9 @@ var SDK = /** @class */ (function () {
                             case 'ethereum,ethereum': return [3 /*break*/, 4];
                         }
                         return [3 /*break*/, 6];
-                    case 1: throw new Error('getAllPathsAndRates from EOS to EOS not supported');
-                    case 2: throw new Error('getAllPathsAndRates from EOS to Ethereum not supported');
-                    case 3: throw new Error('getAllPathsAndRates from Ethereum to EOS not supported');
+                    case 1: throw new Error('getAllPathsAndRates from EOS token to EOS token not supported');
+                    case 2: throw new Error('getAllPathsAndRates from EOS token to Ethereum token not supported');
+                    case 3: throw new Error('getAllPathsAndRates from Ethereum token to EOS token not supported');
                     case 4: return [4 /*yield*/, this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
                     case 5:
                         _b = _c.sent(), paths = _b[0], rates_1 = _b[1];
