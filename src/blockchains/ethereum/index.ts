@@ -4,7 +4,7 @@ import * as utils from '../../utils';
 import * as conversionEvents from './conversion_events';
 import * as converterVersion from './converter_version';
 import { timestampToBlockNumber } from './timestamp_to_block_number';
-import { Token, Converter, ConversionEvent } from '../../path_generation';
+import { Token, Converter, ConversionEvent } from '../../types';
 
 const CONTRACT_ADDRESSES = {
     main: {

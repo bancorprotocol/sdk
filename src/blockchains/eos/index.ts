@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { converterBlockchainIds } from './converter_blockchain_ids';
 import fs from 'fs';
 import * as utils from '../../utils';
-import { Token, Converter, ConversionEvent } from '../../path_generation';
+import { Token, Converter, ConversionEvent } from '../../types';
 import * as registry from './registry';
 
 interface Reserve {

@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import { Token, Converter, ConversionEvent } from '../../path_generation';
+import { Token, Converter, ConversionEvent } from '../../types';
 export declare class Ethereum {
     web3: Web3;
     networkType: string;

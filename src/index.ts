@@ -1,6 +1,6 @@
 import { EOS } from './blockchains/eos/index';
 import { Ethereum } from './blockchains/ethereum/index';
-import { Token, Converter, ConversionEvent } from './path_generation';
+import { Token, Converter, ConversionEvent } from './types';
 
 export class SDK {
     eos: EOS;

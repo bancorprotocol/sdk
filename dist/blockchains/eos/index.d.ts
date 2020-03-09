@@ -1,5 +1,5 @@
 import { JsonRpc } from 'eosjs';
-import { Token, Converter, ConversionEvent } from '../../path_generation';
+import { Token, Converter, ConversionEvent } from '../../types';
 export declare class EOS {
     jsonRpc: JsonRpc;
     static create(nodeEndpoint: string): Promise<EOS>;
