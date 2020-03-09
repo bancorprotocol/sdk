@@ -51,11 +51,17 @@ export class SDK {
     }
 
     async getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
-        if (sourceToken.blockchainType == 'ethereum' && targetToken.blockchainType == 'ethereum') {
+        switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
+        case 'eos,eos':
+            throw new Error('getAllPathsAndRates from EOS to EOS not supported');
+        case 'eos,ethereum':
+            throw new Error('getAllPathsAndRates from EOS to Ethereum not supported');
+        case 'ethereum,eos':
+            throw new Error('getAllPathsAndRates from Ethereum to EOS not supported');
+        case 'ethereum,ethereum':
             const [paths, rates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
             return paths.map((path, i) => ({path: path.map(x => ({blockchainType: 'ethereum', blockchainId: x})), rate: rates[i]}));
         }
-        throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {
