@@ -1,4 +1,9 @@
-export type BlockchainType = 'ethereum' | 'eos';
+export interface Settings {
+    eosNodeEndpoint?: string;
+    ethereumNodeEndpoint?: string;
+}
+
+export type BlockchainType = 'eos' | 'ethereum';
 
 export interface Token {
     blockchainType: BlockchainType;

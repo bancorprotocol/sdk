@@ -1,13 +1,10 @@
 import { EOS } from './blockchains/eos/index';
 import { Ethereum } from './blockchains/ethereum/index';
-import { Token, Converter, ConversionEvent } from './types';
+import { Settings, Token, Converter, ConversionEvent } from './types';
 export declare class SDK {
     eos: EOS;
     ethereum: Ethereum;
-    static create({ eosNodeEndpoint, ethNodeEndpoint }?: {
-        eosNodeEndpoint?: string;
-        ethNodeEndpoint?: string;
-    }): Promise<SDK>;
+    static create(settings: Settings): Promise<SDK>;
     static destroy(sdk: SDK): Promise<void>;
     getShortestPath(sourceToken: Token, targetToken: Token, amount?: string): Promise<Token[]>;
     getCheapestPath(sourceToken: Token, targetToken: Token, amount?: string): Promise<Token[]>;

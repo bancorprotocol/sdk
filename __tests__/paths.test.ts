@@ -8,7 +8,7 @@ describe('paths test', () => {
 
     beforeEach(async () => {
         jest.spyOn(ethereum, 'getWeb3').mockImplementationOnce(ethereumMocks.getWeb3);
-        sdk = await SDK.create();
+        sdk = await SDK.create({eosNodeEndpoint: 'dummy', ethereumNodeEndpoint: 'dummy'});
     });
 
     afterEach(async () => {

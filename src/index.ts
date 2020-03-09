@@ -1,21 +1,25 @@
 import { EOS } from './blockchains/eos/index';
 import { Ethereum } from './blockchains/ethereum/index';
-import { Token, Converter, ConversionEvent } from './types';
+import { Settings, Token, Converter, ConversionEvent } from './types';
 
 export class SDK {
     eos: EOS;
     ethereum: Ethereum;
 
-    static async create({eosNodeEndpoint = "", ethNodeEndpoint = ""} = {}): Promise<SDK> {
+    static async create(settings: Settings): Promise<SDK> {
         const sdk = new SDK();
-        sdk.eos = await EOS.create(eosNodeEndpoint);
-        sdk.ethereum = await Ethereum.create(ethNodeEndpoint);
+        if (settings.eosNodeEndpoint)
+            sdk.eos = await EOS.create(settings.eosNodeEndpoint);
+        if (settings.ethereumNodeEndpoint)
+            sdk.ethereum = await Ethereum.create(settings.ethereumNodeEndpoint);
         return sdk;
     }
 
     static async destroy(sdk: SDK): Promise<void> {
-        await EOS.destroy(sdk.eos);
-        await Ethereum.destroy(sdk.ethereum);
+        if (sdk.eos)
+            await EOS.destroy(sdk.eos);
+        if (sdk.ethereum)
+            await Ethereum.destroy(sdk.ethereum);
     }
 
     async getShortestPath(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<Token[]> {
