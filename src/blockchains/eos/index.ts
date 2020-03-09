@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { converterBlockchainIds } from './converter_blockchain_ids';
 import fs from 'fs';
 import * as utils from '../../utils';
-import { Token, Converter } from '../../path_generation';
+import { Token, Converter, ConversionEvent } from '../../path_generation';
 import * as registry from './registry';
 
 interface Reserve {
@@ -45,11 +45,11 @@ export class EOS {
         return '1.0';
     }
 
-    async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]> {
+    async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]> {
         throw new Error('getConversionEvents not supported on EOS');
     }
 
-    async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]> {
+    async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
         throw new Error('getConversionEventsByTimestamp not supported on EOS');
     }
 

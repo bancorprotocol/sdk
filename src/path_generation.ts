@@ -11,3 +11,13 @@ export interface Converter {
     blockchainId: string;
     symbol?: string;
 }
+
+export interface ConversionEvent {
+    fromToken: string;
+    toToken: string;
+    trader: string;
+    inputAmount: string;
+    outputAmount: string;
+    conversionFee?: string;
+    blockNumber: number;
+}

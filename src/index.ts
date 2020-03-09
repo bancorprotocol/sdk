@@ -1,6 +1,6 @@
 import { EOS } from './blockchains/eos/index';
 import { Ethereum } from './blockchains/ethereum/index';
-import { Token, Converter } from './path_generation';
+import { Token, Converter, ConversionEvent } from './path_generation';
 
 export class SDK {
     eos: EOS;
@@ -58,11 +58,11 @@ export class SDK {
         return await this[converter.blockchainType].getConverterVersion(converter);
     }
 
-    async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]> {
+    async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]> {
         return await this[token.blockchainType].getConversionEvents(token, fromBlock, toBlock);
     }
 
-    async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]> {
+    async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
         return await this[token.blockchainType].getConversionEventsByTimestamp(token, fromTimestamp, toTimestamp);
     }
 

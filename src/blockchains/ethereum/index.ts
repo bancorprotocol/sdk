@@ -3,8 +3,8 @@ import * as abis from './abis';
 import * as utils from '../../utils';
 import * as conversionEvents from './conversion_events';
 import * as converterVersion from './converter_version';
-import { Token, Converter } from '../../path_generation';
 import { timestampToBlockNumber } from './timestamp_to_block_number';
+import { Token, Converter, ConversionEvent } from '../../path_generation';
 
 const CONTRACT_ADDRESSES = {
     main: {
@@ -75,11 +75,11 @@ export class Ethereum {
         return (await converterVersion.get(this, converter.blockchainId)).value;
     }
 
-    async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]> {
+    async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]> {
         return await conversionEvents.get(this, token.blockchainId, fromBlock, toBlock);
     }
 
-    async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]> {
+    async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
         const fromBlock = await timestampToBlockNumber(this, fromTimestamp);
         const toBlock = await timestampToBlockNumber(this, toTimestamp);
         return await conversionEvents.get(this, token.blockchainId, fromBlock, toBlock);

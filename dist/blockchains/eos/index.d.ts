@@ -1,5 +1,5 @@
 import { JsonRpc } from 'eosjs';
-import { Token, Converter } from '../../path_generation';
+import { Token, Converter, ConversionEvent } from '../../path_generation';
 export declare class EOS {
     jsonRpc: JsonRpc;
     static create(nodeEndpoint: string): Promise<EOS>;
@@ -8,8 +8,8 @@ export declare class EOS {
     getPath(from: Token, to: Token): Promise<Token[]>;
     getRateByPath(path: Token[], amount: string): Promise<string>;
     getConverterVersion(converter: Converter): Promise<string>;
-    getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<object[]>;
-    getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<object[]>;
+    getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;
+    getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;
     buildPathsFile(): Promise<void>;
 }
 export declare const getReservesFromCode: (jsonRpc: any, code: any, symbol: any) => Promise<any>;
