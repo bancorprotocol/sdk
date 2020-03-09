@@ -1,6 +1,6 @@
 import { EOS } from './blockchains/eos/index';
 import { Ethereum } from './blockchains/ethereum/index';
-import { Settings, Token, Converter, ConversionEvent } from './types';
+import { Settings, BlockchainType, Token, Converter, ConversionEvent } from './types';
 
 export class SDK {
     eos: EOS;
@@ -51,14 +51,14 @@ export class SDK {
     }
 
     async getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
-        switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
-        case 'eos,eos':
+        switch (pathType(sourceToken.blockchainType, targetToken.blockchainType)) {
+        case pathType('eos', 'eos'):
             throw new Error('getAllPathsAndRates from eos token to eos token not supported');
-        case 'eos,ethereum':
+        case pathType('eos', 'ethereum'):
             throw new Error('getAllPathsAndRates from eos token to ethereum token not supported');
-        case 'ethereum,eos':
+        case pathType('ethereum', 'eos'):
             throw new Error('getAllPathsAndRates from ethereum token to eos token not supported');
-        case 'ethereum,ethereum':
+        case pathType('ethereum', 'ethereum'):
             const [paths, rates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
             return paths.map((path, i) => ({path: path.map(x => ({blockchainType: 'ethereum', blockchainId: x})), rate: rates[i]}));
         }
@@ -86,19 +86,19 @@ async function getPath(sdk: SDK, sourceToken: Token, targetToken: Token, amount:
     let ethPaths;
     let ethRates;
 
-    switch (sourceToken.blockchainType + ',' + targetToken.blockchainType) {
-    case 'eos,eos':
+    switch (pathType(sourceToken.blockchainType, targetToken.blockchainType)) {
+    case pathType('eos', 'eos'):
         eosPath = await sdk.eos.getPath(sourceToken, targetToken);
         return eosPath;
-    case 'eos,ethereum':
+    case pathType('eos', 'ethereum'):
         eosPath = await sdk.eos.getPath(sourceToken, sdk.eos.getAnchorToken());
         [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sdk.ethereum.getAnchorToken(), targetToken.blockchainId, amount);
         return [...eosPath, ...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
-    case 'ethereum,eos':
+    case pathType('ethereum', 'eos'):
         [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, sdk.ethereum.getAnchorToken(), amount);
         eosPath = await sdk.eos.getPath(sdk.eos.getAnchorToken(), targetToken);
         return [...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), ...eosPath];
-    case 'ethereum,ethereum':
+    case pathType('ethereum', 'ethereum'):
         [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
         return getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}));
     }
@@ -143,4 +143,8 @@ function equalPath(paths: string[][], index1: number, index2: number): boolean {
 
 function equalRate(rates: string[], index1: number, index2: number): boolean {
     return rates[index1] == rates[index2];
+}
+
+function pathType(blockchainType1: BlockchainType, blockchainType2: BlockchainType): string {
+    return blockchainType1 + ',' + blockchainType2;
 }

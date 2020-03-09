@@ -175,12 +175,12 @@ var SDK = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _a = sourceToken.blockchainType + ',' + targetToken.blockchainType;
+                        _a = pathType(sourceToken.blockchainType, targetToken.blockchainType);
                         switch (_a) {
-                            case 'eos,eos': return [3 /*break*/, 1];
-                            case 'eos,ethereum': return [3 /*break*/, 2];
-                            case 'ethereum,eos': return [3 /*break*/, 3];
-                            case 'ethereum,ethereum': return [3 /*break*/, 4];
+                            case pathType('eos', 'eos'): return [3 /*break*/, 1];
+                            case pathType('eos', 'ethereum'): return [3 /*break*/, 2];
+                            case pathType('ethereum', 'eos'): return [3 /*break*/, 3];
+                            case pathType('ethereum', 'ethereum'): return [3 /*break*/, 4];
                         }
                         return [3 /*break*/, 6];
                     case 1: throw new Error('getAllPathsAndRates from eos token to eos token not supported');
@@ -247,12 +247,12 @@ function getPath(sdk, sourceToken, targetToken, amount, getBestPath) {
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
-                    _a = sourceToken.blockchainType + ',' + targetToken.blockchainType;
+                    _a = pathType(sourceToken.blockchainType, targetToken.blockchainType);
                     switch (_a) {
-                        case 'eos,eos': return [3 /*break*/, 1];
-                        case 'eos,ethereum': return [3 /*break*/, 3];
-                        case 'ethereum,eos': return [3 /*break*/, 6];
-                        case 'ethereum,ethereum': return [3 /*break*/, 9];
+                        case pathType('eos', 'eos'): return [3 /*break*/, 1];
+                        case pathType('eos', 'ethereum'): return [3 /*break*/, 3];
+                        case pathType('ethereum', 'eos'): return [3 /*break*/, 6];
+                        case pathType('ethereum', 'ethereum'): return [3 /*break*/, 9];
                     }
                     return [3 /*break*/, 11];
                 case 1: return [4 /*yield*/, sdk.eos.getPath(sourceToken, targetToken)];
@@ -316,4 +316,7 @@ function equalPath(paths, index1, index2) {
 }
 function equalRate(rates, index1, index2) {
     return rates[index1] == rates[index2];
+}
+function pathType(blockchainType1, blockchainType2) {
+    return blockchainType1 + ',' + blockchainType2;
 }
