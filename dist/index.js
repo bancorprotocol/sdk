@@ -267,7 +267,7 @@ function getPath(sdk, sourceToken, targetToken, amount, getBestPath) {
                 case 10:
                     _d = _e.sent(), ethPaths = _d[0], ethRates = _d[1];
                     return [2 /*return*/, getBestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: 'ethereum', blockchainId: x }); })];
-                case 11: throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
+                case 11: return [2 /*return*/];
             }
         });
     });

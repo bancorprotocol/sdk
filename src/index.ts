@@ -96,8 +96,6 @@ async function getPath(sdk: SDK, sourceToken: Token, targetToken: Token, amount:
         [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
         return getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}));
     }
-
-    throw new Error(sourceToken.blockchainType + ' blockchain to ' + targetToken.blockchainType + ' blockchain not supported');
 }
 
 function getShortestPath(paths: string[][], rates: string[]): string[] {
