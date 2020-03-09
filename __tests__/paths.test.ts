@@ -443,7 +443,7 @@ describe('paths test', () => {
             { blockchainType: 'eos', blockchainId: '', symbol: '' },
             { blockchainType: 'eos', blockchainId: '', symbol: '' }
         );
-        expect(promise).rejects.toEqual(new Error('getAllPathsAndRates from EOS token to EOS token not supported'));
+        expect(promise).rejects.toEqual(new Error('getAllPathsAndRates from eos token to eos token not supported'));
     });
 
     it('getAllPathsAndRates from eos token to ethereum token', async () => {
@@ -451,7 +451,7 @@ describe('paths test', () => {
             { blockchainType: 'eos', blockchainId: '', symbol: '' },
             { blockchainType: 'ethereum', blockchainId: '' }
         );
-        expect(promise).rejects.toEqual(new Error('getAllPathsAndRates from EOS token to Ethereum token not supported'));
+        expect(promise).rejects.toEqual(new Error('getAllPathsAndRates from eos token to ethereum token not supported'));
     });
 
     it('getAllPathsAndRates from ethereum token to eos token', async () => {
@@ -459,7 +459,7 @@ describe('paths test', () => {
             { blockchainType: 'ethereum', blockchainId: '' },
             { blockchainType: 'eos', blockchainId: '', symbol: '' }
         );
-        expect(promise).rejects.toEqual(new Error('getAllPathsAndRates from Ethereum token to EOS token not supported'));
+        expect(promise).rejects.toEqual(new Error('getAllPathsAndRates from ethereum token to eos token not supported'));
     });
 
     it('getAllPathsAndRates from ethereum token to ethereum token', async () => {

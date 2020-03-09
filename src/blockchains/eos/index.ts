@@ -46,11 +46,11 @@ export class EOS {
     }
 
     async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]> {
-        throw new Error('getConversionEvents not supported on EOS');
+        throw new Error('getConversionEvents not supported on eos');
     }
 
     async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
-        throw new Error('getConversionEventsByTimestamp not supported on EOS');
+        throw new Error('getConversionEventsByTimestamp not supported on eos');
     }
 
     async buildPathsFile(): Promise<void> {
