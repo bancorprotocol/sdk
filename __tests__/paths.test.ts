@@ -438,6 +438,30 @@ describe('paths test', () => {
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
     });
 
+    it('getAllPathsAndRates from eos token to eos token', async () => {
+        const promise = sdk.getAllPathsAndRates(
+            { blockchainType: 'eos', blockchainId: '', symbol: '' },
+            { blockchainType: 'eos', blockchainId: '', symbol: '' }
+        );
+        expect(promise).rejects.toEqual(new Error('eos blockchain to eos blockchain not supported'));
+    });
+
+    it('getAllPathsAndRates from eos token to ethereum token', async () => {
+        const promise = sdk.getAllPathsAndRates(
+            { blockchainType: 'eos', blockchainId: '', symbol: '' },
+            { blockchainType: 'ethereum', blockchainId: '' }
+        );
+        expect(promise).rejects.toEqual(new Error('eos blockchain to ethereum blockchain not supported'));
+    });
+
+    it('getAllPathsAndRates from ethereum token to eos token', async () => {
+        const promise = sdk.getAllPathsAndRates(
+            { blockchainType: 'ethereum', blockchainId: '' },
+            { blockchainType: 'eos', blockchainId: '', symbol: '' }
+        );
+        expect(promise).rejects.toEqual(new Error('ethereum blockchain to eos blockchain not supported'));
+    });
+
     it('getAllPathsAndRates from ethereum token to ethereum token', async () => {
         const spyGetGraph = jest
             .spyOn(ethereum, 'getGraph')
