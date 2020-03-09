@@ -37,6 +37,16 @@ describe('events test', () => {
         }
     }));
 
+    it('getConversionEvents on eos', async () => {
+        const promise = sdk.getConversionEvents({ blockchainType: 'eos', blockchainId: '', symbol: '' }, 0, 0);
+        expect(promise).rejects.toEqual(new Error('getConversionEvents not supported on EOS'));
+    });
+
+    it('getConversionEventsByTimestamp on eos', async () => {
+        const promise = sdk.getConversionEventsByTimestamp({ blockchainType: 'eos', blockchainId: '', symbol: '' }, 0, 0);
+        expect(promise).rejects.toEqual(new Error('getConversionEventsByTimestamp not supported on EOS'));
+    });
+
     for (const event of events) {
         for (const offset of [-1, 0, +1]) {
             it('getConversionEvents on ethereum', async () => {
