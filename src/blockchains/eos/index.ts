@@ -161,32 +161,38 @@ function isMultiConverter(blockchhainId) {
 }
 
 async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromToken: Token, toToken: Token, amount: string) {
+    let reserveSymbol;
+    let balanceFrom;
+    let balanceTo;
+
     const isFromTokenMultiToken = isMultiConverter(fromToken.blockchainId);
     const isToTokenMultiToken = isMultiConverter(toToken.blockchainId);
 
-    let reserveSymbol;
-    if (isFromTokenMultiToken)
+    switch (multiTokenConfiguration(isFromTokenMultiToken, isToTokenMultiToken)) {
+    case multiTokenConfiguration(false, false):
+        reserveSymbol = converter.blockchainId;
+        balanceFrom = await getReserveBalances(jsonRpc, fromToken.blockchainId, converter.blockchainId, 'accounts');
+        balanceTo = await getReserveBalances(jsonRpc, toToken.blockchainId, converter.blockchainId, 'accounts');
+        break;
+    case multiTokenConfiguration(true, false):
         reserveSymbol = fromToken.symbol;
-    if (isToTokenMultiToken)
+        balanceFrom = await getReserveBalances(jsonRpc, fromToken.blockchainId, converter.blockchainId, 'accounts');
+        balanceTo = await getReserveBalances(jsonRpc, converter.blockchainId, fromToken.symbol, 'reserves');
+        break;
+    case multiTokenConfiguration(false, true):
         reserveSymbol = toToken.symbol;
+        balanceFrom = await getReserveBalances(jsonRpc, converter.blockchainId, toToken.symbol, 'reserves');
+        balanceTo = await getReserveBalances(jsonRpc, toToken.blockchainId, converter.blockchainId, 'accounts');
+        break;
+    case multiTokenConfiguration(true, true):
+        throw new Error('conversion between multi-token to multi-token not supported on eos');
+    }
 
     const reserves = await getReservesFromCode(jsonRpc, converter.blockchainId, reserveSymbol);
     const reservesContacts = reserves.rows.map(res => res.contract);
     const conversionFee = (await getConverterSettings(jsonRpc, converter.blockchainId)).rows[0].fee;
     const isConversionFromSmartToken = !reservesContacts.includes(fromToken.blockchainId);
     const isConversionToSmartToken = !reservesContacts.includes(toToken.blockchainId);
-
-    let balanceFrom;
-    if (isToTokenMultiToken)
-        balanceFrom = await getReserveBalances(jsonRpc, converter.blockchainId, toToken.symbol, 'reserves');
-    else
-        balanceFrom = await getReserveBalances(jsonRpc, fromToken.blockchainId, converter.blockchainId, 'accounts');
-
-    let balanceTo;
-    if (isFromTokenMultiToken)
-        balanceTo = await getReserveBalances(jsonRpc, converter.blockchainId, fromToken.symbol, 'reserves');
-    else
-        balanceTo = await getReserveBalances(jsonRpc, toToken.blockchainId, converter.blockchainId, 'accounts');
 
     const balanceObject = {
         [fromToken.blockchainId]: balanceFrom.rows[0].balance,
@@ -286,4 +292,8 @@ function getShortestPath(sourcePath, targetPath) {
     }
 
     return [];
+}
+
+function multiTokenConfiguration(isFromTokenMultiToken, isToTokenMultiToken): number {
+    return (isFromTokenMultiToken << 1) | isToTokenMultiToken;
 }
