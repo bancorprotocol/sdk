@@ -64,7 +64,7 @@ function parseOwnerUpdateEvent(log) {
         currOwner: web3_1.default.utils.toChecksumAddress(indexed ? log.topics[2].slice(-40) : log.data.slice(90, 130))
     };
 }
-function getTokenAmount(_this, token, amount) {
+function getTokenAmount(web3, decimals, token, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var tokenContract, _a, _b;
         return __generator(this, function (_c) {
@@ -73,15 +73,15 @@ function getTokenAmount(_this, token, amount) {
                     if (amount == undefined || amount == "0") {
                         return [2 /*return*/, amount];
                     }
-                    if (!(_this.decimals[token] == undefined)) return [3 /*break*/, 2];
-                    tokenContract = new _this.web3.eth.Contract(abis_1.ERC20Token, token);
-                    _a = _this.decimals;
+                    if (!(decimals[token] == undefined)) return [3 /*break*/, 2];
+                    tokenContract = new web3.eth.Contract(abis_1.ERC20Token, token);
+                    _a = decimals;
                     _b = token;
                     return [4 /*yield*/, tokenContract.methods.decimals().call()];
                 case 1:
                     _a[_b] = _c.sent();
                     _c.label = 2;
-                case 2: return [2 /*return*/, utils_1.fromWei(amount, _this.decimals[token])];
+                case 2: return [2 /*return*/, utils_1.fromWei(amount, decimals[token])];
             }
         });
     });
@@ -160,7 +160,7 @@ function getOwnerUpdateEvents(web3, token, fromBlock, toBlock) {
         });
     });
 }
-function get(_this, token, fromBlock, toBlock) {
+function get(web3, decimals, token, fromBlock, toBlock) {
     return __awaiter(this, void 0, void 0, function () {
         var result, batches, events, _i, _a, event_1, index, _b, batches_1, batch, _c, _d, abi, converter, events_2, _e, events_1, event_2, _f, _g, _h;
         return __generator(this, function (_j) {
@@ -168,7 +168,7 @@ function get(_this, token, fromBlock, toBlock) {
                 case 0:
                     result = [];
                     batches = [{ fromBlock: fromBlock, toBlock: undefined, owner: undefined }];
-                    return [4 /*yield*/, getOwnerUpdateEvents(_this.web3, token, fromBlock, toBlock)];
+                    return [4 /*yield*/, getOwnerUpdateEvents(web3, token, fromBlock, toBlock)];
                 case 1:
                     events = _j.sent();
                     for (_i = 0, _a = events.filter(function (event) { return event.blockNumber > fromBlock; }); _i < _a.length; _i++) {
@@ -190,7 +190,7 @@ function get(_this, token, fromBlock, toBlock) {
                 case 3:
                     if (!(_c < _d.length)) return [3 /*break*/, 12];
                     abi = _d[_c];
-                    converter = new _this.web3.eth.Contract([abi], batch.owner);
+                    converter = new web3.eth.Contract([abi], batch.owner);
                     return [4 /*yield*/, getPastEvents(converter, abi.name, batch.fromBlock, batch.toBlock)];
                 case 4:
                     events_2 = _j.sent();
@@ -206,13 +206,13 @@ function get(_this, token, fromBlock, toBlock) {
                         toToken: event_2.returnValues.toToken,
                         trader: event_2.returnValues.trader
                     };
-                    return [4 /*yield*/, getTokenAmount(_this, event_2.returnValues.fromToken, event_2.returnValues.inputAmount)];
+                    return [4 /*yield*/, getTokenAmount(web3, decimals, event_2.returnValues.fromToken, event_2.returnValues.inputAmount)];
                 case 6:
                     _h.inputAmount = _j.sent();
-                    return [4 /*yield*/, getTokenAmount(_this, event_2.returnValues.toToken, event_2.returnValues.outputAmount)];
+                    return [4 /*yield*/, getTokenAmount(web3, decimals, event_2.returnValues.toToken, event_2.returnValues.outputAmount)];
                 case 7:
                     _h.outputAmount = _j.sent();
-                    return [4 /*yield*/, getTokenAmount(_this, event_2.returnValues.toToken, event_2.returnValues.conversionFee)];
+                    return [4 /*yield*/, getTokenAmount(web3, decimals, event_2.returnValues.toToken, event_2.returnValues.conversionFee)];
                 case 8:
                     _g.apply(_f, [(_h.conversionFee = _j.sent(),
                             _h.blockNumber = event_2.blockNumber,

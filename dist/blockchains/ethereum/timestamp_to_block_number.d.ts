@@ -1,1 +1,1 @@
-export declare function timestampToBlockNumber(_this: any, timestamp: any): Promise<any>;
+export declare function timestampToBlockNumber(web3: any, timestamp: any): Promise<any>;

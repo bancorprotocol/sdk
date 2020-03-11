@@ -21,15 +21,15 @@ function parseOwnerUpdateEvent(log) {
     };
 }
 
-async function getTokenAmount(_this, token, amount) {
+async function getTokenAmount(web3, decimals, token, amount) {
     if (amount == undefined || amount == "0") {
         return amount;
     }
-    if (_this.decimals[token] == undefined) {
-        const tokenContract = new _this.web3.eth.Contract(ERC20Token, token);
-        _this.decimals[token] = await tokenContract.methods.decimals().call();
+    if (decimals[token] == undefined) {
+        const tokenContract = new web3.eth.Contract(ERC20Token, token);
+        decimals[token] = await tokenContract.methods.decimals().call();
     }
-    return fromWei(amount, _this.decimals[token]);
+    return fromWei(amount, decimals[token]);
 }
 
 async function getPastLogs(web3, address, topic0, fromBlock, toBlock) {
@@ -72,11 +72,11 @@ async function getOwnerUpdateEvents(web3, token, fromBlock, toBlock) {
     throw new Error("Inactive Token");
 }
 
-export async function get(_this, token, fromBlock, toBlock) {
+export async function get(web3, decimals, token, fromBlock, toBlock) {
     const result = [];
 
     const batches = [{fromBlock: fromBlock, toBlock: undefined, owner: undefined}];
-    const events = await getOwnerUpdateEvents(_this.web3, token, fromBlock, toBlock);
+    const events = await getOwnerUpdateEvents(web3, token, fromBlock, toBlock);
     for (const event of events.filter(event => event.blockNumber > fromBlock)) {
         batches[batches.length - 1].toBlock = event.blockNumber - 1;
         batches[batches.length - 1].owner = event.prevOwner;
@@ -88,7 +88,7 @@ export async function get(_this, token, fromBlock, toBlock) {
     let index = 0;
     for (const batch of batches) {
         for (const abi of CONVERSION_EVENT_LEGACY.slice(index)) {
-            const converter = new _this.web3.eth.Contract([abi], batch.owner);
+            const converter = new web3.eth.Contract([abi], batch.owner);
             const events = await getPastEvents(converter, abi.name, batch.fromBlock, batch.toBlock);
             if (events.length > 0) {
                 for (const event of events) {
@@ -96,9 +96,9 @@ export async function get(_this, token, fromBlock, toBlock) {
                         fromToken    : event.returnValues.fromToken,
                         toToken      : event.returnValues.toToken,
                         trader       : event.returnValues.trader,
-                        inputAmount  : await getTokenAmount(_this, event.returnValues.fromToken, event.returnValues.inputAmount),
-                        outputAmount : await getTokenAmount(_this, event.returnValues.toToken  , event.returnValues.outputAmount),
-                        conversionFee: await getTokenAmount(_this, event.returnValues.toToken  , event.returnValues.conversionFee),
+                        inputAmount  : await getTokenAmount(web3, decimals, event.returnValues.fromToken, event.returnValues.inputAmount),
+                        outputAmount : await getTokenAmount(web3, decimals, event.returnValues.toToken  , event.returnValues.outputAmount),
+                        conversionFee: await getTokenAmount(web3, decimals, event.returnValues.toToken  , event.returnValues.conversionFee),
                         blockNumber  : event.blockNumber
                     });
                 }

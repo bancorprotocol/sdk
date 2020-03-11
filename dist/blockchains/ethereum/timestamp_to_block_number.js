@@ -36,18 +36,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-function timestampToBlockNumber(_this, timestamp) {
+function timestampToBlockNumber(web3, timestamp) {
     return __awaiter(this, void 0, void 0, function () {
         var lo, hi, block;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, getBlock(_this.web3, 1)];
+                case 0: return [4 /*yield*/, getBlock(web3, 1)];
                 case 1:
                     lo = _a.sent();
-                    return [4 /*yield*/, getBlock(_this.web3, "latest")];
+                    return [4 /*yield*/, getBlock(web3, "latest")];
                 case 2:
                     hi = _a.sent();
-                    return [4 /*yield*/, searchBlock(_this.web3, lo, hi, timestamp)];
+                    return [4 /*yield*/, searchBlock(web3, lo, hi, timestamp)];
                 case 3:
                     block = _a.sent();
                     return [2 /*return*/, block.number];

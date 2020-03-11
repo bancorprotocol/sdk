@@ -73,7 +73,7 @@ function parse(type, data) {
     }
     return data;
 }
-function get(_this, address) {
+function get(web3, address) {
     return __awaiter(this, void 0, void 0, function () {
         var _i, _a, type, abi, contract, version, value;
         return __generator(this, function (_b) {
@@ -85,7 +85,7 @@ function get(_this, address) {
                     if (!(_i < _a.length)) return [3 /*break*/, 4];
                     type = _a[_i];
                     abi = [{ "constant": true, "inputs": [], "name": "version", "outputs": [{ "name": "", "type": type }], "payable": false, "stateMutability": "view", "type": "function" }];
-                    contract = new _this.web3.eth.Contract(abi, address);
+                    contract = new web3.eth.Contract(abi, address);
                     return [4 /*yield*/, rpc(contract.methods.version())];
                 case 2:
                     version = _b.sent();

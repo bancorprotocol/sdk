@@ -72,17 +72,17 @@ export class Ethereum {
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {
-        return (await converterVersion.get(this, converter.blockchainId)).value;
+        return (await converterVersion.get(this.web3, converter.blockchainId)).value;
     }
 
     async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]> {
-        return await conversionEvents.get(this, token.blockchainId, fromBlock, toBlock);
+        return await conversionEvents.get(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
     }
 
     async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
-        const fromBlock = await timestampToBlockNumber(this, fromTimestamp);
-        const toBlock = await timestampToBlockNumber(this, toTimestamp);
-        return await conversionEvents.get(this, token.blockchainId, fromBlock, toBlock);
+        const fromBlock = await timestampToBlockNumber(this.web3, fromTimestamp);
+        const toBlock = await timestampToBlockNumber(this.web3, toTimestamp);
+        return await conversionEvents.get(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
     }
 }
 
