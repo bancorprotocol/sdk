@@ -449,5 +449,5 @@ function getShortestPath(sourcePath, targetPath) {
     return [];
 }
 function multiTokenConfiguration(isFromTokenMultiToken, isToTokenMultiToken) {
-    return (isFromTokenMultiToken << 1) | isToTokenMultiToken;
+    return isFromTokenMultiToken | (isToTokenMultiToken << 1);
 }
