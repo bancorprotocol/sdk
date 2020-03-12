@@ -162,8 +162,8 @@ function isMultiConverter(blockchhainId) {
 
 async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromToken: Token, toToken: Token, amount: string) {
     let reserveSymbol;
-    let balanceFrom;
-    let balanceTo;
+    let reserveFrom;
+    let reserveTo;
 
     const isFromTokenMultiToken = isMultiConverter(fromToken.blockchainId);
     const isToTokenMultiToken = isMultiConverter(toToken.blockchainId);
@@ -171,23 +171,25 @@ async function getConversionRate(jsonRpc: JsonRpc, converter: Converter, fromTok
     switch (multiTokenConfiguration(isFromTokenMultiToken, isToTokenMultiToken)) {
     case multiTokenConfiguration(false, false):
         reserveSymbol = converter.blockchainId;
-        balanceFrom = await getReserveBalances(jsonRpc, fromToken.blockchainId, converter.blockchainId, 'accounts');
-        balanceTo = await getReserveBalances(jsonRpc, toToken.blockchainId, converter.blockchainId, 'accounts');
+        reserveFrom = {code: fromToken.blockchainId, scope: converter.blockchainId, table: 'accounts'};
+        reserveTo = {code: toToken.blockchainId, scope: converter.blockchainId, table: 'accounts'};
         break;
     case multiTokenConfiguration(true, false):
         reserveSymbol = fromToken.symbol;
-        balanceFrom = await getReserveBalances(jsonRpc, fromToken.blockchainId, converter.blockchainId, 'accounts');
-        balanceTo = await getReserveBalances(jsonRpc, converter.blockchainId, fromToken.symbol, 'reserves');
+        reserveFrom = {code: fromToken.blockchainId, scope: converter.blockchainId, table: 'accounts'};
+        reserveTo = {code: converter.blockchainId, scope: fromToken.symbol, table: 'reserves'};
         break;
     case multiTokenConfiguration(false, true):
         reserveSymbol = toToken.symbol;
-        balanceFrom = await getReserveBalances(jsonRpc, converter.blockchainId, toToken.symbol, 'reserves');
-        balanceTo = await getReserveBalances(jsonRpc, toToken.blockchainId, converter.blockchainId, 'accounts');
+        reserveFrom = {code: converter.blockchainId, scope: toToken.symbol, table: 'reserves'};
+        reserveTo = {code: toToken.blockchainId, scope: converter.blockchainId, table: 'accounts'};
         break;
     case multiTokenConfiguration(true, true):
         throw new Error('conversion between multi-token to multi-token not supported on eos');
     }
 
+    const balanceFrom = await getReserveBalances(jsonRpc, reserveFrom.code, reserveFrom.scope, reserveFrom.table);
+    const balanceTo = await getReserveBalances(jsonRpc, reserveTo.code, reserveTo.scope, reserveTo.table);
     const reserves = await getReservesFromCode(jsonRpc, converter.blockchainId, reserveSymbol);
     const reservesContacts = reserves.rows.map(res => res.contract);
     const conversionFee = (await getConverterSettings(jsonRpc, converter.blockchainId)).rows[0].fee;
