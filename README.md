@@ -78,4 +78,5 @@ const path = await bancor.generatePath(sourceToken, targetToken);
 ## Collaborators
 
 * **[Yudi Levi](https://github.com/yudilevi)**
+* **[Barak Manos](https://github.com/barakman)**
 * **[Omry Rozenfeld](https://github.com/omryr)**
