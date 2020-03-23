@@ -37,8 +37,7 @@ export async function deinit() {
 }
 
 export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
-    const tokenContract = new web3.eth.Contract(ERC20Token, token);
-    const decimals = await tokenContract.methods.decimals().call();
+    const decimals = await getTokenDecimals(token);
     return toWei(amount, decimals);
 };
 
@@ -49,6 +48,14 @@ export const getConversionReturn = async (converterPair: ConversionPathStep, amo
 };
 
 export const getTokenDecimals = async tokenBlockchainId => {
+    let tokenDecimals = {
+        '0xe0b7927c4af23765cb51314a0e0521a9645f0e2a': '9',
+        '0xbdeb4b83251fb146687fa19d1c660f99411eefe3': '18'
+    };
+
+    if (tokenBlockchainId.toLowerCase() in tokenDecimals)
+        return tokenDecimals[tokenBlockchainId.toLowerCase()];
+
     const token = new web3.eth.Contract(ERC20Token, tokenBlockchainId);
     return await token.methods.decimals().call();
 };
@@ -189,8 +196,7 @@ export async function getAllPathsAndRates(sourceToken, targetToken, amount) {
 }
 
 const getDecimals = async function(token) {
-    const tokenContract = new web3.eth.Contract(ERC20Token, token);
-    return await tokenContract.methods.decimals().call();
+    return await getTokenDecimals(token);
 };
 
 const getRates = async function(multicall, paths, amount) {

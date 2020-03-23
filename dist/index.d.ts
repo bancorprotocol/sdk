@@ -6,6 +6,7 @@ interface Settings {
     ethereumContractRegistryAddress?: string;
 }
 export declare function init(args: Settings): Promise<void>;
+export declare function deinit(): Promise<void>;
 export declare function generateEosPaths(): Promise<void>;
 export declare function generatePath(sourceToken: Token, targetToken: Token, amount?: string, getBestPath?: typeof getCheapestPath): Promise<ConversionPaths>;
 export declare const calculateRateFromPaths: (paths: ConversionPaths, amount: any) => any;
@@ -17,6 +18,7 @@ declare function getShortestPath(paths: string[][], rates: string[]): string[];
 declare function getCheapestPath(paths: string[][], rates: string[]): string[];
 declare const _default: {
     init: typeof init;
+    deinit: typeof deinit;
     generateEosPaths: typeof generateEosPaths;
     getRate: typeof getRate;
     generatePath: typeof generatePath;

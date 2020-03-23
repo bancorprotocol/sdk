@@ -74,7 +74,7 @@ function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    web3 = new web3_1.default(new web3_1.default.providers.HttpProvider(ethereumNodeUrl));
+                    web3 = new web3_1.default(ethereumNodeUrl);
                     contractRegistryContract = new web3.eth.Contract(contractRegistry, ethereumContractRegistryAddress);
                     return [4 /*yield*/, contractRegistryContract.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
                 case 1:
@@ -90,13 +90,21 @@ function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
     });
 }
 exports.init = init;
+function deinit() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            if (web3 && web3.currentProvider.constructor.name == 'WebsocketProvider')
+                web3.currentProvider.connection.close();
+            return [2 /*return*/];
+        });
+    });
+}
+exports.deinit = deinit;
 exports.getAmountInTokenWei = function (token, amount, web3) { return __awaiter(void 0, void 0, void 0, function () {
-    var tokenContract, decimals;
+    var decimals;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                tokenContract = new web3.eth.Contract(ERC20Token_1.ERC20Token, token);
-                return [4 /*yield*/, tokenContract.methods.decimals().call()];
+            case 0: return [4 /*yield*/, exports.getTokenDecimals(token)];
             case 1:
                 decimals = _a.sent();
                 return [2 /*return*/, utils_1.toWei(amount, decimals)];
@@ -117,10 +125,16 @@ exports.getConversionReturn = function (converterPair, amount, ABI, web3) { retu
     });
 }); };
 exports.getTokenDecimals = function (tokenBlockchainId) { return __awaiter(void 0, void 0, void 0, function () {
-    var token;
+    var tokenDecimals, token;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
+                tokenDecimals = {
+                    '0xe0b7927c4af23765cb51314a0e0521a9645f0e2a': '9',
+                    '0xbdeb4b83251fb146687fa19d1c660f99411eefe3': '18'
+                };
+                if (tokenBlockchainId.toLowerCase() in tokenDecimals)
+                    return [2 /*return*/, tokenDecimals[tokenBlockchainId.toLowerCase()]];
                 token = new web3.eth.Contract(ERC20Token_1.ERC20Token, tokenBlockchainId);
                 return [4 /*yield*/, token.methods.decimals().call()];
             case 1: return [2 /*return*/, _a.sent()];
@@ -380,12 +394,9 @@ function getAllPathsAndRates(sourceToken, targetToken, amount) {
 exports.getAllPathsAndRates = getAllPathsAndRates;
 var getDecimals = function (token) {
     return __awaiter(this, void 0, void 0, function () {
-        var tokenContract;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    tokenContract = new web3.eth.Contract(ERC20Token_1.ERC20Token, token);
-                    return [4 /*yield*/, tokenContract.methods.decimals().call()];
+                case 0: return [4 /*yield*/, exports.getTokenDecimals(token)];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
