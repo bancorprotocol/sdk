@@ -1,5 +1,6 @@
 import { ConversionPathStep, Token } from '../../path_generation';
 export declare function init(ethereumNodeUrl: any, ethereumContractRegistryAddress?: string): Promise<void>;
+export declare function deinit(): Promise<void>;
 export declare const getAmountInTokenWei: (token: string, amount: string, web3: any) => Promise<string>;
 export declare const getConversionReturn: (converterPair: ConversionPathStep, amount: string, ABI: any, web3: any) => Promise<any>;
 export declare const getTokenDecimals: (tokenBlockchainId: any) => Promise<any>;

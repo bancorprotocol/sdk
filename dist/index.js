@@ -57,6 +57,19 @@ function init(args) {
     });
 }
 exports.init = init;
+function deinit() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, index_1.deinit()];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.deinit = deinit;
 function generateEosPaths() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -243,6 +256,7 @@ function equalRate(rates, index1, index2) {
 }
 exports.default = {
     init: init,
+    deinit: deinit,
     generateEosPaths: generateEosPaths,
     getRate: getRate,
     generatePath: generatePath,

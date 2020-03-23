@@ -69,6 +69,12 @@ const path = await bancor.generatePath(sourceToken, targetToken);
 }
 ```
 
+## Deinitialization
+
+```js
+await bancor.deinit();
+```
+
 ## Features
 
   * Price discovery

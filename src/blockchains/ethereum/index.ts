@@ -23,7 +23,7 @@ let registry;
 let network;
 
 export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6') {
-    web3 = new Web3(new Web3.providers.HttpProvider(ethereumNodeUrl));
+    web3 = new Web3(ethereumNodeUrl);
     const contractRegistryContract = new web3.eth.Contract(contractRegistry, ethereumContractRegistryAddress);
     const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
     const networkBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
@@ -31,9 +31,13 @@ export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0
     network = new web3.eth.Contract(networkAbi, networkBlockchainId);
 }
 
+export async function deinit() {
+    if (web3 && web3.currentProvider.constructor.name == 'WebsocketProvider')
+        web3.currentProvider.connection.close();
+}
+
 export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
-    const tokenContract = new web3.eth.Contract(ERC20Token, token);
-    const decimals = await tokenContract.methods.decimals().call();
+    const decimals = await getTokenDecimals(token);
     return toWei(amount, decimals);
 };
 
@@ -44,6 +48,14 @@ export const getConversionReturn = async (converterPair: ConversionPathStep, amo
 };
 
 export const getTokenDecimals = async tokenBlockchainId => {
+    let tokenDecimals = {
+        '0xe0b7927c4af23765cb51314a0e0521a9645f0e2a': '9',
+        '0xbdeb4b83251fb146687fa19d1c660f99411eefe3': '18'
+    };
+
+    if (tokenBlockchainId.toLowerCase() in tokenDecimals)
+        return tokenDecimals[tokenBlockchainId.toLowerCase()];
+
     const token = new web3.eth.Contract(ERC20Token, tokenBlockchainId);
     return await token.methods.decimals().call();
 };
@@ -184,8 +196,7 @@ export async function getAllPathsAndRates(sourceToken, targetToken, amount) {
 }
 
 const getDecimals = async function(token) {
-    const tokenContract = new web3.eth.Contract(ERC20Token, token);
-    return await tokenContract.methods.decimals().call();
+    return await getTokenDecimals(token);
 };
 
 const getRates = async function(multicall, paths, amount) {
