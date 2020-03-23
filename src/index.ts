@@ -1,4 +1,4 @@
-import { init as initEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate, getAllPathsAndRates as ethGetAllPathsAndRates} from './blockchains/ethereum/index';
+import { init as initEthereum, deinit as deinitEthereum, getConverterBlockchainId, getPathStepRate as getEthPathStepRate, getAllPathsAndRates as ethGetAllPathsAndRates} from './blockchains/ethereum/index';
 import { buildPathsFile, initEOS, getPathStepRate as getEOSPathStepRate, isMultiConverter } from './blockchains/eos';
 import { Token, generatePathByBlockchainIds, ConversionPaths, ConversionPathStep, BlockchainType, ConversionToken } from './path_generation';
 
@@ -13,6 +13,10 @@ export async function init(args: Settings) {
         initEOS(args.eosNodeEndpoint);
     if (args.ethereumNodeEndpoint)
         await initEthereum(args.ethereumNodeEndpoint, args.ethereumContractRegistryAddress);
+}
+
+export async function deinit() {
+    await deinitEthereum();
 }
 
 export async function generateEosPaths() {
@@ -113,6 +117,7 @@ function equalRate(rates: string[], index1: number, index2: number): boolean {
 
 export default {
     init,
+    deinit,
     generateEosPaths,
     getRate,
     generatePath,

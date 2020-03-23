@@ -23,12 +23,17 @@ let registry;
 let network;
 
 export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6') {
-    web3 = new Web3(new Web3.providers.HttpProvider(ethereumNodeUrl));
+    web3 = new Web3(ethereumNodeUrl);
     const contractRegistryContract = new web3.eth.Contract(contractRegistry, ethereumContractRegistryAddress);
     const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
     const networkBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
     network = new web3.eth.Contract(networkAbi, networkBlockchainId);
+}
+
+export async function deinit() {
+    if (web3 && web3.currentProvider.constructor.name == 'WebsocketProvider')
+        web3.currentProvider.connection.close();
 }
 
 export const getAmountInTokenWei = async (token: string, amount: string, web3) => {
