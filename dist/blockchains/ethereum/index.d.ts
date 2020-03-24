@@ -6,7 +6,7 @@ export declare class Ethereum {
     bancorNetwork: Web3.eth.Contract;
     converterRegistry: Web3.eth.Contract;
     multicallContract: Web3.eth.Contract;
-    decimals: {};
+    decimals: object;
     static create(nodeEndpoint: string): Promise<Ethereum>;
     static destroy(ethereum: Ethereum): Promise<void>;
     getAnchorToken(): string;

@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -64,16 +75,20 @@ var CONTRACT_ADDRESSES = {
         registry: '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4',
         multicall: '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2',
         anchorToken: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
+        nonStandardTokenDecimals: {
+            '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': '9',
+            '0xbdEB4b83251Fb146687fa19D1C660F99411eefe3': '18'
+        }
     },
     ropsten: {
         registry: '0xFD95E724962fCfC269010A0c6700Aa09D5de3074',
         multicall: '0xf3ad7e31b052ff96566eedd218a823430e74b406',
         anchorToken: '0x62bd9D98d4E188e281D7B78e29334969bbE1053c',
+        nonStandardTokenDecimals: {}
     }
 };
 var Ethereum = /** @class */ (function () {
     function Ethereum() {
-        this.decimals = {};
     }
     Ethereum.create = function (nodeEndpoint) {
         return __awaiter(this, void 0, void 0, function () {
@@ -97,6 +112,7 @@ var Ethereum = /** @class */ (function () {
                         ethereum.bancorNetwork = new ethereum.web3.eth.Contract(abis.BancorNetwork, bancorNetworkAddress);
                         ethereum.converterRegistry = new ethereum.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
                         ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, exports.getContractAddresses(ethereum).multicall);
+                        ethereum.decimals = __assign({}, CONTRACT_ADDRESSES[ethereum.networkType].nonStandardTokenDecimals);
                         return [2 /*return*/, ethereum];
                 }
             });
