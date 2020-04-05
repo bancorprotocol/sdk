@@ -63,8 +63,8 @@ export const getRateByPath = async (paths: ConversionPaths, amount) => {
     return await calculateRateFromPaths(paths, amount);
 };
 
-export async function getRate(sourceToken: Token, targetToken: Token, amount: string) {
-    const paths = await generatePath(sourceToken, targetToken);
+export async function getRate(sourceToken: Token, targetToken: Token, amount: string = '1') {
+    const paths = await generatePath(sourceToken, targetToken, amount);
     return await getRateByPath(paths, amount);
 }
 
