@@ -7,7 +7,7 @@ export declare class Ethereum {
     converterRegistry: Web3.eth.Contract;
     multicallContract: Web3.eth.Contract;
     decimals: object;
-    static create(nodeEndpoint: string): Promise<Ethereum>;
+    static create(nodeEndpoint: string | Object): Promise<Ethereum>;
     static destroy(ethereum: Ethereum): Promise<void>;
     getAnchorToken(): string;
     getRateByPath(path: Token[], amount: string): Promise<string>;

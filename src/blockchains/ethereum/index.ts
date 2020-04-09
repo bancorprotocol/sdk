@@ -33,7 +33,7 @@ export class Ethereum {
     multicallContract: Web3.eth.Contract;
     decimals: object;
 
-    static async create(nodeEndpoint: string): Promise<Ethereum> {
+    static async create(nodeEndpoint: string | Object): Promise<Ethereum> {
         const ethereum = new Ethereum();
         ethereum.web3 = getWeb3(nodeEndpoint);
         ethereum.networkType = await ethereum.web3.eth.net.getNetworkType();

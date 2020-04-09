@@ -1,6 +1,6 @@
 export interface Settings {
     eosNodeEndpoint?: string;
-    ethereumNodeEndpoint?: string;
+    ethereumNodeEndpoint?: string | Object;
 }
 export declare type BlockchainType = 'eos' | 'ethereum';
 export interface Token {
