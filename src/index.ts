@@ -50,7 +50,7 @@ export class SDK {
         return amount;
     }
 
-    async getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
+    async getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<[{path: Token[], rate: string}]> {
         switch (pathType(sourceToken.blockchainType, targetToken.blockchainType)) {
         case pathType('eos', 'eos'):
             throw new Error('getAllPathsAndRates from eos token to eos token not supported');
@@ -62,6 +62,30 @@ export class SDK {
             const [paths, rates] = await this.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
             return paths.map((path, i) => ({path: path.map(x => ({blockchainType: 'ethereum', blockchainId: x})), rate: rates[i]}));
         }
+    }
+
+    async getShortestPathAndRate(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
+        const paths_rates = await this.getAllPathsAndRates(sourceToken, targetToken, amount);
+        const paths = paths_rates.map(x => x.path.map(y => y.blockchainId));
+        const rates = paths_rates.map(x => x.rate);
+        let index = 0;
+        for (let i = 1; i < paths_rates.length; i++) {
+            if (betterPath(paths, index, i) || (equalPath(paths, index, i) && betterRate(rates, index, i)))
+                index = i;
+        }
+        return paths_rates[index];
+    }
+
+    async getCheapestPathAndRate(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
+        const paths_rates = await this.getAllPathsAndRates(sourceToken, targetToken, amount);
+        const paths = paths_rates.map(x => x.path.map(y => y.blockchainId));
+        const rates = paths_rates.map(x => x.rate);
+        let index = 0;
+        for (let i = 1; i < paths_rates.length; i++) {
+            if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
+                index = i;
+        }
+        return paths_rates[index];
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {

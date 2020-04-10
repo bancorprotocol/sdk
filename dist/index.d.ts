@@ -11,7 +11,15 @@ export declare class SDK {
     getShortestPathRate(sourceToken: Token, targetToken: Token, amount?: string): Promise<string>;
     getCheapestPathRate(sourceToken: Token, targetToken: Token, amount?: string): Promise<string>;
     getRateByPath(path: Token[], amount?: string): Promise<string>;
-    getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount?: string): Promise<{
+    getAllPathsAndRates(sourceToken: Token, targetToken: Token, amount?: string): Promise<[{
+        path: Token[];
+        rate: string;
+    }]>;
+    getShortestPathAndRate(sourceToken: Token, targetToken: Token, amount?: string): Promise<{
+        path: Token[];
+        rate: string;
+    }>;
+    getCheapestPathAndRate(sourceToken: Token, targetToken: Token, amount?: string): Promise<{
         path: Token[];
         rate: string;
     }>;

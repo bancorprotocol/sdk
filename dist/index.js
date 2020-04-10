@@ -195,6 +195,48 @@ var SDK = /** @class */ (function () {
             });
         });
     };
+    SDK.prototype.getShortestPathAndRate = function (sourceToken, targetToken, amount) {
+        if (amount === void 0) { amount = '1'; }
+        return __awaiter(this, void 0, void 0, function () {
+            var paths_rates, paths, rates, index, i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getAllPathsAndRates(sourceToken, targetToken, amount)];
+                    case 1:
+                        paths_rates = _a.sent();
+                        paths = paths_rates.map(function (x) { return x.path.map(function (y) { return y.blockchainId; }); });
+                        rates = paths_rates.map(function (x) { return x.rate; });
+                        index = 0;
+                        for (i = 1; i < paths_rates.length; i++) {
+                            if (betterPath(paths, index, i) || (equalPath(paths, index, i) && betterRate(rates, index, i)))
+                                index = i;
+                        }
+                        return [2 /*return*/, paths_rates[index]];
+                }
+            });
+        });
+    };
+    SDK.prototype.getCheapestPathAndRate = function (sourceToken, targetToken, amount) {
+        if (amount === void 0) { amount = '1'; }
+        return __awaiter(this, void 0, void 0, function () {
+            var paths_rates, paths, rates, index, i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getAllPathsAndRates(sourceToken, targetToken, amount)];
+                    case 1:
+                        paths_rates = _a.sent();
+                        paths = paths_rates.map(function (x) { return x.path.map(function (y) { return y.blockchainId; }); });
+                        rates = paths_rates.map(function (x) { return x.rate; });
+                        index = 0;
+                        for (i = 1; i < paths_rates.length; i++) {
+                            if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
+                                index = i;
+                        }
+                        return [2 /*return*/, paths_rates[index]];
+                }
+            });
+        });
+    };
     SDK.prototype.getConverterVersion = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
