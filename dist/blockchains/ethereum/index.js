@@ -221,6 +221,8 @@ var Ethereum = /** @class */ (function () {
 }());
 exports.Ethereum = Ethereum;
 exports.getWeb3 = function (nodeEndpoint) {
+    if (typeof nodeEndpoint !== 'string')
+        return nodeEndpoint;
     return new web3_1.default(nodeEndpoint);
 };
 exports.getContractAddresses = function (ethereum) {

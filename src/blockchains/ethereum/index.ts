@@ -94,6 +94,8 @@ export class Ethereum {
 }
 
 export const getWeb3 = function(nodeEndpoint) {
+    if (typeof nodeEndpoint !== 'string')
+        return nodeEndpoint;
     return new Web3(nodeEndpoint);
 };
 
