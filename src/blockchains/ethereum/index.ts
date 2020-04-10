@@ -94,9 +94,9 @@ export class Ethereum {
 }
 
 export const getWeb3 = function(nodeEndpoint) {
-    if (typeof nodeEndpoint !== 'string')
-        return nodeEndpoint;
-    return new Web3(nodeEndpoint);
+    const web3 = new Web3();
+    web3.setProvider(nodeEndpoint);
+    return web3;
 };
 
 export const getContractAddresses = function(ethereum) {
