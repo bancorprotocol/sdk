@@ -127,6 +127,21 @@ var Ethereum = /** @class */ (function () {
             });
         });
     };
+    Ethereum.prototype.refresh = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = this;
+                        return [4 /*yield*/, exports.getGraph(this)];
+                    case 1:
+                        _a.graph = _b.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     Ethereum.prototype.getAnchorToken = function () {
         return exports.getContractAddresses(this).anchorToken;
     };
@@ -155,26 +170,30 @@ var Ethereum = /** @class */ (function () {
     };
     Ethereum.prototype.getAllPathsAndRates = function (sourceToken, targetToken, amount) {
         return __awaiter(this, void 0, void 0, function () {
-            var paths, graph, tokens, destToken, sourceDecimals, targetDecimals, rates;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var paths, _a, tokens, destToken, sourceDecimals, targetDecimals, rates;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         paths = [];
+                        if (!!this.graph) return [3 /*break*/, 2];
+                        _a = this;
                         return [4 /*yield*/, exports.getGraph(this)];
                     case 1:
-                        graph = _a.sent();
+                        _a.graph = _b.sent();
+                        _b.label = 2;
+                    case 2:
                         tokens = [web3_1.default.utils.toChecksumAddress(sourceToken)];
                         destToken = web3_1.default.utils.toChecksumAddress(targetToken);
-                        getAllPathsRecursive(paths, graph, tokens, destToken);
+                        getAllPathsRecursive(paths, this.graph, tokens, destToken);
                         return [4 /*yield*/, exports.getDecimals(this, sourceToken)];
-                    case 2:
-                        sourceDecimals = _a.sent();
-                        return [4 /*yield*/, exports.getDecimals(this, targetToken)];
                     case 3:
-                        targetDecimals = _a.sent();
-                        return [4 /*yield*/, exports.getRates(this, paths, utils.toWei(amount, sourceDecimals))];
+                        sourceDecimals = _b.sent();
+                        return [4 /*yield*/, exports.getDecimals(this, targetToken)];
                     case 4:
-                        rates = _a.sent();
+                        targetDecimals = _b.sent();
+                        return [4 /*yield*/, exports.getRates(this, paths, utils.toWei(amount, sourceDecimals))];
+                    case 5:
+                        rates = _b.sent();
                         return [2 /*return*/, [paths, rates.map(function (rate) { return utils.fromWei(rate, targetDecimals); })]];
                 }
             });

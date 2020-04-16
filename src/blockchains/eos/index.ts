@@ -24,6 +24,9 @@ export class EOS {
     static async destroy(eos: EOS): Promise<void> {
     }
 
+    async refresh(): Promise<void> {
+    }
+
     getAnchorToken(): Token {
         return getAnchorToken(); // calling global function
     }

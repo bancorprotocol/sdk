@@ -32,6 +32,7 @@ export class Ethereum {
     converterRegistry: Web3.eth.Contract;
     multicallContract: Web3.eth.Contract;
     decimals: object;
+    graph: object;
 
     static async create(nodeEndpoint: string | Object): Promise<Ethereum> {
         const ethereum = new Ethereum();
@@ -52,6 +53,10 @@ export class Ethereum {
             ethereum.web3.currentProvider.connection.close();
     }
 
+    async refresh(): Promise<void> {
+        this.graph = await getGraph(this);
+    }
+
     getAnchorToken(): string {
         return getContractAddresses(this).anchorToken;
     }
@@ -68,10 +73,10 @@ export class Ethereum {
 
     async getAllPathsAndRates(sourceToken, targetToken, amount) {
         const paths = [];
-        const graph = await getGraph(this);
+        if (!this.graph) this.graph = await getGraph(this);
         const tokens = [Web3.utils.toChecksumAddress(sourceToken)];
         const destToken = Web3.utils.toChecksumAddress(targetToken);
-        getAllPathsRecursive(paths, graph, tokens, destToken);
+        getAllPathsRecursive(paths, this.graph, tokens, destToken);
         const sourceDecimals = await getDecimals(this, sourceToken);
         const targetDecimals = await getDecimals(this, targetToken);
         const rates = await getRates(this, paths, utils.toWei(amount, sourceDecimals));

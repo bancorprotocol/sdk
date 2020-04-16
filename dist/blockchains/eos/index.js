@@ -90,6 +90,13 @@ var EOS = /** @class */ (function () {
             });
         });
     };
+    EOS.prototype.refresh = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/];
+            });
+        });
+    };
     EOS.prototype.getAnchorToken = function () {
         return exports.getAnchorToken(); // calling global function
     };

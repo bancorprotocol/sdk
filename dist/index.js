@@ -94,6 +94,27 @@ var SDK = /** @class */ (function () {
             });
         });
     };
+    SDK.prototype.refresh = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this.eos) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.eos.refresh()];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        if (!this.ethereum) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.ethereum.refresh()];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     SDK.prototype.getShortestPath = function (sourceToken, targetToken, amount) {
         if (amount === void 0) { amount = '1'; }
         return __awaiter(this, void 0, void 0, function () {

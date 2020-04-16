@@ -7,8 +7,10 @@ export declare class Ethereum {
     converterRegistry: Web3.eth.Contract;
     multicallContract: Web3.eth.Contract;
     decimals: object;
+    graph: object;
     static create(nodeEndpoint: string | Object): Promise<Ethereum>;
     static destroy(ethereum: Ethereum): Promise<void>;
+    refresh(): Promise<void>;
     getAnchorToken(): string;
     getRateByPath(path: Token[], amount: string): Promise<string>;
     getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;

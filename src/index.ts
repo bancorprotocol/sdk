@@ -22,6 +22,13 @@ export class SDK {
             await Ethereum.destroy(sdk.ethereum);
     }
 
+    async refresh(): Promise<void> {
+        if (this.eos)
+            await this.eos.refresh();
+        if (this.ethereum)
+            await this.ethereum.refresh();
+    }
+
     async getShortestPath(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<Token[]> {
         return await getPath(this, sourceToken, targetToken, amount, getShortestPath);
     }

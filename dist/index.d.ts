@@ -6,6 +6,7 @@ export declare class SDK {
     ethereum: Ethereum;
     static create(settings: Settings): Promise<SDK>;
     static destroy(sdk: SDK): Promise<void>;
+    refresh(): Promise<void>;
     getShortestPath(sourceToken: Token, targetToken: Token, amount?: string): Promise<Token[]>;
     getCheapestPath(sourceToken: Token, targetToken: Token, amount?: string): Promise<Token[]>;
     getShortestPathRate(sourceToken: Token, targetToken: Token, amount?: string): Promise<string>;
