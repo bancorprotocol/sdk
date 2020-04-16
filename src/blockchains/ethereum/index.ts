@@ -11,6 +11,10 @@ const CONTRACT_ADDRESSES = {
         registry: '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4',
         multicall: '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2',
         anchorToken: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
+        pivotTokens: [
+            '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
+            '0x309627af60F0926daa6041B8279484312f2bf060'
+        ],
         nonStandardTokenDecimals: {
             '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': '9',
             '0xbdEB4b83251Fb146687fa19D1C660F99411eefe3': '18'
@@ -20,6 +24,9 @@ const CONTRACT_ADDRESSES = {
         registry: '0xFD95E724962fCfC269010A0c6700Aa09D5de3074',
         multicall: '0xf3ad7e31b052ff96566eedd218a823430e74b406',
         anchorToken: '0x62bd9D98d4E188e281D7B78e29334969bbE1053c',
+        pivotTokens: [
+            '0x62bd9D98d4E188e281D7B78e29334969bbE1053c'
+        ],
         nonStandardTokenDecimals: {
         }
     }
@@ -72,15 +79,16 @@ export class Ethereum {
     }
 
     async getAllPathsAndRates(sourceToken, targetToken, amount) {
-        const paths = [];
+        const allPaths = [];
         if (!this.graph) this.graph = await getGraph(this);
         const tokens = [Web3.utils.toChecksumAddress(sourceToken)];
         const destToken = Web3.utils.toChecksumAddress(targetToken);
-        getAllPathsRecursive(paths, this.graph, tokens, destToken);
+        getAllPathsRecursive(allPaths, this.graph, tokens, destToken);
+        const somePaths = this.filter(allPaths);
         const sourceDecimals = await getDecimals(this, sourceToken);
         const targetDecimals = await getDecimals(this, targetToken);
-        const rates = await getRatesSafe(this, paths, utils.toWei(amount, sourceDecimals));
-        return [paths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
+        const rates = await getRatesSafe(this, somePaths, utils.toWei(amount, sourceDecimals));
+        return [somePaths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {
@@ -95,6 +103,19 @@ export class Ethereum {
         const fromBlock = await timestampToBlockNumber(this.web3, fromTimestamp);
         const toBlock = await timestampToBlockNumber(this.web3, toTimestamp);
         return await conversionEvents.get(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
+    }
+
+    filter(paths: string[][]): string[][] {
+        const table = {'all': {paths: paths, length: 0}};
+        for (const pivotToken of getContractAddresses(this).pivotTokens)
+            table[pivotToken] = {paths: paths.filter(path => path.includes(pivotToken)), length: 0};
+        for (const [key, value] of Object.entries(table))
+            table[key].length = Math.min(...value.paths.map(path => path.length));
+        const filteredPaths = {};
+        for (const [key, value] of Object.entries(table))
+            for (const path of value.paths.filter(path => path.length == value.length))
+                filteredPaths[path.join(',')] = true;
+        return Object.keys(filteredPaths).map(key => key.split(','));
     }
 }
 

@@ -75,6 +75,10 @@ var CONTRACT_ADDRESSES = {
         registry: '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4',
         multicall: '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2',
         anchorToken: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
+        pivotTokens: [
+            '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
+            '0x309627af60F0926daa6041B8279484312f2bf060'
+        ],
         nonStandardTokenDecimals: {
             '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': '9',
             '0xbdEB4b83251Fb146687fa19D1C660F99411eefe3': '18'
@@ -84,6 +88,9 @@ var CONTRACT_ADDRESSES = {
         registry: '0xFD95E724962fCfC269010A0c6700Aa09D5de3074',
         multicall: '0xf3ad7e31b052ff96566eedd218a823430e74b406',
         anchorToken: '0x62bd9D98d4E188e281D7B78e29334969bbE1053c',
+        pivotTokens: [
+            '0x62bd9D98d4E188e281D7B78e29334969bbE1053c'
+        ],
         nonStandardTokenDecimals: {}
     }
 };
@@ -170,11 +177,11 @@ var Ethereum = /** @class */ (function () {
     };
     Ethereum.prototype.getAllPathsAndRates = function (sourceToken, targetToken, amount) {
         return __awaiter(this, void 0, void 0, function () {
-            var paths, _a, tokens, destToken, sourceDecimals, targetDecimals, rates;
+            var allPaths, _a, tokens, destToken, somePaths, sourceDecimals, targetDecimals, rates;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        paths = [];
+                        allPaths = [];
                         if (!!this.graph) return [3 /*break*/, 2];
                         _a = this;
                         return [4 /*yield*/, exports.getGraph(this)];
@@ -184,17 +191,18 @@ var Ethereum = /** @class */ (function () {
                     case 2:
                         tokens = [web3_1.default.utils.toChecksumAddress(sourceToken)];
                         destToken = web3_1.default.utils.toChecksumAddress(targetToken);
-                        getAllPathsRecursive(paths, this.graph, tokens, destToken);
+                        getAllPathsRecursive(allPaths, this.graph, tokens, destToken);
+                        somePaths = this.filter(allPaths);
                         return [4 /*yield*/, exports.getDecimals(this, sourceToken)];
                     case 3:
                         sourceDecimals = _b.sent();
                         return [4 /*yield*/, exports.getDecimals(this, targetToken)];
                     case 4:
                         targetDecimals = _b.sent();
-                        return [4 /*yield*/, exports.getRatesSafe(this, paths, utils.toWei(amount, sourceDecimals))];
+                        return [4 /*yield*/, exports.getRatesSafe(this, somePaths, utils.toWei(amount, sourceDecimals))];
                     case 5:
                         rates = _b.sent();
-                        return [2 /*return*/, [paths, rates.map(function (rate) { return utils.fromWei(rate, targetDecimals); })]];
+                        return [2 /*return*/, [somePaths, rates.map(function (rate) { return utils.fromWei(rate, targetDecimals); })]];
                 }
             });
         });
@@ -235,6 +243,32 @@ var Ethereum = /** @class */ (function () {
                 }
             });
         });
+    };
+    Ethereum.prototype.filter = function (paths) {
+        var table = { 'all': { paths: paths, length: 0 } };
+        var _loop_1 = function (pivotToken) {
+            table[pivotToken] = { paths: paths.filter(function (path) { return path.includes(pivotToken); }), length: 0 };
+        };
+        for (var _i = 0, _a = exports.getContractAddresses(this).pivotTokens; _i < _a.length; _i++) {
+            var pivotToken = _a[_i];
+            _loop_1(pivotToken);
+        }
+        for (var _b = 0, _c = Object.entries(table); _b < _c.length; _b++) {
+            var _d = _c[_b], key = _d[0], value = _d[1];
+            table[key].length = Math.min.apply(Math, value.paths.map(function (path) { return path.length; }));
+        }
+        var filteredPaths = {};
+        var _loop_2 = function (key, value) {
+            for (var _i = 0, _a = value.paths.filter(function (path) { return path.length == value.length; }); _i < _a.length; _i++) {
+                var path = _a[_i];
+                filteredPaths[path.join(',')] = true;
+            }
+        };
+        for (var _e = 0, _f = Object.entries(table); _e < _f.length; _e++) {
+            var _g = _f[_e], key = _g[0], value = _g[1];
+            _loop_2(key, value);
+        }
+        return Object.keys(filteredPaths).map(function (key) { return key.split(','); });
     };
     return Ethereum;
 }());
@@ -319,7 +353,7 @@ exports.getRates = function (ethereum, paths, amount) {
 };
 exports.getGraph = function (ethereum) {
     return __awaiter(this, void 0, void 0, function () {
-        var graph, convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
+        var graph, convertibleTokens, calls, _a, blockNumber, returnData, _loop_3, i;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -331,7 +365,7 @@ exports.getGraph = function (ethereum) {
                     return [4 /*yield*/, ethereum.multicallContract.methods.aggregate(calls, true).call()];
                 case 2:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
-                    _loop_1 = function (i) {
+                    _loop_3 = function (i) {
                         for (var _i = 0, _a = Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(function (n) { return web3_1.default.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)); }); _i < _a.length; _i++) {
                             var smartToken = _a[_i];
                             if (convertibleTokens[i] != smartToken) {
@@ -341,7 +375,7 @@ exports.getGraph = function (ethereum) {
                         }
                     };
                     for (i = 0; i < returnData.length; i++) {
-                        _loop_1(i);
+                        _loop_3(i);
                     }
                     return [2 /*return*/, graph];
             }
