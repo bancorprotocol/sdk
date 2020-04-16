@@ -28,7 +28,7 @@ let network;
 let multicall;
 let registryData;
 
-export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6') {
+export async function init(ethereumNodeUrl, ethereumContractRegistryAddress = '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4') {
     web3 = new Web3(ethereumNodeUrl);
     const contractRegistryContract = new web3.eth.Contract(contractRegistry, ethereumContractRegistryAddress);
     const registryBlockchainId = await contractRegistryContract.methods.addressOf(Web3.utils.asciiToHex('BancorConverterRegistry')).call();
@@ -222,5 +222,5 @@ const getRatesSafe = async function(paths, amount) {
 const getRates = async function(paths, amount) {
     const calls = paths.map(path => [network._address, network.methods.getReturnByPath(path, amount).encodeABI()]);
     const [blockNumber, returnData] = await multicall.methods.aggregate(calls, false).call();
-    return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : "0");
+    return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : '0');
 };
