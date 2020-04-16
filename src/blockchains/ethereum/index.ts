@@ -79,7 +79,7 @@ export class Ethereum {
         getAllPathsRecursive(paths, this.graph, tokens, destToken);
         const sourceDecimals = await getDecimals(this, sourceToken);
         const targetDecimals = await getDecimals(this, targetToken);
-        const rates = await getRates(this, paths, utils.toWei(amount, sourceDecimals));
+        const rates = await getRatesSafe(this, paths, utils.toWei(amount, sourceDecimals));
         return [paths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
     }
 
@@ -121,6 +121,18 @@ export const getDecimals = async function(ethereum, token) {
     }
     return ethereum.decimals[token];
 };
+
+export const getRatesSafe = async function(ethereum, paths, amount) {
+    try {
+        return await getRates(ethereum, paths, amount);
+    }
+    catch (error) {
+        const mid = paths.length >> 1;
+        const arr1 = await getRatesSafe(ethereum, paths.slice(0, mid), amount);
+        const arr2 = await getRatesSafe(ethereum, paths.slice(mid, paths.length), amount);
+        return [...arr1, ...arr2];
+    }
+}
 
 export const getRates = async function(ethereum, paths, amount) {
     const calls = paths.map(path => [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]);

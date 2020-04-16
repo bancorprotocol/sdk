@@ -191,7 +191,7 @@ var Ethereum = /** @class */ (function () {
                         return [4 /*yield*/, exports.getDecimals(this, targetToken)];
                     case 4:
                         targetDecimals = _b.sent();
-                        return [4 /*yield*/, exports.getRates(this, paths, utils.toWei(amount, sourceDecimals))];
+                        return [4 /*yield*/, exports.getRatesSafe(this, paths, utils.toWei(amount, sourceDecimals))];
                     case 5:
                         rates = _b.sent();
                         return [2 /*return*/, [paths, rates.map(function (rate) { return utils.fromWei(rate, targetDecimals); })]];
@@ -274,6 +274,30 @@ exports.getDecimals = function (ethereum, token) {
                     _a[_b] = _c.sent();
                     _c.label = 2;
                 case 2: return [2 /*return*/, ethereum.decimals[token]];
+            }
+        });
+    });
+};
+exports.getRatesSafe = function (ethereum, paths, amount) {
+    return __awaiter(this, void 0, void 0, function () {
+        var error_1, mid, arr1, arr2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 5]);
+                    return [4 /*yield*/, exports.getRates(ethereum, paths, amount)];
+                case 1: return [2 /*return*/, _a.sent()];
+                case 2:
+                    error_1 = _a.sent();
+                    mid = paths.length >> 1;
+                    return [4 /*yield*/, exports.getRatesSafe(ethereum, paths.slice(0, mid), amount)];
+                case 3:
+                    arr1 = _a.sent();
+                    return [4 /*yield*/, exports.getRatesSafe(ethereum, paths.slice(mid, paths.length), amount)];
+                case 4:
+                    arr2 = _a.sent();
+                    return [2 /*return*/, __spreadArrays(arr1, arr2)];
+                case 5: return [2 /*return*/];
             }
         });
     });
