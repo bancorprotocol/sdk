@@ -72,7 +72,7 @@ var network;
 var multicall;
 var registryData;
 function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
-    if (ethereumContractRegistryAddress === void 0) { ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6'; }
+    if (ethereumContractRegistryAddress === void 0) { ethereumContractRegistryAddress = '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4'; }
     return __awaiter(this, void 0, void 0, function () {
         var contractRegistryContract, registryBlockchainId, networkBlockchainId;
         return __generator(this, function (_a) {
@@ -468,7 +468,7 @@ var getRates = function (paths, amount) {
                     return [4 /*yield*/, multicall.methods.aggregate(calls, false).call()];
                 case 1:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
-                    return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : "0"; })];
+                    return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : '0'; })];
             }
         });
     });
