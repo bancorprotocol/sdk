@@ -58,8 +58,10 @@ var BancorConverterRegistry_1 = require("./contracts/BancorConverterRegistry");
 var BancorNetwork_1 = require("./contracts/BancorNetwork");
 var SmartToken_1 = require("./contracts/SmartToken");
 var ERC20Token_1 = require("./contracts/ERC20Token");
-var ETHBlockchainId = '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315';
+var USDBBlockchainId = '0x309627af60F0926daa6041B8279484312f2bf060';
 var BNTBlockchainId = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
+var MULTICALL_ABI = [{ "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
+var MULTICALL_ADDRESS = '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2';
 var web3;
 var bancorConverter = BancorConverter_1.BancorConverter;
 var contractRegistry = ContractRegistry_1.ContractRegistry;
@@ -67,6 +69,8 @@ var registryAbi = BancorConverterRegistry_1.BancorConverterRegistry;
 var networkAbi = BancorNetwork_1.BancorNetwork;
 var registry;
 var network;
+var multicall;
+var registryData;
 function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
     if (ethereumContractRegistryAddress === void 0) { ethereumContractRegistryAddress = '0xf078b4ec84e5fc57c693d43f1f4a82306c9b88d6'; }
     return __awaiter(this, void 0, void 0, function () {
@@ -84,6 +88,10 @@ function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
                     networkBlockchainId = _a.sent();
                     registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
                     network = new web3.eth.Contract(networkAbi, networkBlockchainId);
+                    multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
+                    return [4 /*yield*/, getGraph()];
+                case 3:
+                    _a.sent();
                     return [2 /*return*/];
             }
         });
@@ -203,16 +211,6 @@ exports.getConverterBlockchainId = function (blockchainId) { return __awaiter(vo
         }
     });
 }); };
-function getSourceAndTargetTokens(srcToken, trgToken) {
-    var isSourceETH = (srcToken || BNTBlockchainId).toLocaleLowerCase() == ETHBlockchainId.toLocaleLowerCase();
-    var sourceToken = isSourceETH ? BNTBlockchainId : (srcToken || BNTBlockchainId);
-    var targetToken = trgToken == ETHBlockchainId ? BNTBlockchainId : (trgToken || BNTBlockchainId);
-    return {
-        srcToken: sourceToken,
-        trgToken: targetToken
-    };
-}
-exports.getSourceAndTargetTokens = getSourceAndTargetTokens;
 function getReserves(converterBlockchainId) {
     return __awaiter(this, void 0, void 0, function () {
         var reserves;
@@ -330,32 +328,28 @@ function getSmartTokens(token) {
     });
 }
 exports.getSmartTokens = getSmartTokens;
-function registryDataUpdate(registryData, key, value) {
+function registryDataUpdate(key, value) {
     if (registryData[key] == undefined)
         registryData[key] = [value];
     else if (!registryData[key].includes(value))
         registryData[key].push(value);
 }
-function getAllPathsRecursive(paths, path, targetToken, registryData) {
+function getAllPathsRecursive(paths, path, targetToken) {
     var prevToken = path[path.length - 1];
     if (prevToken == targetToken)
         paths.push(path);
     else
         for (var _i = 0, _a = registryData[prevToken].filter(function (token) { return !path.includes(token); }); _i < _a.length; _i++) {
             var nextToken = _a[_i];
-            getAllPathsRecursive(paths, __spreadArrays(path, [nextToken]), targetToken, registryData);
+            getAllPathsRecursive(paths, __spreadArrays(path, [nextToken]), targetToken);
         }
 }
-function getAllPathsAndRates(sourceToken, targetToken, amount) {
+function getGraph() {
     return __awaiter(this, void 0, void 0, function () {
-        var MULTICALL_ABI, MULTICALL_ADDRESS, multicall, convertibleTokens, calls, _a, blockNumber, returnData, registryData, _loop_1, i, paths, sourceDecimals, targetDecimals, rates;
+        var convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0:
-                    MULTICALL_ABI = [{ "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
-                    MULTICALL_ADDRESS = '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2';
-                    multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
-                    return [4 /*yield*/, registry.methods.getConvertibleTokens().call()];
+                case 0: return [4 /*yield*/, registry.methods.getConvertibleTokens().call()];
                 case 1:
                     convertibleTokens = _b.sent();
                     calls = convertibleTokens.map(function (convertibleToken) { return [registry._address, registry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
@@ -367,31 +361,69 @@ function getAllPathsAndRates(sourceToken, targetToken, amount) {
                         for (var _i = 0, _a = Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(function (n) { return web3_1.default.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)); }); _i < _a.length; _i++) {
                             var smartToken = _a[_i];
                             if (convertibleTokens[i] != smartToken) {
-                                registryDataUpdate(registryData, convertibleTokens[i], smartToken);
-                                registryDataUpdate(registryData, smartToken, convertibleTokens[i]);
+                                registryDataUpdate(convertibleTokens[i], smartToken);
+                                registryDataUpdate(smartToken, convertibleTokens[i]);
                             }
                         }
                     };
                     for (i = 0; i < returnData.length; i++) {
                         _loop_1(i);
                     }
-                    paths = [];
-                    getAllPathsRecursive(paths, [web3_1.default.utils.toChecksumAddress(sourceToken)], web3_1.default.utils.toChecksumAddress(targetToken), registryData);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function getAllPathsAndRates(sourceToken, targetToken, amount) {
+    return __awaiter(this, void 0, void 0, function () {
+        var allPaths, somePaths, sourceDecimals, targetDecimals, rates;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    allPaths = [];
+                    getAllPathsRecursive(allPaths, [web3_1.default.utils.toChecksumAddress(sourceToken)], web3_1.default.utils.toChecksumAddress(targetToken));
+                    somePaths = filter(allPaths);
                     return [4 /*yield*/, getDecimals(sourceToken)];
-                case 3:
-                    sourceDecimals = _b.sent();
+                case 1:
+                    sourceDecimals = _a.sent();
                     return [4 /*yield*/, getDecimals(targetToken)];
-                case 4:
-                    targetDecimals = _b.sent();
-                    return [4 /*yield*/, getRates(multicall, paths, utils_1.toWei(amount, sourceDecimals))];
-                case 5:
-                    rates = _b.sent();
-                    return [2 /*return*/, [paths, rates.map(function (rate) { return utils_1.fromWei(rate, targetDecimals); })]];
+                case 2:
+                    targetDecimals = _a.sent();
+                    return [4 /*yield*/, getRatesSafe(somePaths, utils_1.toWei(amount, sourceDecimals))];
+                case 3:
+                    rates = _a.sent();
+                    return [2 /*return*/, [somePaths, rates.map(function (rate) { return utils_1.fromWei(rate, targetDecimals); })]];
             }
         });
     });
 }
 exports.getAllPathsAndRates = getAllPathsAndRates;
+function filter(paths) {
+    var table = { 'all': { paths: paths, length: 0 } };
+    var _loop_2 = function (pivotToken) {
+        table[pivotToken] = { paths: paths.filter(function (path) { return path.includes(pivotToken); }), length: 0 };
+    };
+    for (var _i = 0, _a = [USDBBlockchainId, BNTBlockchainId]; _i < _a.length; _i++) {
+        var pivotToken = _a[_i];
+        _loop_2(pivotToken);
+    }
+    for (var _b = 0, _c = Object.entries(table); _b < _c.length; _b++) {
+        var _d = _c[_b], key = _d[0], value = _d[1];
+        table[key].length = Math.min.apply(Math, value.paths.map(function (path) { return path.length; }));
+    }
+    var filteredPaths = {};
+    var _loop_3 = function (key, value) {
+        for (var _i = 0, _a = value.paths.filter(function (path) { return path.length == value.length; }); _i < _a.length; _i++) {
+            var path = _a[_i];
+            filteredPaths[path.join(',')] = true;
+        }
+    };
+    for (var _e = 0, _f = Object.entries(table); _e < _f.length; _e++) {
+        var _g = _f[_e], key = _g[0], value = _g[1];
+        _loop_3(key, value);
+    }
+    return Object.keys(filteredPaths).map(function (key) { return key.split(','); });
+}
 var getDecimals = function (token) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -402,7 +434,31 @@ var getDecimals = function (token) {
         });
     });
 };
-var getRates = function (multicall, paths, amount) {
+var getRatesSafe = function (paths, amount) {
+    return __awaiter(this, void 0, void 0, function () {
+        var error_2, mid, arr1, arr2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 5]);
+                    return [4 /*yield*/, getRates(paths, amount)];
+                case 1: return [2 /*return*/, _a.sent()];
+                case 2:
+                    error_2 = _a.sent();
+                    mid = paths.length >> 1;
+                    return [4 /*yield*/, getRatesSafe(paths.slice(0, mid), amount)];
+                case 3:
+                    arr1 = _a.sent();
+                    return [4 /*yield*/, getRatesSafe(paths.slice(mid, paths.length), amount)];
+                case 4:
+                    arr2 = _a.sent();
+                    return [2 /*return*/, __spreadArrays(arr1, arr2)];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+};
+var getRates = function (paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var calls, _a, blockNumber, returnData;
         return __generator(this, function (_b) {

@@ -190,11 +190,12 @@ exports.getRateByPath = function (paths, amount) { return __awaiter(void 0, void
     });
 }); };
 function getRate(sourceToken, targetToken, amount) {
+    if (amount === void 0) { amount = '1'; }
     return __awaiter(this, void 0, void 0, function () {
         var paths;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, generatePath(sourceToken, targetToken)];
+                case 0: return [4 /*yield*/, generatePath(sourceToken, targetToken, amount)];
                 case 1:
                     paths = _a.sent();
                     return [4 /*yield*/, exports.getRateByPath(paths, amount)];
