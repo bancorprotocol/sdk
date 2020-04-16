@@ -7,10 +7,6 @@ export declare const getTokenDecimals: (tokenBlockchainId: any) => Promise<any>;
 export declare function getPathStepRate(converterPair: ConversionPathStep, amount: string): Promise<string>;
 export declare function getRegistry(): Promise<any>;
 export declare const getConverterBlockchainId: (blockchainId: any) => Promise<any>;
-export declare function getSourceAndTargetTokens(srcToken: string, trgToken: string): {
-    srcToken: string;
-    trgToken: string;
-};
 export declare function getReserves(converterBlockchainId: any): Promise<{
     reserves: any;
 }>;
