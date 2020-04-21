@@ -40,6 +40,8 @@ export class Ethereum {
     multicallContract: Web3.eth.Contract;
     decimals: object;
     graph: object;
+    trees: object;
+    getPathsFunc: (sourceToken: string, targetToken: string) => string[][];
 
     static async create(nodeEndpoint: string | Object): Promise<Ethereum> {
         const ethereum = new Ethereum();
@@ -52,6 +54,8 @@ export class Ethereum {
         ethereum.converterRegistry = new ethereum.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
         ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, getContractAddresses(ethereum).multicall);
         ethereum.decimals = {...CONTRACT_ADDRESSES[ethereum.networkType].nonStandardTokenDecimals};
+        ethereum.getPathsFunc = ethereum.getSomePathsFunc;
+        await ethereum.refresh();
         return ethereum;
     }
 
@@ -62,6 +66,7 @@ export class Ethereum {
 
     async refresh(): Promise<void> {
         this.graph = await getGraph(this);
+        this.trees = getTrees(this);
     }
 
     getAnchorToken(): string {
@@ -79,16 +84,13 @@ export class Ethereum {
     }
 
     async getAllPathsAndRates(sourceToken, targetToken, amount) {
-        const allPaths = [];
-        if (!this.graph) this.graph = await getGraph(this);
-        const tokens = [Web3.utils.toChecksumAddress(sourceToken)];
-        const destToken = Web3.utils.toChecksumAddress(targetToken);
-        getAllPathsRecursive(allPaths, this.graph, tokens, destToken);
-        const somePaths = this.filter(allPaths);
+        sourceToken = Web3.utils.toChecksumAddress(sourceToken);
+        targetToken = Web3.utils.toChecksumAddress(targetToken);
+        const paths = this.getPathsFunc(sourceToken, targetToken);
         const sourceDecimals = await getDecimals(this, sourceToken);
         const targetDecimals = await getDecimals(this, targetToken);
-        const rates = await getRatesSafe(this, somePaths, utils.toWei(amount, sourceDecimals));
-        return [somePaths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
+        const rates = await getRatesSafe(this, paths, utils.toWei(amount, sourceDecimals));
+        return [paths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {
@@ -105,17 +107,27 @@ export class Ethereum {
         return await conversionEvents.get(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
     }
 
-    filter(paths: string[][]): string[][] {
-        const table = {'all': {paths: paths, length: 0}};
-        for (const pivotToken of getContractAddresses(this).pivotTokens)
-            table[pivotToken] = {paths: paths.filter(path => path.includes(pivotToken)), length: 0};
-        for (const [key, value] of Object.entries(table))
-            table[key].length = Math.min(...value.paths.map(path => path.length));
-        const filteredPaths = {};
-        for (const [key, value] of Object.entries(table))
-            for (const path of value.paths.filter(path => path.length == value.length))
-                filteredPaths[path.join(',')] = true;
-        return Object.keys(filteredPaths).map(key => key.split(','));
+    getAllPathsFunc(sourceToken: string, targetToken: string): string[][] {
+        const paths = [];
+        const tokens = [Web3.utils.toChecksumAddress(sourceToken)];
+        const destToken = Web3.utils.toChecksumAddress(targetToken);
+        getAllPathsRecursive(paths, this.graph, tokens, destToken);
+        return paths;
+    }
+
+    getSomePathsFunc(sourceToken: string, targetToken: string): string[][] {
+        const commonTokens = this.graph[sourceToken].filter(token => this.graph[targetToken].includes(token));
+        const paths = commonTokens.map(commonToken => [sourceToken, commonToken, targetToken]);
+        const pivotTokens = getContractAddresses(this).pivotTokens;
+        for (const pivotToken1 of pivotTokens) {
+            for (const pivotToken2 of pivotTokens) {
+                const sourcePath = getOnePathRecursive(this.trees[pivotToken1], sourceToken);
+                const middlePath = getOnePathRecursive(this.trees[pivotToken2], pivotToken1);
+                const targetPath = getOnePathRecursive(this.trees[pivotToken2], targetToken);
+                paths.push(getMergedPath(sourcePath.concat(middlePath.slice(1)), targetPath));
+            }
+        }
+        return Array.from(new Set<string>(paths.map(path => path.join(',')))).map(path => path.split(','));
     }
 }
 
@@ -180,11 +192,33 @@ export const getGraph = async function(ethereum) {
     return graph;
 };
 
+export const getTrees = function(ethereum) {
+    const trees = {};
+
+    for (const pivotToken of getContractAddresses(ethereum).pivotTokens)
+        trees[pivotToken] = getTree(ethereum.graph, pivotToken);
+
+    return trees;
+};
+
 function updateGraph(graph, key, value) {
     if (graph[key] == undefined)
         graph[key] = [value];
     else if (!graph[key].includes(value))
         graph[key].push(value);
+}
+
+function getTree(graph, root) {
+    const tree = {[root]: null};
+    const queue = [root];
+    while (queue.length > 0) {
+        const dst = queue.shift();
+        for (const src of graph[dst].filter(node => tree[node] === undefined)) {
+            tree[src] = dst;
+            queue.push(src);
+        }
+    }
+    return tree;
 }
 
 function getAllPathsRecursive(paths, graph, tokens, destToken) {
@@ -193,4 +227,40 @@ function getAllPathsRecursive(paths, graph, tokens, destToken) {
         paths.push(tokens);
     else for (const nextToken of graph[prevToken].filter(token => !tokens.includes(token)))
         getAllPathsRecursive(paths, graph, [...tokens, nextToken], destToken);
+}
+
+function getOnePathRecursive(tree, token) {
+    if (tree[token])
+        return [token, ...getOnePathRecursive(tree, tree[token])];
+    return [token];
+}
+
+function getMergedPath(sourcePath, targetPath) {
+    if (sourcePath.length > 0 && targetPath.length > 0) {
+        let i = sourcePath.length - 1;
+        let j = targetPath.length - 1;
+        while (i >= 0 && j >= 0 && sourcePath[i] == targetPath[j]) {
+            i--;
+            j--;
+        }
+
+        const path = [];
+        for (let m = 0; m <= i + 1; m++)
+            path.push(sourcePath[m]);
+        for (let n = j; n >= 0; n--)
+            path.push(targetPath[n]);
+
+        let length = 0;
+        for (let p = 0; p < path.length; p += 1) {
+            for (let q = p + 2; q < path.length - p % 2; q += 2) {
+                if (path[p] == path[q])
+                    p = q;
+            }
+            path[length++] = path[p];
+        }
+
+        return path.slice(0, length);
+    }
+
+    return [];
 }
