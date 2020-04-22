@@ -12,7 +12,7 @@ export function getWeb3(nodeEndpoint) {
         eth: {
             net: {
                 getNetworkType: function () {
-                    return 'main';
+                    return 'dummy';
                 }
             },
             Contract: function(abi, address) {
@@ -22,6 +22,20 @@ export function getWeb3(nodeEndpoint) {
                             return {
                                 call: function() {
                                     return '0x0000000000000000000000000000000000000000';
+                                }
+                            };
+                        },
+                        aggregate: function(calls, strict) {
+                            return {
+                                call: function() {
+                                    return [0, []];
+                                }
+                            };
+                        },
+                        getConvertibleTokens: function() {
+                            return {
+                                call: function() {
+                                    return [];
                                 }
                             };
                         }

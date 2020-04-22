@@ -55,10 +55,6 @@ var anchorToken = {
     blockchainId: 'bntbntbntbnt',
     symbol: 'BNT'
 };
-var converterAccounts = [
-    'bancorcnvrtr',
-    'creatorcnvrt'
-];
 var EOS = /** @class */ (function () {
     function EOS() {
     }
