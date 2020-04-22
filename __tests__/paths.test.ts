@@ -203,7 +203,7 @@ describe('paths test', () => {
     });
 
     it('getShortestPath from ethereum token to ethereum token', async () => {
-        const spyFilter = jest
+        const spyGetPathsFunc = jest
             .spyOn(sdk.ethereum, 'getPathsFunc')
             .mockImplementationOnce(sdk.ethereum.getAllPathsFunc);
 
@@ -238,7 +238,7 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyFilter).toHaveBeenCalledTimes(1);
+        expect(spyGetPathsFunc).toHaveBeenCalledTimes(1);
     });
 
     it('getCheapestPath from eos token to eos token', async () => {
@@ -428,7 +428,7 @@ describe('paths test', () => {
     });
 
     it('getCheapestPath from ethereum token to ethereum token', async () => {
-        const spyFilter = jest
+        const spyGetPathsFunc = jest
             .spyOn(sdk.ethereum, 'getPathsFunc')
             .mockImplementationOnce(sdk.ethereum.getAllPathsFunc);
 
@@ -465,7 +465,7 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyFilter).toHaveBeenCalledTimes(1);
+        expect(spyGetPathsFunc).toHaveBeenCalledTimes(1);
     });
 
     it('getAllPathsAndRates from eos token to eos token', async () => {
@@ -493,7 +493,7 @@ describe('paths test', () => {
     });
 
     it('getAllPathsAndRates from ethereum token to ethereum token', async () => {
-        const spyFilter = jest
+        const spyGetPathsFunc = jest
             .spyOn(sdk.ethereum, 'getPathsFunc')
             .mockImplementationOnce(sdk.ethereum.getAllPathsFunc);
 
@@ -567,11 +567,11 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyFilter).toHaveBeenCalledTimes(1);
+        expect(spyGetPathsFunc).toHaveBeenCalledTimes(1);
     });
 
     it('getShortestPathAndRate from ethereum token to ethereum token', async () => {
-        const spyFilter = jest
+        const spyGetPathsFunc = jest
             .spyOn(sdk.ethereum, 'getPathsFunc')
             .mockImplementationOnce(sdk.ethereum.getAllPathsFunc);
 
@@ -609,11 +609,11 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyFilter).toHaveBeenCalledTimes(1);
+        expect(spyGetPathsFunc).toHaveBeenCalledTimes(1);
     });
 
     it('getCheapestPathAndRate from ethereum token to ethereum token', async () => {
-        const spyFilter = jest
+        const spyGetPathsFunc = jest
             .spyOn(sdk.ethereum, 'getPathsFunc')
             .mockImplementationOnce(sdk.ethereum.getAllPathsFunc);
 
@@ -653,6 +653,6 @@ describe('paths test', () => {
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyFilter).toHaveBeenCalledTimes(1);
+        expect(spyGetPathsFunc).toHaveBeenCalledTimes(1);
     });
 });

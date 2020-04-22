@@ -1013,7 +1013,7 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' },
                 { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
                 { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
-                ]));
+            ]));
 
         await sdk.refresh();
 
