@@ -1,32 +1,32 @@
-import { EOS } from './blockchains/eos/index';
 import { Ethereum } from './blockchains/ethereum/index';
+import { EOS } from './blockchains/eos/index';
 import { Settings, BlockchainType, Token, Converter, ConversionEvent } from './types';
 
 export class SDK {
-    eos: EOS;
     ethereum: Ethereum;
+    eos: EOS;
 
     static async create(settings: Settings): Promise<SDK> {
         const sdk = new SDK();
-        if (settings.eosNodeEndpoint)
-            sdk.eos = await EOS.create(settings.eosNodeEndpoint);
         if (settings.ethereumNodeEndpoint)
             sdk.ethereum = await Ethereum.create(settings.ethereumNodeEndpoint);
+        if (settings.eosNodeEndpoint)
+            sdk.eos = await EOS.create(settings.eosNodeEndpoint);
         return sdk;
     }
 
     static async destroy(sdk: SDK): Promise<void> {
-        if (sdk.eos)
-            await EOS.destroy(sdk.eos);
         if (sdk.ethereum)
             await Ethereum.destroy(sdk.ethereum);
+        if (sdk.eos)
+            await EOS.destroy(sdk.eos);
     }
 
     async refresh(): Promise<void> {
-        if (this.eos)
-            await this.eos.refresh();
         if (this.ethereum)
             await this.ethereum.refresh();
+        if (this.eos)
+            await this.eos.refresh();
     }
 
     async getShortestPath(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<Token[]> {
@@ -106,32 +106,28 @@ export class SDK {
     async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
         return await this[token.blockchainType].getConversionEventsByTimestamp(token, fromTimestamp, toTimestamp);
     }
-
-    async buildPathsFile(): Promise<void> {
-        await this.eos.buildPathsFile();
-    }
 }
 
 async function getPath(sdk: SDK, sourceToken: Token, targetToken: Token, amount: string, getBestPath: (paths: string[][], rates: string[]) => string[]): Promise<Token[]> {
-    let eosPath;
     let ethPaths;
     let ethRates;
+    let eosPath;
 
     switch (pathType(sourceToken.blockchainType, targetToken.blockchainType)) {
-    case pathType('eos', 'eos'):
-        eosPath = await sdk.eos.getPath(sourceToken, targetToken);
-        return eosPath;
+    case pathType('ethereum', 'ethereum'):
+        [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
+        return getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}));
+    case pathType('ethereum', 'eos'):
+        [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, sdk.ethereum.getAnchorToken(), amount);
+        eosPath = await sdk.eos.getPath(sdk.eos.getAnchorToken(), targetToken);
+        return [...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), ...eosPath];    
     case pathType('eos', 'ethereum'):
         eosPath = await sdk.eos.getPath(sourceToken, sdk.eos.getAnchorToken());
         [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sdk.ethereum.getAnchorToken(), targetToken.blockchainId, amount);
         return [...eosPath, ...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}))];
-    case pathType('ethereum', 'eos'):
-        [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, sdk.ethereum.getAnchorToken(), amount);
-        eosPath = await sdk.eos.getPath(sdk.eos.getAnchorToken(), targetToken);
-        return [...getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x})), ...eosPath];
-    case pathType('ethereum', 'ethereum'):
-        [ethPaths, ethRates] = await sdk.ethereum.getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount);
-        return getBestPath(ethPaths, ethRates).map(x => ({blockchainType: 'ethereum', blockchainId: x}));
+    case pathType('eos', 'eos'):
+        eosPath = await sdk.eos.getPath(sourceToken, targetToken);
+        return eosPath;
     }
 }
 

@@ -17,6 +17,16 @@ function fromWei(amount, decimals) {
     return new decimal_js_1.default(amount + "e-" + decimals).toFixed();
 }
 exports.fromWei = fromWei;
+function toDecimalPlaces(amount, decimals) {
+    return amount.toDecimalPlaces(decimals, decimal_js_1.default.ROUND_DOWN);
+}
+exports.toDecimalPlaces = toDecimalPlaces;
+function isTokenEqual(token1, token2) {
+    return token1.blockchainType == token2.blockchainType &&
+        token1.blockchainId == token2.blockchainId &&
+        token1.symbol == token2.symbol;
+}
+exports.isTokenEqual = isTokenEqual;
 function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], depositAmount = _a[3];
@@ -46,14 +56,14 @@ function calculateSaleReturn(supply, reserveBalance, reserveRatio, sellAmount) {
     return reserveBalance.mul(ONE.sub(ONE.sub(sellAmount.div(supply)).pow((MAX_RATIO.div(reserveRatio)))));
 }
 exports.calculateSaleReturn = calculateSaleReturn;
-function calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount) {
+function calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount) {
     var _a;
-    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), fromReserveBalance = _a[0], fromReserveRatio = _a[1], toReserveBalance = _a[2], toReserveRatio = _a[3], amount = _a[4];
+    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), sourceReserveBalance = _a[0], sourceReserveRatio = _a[1], targetReserveBalance = _a[2], targetReserveRatio = _a[3], amount = _a[4];
     // special case for equal ratios
-    if (fromReserveRatio.equals(toReserveRatio))
-        return toReserveBalance.mul(amount).div(fromReserveBalance.add(amount));
-    // return toReserveBalance * (1 - (fromReserveBalance / (fromReserveBalance + amount)) ^ (fromReserveRatio / toReserveRatio))
-    return toReserveBalance.mul(ONE.sub(fromReserveBalance.div(fromReserveBalance.add(amount)).pow(fromReserveRatio.div(toReserveRatio))));
+    if (sourceReserveRatio.equals(targetReserveRatio))
+        return targetReserveBalance.mul(amount).div(sourceReserveBalance.add(amount));
+    // return targetReserveBalance * (1 - (sourceReserveBalance / (sourceReserveBalance + amount)) ^ (sourceReserveRatio / targetReserveRatio))
+    return targetReserveBalance.mul(ONE.sub(sourceReserveBalance.div(sourceReserveBalance.add(amount)).pow(sourceReserveRatio.div(targetReserveRatio))));
 }
 exports.calculateCrossReserveReturn = calculateCrossReserveReturn;
 function calculateFundCost(supply, reserveBalance, totalRatio, amount) {

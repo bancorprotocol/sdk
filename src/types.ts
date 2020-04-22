@@ -1,9 +1,9 @@
 export interface Settings {
-    eosNodeEndpoint?: string;
     ethereumNodeEndpoint?: string | Object; // Object in order to allow an existing web3 provider
+    eosNodeEndpoint?: string;
 }
 
-export type BlockchainType = 'eos' | 'ethereum';
+export type BlockchainType = 'ethereum' | 'eos';
 
 export interface Token {
     blockchainType: BlockchainType;

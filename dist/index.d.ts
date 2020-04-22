@@ -1,9 +1,9 @@
-import { EOS } from './blockchains/eos/index';
 import { Ethereum } from './blockchains/ethereum/index';
+import { EOS } from './blockchains/eos/index';
 import { Settings, Token, Converter, ConversionEvent } from './types';
 export declare class SDK {
-    eos: EOS;
     ethereum: Ethereum;
+    eos: EOS;
     static create(settings: Settings): Promise<SDK>;
     static destroy(sdk: SDK): Promise<void>;
     refresh(): Promise<void>;
@@ -27,5 +27,4 @@ export declare class SDK {
     getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;
-    buildPathsFile(): Promise<void>;
 }

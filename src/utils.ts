@@ -1,4 +1,5 @@
 import Decimal from 'decimal.js';
+import { Token } from './types';
 
 const ZERO = new Decimal(0);
 const ONE = new Decimal(1);
@@ -13,6 +14,16 @@ export function toWei(amount, decimals) {
 
 export function fromWei(amount, decimals) {
     return new Decimal(`${amount}e-${decimals}`).toFixed();
+}
+
+export function toDecimalPlaces(amount, decimals) {
+    return amount.toDecimalPlaces(decimals, Decimal.ROUND_DOWN);
+}
+
+export function isTokenEqual(token1: Token, token2: Token) {
+    return token1.blockchainType == token2.blockchainType &&
+           token1.blockchainId == token2.blockchainId &&
+           token1.symbol == token2.symbol;
 }
 
 export function calculatePurchaseReturn(supply, reserveBalance, reserveRatio, depositAmount) {
@@ -49,15 +60,15 @@ export function calculateSaleReturn(supply, reserveBalance, reserveRatio, sellAm
     return reserveBalance.mul(ONE.sub(ONE.sub(sellAmount.div(supply)).pow((MAX_RATIO.div(reserveRatio)))));
 }
 
-export function calculateCrossReserveReturn(fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount) {
-    [fromReserveBalance, fromReserveRatio, toReserveBalance, toReserveRatio, amount] = Array.from(arguments).map(x => new Decimal(x));
+export function calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount) {
+    [sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for equal ratios
-    if (fromReserveRatio.equals(toReserveRatio))
-        return toReserveBalance.mul(amount).div(fromReserveBalance.add(amount));
+    if (sourceReserveRatio.equals(targetReserveRatio))
+        return targetReserveBalance.mul(amount).div(sourceReserveBalance.add(amount));
 
-    // return toReserveBalance * (1 - (fromReserveBalance / (fromReserveBalance + amount)) ^ (fromReserveRatio / toReserveRatio))
-    return toReserveBalance.mul(ONE.sub(fromReserveBalance.div(fromReserveBalance.add(amount)).pow(fromReserveRatio.div(toReserveRatio))));
+    // return targetReserveBalance * (1 - (sourceReserveBalance / (sourceReserveBalance + amount)) ^ (sourceReserveRatio / targetReserveRatio))
+    return targetReserveBalance.mul(ONE.sub(sourceReserveBalance.div(sourceReserveBalance.add(amount)).pow(sourceReserveRatio.div(targetReserveRatio))));
 }
 
 export function calculateFundCost(supply, reserveBalance, totalRatio, amount) {
