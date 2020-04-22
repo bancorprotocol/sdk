@@ -70,6 +70,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ]));
 
+        await sdk.refresh();
+
         const received = await sdk.getShortestPathRate(
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
@@ -151,6 +153,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
                 { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' }
             ]));
+
+        await sdk.refresh();
 
         const received = await sdk.getShortestPathRate(
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
@@ -235,6 +239,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ]));
 
+        await sdk.refresh();
+
         const received = await sdk.getShortestPathRate(
             { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' },
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
@@ -317,6 +323,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
                 { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' }
             ]));
+
+        await sdk.refresh();
 
         const received = await sdk.getShortestPathRate(
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
@@ -401,6 +409,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ]));
 
+        await sdk.refresh();
+
         const received = await sdk.getShortestPathRate(
             { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' },
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
@@ -480,6 +490,8 @@ describe('rates test', () => {
                 { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
                 { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
             ]));
+
+        await sdk.refresh();
 
         const received = await sdk.getShortestPathRate(
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
@@ -562,6 +574,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
             ]));
 
+        await sdk.refresh();
+
         const received = await sdk.getShortestPathRate(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
@@ -594,6 +608,8 @@ describe('rates test', () => {
                 { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
                 { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' }
             ]));
+
+        await sdk.refresh();
 
         const received = await sdk.getShortestPathRate(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
@@ -659,6 +675,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
                 { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ]));
+
+        await sdk.refresh();
 
         const received = await sdk.getCheapestPathRate(
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
@@ -741,6 +759,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
                 { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' }
             ]));
+
+        await sdk.refresh();
 
         const received = await sdk.getCheapestPathRate(
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
@@ -825,6 +845,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
             ]));
 
+        await sdk.refresh();
+
         const received = await sdk.getCheapestPathRate(
             { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' },
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
@@ -907,6 +929,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
                 { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' }
             ]));
+
+        await sdk.refresh();
 
         const received = await sdk.getCheapestPathRate(
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
@@ -991,6 +1015,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
                 ]));
 
+        await sdk.refresh();
+
         const received = await sdk.getCheapestPathRate(
             { blockchainType: 'eos', blockchainId: 'xxxxxxxxxxxx', symbol: 'AAABBB' },
             { blockchainType: 'eos', blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
@@ -1070,6 +1096,8 @@ describe('rates test', () => {
                 { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
                 { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' }
             ]));
+
+        await sdk.refresh();
 
         const received = await sdk.getCheapestPathRate(
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' },
@@ -1152,6 +1180,8 @@ describe('rates test', () => {
                 { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
             ]));
 
+        await sdk.refresh();
+
         const received = await sdk.getCheapestPathRate(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: 'eos', blockchainId: 'cccccccccccc', symbol: 'CCC' }
@@ -1184,6 +1214,8 @@ describe('rates test', () => {
                 { blockchainType: 'ethereum', blockchainId: '0x2222222222222222222222222222222222222222' },
                 { blockchainType: 'ethereum', blockchainId: '0x3333333333333333333333333333333333333333' }
             ]));
+
+        await sdk.refresh();
 
         const received = await sdk.getCheapestPathRate(
             { blockchainType: 'ethereum', blockchainId: '0x1111111111111111111111111111111111111111' },

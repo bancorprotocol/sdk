@@ -92,6 +92,13 @@ var CONTRACT_ADDRESSES = {
             '0x62bd9D98d4E188e281D7B78e29334969bbE1053c'
         ],
         nonStandardTokenDecimals: {}
+    },
+    dummy: {
+        registry: '0x0000000000000000000000000000000000000000',
+        multicall: '0x0000000000000000000000000000000000000000',
+        anchorToken: '0x0000000000000000000000000000000000000000',
+        pivotTokens: [],
+        nonStandardTokenDecimals: {}
     }
 };
 var Ethereum = /** @class */ (function () {
@@ -140,15 +147,18 @@ var Ethereum = /** @class */ (function () {
     };
     Ethereum.prototype.refresh = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         _a = this;
                         return [4 /*yield*/, exports.getGraph(this)];
                     case 1:
-                        _a.graph = _b.sent();
-                        this.trees = exports.getTrees(this);
+                        _a.graph = _c.sent();
+                        _b = this;
+                        return [4 /*yield*/, exports.getTrees(this)];
+                    case 2:
+                        _b.trees = _c.sent();
                         return [2 /*return*/];
                 }
             });
@@ -377,12 +387,17 @@ exports.getGraph = function (ethereum) {
     });
 };
 exports.getTrees = function (ethereum) {
-    var trees = {};
-    for (var _i = 0, _a = exports.getContractAddresses(ethereum).pivotTokens; _i < _a.length; _i++) {
-        var pivotToken = _a[_i];
-        trees[pivotToken] = getTree(ethereum.graph, pivotToken);
-    }
-    return trees;
+    return __awaiter(this, void 0, void 0, function () {
+        var trees, _i, _a, pivotToken;
+        return __generator(this, function (_b) {
+            trees = {};
+            for (_i = 0, _a = exports.getContractAddresses(ethereum).pivotTokens; _i < _a.length; _i++) {
+                pivotToken = _a[_i];
+                trees[pivotToken] = getTree(ethereum.graph, pivotToken);
+            }
+            return [2 /*return*/, trees];
+        });
+    });
 };
 function updateGraph(graph, key, value) {
     if (graph[key] == undefined)

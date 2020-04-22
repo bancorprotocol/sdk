@@ -29,4 +29,4 @@ export declare const getDecimals: (ethereum: any, token: any) => Promise<any>;
 export declare const getRatesSafe: (ethereum: any, paths: any, amount: any) => any;
 export declare const getRates: (ethereum: any, paths: any, amount: any) => Promise<any>;
 export declare const getGraph: (ethereum: any) => Promise<{}>;
-export declare const getTrees: (ethereum: any) => {};
+export declare const getTrees: (ethereum: any) => Promise<{}>;

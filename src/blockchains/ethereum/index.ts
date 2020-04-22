@@ -29,6 +29,15 @@ const CONTRACT_ADDRESSES = {
         ],
         nonStandardTokenDecimals: {
         }
+    },
+    dummy: {
+        registry: '0x0000000000000000000000000000000000000000',
+        multicall: '0x0000000000000000000000000000000000000000',
+        anchorToken: '0x0000000000000000000000000000000000000000',
+        pivotTokens: [
+        ],
+        nonStandardTokenDecimals: {
+        }
     }
 };
 
@@ -66,7 +75,7 @@ export class Ethereum {
 
     async refresh(): Promise<void> {
         this.graph = await getGraph(this);
-        this.trees = getTrees(this);
+        this.trees = await getTrees(this);
     }
 
     getAnchorToken(): string {
@@ -192,7 +201,7 @@ export const getGraph = async function(ethereum) {
     return graph;
 };
 
-export const getTrees = function(ethereum) {
+export const getTrees = async function(ethereum) {
     const trees = {};
 
     for (const pivotToken of getContractAddresses(ethereum).pivotTokens)
