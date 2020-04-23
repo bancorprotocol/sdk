@@ -48,10 +48,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var eosjs_1 = require("eosjs");
 var node_fetch_1 = __importDefault(require("node-fetch"));
-var utils = __importStar(require("../../utils"));
+var helpers = __importStar(require("../../helpers"));
+var types_1 = require("../../types");
 var legacy_converters_1 = __importDefault(require("./legacy_converters"));
 var anchorToken = {
-    blockchainType: 'eos',
+    blockchainType: types_1.BlockchainType.EOS,
     blockchainId: 'bntbntbntbnt',
     symbol: 'BNT'
 };
@@ -259,7 +260,7 @@ function getConversionRate(jsonRpc, smartToken, sourceToken, targetToken, amount
                 case 2:
                     converterBlockchainId = _a.sent();
                     converter = {
-                        blockchainType: 'eos',
+                        blockchainType: types_1.BlockchainType.EOS,
                         blockchainId: converterBlockchainId,
                         symbol: smartToken.symbol
                     };
@@ -272,24 +273,24 @@ function getConversionRate(jsonRpc, smartToken, sourceToken, targetToken, amount
                     reserves = _a.sent();
                     magnitude = 1;
                     targetDecimals = 4;
-                    if (!utils.isTokenEqual(sourceToken, smartToken)) return [3 /*break*/, 6];
+                    if (!helpers.isTokenEqual(sourceToken, smartToken)) return [3 /*break*/, 6];
                     supply = getBalance(smartTokenStat.supply);
                     return [4 /*yield*/, getReserveBalance(jsonRpc, converter, targetToken)];
                 case 5:
                     reserveBalance = _a.sent();
                     reserveRatio = getReserve(reserves, targetToken).ratio;
                     targetDecimals = getDecimals(reserveBalance);
-                    returnAmount = utils.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
+                    returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
                     return [3 /*break*/, 11];
                 case 6:
-                    if (!utils.isTokenEqual(targetToken, smartToken)) return [3 /*break*/, 8];
+                    if (!helpers.isTokenEqual(targetToken, smartToken)) return [3 /*break*/, 8];
                     supply = getBalance(smartTokenStat.supply);
                     return [4 /*yield*/, getReserveBalance(jsonRpc, converter, sourceToken)];
                 case 7:
                     reserveBalance = _a.sent();
                     reserveRatio = getReserve(reserves, sourceToken).ratio;
                     targetDecimals = getDecimals(supply);
-                    returnAmount = utils.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
+                    returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
                     return [3 /*break*/, 11];
                 case 8: return [4 /*yield*/, getReserveBalance(jsonRpc, converter, sourceToken)];
                 case 9:
@@ -300,12 +301,12 @@ function getConversionRate(jsonRpc, smartToken, sourceToken, targetToken, amount
                     targetReserveBalance = _a.sent();
                     targetReserveRatio = getReserve(reserves, targetToken).ratio;
                     targetDecimals = getDecimals(targetReserveBalance);
-                    returnAmount = utils.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
+                    returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
                     magnitude = 2;
                     _a.label = 11;
                 case 11:
-                    returnAmount = utils.getFinalAmount(returnAmount, conversionFee, magnitude);
-                    return [2 /*return*/, utils.toDecimalPlaces(returnAmount, targetDecimals)];
+                    returnAmount = helpers.getFinalAmount(returnAmount, conversionFee, magnitude);
+                    return [2 /*return*/, helpers.toDecimalPlaces(returnAmount, targetDecimals)];
             }
         });
     });
@@ -326,7 +327,7 @@ function getTokenSmartTokens(token) {
                     if (reserveAccount == token.blockchainId && converter.reserves[reserveAccount] == token.symbol) {
                         smartTokenAccount = Object.keys(converter.smartToken)[0];
                         smartTokens.push({
-                            blockchainType: 'eos',
+                            blockchainType: types_1.BlockchainType.EOS,
                             blockchainId: smartTokenAccount,
                             symbol: converter.smartToken[smartTokenAccount]
                         });
@@ -343,7 +344,7 @@ function getPathToAnchor(jsonRpc, token, anchorToken) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (utils.isTokenEqual(token, anchorToken))
+                    if (helpers.isTokenEqual(token, anchorToken))
                         return [2 /*return*/, [token]];
                     return [4 /*yield*/, getTokenSmartTokens(token)];
                 case 1:
@@ -359,7 +360,7 @@ function getShortestPath(sourcePath, targetPath) {
     if (sourcePath.length > 0 && targetPath.length > 0) {
         var i = sourcePath.length - 1;
         var j = targetPath.length - 1;
-        while (i >= 0 && j >= 0 && utils.isTokenEqual(sourcePath[i], targetPath[j])) {
+        while (i >= 0 && j >= 0 && helpers.isTokenEqual(sourcePath[i], targetPath[j])) {
             i--;
             j--;
         }
@@ -371,7 +372,7 @@ function getShortestPath(sourcePath, targetPath) {
         var length_1 = 0;
         for (var p = 0; p < path.length; p += 1) {
             for (var q = p + 2; q < path.length - p % 2; q += 2) {
-                if (utils.isTokenEqual(path[p], path[q]))
+                if (helpers.isTokenEqual(path[p], path[q]))
                     p = q;
             }
             path[length_1++] = path[p];

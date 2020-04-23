@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,67 +49,49 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("./core");
-var conversion_paths_1 = require("./conversion_paths");
-var history_1 = require("./history");
-var pricing_1 = require("./pricing");
-var utils_1 = require("./utils");
-var SDK = /** @class */ (function () {
-    function SDK() {
-        this.conversionPaths = null;
-        this.history = null;
-        this.pricing = null;
-        this.utils = null;
-        this._core = new core_1.Core();
+var sdk_module_1 = require("./sdk_module");
+var Pricing = /** @class */ (function (_super) {
+    __extends(Pricing, _super);
+    function Pricing() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    SDK.create = function (settings) {
+    Pricing.prototype.getRate = function (sourceToken, targetToken, amount) {
+        if (amount === void 0) { amount = '1'; }
         return __awaiter(this, void 0, void 0, function () {
-            var sdk;
+            var path;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.core.getPath(sourceToken, targetToken, amount)];
+                    case 1:
+                        path = _a.sent();
+                        return [4 /*yield*/, this.getRateByPath(path, amount)];
+                    case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    Pricing.prototype.getRateByPath = function (path, amount) {
+        if (amount === void 0) { amount = '1'; }
+        return __awaiter(this, void 0, void 0, function () {
+            var bgn, end;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        sdk = new SDK();
-                        return [4 /*yield*/, sdk._core.create(settings)];
+                        bgn = 0;
+                        _a.label = 1;
                     case 1:
-                        _a.sent();
-                        sdk.conversionPaths = new conversion_paths_1.ConversionPaths(sdk._core);
-                        sdk.history = new history_1.History(sdk._core);
-                        sdk.pricing = new pricing_1.Pricing(sdk._core);
-                        sdk.utils = new utils_1.Utils(sdk._core);
-                        return [2 /*return*/, sdk];
+                        if (!(bgn < path.length)) return [3 /*break*/, 3];
+                        end = path.slice(bgn).findIndex(function (token) { return token.blockchainType != path[bgn].blockchainType; }) >>> 0;
+                        return [4 /*yield*/, this.core.blockchains[path[bgn].blockchainType].getRateByPath(path.slice(bgn, end), amount)];
+                    case 2:
+                        amount = _a.sent();
+                        bgn = end;
+                        return [3 /*break*/, 1];
+                    case 3: return [2 /*return*/, amount];
                 }
             });
         });
     };
-    SDK.destroy = function (sdk) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        sdk.conversionPaths = null;
-                        sdk.history = null;
-                        sdk.pricing = null;
-                        sdk.utils = null;
-                        return [4 /*yield*/, sdk._core.destroy()];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    SDK.prototype.refresh = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this._core.refresh()];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    return SDK;
-}());
-exports.SDK = SDK;
+    return Pricing;
+}(sdk_module_1.SDKModule));
+exports.Pricing = Pricing;

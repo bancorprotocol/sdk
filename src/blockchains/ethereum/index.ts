@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import * as abis from './abis';
-import * as utils from '../../utils';
+import * as helpers from '../../helpers';
 import * as conversionEvents from './conversion_events';
 import * as converterVersion from './converter_version';
 import { Token, Converter, ConversionEvent } from '../../types';
@@ -86,9 +86,9 @@ export class Ethereum {
         const tokens = path.map(token => token.blockchainId);
         const sourceDecimals = await getDecimals(this, tokens[0]);
         const targetDecimals = await getDecimals(this, tokens[tokens.length - 1]);
-        amount = utils.toWei(amount, sourceDecimals);
+        amount = helpers.toWei(amount, sourceDecimals);
         amount = await getReturn(this, tokens, amount);
-        amount = utils.fromWei(amount, targetDecimals);
+        amount = helpers.fromWei(amount, targetDecimals);
         return amount;
     }
 
@@ -98,8 +98,8 @@ export class Ethereum {
         const paths = this.getPathsFunc(sourceToken, targetToken);
         const sourceDecimals = await getDecimals(this, sourceToken);
         const targetDecimals = await getDecimals(this, targetToken);
-        const rates = await getRatesSafe(this, paths, utils.toWei(amount, sourceDecimals));
-        return [paths, rates.map(rate => utils.fromWei(rate, targetDecimals))];
+        const rates = await getRatesSafe(this, paths, helpers.toWei(amount, sourceDecimals));
+        return [paths, rates.map(rate => helpers.fromWei(rate, targetDecimals))];
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {

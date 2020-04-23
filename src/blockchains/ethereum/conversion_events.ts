@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import { ERC20Token } from './abis';
-import { fromWei } from '../../utils';
+import { fromWei } from '../../helpers';
 
 const GENESIS_BLOCK_NUMBER = 3851136;
 

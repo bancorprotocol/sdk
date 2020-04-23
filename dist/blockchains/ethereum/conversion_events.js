@@ -48,7 +48,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var web3_1 = __importDefault(require("web3"));
 var abis_1 = require("./abis");
-var utils_1 = require("../../utils");
+var helpers_1 = require("../../helpers");
 var GENESIS_BLOCK_NUMBER = 3851136;
 var OWNER_UPDATE_EVENT_HASH = web3_1.default.utils.keccak256("OwnerUpdate(address,address)");
 var CONVERSION_EVENT_LEGACY = [
@@ -81,7 +81,7 @@ function getTokenAmount(web3, decimals, token, amount) {
                 case 1:
                     _a[_b] = _c.sent();
                     _c.label = 2;
-                case 2: return [2 /*return*/, utils_1.fromWei(amount, decimals[token])];
+                case 2: return [2 /*return*/, helpers_1.fromWei(amount, decimals[token])];
             }
         });
     });

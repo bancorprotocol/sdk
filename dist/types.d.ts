@@ -1,8 +1,11 @@
+export declare enum BlockchainType {
+    Ethereum = "ethereum",
+    EOS = "eos"
+}
 export interface Settings {
     ethereumNodeEndpoint?: string | Object;
     eosNodeEndpoint?: string;
 }
-export declare type BlockchainType = 'ethereum' | 'eos';
 export interface Token {
     blockchainType: BlockchainType;
     blockchainId: string;

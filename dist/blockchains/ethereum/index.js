@@ -66,7 +66,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var web3_1 = __importDefault(require("web3"));
 var abis = __importStar(require("./abis"));
-var utils = __importStar(require("../../utils"));
+var helpers = __importStar(require("../../helpers"));
 var conversionEvents = __importStar(require("./conversion_events"));
 var converterVersion = __importStar(require("./converter_version"));
 var timestamp_to_block_number_1 = require("./timestamp_to_block_number");
@@ -180,11 +180,11 @@ var Ethereum = /** @class */ (function () {
                         return [4 /*yield*/, exports.getDecimals(this, tokens[tokens.length - 1])];
                     case 2:
                         targetDecimals = _a.sent();
-                        amount = utils.toWei(amount, sourceDecimals);
+                        amount = helpers.toWei(amount, sourceDecimals);
                         return [4 /*yield*/, exports.getReturn(this, tokens, amount)];
                     case 3:
                         amount = _a.sent();
-                        amount = utils.fromWei(amount, targetDecimals);
+                        amount = helpers.fromWei(amount, targetDecimals);
                         return [2 /*return*/, amount];
                 }
             });
@@ -205,10 +205,10 @@ var Ethereum = /** @class */ (function () {
                         return [4 /*yield*/, exports.getDecimals(this, targetToken)];
                     case 2:
                         targetDecimals = _a.sent();
-                        return [4 /*yield*/, exports.getRatesSafe(this, paths, utils.toWei(amount, sourceDecimals))];
+                        return [4 /*yield*/, exports.getRatesSafe(this, paths, helpers.toWei(amount, sourceDecimals))];
                     case 3:
                         rates = _a.sent();
-                        return [2 /*return*/, [paths, rates.map(function (rate) { return utils.fromWei(rate, targetDecimals); })]];
+                        return [2 /*return*/, [paths, rates.map(function (rate) { return helpers.fromWei(rate, targetDecimals); })]];
                 }
             });
         });

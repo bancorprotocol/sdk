@@ -1,11 +1,11 @@
 import { JsonRpc } from 'eosjs';
 import fetch from 'node-fetch';
-import * as utils from '../../utils';
-import { Token, Converter, ConversionEvent } from '../../types';
+import * as helpers from '../../helpers';
+import { Token, Converter, ConversionEvent, BlockchainType } from '../../types';
 import legacyConverters from './legacy_converters';
 
 const anchorToken:Token = {
-    blockchainType: 'eos',
+    blockchainType: BlockchainType.EOS,
     blockchainId: 'bntbntbntbnt',
     symbol: 'BNT'
 };
@@ -126,7 +126,7 @@ async function getConversionRate(jsonRpc: JsonRpc, smartToken: Token, sourceToke
     let smartTokenStat = await getSmartTokenStat(jsonRpc, smartToken);
     let converterBlockchainId = await smartTokenStat.issuer;
     let converter: Converter = {
-        blockchainType: 'eos',
+        blockchainType: BlockchainType.EOS,
         blockchainId: converterBlockchainId,
         symbol: smartToken.symbol
     };
@@ -139,20 +139,20 @@ async function getConversionRate(jsonRpc: JsonRpc, smartToken: Token, sourceToke
     let returnAmount;
 
     // sale
-    if (utils.isTokenEqual(sourceToken, smartToken)) {
+    if (helpers.isTokenEqual(sourceToken, smartToken)) {
         let supply = getBalance(smartTokenStat.supply);
         let reserveBalance = await getReserveBalance(jsonRpc, converter, targetToken);
         let reserveRatio = getReserve(reserves, targetToken).ratio;
         targetDecimals = getDecimals(reserveBalance);
-        returnAmount = utils.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
+        returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
     }
     // purchase
-    else if (utils.isTokenEqual(targetToken, smartToken)) {
+    else if (helpers.isTokenEqual(targetToken, smartToken)) {
         let supply = getBalance(smartTokenStat.supply);
         let reserveBalance = await getReserveBalance(jsonRpc, converter, sourceToken);
         let reserveRatio = getReserve(reserves, sourceToken).ratio;
         targetDecimals = getDecimals(supply);
-        returnAmount = utils.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
+        returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
     }
     else {
         // cross convert
@@ -161,12 +161,12 @@ async function getConversionRate(jsonRpc: JsonRpc, smartToken: Token, sourceToke
         let targetReserveBalance = await getReserveBalance(jsonRpc, converter, targetToken);
         let targetReserveRatio = getReserve(reserves, targetToken).ratio;
         targetDecimals = getDecimals(targetReserveBalance);
-        returnAmount = utils.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
+        returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
         magnitude = 2;
     }
 
-    returnAmount = utils.getFinalAmount(returnAmount, conversionFee, magnitude);
-    return utils.toDecimalPlaces(returnAmount, targetDecimals);
+    returnAmount = helpers.getFinalAmount(returnAmount, conversionFee, magnitude);
+    return helpers.toDecimalPlaces(returnAmount, targetDecimals);
 }
 
 async function getTokenSmartTokens(token: Token) {
@@ -185,7 +185,7 @@ async function getTokenSmartTokens(token: Token) {
             if (reserveAccount == token.blockchainId && converter.reserves[reserveAccount] == token.symbol) {
                 let smartTokenAccount = Object.keys(converter.smartToken)[0];
                 smartTokens.push({
-                    blockchainType: 'eos',
+                    blockchainType: BlockchainType.EOS,
                     blockchainId: smartTokenAccount,
                     symbol: converter.smartToken[smartTokenAccount]
                 });
@@ -197,7 +197,7 @@ async function getTokenSmartTokens(token: Token) {
 }
 
 async function getPathToAnchor(jsonRpc: JsonRpc, token: Token, anchorToken: Token) {
-    if (utils.isTokenEqual(token, anchorToken))
+    if (helpers.isTokenEqual(token, anchorToken))
         return [token];
 
     // hardcoded path for legacy converters
@@ -212,7 +212,7 @@ function getShortestPath(sourcePath, targetPath) {
     if (sourcePath.length > 0 && targetPath.length > 0) {
         let i = sourcePath.length - 1;
         let j = targetPath.length - 1;
-        while (i >= 0 && j >= 0 && utils.isTokenEqual(sourcePath[i], targetPath[j])) {
+        while (i >= 0 && j >= 0 && helpers.isTokenEqual(sourcePath[i], targetPath[j])) {
             i--;
             j--;
         }
@@ -226,7 +226,7 @@ function getShortestPath(sourcePath, targetPath) {
         let length = 0;
         for (let p = 0; p < path.length; p += 1) {
             for (let q = p + 2; q < path.length - p % 2; q += 2) {
-                if (utils.isTokenEqual(path[p], path[q]))
+                if (helpers.isTokenEqual(path[p], path[q]))
                     p = q;
             }
             path[length++] = path[p];
