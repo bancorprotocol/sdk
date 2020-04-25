@@ -77,6 +77,8 @@ var Pricing = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (path.length == 1)
+                            return [2 /*return*/, amount];
                         bgn = 0;
                         _a.label = 1;
                     case 1:

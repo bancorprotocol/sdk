@@ -83,6 +83,9 @@ export class Ethereum {
     }
 
     async getRateByPath(path: Token[], amount: string): Promise<string> {
+        if (path.length == 1)
+            return amount;
+
         const tokens = path.map(token => token.blockchainId);
         const sourceDecimals = await getDecimals(this, tokens[0]);
         const targetDecimals = await getDecimals(this, tokens[tokens.length - 1]);

@@ -8,6 +8,9 @@ export class Pricing extends SDKModule {
     }
 
     async getRateByPath(path: Token[], amount: string = '1'): Promise<string> {
+        if (path.length == 1)
+            return amount;
+
         let bgn = 0;
         while (bgn < path.length) {
             const end = path.slice(bgn).findIndex(token => token.blockchainType != path[bgn].blockchainType) >>> 0;

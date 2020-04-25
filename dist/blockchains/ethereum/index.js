@@ -173,6 +173,8 @@ var Ethereum = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (path.length == 1)
+                            return [2 /*return*/, amount];
                         tokens = path.map(function (token) { return token.blockchainId; });
                         return [4 /*yield*/, exports.getDecimals(this, tokens[0])];
                     case 1:
