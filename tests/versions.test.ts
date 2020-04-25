@@ -1,8 +1,7 @@
 import { SDK } from '../src';
 import { BlockchainType } from '../src/types';
-import * as eos from '../src/blockchains/eos';
 import * as ethereum from '../src/blockchains/ethereum';
-import * as ethereumMocks from '../src/blockchains/ethereum/mocks';
+import * as ethereumMocks from './mocks/ethereum';
 
 describe('versions test', () => {
     let sdk: SDK;
@@ -15,11 +14,6 @@ describe('versions test', () => {
     afterEach(async () => {
         await SDK.destroy(sdk);
         jest.restoreAllMocks();
-    });
-
-    it('getConverterVersion of eos converter', async () => {
-        const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' });
-        expect(received).toEqual('1.0');
     });
 
     it('getConverterVersion of ethereum converter with a "string" version type', async () => {
@@ -44,5 +38,10 @@ describe('versions test', () => {
         ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['', '', '', '4.4']);
         const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
         expect(received).toEqual('unknown');
+    });
+
+    it('getConverterVersion of eos converter', async () => {
+        const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' });
+        expect(received).toEqual('1.0');
     });
 });

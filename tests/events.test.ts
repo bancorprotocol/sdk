@@ -2,7 +2,7 @@ import { SDK } from '../src';
 import { BlockchainType } from '../src/types';
 import * as eos from '../src/blockchains/eos';
 import * as ethereum from '../src/blockchains/ethereum';
-import * as ethereumMocks from '../src/blockchains/ethereum/mocks';
+import * as ethereumMocks from './mocks/ethereum';
 
 describe('events test', () => {
     let sdk: SDK;
@@ -38,16 +38,6 @@ describe('events test', () => {
         }
     }));
 
-    it('getConversionEvents on eos', async () => {
-        const promise = sdk.history.getConversionEvents({ blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' }, 0, 0);
-        expect(promise).rejects.toEqual(new Error('getConversionEvents not supported on eos'));
-    });
-
-    it('getConversionEventsByTimestamp on eos', async () => {
-        const promise = sdk.history.getConversionEventsByTimestamp({ blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' }, 0, 0);
-        expect(promise).rejects.toEqual(new Error('getConversionEventsByTimestamp not supported on eos'));
-    });
-
     for (const event of events) {
         for (const offset of [-1, 0, +1]) {
             it('getConversionEvents on ethereum', async () => {
@@ -67,4 +57,14 @@ describe('events test', () => {
             });
         }
     }
+
+    it('getConversionEvents on eos', async () => {
+        const promise = sdk.history.getConversionEvents({ blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' }, 0, 0);
+        expect(promise).rejects.toEqual(new Error('getConversionEvents not supported on eos'));
+    });
+
+    it('getConversionEventsByTimestamp on eos', async () => {
+        const promise = sdk.history.getConversionEventsByTimestamp({ blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' }, 0, 0);
+        expect(promise).rejects.toEqual(new Error('getConversionEventsByTimestamp not supported on eos'));
+    });
 });

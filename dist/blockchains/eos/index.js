@@ -121,7 +121,7 @@ var EOS = /** @class */ (function () {
                     case 3:
                         i += 2;
                         return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/, amount];
+                    case 4: return [2 /*return*/, amount.toString()];
                 }
             });
         });

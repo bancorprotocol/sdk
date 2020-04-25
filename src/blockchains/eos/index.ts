@@ -31,15 +31,15 @@ export class EOS {
 
     async getPath(from: Token, to: Token): Promise<Token[]> {
         const anchorToken = this.getAnchorToken();
-        const sourcePath = await this.getPathToAnchor(this.jsonRpc, from, anchorToken);
-        const targetPath = await this.getPathToAnchor(this.jsonRpc, to, anchorToken);
+        const sourcePath = await this.getPathToAnchor(from, anchorToken);
+        const targetPath = await this.getPathToAnchor(to, anchorToken);
         return this.getShortestPath(sourcePath, targetPath);
     }
 
     async getRateByPath(path: Token[], amount): Promise<string> {
         for (let i = 0; i < path.length - 1; i += 2)
-            amount = await this.getConversionRate(this.jsonRpc, path[i + 1], path[i], path[i + 2], amount);
-        return amount;
+            amount = await this.getConversionRate(path[i + 1], path[i], path[i + 2], amount);
+        return amount.toString();
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {
@@ -54,8 +54,8 @@ export class EOS {
         throw new Error('getConversionEventsByTimestamp not supported on eos');
     }
 
-    private async getConverterSettings(jsonRpc, converter: Converter) {
-        let res = await jsonRpc.get_table_rows({
+    private async getConverterSettings(converter: Converter) {
+        let res = await this.jsonRpc.get_table_rows({
             json: true,
             code: converter.blockchainId,
             scope: converter.blockchainId,
@@ -65,8 +65,8 @@ export class EOS {
         return res.rows[0];
     };
     
-    private async getSmartTokenStat(jsonRpc, smartToken: Token) {
-        let stat = await jsonRpc.get_table_rows({
+    private async getSmartTokenStat(smartToken: Token) {
+        let stat = await this.jsonRpc.get_table_rows({
             json: true,
             code: smartToken.blockchainId,
             scope: smartToken.symbol,
@@ -76,8 +76,8 @@ export class EOS {
         return stat.rows[0];
     };
     
-    private async getReserves(jsonRpc, converter: Converter) {
-        let res = await jsonRpc.get_table_rows({
+    private async getReserves(converter: Converter) {
+        let res = await this.jsonRpc.get_table_rows({
             json: true,
             code: converter.blockchainId,
             scope: converter.blockchainId,
@@ -87,8 +87,8 @@ export class EOS {
         return res.rows;
     };
     
-    private async getReserveBalance(jsonRpc, converter: Converter, reserveToken: Token) {
-        let res = await jsonRpc.get_table_rows({
+    private async getReserveBalance(converter: Converter, reserveToken: Token) {
+        let res = await this.jsonRpc.get_table_rows({
             json: true,
             code: reserveToken.blockchainId,
             scope: converter.blockchainId,
@@ -117,8 +117,8 @@ export class EOS {
         return amount.split('.')[1].length;
     }
     
-    private async getConversionRate(jsonRpc: JsonRpc, smartToken: Token, sourceToken: Token, targetToken: Token, amount: string) {
-        let smartTokenStat = await this.getSmartTokenStat(jsonRpc, smartToken);
+    private async getConversionRate(smartToken: Token, sourceToken: Token, targetToken: Token, amount: string) {
+        let smartTokenStat = await this.getSmartTokenStat(smartToken);
         let converterBlockchainId = await smartTokenStat.issuer;
         let converter: Converter = {
             blockchainType: BlockchainType.EOS,
@@ -126,9 +126,9 @@ export class EOS {
             symbol: smartToken.symbol
         };
     
-        let conversionSettings = await this.getConverterSettings(jsonRpc, converter);
+        let conversionSettings = await this.getConverterSettings(converter);
         let conversionFee = conversionSettings.fee;
-        let reserves = await this.getReserves(jsonRpc, converter);
+        let reserves = await this.getReserves(converter);
         let magnitude = 1;
         let targetDecimals = 4;
         let returnAmount;
@@ -136,7 +136,7 @@ export class EOS {
         // sale
         if (helpers.isTokenEqual(sourceToken, smartToken)) {
             let supply = this.getBalance(smartTokenStat.supply);
-            let reserveBalance = await this.getReserveBalance(jsonRpc, converter, targetToken);
+            let reserveBalance = await this.getReserveBalance(converter, targetToken);
             let reserveRatio = this.getReserve(reserves, targetToken).ratio;
             targetDecimals = this.getDecimals(reserveBalance);
             returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
@@ -144,16 +144,16 @@ export class EOS {
         // purchase
         else if (helpers.isTokenEqual(targetToken, smartToken)) {
             let supply = this.getBalance(smartTokenStat.supply);
-            let reserveBalance = await this.getReserveBalance(jsonRpc, converter, sourceToken);
+            let reserveBalance = await this.getReserveBalance(converter, sourceToken);
             let reserveRatio = this.getReserve(reserves, sourceToken).ratio;
             targetDecimals = this.getDecimals(supply);
             returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
         }
         else {
             // cross convert
-            let sourceReserveBalance = await this.getReserveBalance(jsonRpc, converter, sourceToken);
+            let sourceReserveBalance = await this.getReserveBalance(converter, sourceToken);
             let sourceReserveRatio = this.getReserve(reserves, sourceToken).ratio;
-            let targetReserveBalance = await this.getReserveBalance(jsonRpc, converter, targetToken);
+            let targetReserveBalance = await this.getReserveBalance(converter, targetToken);
             let targetReserveRatio = this.getReserve(reserves, targetToken).ratio;
             targetDecimals = this.getDecimals(targetReserveBalance);
             returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
@@ -191,7 +191,7 @@ export class EOS {
         return smartTokens;
     }
     
-    private async getPathToAnchor(jsonRpc: JsonRpc, token: Token, anchorToken: Token) {
+    private async getPathToAnchor(token: Token, anchorToken: Token) {
         if (helpers.isTokenEqual(token, anchorToken))
             return [token];
     
