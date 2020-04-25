@@ -11,5 +11,16 @@ export declare class EOS {
     getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;
+    private getConverterSettings;
+    private getSmartTokenStat;
+    private getReserves;
+    private getReserveBalance;
+    private getReserve;
+    private getBalance;
+    private getSymbol;
+    private getDecimals;
+    private getConversionRate;
+    private getTokenSmartTokens;
+    private getPathToAnchor;
+    private getShortestPath;
 }
-export declare const getAnchorToken: () => Token;

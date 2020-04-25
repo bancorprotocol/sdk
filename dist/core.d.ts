@@ -9,4 +9,9 @@ export declare class Core {
         rate: string;
     }]>;
     getPath(sourceToken: Token, targetToken: Token, amount: string): Promise<Token[]>;
+    private getCheapestPath;
+    private betterPath;
+    private betterRate;
+    private equalRate;
+    private pathType;
 }

@@ -1,6 +1,7 @@
-import { SDK } from '../src/index';
-import * as eos from '../src/blockchains/eos/index';
-import * as ethereum from '../src/blockchains/ethereum/index';
+import { SDK } from '../src';
+import { BlockchainType } from '../src/types';
+import * as eos from '../src/blockchains/eos';
+import * as ethereum from '../src/blockchains/ethereum';
 import * as ethereumMocks from '../src/blockchains/ethereum/mocks';
 
 describe('general test', () => {
@@ -14,29 +15,29 @@ describe('general test', () => {
 
     it('initialize none', async () => {
         const sdk = await SDK.create({});
-        expect(sdk.eos).toBeUndefined();
-        expect(sdk.ethereum).toBeUndefined();
+        expect(sdk._core.blockchains[BlockchainType.EOS]).toBeUndefined();
+        expect(sdk._core.blockchains[BlockchainType.Ethereum]).toBeUndefined();
         await SDK.destroy(sdk);
     });
 
     it('initialize eos', async () => {
         const sdk = await SDK.create({eosNodeEndpoint: 'dummy'});
-        expect(sdk.eos).toBeTruthy();
-        expect(sdk.ethereum).toBeUndefined();
+        expect(sdk._core.blockchains[BlockchainType.EOS]).toBeTruthy();
+        expect(sdk._core.blockchains[BlockchainType.Ethereum]).toBeUndefined();
         await SDK.destroy(sdk);
     });
 
     it('initialize ethereum', async () => {
         const sdk = await SDK.create({ethereumNodeEndpoint: 'dummy'});
-        expect(sdk.eos).toBeUndefined();
-        expect(sdk.ethereum).toBeTruthy();
+        expect(sdk._core.blockchains[BlockchainType.EOS]).toBeUndefined();
+        expect(sdk._core.blockchains[BlockchainType.Ethereum]).toBeTruthy();
         await SDK.destroy(sdk);
     });
 
     it('initialize both', async () => {
         const sdk = await SDK.create({eosNodeEndpoint: 'dummy', ethereumNodeEndpoint: 'dummy'});
-        expect(sdk.eos).toBeTruthy();
-        expect(sdk.ethereum).toBeTruthy();
+        expect(sdk._core.blockchains[BlockchainType.EOS]).toBeTruthy();
+        expect(sdk._core.blockchains[BlockchainType.Ethereum]).toBeTruthy();
         await SDK.destroy(sdk);
     });
 });

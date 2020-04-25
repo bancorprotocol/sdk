@@ -1,4 +1,4 @@
-import { SDK } from '../src/index';
+import { SDK } from '../src';
 import { BlockchainType } from '../src/types';
 import * as eos from '../src/blockchains/eos';
 import * as ethereum from '../src/blockchains/ethereum';

@@ -1,4 +1,4 @@
-import { SDK } from '../src/index';
+import { SDK } from '../src';
 import { BlockchainType } from '../src/types';
 import * as eos from '../src/blockchains/eos';
 import * as ethereum from '../src/blockchains/ethereum';
@@ -22,24 +22,10 @@ describe('paths test', () => {
             .spyOn(eos, 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
-        const spyGetConvertibleTokens = jest
-            .spyOn(eos, 'getConvertibleTokens')
-            .mockImplementationOnce(() => ({ AAA: { AAACCC: 'aaacccaaaccc' } }))
-            .mockImplementationOnce(() => ({ CCC: { AAACCC: 'aaacccaaaccc' } }));
-
-        const spyGetSmartTokens = jest
-            .spyOn(eos, 'getSmartTokens')
-            .mockImplementationOnce(() => ({ }))
-            .mockImplementationOnce(() => ({ }));
-
-        const spyGetReservesFromCode = jest
-            .spyOn(eos, 'getReservesFromCode')
-            .mockResolvedValueOnce({
-                rows: [{
-                    contract: 'aaaaaaaaaaaa',
-                    currency: '0.0 AAA'
-                }]
-            });
+        const spyGetTokenSmartTokens = jest
+            .spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getTokenSmartTokens')
+            .mockImplementationOnce(() => ({ aaacccaaaccc: 'AAACCC' }))
+            .mockImplementationOnce(() => ({ aaacccaaaccc: 'AAACCC' }));
 
         await sdk.refresh();
 
@@ -56,9 +42,7 @@ describe('paths test', () => {
 
         expect(received).toEqual(expected);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(1);
-        expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
-        expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
-        expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
+        expect(spyGetTokenSmartTokens).toHaveBeenCalledTimes(2);
     });
 
     it('getPath from eos token to ethereum token', async () => {
@@ -87,24 +71,10 @@ describe('paths test', () => {
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }))
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
-        const spyGetConvertibleTokens = jest
-            .spyOn(eos, 'getConvertibleTokens')
-            .mockImplementationOnce(() => ({ AAA: { AAACCC: 'aaacccaaaccc' } }))
-            .mockImplementationOnce(() => ({ CCC: { AAACCC: 'aaacccaaaccc' } }));
-
-        const spyGetSmartTokens = jest
-            .spyOn(eos, 'getSmartTokens')
-            .mockImplementationOnce(() => ({ }))
-            .mockImplementationOnce(() => ({ }));
-
-        const spyGetReservesFromCode = jest
-            .spyOn(eos, 'getReservesFromCode')
-            .mockResolvedValueOnce({
-                rows: [{
-                    contract: 'aaaaaaaaaaaa',
-                    currency: '0.0 AAA'
-                }]
-            });
+        const spyGetTokenSmartTokens = jest
+            .spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getTokenSmartTokens')
+            .mockImplementationOnce(() => ({ aaacccaaaccc: 'AAACCC' }))
+            .mockImplementationOnce(() => ({ aaacccaaaccc: 'AAACCC' }));
 
         await sdk.refresh();
 
@@ -126,9 +96,7 @@ describe('paths test', () => {
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
-        expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
-        expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
-        expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
+        expect(spyGetTokenSmartTokens).toHaveBeenCalledTimes(2);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(3);
     });
 
@@ -158,24 +126,10 @@ describe('paths test', () => {
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }))
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
-        const spyGetConvertibleTokens = jest
-            .spyOn(eos, 'getConvertibleTokens')
-            .mockImplementationOnce(() => ({ AAA: { AAACCC: 'aaacccaaaccc' } }))
-            .mockImplementationOnce(() => ({ CCC: { AAACCC: 'aaacccaaaccc' } }));
-
-        const spyGetSmartTokens = jest
-            .spyOn(eos, 'getSmartTokens')
-            .mockImplementationOnce(() => ({ }))
-            .mockImplementationOnce(() => ({ }));
-
-        const spyGetReservesFromCode = jest
-            .spyOn(eos, 'getReservesFromCode')
-            .mockResolvedValueOnce({
-                rows: [{
-                    contract: 'aaaaaaaaaaaa',
-                    currency: '0.0 AAA'
-                }]
-            });
+        const spyGetTokenSmartTokens = jest
+            .spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getTokenSmartTokens')
+            .mockImplementationOnce(() => ({ aaacccaaaccc: 'AAACCC' }))
+            .mockImplementationOnce(() => ({ aaacccaaaccc: 'AAACCC' }));
 
         await sdk.refresh();
 
@@ -197,9 +151,7 @@ describe('paths test', () => {
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
-        expect(spyGetConvertibleTokens).toHaveBeenCalledTimes(2);
-        expect(spyGetSmartTokens).toHaveBeenCalledTimes(2);
-        expect(spyGetReservesFromCode).toHaveBeenCalledTimes(1);
+        expect(spyGetTokenSmartTokens).toHaveBeenCalledTimes(2);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(3);
     });
 
