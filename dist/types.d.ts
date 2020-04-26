@@ -6,14 +6,14 @@ export declare enum BlockchainType {
     EOS = "eos"
 }
 /**
-* SDK initialization settings
+* SDK initialization settings interface
 */
 export interface Settings {
     ethereumNodeEndpoint?: string | Object;
     eosNodeEndpoint?: string;
 }
 /**
-* Token object
+* Token interface
 */
 export interface Token {
     blockchainType: BlockchainType;
@@ -21,7 +21,7 @@ export interface Token {
     symbol?: string;
 }
 /**
-* Converter object
+* Converter interface
 */
 export interface Converter {
     blockchainType: BlockchainType;
@@ -29,7 +29,7 @@ export interface Converter {
     symbol?: string;
 }
 /**
-* ConversionEvent object
+* ConversionEvent interface
 */
 export interface ConversionEvent {
     fromToken: string;
@@ -39,4 +39,16 @@ export interface ConversionEvent {
     outputAmount: string;
     conversionFee?: string;
     blockNumber: number;
+}
+/**
+* Blockchain interface - defines the methods that each blockchain plugin should implement
+*/
+export interface Blockchain {
+    getAnchorToken(): Token;
+    getRateByPath(path: Token[], amount: string): Promise<string>;
+    getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]>;
+    getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]>;
+    getConverterVersion(converter: Converter): Promise<string>;
+    getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;
+    getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;
 }

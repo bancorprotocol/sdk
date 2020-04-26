@@ -1,6 +1,6 @@
 import Web3 from 'web3';
-import { Token, Converter, ConversionEvent } from '../../types';
-export declare class Ethereum {
+import { Blockchain, Converter, ConversionEvent, Token } from '../../types';
+export declare class Ethereum implements Blockchain {
     web3: Web3;
     networkType: string;
     bancorNetwork: Web3.eth.Contract;

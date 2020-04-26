@@ -140,6 +140,44 @@ var EOS = /** @class */ (function () {
             });
         });
     };
+    EOS.prototype.getPaths = function (sourceToken, targetToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            var path;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getPath(sourceToken, targetToken)];
+                    case 1:
+                        path = _a.sent();
+                        return [2 /*return*/, [path]];
+                }
+            });
+        });
+    };
+    EOS.prototype.getRates = function (tokenPaths, tokenAmount) {
+        return __awaiter(this, void 0, void 0, function () {
+            var rates, _i, tokenPaths_1, path, amount;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        rates = [];
+                        _i = 0, tokenPaths_1 = tokenPaths;
+                        _a.label = 1;
+                    case 1:
+                        if (!(_i < tokenPaths_1.length)) return [3 /*break*/, 4];
+                        path = tokenPaths_1[_i];
+                        return [4 /*yield*/, this.getRateByPath(path, tokenAmount)];
+                    case 2:
+                        amount = _a.sent();
+                        rates.push(amount);
+                        _a.label = 3;
+                    case 3:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 4: return [2 /*return*/, rates];
+                }
+            });
+        });
+    };
     EOS.prototype.getConverterVersion = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

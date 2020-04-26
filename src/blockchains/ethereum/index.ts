@@ -3,7 +3,7 @@ import * as abis from './abis';
 import * as helpers from '../../helpers';
 import * as conversionEvents from './conversion_events';
 import * as converterVersion from './converter_version';
-import { BlockchainType, Token, Converter, ConversionEvent } from '../../types';
+import { Blockchain, BlockchainType, Converter, ConversionEvent, Token } from '../../types';
 import { timestampToBlockNumber } from './timestamp_to_block_number';
 
 const CONTRACT_ADDRESSES = {
@@ -41,7 +41,7 @@ const CONTRACT_ADDRESSES = {
     }
 };
 
-export class Ethereum {
+export class Ethereum implements Blockchain {
     web3: Web3;
     networkType: string;
     bancorNetwork: Web3.eth.Contract;

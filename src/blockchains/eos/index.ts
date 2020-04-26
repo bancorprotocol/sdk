@@ -1,7 +1,7 @@
 import { JsonRpc } from 'eosjs';
 import fetch from 'node-fetch';
 import * as helpers from '../../helpers';
-import { Token, Converter, ConversionEvent, BlockchainType } from '../../types';
+import { Blockchain, BlockchainType, Converter, ConversionEvent, Token } from '../../types';
 import legacyConverters from './legacy_converters';
 
 const anchorToken:Token = {
@@ -10,7 +10,7 @@ const anchorToken:Token = {
     symbol: 'BNT'
 };
 
-export class EOS {
+export class EOS implements Blockchain {
     jsonRpc: JsonRpc;
 
     static async create(nodeEndpoint: string): Promise<EOS> {
@@ -44,6 +44,21 @@ export class EOS {
 
     async getRate(from: Token, to: Token, amount: string): Promise<string> {
         return await this.getRateByPath(await this.getPath(from, to), amount);
+    }
+
+    async getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]> {
+        let path = await this.getPath(sourceToken, targetToken);
+        return [path];
+    }
+
+    async getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]> {
+        let rates = [];
+        for (let path of tokenPaths) {
+            let amount = await this.getRateByPath(path, tokenAmount);
+            rates.push(amount);
+        }
+
+        return rates;
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {
