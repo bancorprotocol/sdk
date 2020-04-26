@@ -68,7 +68,7 @@ export class EOS {
         });
         return res.rows[0];
     };
-    
+
     private async getSmartTokenStat(smartToken: Token) {
         let stat = await this.jsonRpc.get_table_rows({
             json: true,
@@ -79,7 +79,7 @@ export class EOS {
         });
         return stat.rows[0];
     };
-    
+
     private async getReserves(converter: Converter) {
         let res = await this.jsonRpc.get_table_rows({
             json: true,
@@ -90,7 +90,7 @@ export class EOS {
         });
         return res.rows;
     };
-    
+
     private async getReserveBalance(converter: Converter, reserveToken: Token) {
         let res = await this.jsonRpc.get_table_rows({
             json: true,
@@ -101,26 +101,26 @@ export class EOS {
         });
         return this.getBalance(res.rows[0].balance);
     };
-    
+
     private getReserve(reserves, reserveToken: Token) {
         return reserves.filter(reserve => {
             return reserve.contract == reserveToken.blockchainId &&
                    this.getSymbol(reserve.currency) == reserveToken.symbol;
         })[0];
     }
-    
+
     private getBalance(asset) {
         return asset.split(' ')[0];
     }
-    
+
     private getSymbol(asset) {
         return asset.split(' ')[1];
     }
-    
+
     private getDecimals(amount) {
         return amount.split('.')[1].length;
     }
-    
+
     private async getConversionRate(smartToken: Token, sourceToken: Token, targetToken: Token, amount: string) {
         let smartTokenStat = await this.getSmartTokenStat(smartToken);
         let converterBlockchainId = await smartTokenStat.issuer;
@@ -129,14 +129,14 @@ export class EOS {
             blockchainId: converterBlockchainId,
             symbol: smartToken.symbol
         };
-    
+
         let conversionSettings = await this.getConverterSettings(converter);
         let conversionFee = conversionSettings.fee;
         let reserves = await this.getReserves(converter);
         let magnitude = 1;
         let targetDecimals = 4;
         let returnAmount;
-    
+
         // sale
         if (helpers.isTokenEqual(sourceToken, smartToken)) {
             let supply = this.getBalance(smartTokenStat.supply);
@@ -163,22 +163,22 @@ export class EOS {
             returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
             magnitude = 2;
         }
-    
+
         returnAmount = helpers.getFinalAmount(returnAmount, conversionFee, magnitude);
         return helpers.toDecimalPlaces(returnAmount, targetDecimals);
     }
-    
+
     private async getTokenSmartTokens(token: Token) {
         let smartTokens: Token[] = [];
-    
+
         // search in legacy converters
         for (let converterAccount in legacyConverters) {
             let converter = legacyConverters[converterAccount];
-    
+
             // check if the token is the converter smart token
             if (converter.smartToken[token.blockchainId] == token.symbol)
                 smartTokens.push(token);
-    
+
             // check if the token is one of the converter's reserve tokens
             for (let reserveAccount in converter.reserves) {
                 if (reserveAccount == token.blockchainId && converter.reserves[reserveAccount] == token.symbol) {
@@ -191,22 +191,22 @@ export class EOS {
                 }
             }
         }
-    
+
         return smartTokens;
     }
-    
+
     private async getPathToAnchor(token: Token, anchorToken: Token) {
         if (helpers.isTokenEqual(token, anchorToken))
             return [token];
-    
+
         // hardcoded path for legacy converters
         const smartTokens = await this.getTokenSmartTokens(token);
         if (smartTokens.length == 0)
             return [];
-    
+
         return [token, smartTokens[0], anchorToken];
     }
-    
+
     private getShortestPath(sourcePath, targetPath) {
         if (sourcePath.length > 0 && targetPath.length > 0) {
             let i = sourcePath.length - 1;
@@ -215,13 +215,13 @@ export class EOS {
                 i--;
                 j--;
             }
-    
+
             const path = [];
             for (let m = 0; m <= i + 1; m++)
                 path.push(sourcePath[m]);
             for (let n = j; n >= 0; n--)
                 path.push(targetPath[n]);
-    
+
             let length = 0;
             for (let p = 0; p < path.length; p += 1) {
                 for (let q = p + 2; q < path.length - p % 2; q += 2) {
@@ -230,11 +230,10 @@ export class EOS {
                 }
                 path[length++] = path[p];
             }
-    
+
             return path.slice(0, length);
         }
-    
+
         return [];
     }
-    
 }
