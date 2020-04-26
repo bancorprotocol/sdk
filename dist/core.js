@@ -125,9 +125,9 @@ var Core = /** @class */ (function () {
     };
     Core.prototype.getPaths = function (sourceToken, targetToken) {
         return __awaiter(this, void 0, void 0, function () {
-            var f, cartesian, _a, _b, _c, _d, _e;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
+            var f, cartesian, sourceBlockchain, targetBlockchain, sourcePaths, targetPaths;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         f = function (a, b) { return [].concat.apply([], a.map(function (d) { return b.map(function (e) { return [].concat(d, e); }); })); };
                         cartesian = function (a, b) {
@@ -137,33 +137,19 @@ var Core = /** @class */ (function () {
                             }
                             return (b ? cartesian.apply(void 0, __spreadArrays([f(a, b)], c)) : a);
                         };
-                        _a = this.pathType(sourceToken.blockchainType, targetToken.blockchainType);
-                        switch (_a) {
-                            case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.Ethereum): return [3 /*break*/, 1];
-                            case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.EOS): return [3 /*break*/, 3];
-                            case this.pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.Ethereum): return [3 /*break*/, 6];
-                            case this.pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.EOS): return [3 /*break*/, 9];
-                        }
-                        return [3 /*break*/, 11];
-                    case 1: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getPaths(sourceToken, targetToken)];
-                    case 2: return [2 /*return*/, _f.sent()];
+                        if (!(sourceToken.blockchainType == targetToken.blockchainType)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.blockchains[sourceToken.blockchainType].getPaths(sourceToken, targetToken)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                    case 2:
+                        sourceBlockchain = this.blockchains[sourceToken.blockchainType];
+                        targetBlockchain = this.blockchains[targetToken.blockchainType];
+                        return [4 /*yield*/, sourceBlockchain.getPaths(sourceToken, sourceBlockchain.getAnchorToken())];
                     case 3:
-                        _b = cartesian;
-                        return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getPaths(sourceToken, this.blockchains[types_1.BlockchainType.Ethereum].getAnchorToken())];
+                        sourcePaths = _a.sent();
+                        return [4 /*yield*/, targetBlockchain.getPaths(targetBlockchain.getAnchorToken(), targetToken)];
                     case 4:
-                        _c = [_f.sent()];
-                        return [4 /*yield*/, this.blockchains[types_1.BlockchainType.EOS].getPath(this.blockchains[types_1.BlockchainType.EOS].getAnchorToken(), targetToken)];
-                    case 5: return [2 /*return*/, _b.apply(void 0, _c.concat([[_f.sent()]]))];
-                    case 6:
-                        _d = cartesian;
-                        return [4 /*yield*/, this.blockchains[types_1.BlockchainType.EOS].getPath(sourceToken, this.blockchains[types_1.BlockchainType.EOS].getAnchorToken())];
-                    case 7:
-                        _e = [[_f.sent()]];
-                        return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getPaths(this.blockchains[types_1.BlockchainType.Ethereum].getAnchorToken(), targetToken)];
-                    case 8: return [2 /*return*/, _d.apply(void 0, _e.concat([_f.sent()]))];
-                    case 9: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.EOS].getPath(sourceToken, targetToken)];
-                    case 10: return [2 /*return*/, [_f.sent()]];
-                    case 11: return [2 /*return*/];
+                        targetPaths = _a.sent();
+                        return [2 /*return*/, cartesian(sourcePaths, targetPaths)];
                 }
             });
         });

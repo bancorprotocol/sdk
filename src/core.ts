@@ -1,9 +1,9 @@
 import { Ethereum } from './blockchains/ethereum';
 import { EOS } from './blockchains/eos';
-import { Settings, BlockchainType, Token } from './types';
+import { Settings, BlockchainType, Token, Blockchain } from './types';
 
 export class Core {
-    blockchains = {};
+    blockchains: Partial<Record<BlockchainType, Blockchain>> = {};
 
     async create(settings: Settings) {
         if (settings.ethereumNodeEndpoint)
@@ -14,37 +14,28 @@ export class Core {
 
     async destroy(): Promise<void> {
         if (this.blockchains[BlockchainType.Ethereum])
-            await Ethereum.destroy(this.blockchains[BlockchainType.Ethereum]);
+            await Ethereum.destroy(this.blockchains[BlockchainType.Ethereum] as Ethereum);
         if (this.blockchains[BlockchainType.EOS])
-            await EOS.destroy(this.blockchains[BlockchainType.EOS]);
+            await EOS.destroy(this.blockchains[BlockchainType.EOS] as EOS);
     }
 
     async refresh(): Promise<void> {
-        for (let blockchainType in this.blockchains) {
+        for (let blockchainType in this.blockchains)
             await this.blockchains[blockchainType].refresh();
-        }
     }
 
     async getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]> {
         const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
         const cartesian = (a, b?, ...c) => (b ? cartesian(f(a, b), ...c) : a);
 
-        switch (this.pathType(sourceToken.blockchainType, targetToken.blockchainType)) {
-        case this.pathType(BlockchainType.Ethereum, BlockchainType.Ethereum):
-            return await this.blockchains[BlockchainType.Ethereum].getPaths(sourceToken, targetToken);
-        case this.pathType(BlockchainType.Ethereum, BlockchainType.EOS):
-            return cartesian(
-                await this.blockchains[BlockchainType.Ethereum].getPaths(sourceToken, this.blockchains[BlockchainType.Ethereum].getAnchorToken()),
-                [await this.blockchains[BlockchainType.EOS].getPath(this.blockchains[BlockchainType.EOS].getAnchorToken(), targetToken)]
-            );
-        case this.pathType(BlockchainType.EOS, BlockchainType.Ethereum):
-            return cartesian(
-                [await this.blockchains[BlockchainType.EOS].getPath(sourceToken, this.blockchains[BlockchainType.EOS].getAnchorToken())],
-                await this.blockchains[BlockchainType.Ethereum].getPaths(this.blockchains[BlockchainType.Ethereum].getAnchorToken(), targetToken)
-            );
-        case this.pathType(BlockchainType.EOS, BlockchainType.EOS):
-            return [await this.blockchains[BlockchainType.EOS].getPath(sourceToken, targetToken)];
-        }
+        if (sourceToken.blockchainType == targetToken.blockchainType)
+            return await this.blockchains[sourceToken.blockchainType].getPaths(sourceToken, targetToken);
+
+        let sourceBlockchain: Blockchain = this.blockchains[sourceToken.blockchainType];
+        let targetBlockchain: Blockchain = this.blockchains[targetToken.blockchainType];
+        let sourcePaths: Token[][] = await sourceBlockchain.getPaths(sourceToken, sourceBlockchain.getAnchorToken());
+        let targetPaths: Token[][] = await targetBlockchain.getPaths(targetBlockchain.getAnchorToken(), targetToken);
+        return cartesian(sourcePaths, targetPaths);
     }
 
     async getRates(paths: Token[][], amount: string = '1'): Promise<string[]> {

@@ -1,6 +1,6 @@
-import { Settings, Token } from './types';
+import { Settings, BlockchainType, Token, Blockchain } from './types';
 export declare class Core {
-    blockchains: {};
+    blockchains: Partial<Record<BlockchainType, Blockchain>>;
     create(settings: Settings): Promise<void>;
     destroy(): Promise<void>;
     refresh(): Promise<void>;
