@@ -5,6 +5,9 @@ import { Pricing } from './pricing';
 import { Utils } from './utils';
 import { Settings } from './types';
 
+/**
+ * Main SDK object, should be instantiated using the `create` static method
+ */
 export class SDK {
     conversionPaths = null;
     history = null;
@@ -12,6 +15,11 @@ export class SDK {
     utils = null;
     _core = new Core();
 
+    /**
+    * creates an initializes a new SDK object
+    * 
+    * @param settings   initialization settings
+    */
     static async create(settings: Settings): Promise<SDK> {
         const sdk = new SDK();
         await sdk._core.create(settings);
@@ -22,6 +30,11 @@ export class SDK {
         return sdk;
     }
 
+    /**
+    * deinitializes and destroys an existing SDK object
+    * 
+    * @param sdk   sdk object
+    */
     static async destroy(sdk: SDK): Promise<void> {
         sdk.conversionPaths = null;
         sdk.history = null;
