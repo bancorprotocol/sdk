@@ -137,12 +137,12 @@ var Core = /** @class */ (function () {
                             }
                             return (b ? cartesian.apply(void 0, __spreadArrays([f(a, b)], c)) : a);
                         };
-                        _a = pathType(sourceToken.blockchainType, targetToken.blockchainType);
+                        _a = this.pathType(sourceToken.blockchainType, targetToken.blockchainType);
                         switch (_a) {
-                            case pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.Ethereum): return [3 /*break*/, 1];
-                            case pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.EOS): return [3 /*break*/, 3];
-                            case pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.Ethereum): return [3 /*break*/, 6];
-                            case pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.EOS): return [3 /*break*/, 9];
+                            case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.Ethereum): return [3 /*break*/, 1];
+                            case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.EOS): return [3 /*break*/, 3];
+                            case this.pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.Ethereum): return [3 /*break*/, 6];
+                            case this.pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.EOS): return [3 /*break*/, 9];
                         }
                         return [3 /*break*/, 11];
                     case 1: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getPaths(sourceToken, targetToken)];
@@ -176,15 +176,15 @@ var Core = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        path0Form = pathForm(paths[0]);
-                        if (paths.slice(1).some(function (path) { return pathForm(path) != path0Form; }))
+                        path0Form = this.pathForm(paths[0]);
+                        if (paths.slice(1).some(function (path) { return _this.pathForm(path) != path0Form; }))
                             throw new Error('getRates input paths must bear the same form');
-                        _a = pathType(paths[0][0].blockchainType, paths[0].slice(-1)[0].blockchainType);
+                        _a = this.pathType(paths[0][0].blockchainType, paths[0].slice(-1)[0].blockchainType);
                         switch (_a) {
-                            case pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.Ethereum): return [3 /*break*/, 1];
-                            case pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.EOS): return [3 /*break*/, 3];
-                            case pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.Ethereum): return [3 /*break*/, 4];
-                            case pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.EOS): return [3 /*break*/, 5];
+                            case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.Ethereum): return [3 /*break*/, 1];
+                            case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.EOS): return [3 /*break*/, 3];
+                            case this.pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.Ethereum): return [3 /*break*/, 4];
+                            case this.pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.EOS): return [3 /*break*/, 5];
                         }
                         return [3 /*break*/, 7];
                     case 1: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getRates(paths, amount)];
@@ -198,12 +198,12 @@ var Core = /** @class */ (function () {
             });
         });
     };
+    Core.prototype.pathType = function (blockchainType1, blockchainType2) {
+        return blockchainType1 + ',' + blockchainType2;
+    };
+    Core.prototype.pathForm = function (path) {
+        return JSON.stringify(path[0]) + JSON.stringify(path[path.length - 1]);
+    };
     return Core;
 }());
 exports.Core = Core;
-function pathType(blockchainType1, blockchainType2) {
-    return blockchainType1 + ',' + blockchainType2;
-}
-function pathForm(path) {
-    return JSON.stringify(path[0]) + JSON.stringify(path[path.length - 1]);
-}
