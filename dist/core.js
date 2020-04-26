@@ -191,7 +191,7 @@ var Core = /** @class */ (function () {
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3: throw new Error('getRates from ethereum token to eos token not supported');
                     case 4: throw new Error('getRates from eos token to ethereum token not supported');
-                    case 5: return [4 /*yield*/, Promise.all(paths.map(function (path) { return _this.blockchains[types_1.BlockchainType.EOS].getRate(path, amount); }))];
+                    case 5: return [4 /*yield*/, Promise.all(paths.map(function (path) { return _this.blockchains[types_1.BlockchainType.EOS].getRateByPath(path, amount); }))];
                     case 6: return [2 /*return*/, _b.sent()];
                     case 7: return [2 /*return*/];
                 }

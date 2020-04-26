@@ -60,7 +60,7 @@ export class Core {
         case pathType(BlockchainType.EOS, BlockchainType.Ethereum):
             throw new Error('getRates from eos token to ethereum token not supported');
         case pathType(BlockchainType.EOS, BlockchainType.EOS):
-            return await Promise.all(paths.map(path => this.blockchains[BlockchainType.EOS].getRate(path, amount)));
+            return await Promise.all(paths.map(path => this.blockchains[BlockchainType.EOS].getRateByPath(path, amount)));
         }
     }
 }
