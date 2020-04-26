@@ -218,15 +218,6 @@ exports.default = {
             'lumetokenctr': 'LUME'
         }
     },
-    'bancorc11231': {
-        smartToken: {
-            'bancorr11231': 'BNTSENS'
-        },
-        reserves: {
-            'bntbntbntbnt': 'BNT',
-            'sensegenesis': 'SENSE'
-        }
-    },
     'bancorc11232': {
         smartToken: {
             'bancorr11232': 'BNTUSDT'

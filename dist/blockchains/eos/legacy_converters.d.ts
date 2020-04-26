@@ -215,15 +215,6 @@ declare const _default: {
             'lumetokenctr': string;
         };
     };
-    'bancorc11231': {
-        smartToken: {
-            'bancorr11231': string;
-        };
-        reserves: {
-            'bntbntbntbnt': string;
-            'sensegenesis': string;
-        };
-    };
     'bancorc11232': {
         smartToken: {
             'bancorr11232': string;
