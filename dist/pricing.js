@@ -66,7 +66,7 @@ var Pricing = /** @class */ (function (_super) {
     * @param targetToken    target token
     * @param amount         input amount
     *
-    * @returns  the best conversion path between the source token and the target token, along with the output amount
+    * @returns  the best rate between the source token and the target token, along with the conversion path used to produce that rate
     */
     Pricing.prototype.getRate = function (sourceToken, targetToken, amount) {
         if (amount === void 0) { amount = '1'; }

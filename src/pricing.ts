@@ -13,7 +13,7 @@ export class Pricing extends SDKModule {
     * @param targetToken    target token
     * @param amount         input amount
     * 
-    * @returns  the best conversion path between the source token and the target token, along with the output amount
+    * @returns  the best rate between the source token and the target token, along with the conversion path used to produce that rate
     */
     async getRate(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
         const paths = await this.core.getPaths(sourceToken, targetToken);
