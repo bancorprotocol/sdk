@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import { ERC20Token } from './abis';
 import { fromWei } from '../../helpers';
+import { ConversionEvent } from '../../types';
 
 const GENESIS_BLOCK_NUMBER = 3851136;
 
@@ -73,7 +74,7 @@ async function getOwnerUpdateEvents(web3, token, fromBlock, toBlock) {
 }
 
 export async function get(web3, decimals, token, fromBlock, toBlock) {
-    const result = [];
+    const result: ConversionEvent[] = [];
 
     const batches = [{fromBlock: fromBlock, toBlock: undefined, owner: undefined}];
     const events = await getOwnerUpdateEvents(web3, token, fromBlock, toBlock);
@@ -93,13 +94,13 @@ export async function get(web3, decimals, token, fromBlock, toBlock) {
             if (events.length > 0) {
                 for (const event of events) {
                     result.push({
-                        fromToken    : event.returnValues.fromToken,
-                        toToken      : event.returnValues.toToken,
-                        trader       : event.returnValues.trader,
+                        blockNumber  : event.blockNumber,
+                        sourceToken  : event.returnValues.fromToken,
+                        targetToken  : event.returnValues.toToken,
                         inputAmount  : await getTokenAmount(web3, decimals, event.returnValues.fromToken, event.returnValues.inputAmount),
                         outputAmount : await getTokenAmount(web3, decimals, event.returnValues.toToken  , event.returnValues.outputAmount),
                         conversionFee: await getTokenAmount(web3, decimals, event.returnValues.toToken  , event.returnValues.conversionFee),
-                        blockNumber  : event.blockNumber
+                        trader       : event.returnValues.trader,
                     });
                 }
                 index = CONVERSION_EVENT_LEGACY.indexOf(abi);

@@ -202,9 +202,9 @@ function get(web3, decimals, token, fromBlock, toBlock) {
                     event_2 = events_1[_e];
                     _g = (_f = result).push;
                     _h = {
-                        fromToken: event_2.returnValues.fromToken,
-                        toToken: event_2.returnValues.toToken,
-                        trader: event_2.returnValues.trader
+                        blockNumber: event_2.blockNumber,
+                        sourceToken: event_2.returnValues.fromToken,
+                        targetToken: event_2.returnValues.toToken
                     };
                     return [4 /*yield*/, getTokenAmount(web3, decimals, event_2.returnValues.fromToken, event_2.returnValues.inputAmount)];
                 case 6:
@@ -215,7 +215,7 @@ function get(web3, decimals, token, fromBlock, toBlock) {
                     return [4 /*yield*/, getTokenAmount(web3, decimals, event_2.returnValues.toToken, event_2.returnValues.conversionFee)];
                 case 8:
                     _g.apply(_f, [(_h.conversionFee = _j.sent(),
-                            _h.blockNumber = event_2.blockNumber,
+                            _h.trader = event_2.returnValues.trader,
                             _h)]);
                     _j.label = 9;
                 case 9:

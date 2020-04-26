@@ -32,13 +32,13 @@ export interface Converter {
 * ConversionEvent interface
 */
 export interface ConversionEvent {
-    fromToken: string;
-    toToken: string;
-    trader: string;
+    blockNumber: number;
+    sourceToken: string;
+    targetToken: string;
     inputAmount: string;
     outputAmount: string;
     conversionFee?: string;
-    blockNumber: number;
+    trader: string;
 }
 /**
 * Blockchain interface - defines the methods that each blockchain plugin should implement

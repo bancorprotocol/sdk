@@ -29,12 +29,12 @@ describe('events test', () => {
     const events = Array.from(Array(100).keys()).map(n => ({
         blockNumber: 1000 + 100 * n,
         returnValues: {
-            fromToken: '0x'.padEnd(42, `${n + 1}`),
-            toToken: '0x'.padEnd(42, `${n + 2}`),
-            trader: '0x'.padEnd(42, `${n + 3}`),
+            sourceToken: '0x'.padEnd(42, `${n + 1}`),
+            targetToken: '0x'.padEnd(42, `${n + 2}`),
             inputAmount: `${123 * n + 1}`,
             outputAmount: `${456 * n + 1}`,
-            conversionFee: `${789 * n + 1}`
+            conversionFee: `${789 * n + 1}`,
+            trader: '0x'.padEnd(42, `${n + 3}`),
         }
     }));
 

@@ -164,7 +164,7 @@ var Core = /** @class */ (function () {
                     case 0:
                         path0Form = this.pathForm(paths[0]);
                         if (paths.slice(1).some(function (path) { return _this.pathForm(path) != path0Form; }))
-                            throw new Error('getRates input paths must bear the same form');
+                            throw new Error('getRates input paths must bear the same source and the same target tokens');
                         _a = this.pathType(paths[0][0].blockchainType, paths[0].slice(-1)[0].blockchainType);
                         switch (_a) {
                             case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.Ethereum): return [3 /*break*/, 1];
