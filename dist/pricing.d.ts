@@ -6,6 +6,7 @@ import { Token } from './types';
 export declare class Pricing extends SDKModule {
     /**
     * returns the cheapest rate between any two tokens in the bancor network
+    * getting the rate between tokens of different blockchains is not supported
     *
     * @param sourceToken    source token
     * @param targetToken    target token
