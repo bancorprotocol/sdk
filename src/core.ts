@@ -41,7 +41,7 @@ export class Core {
     async getRates(paths: Token[][], amount: string = '1'): Promise<string[]> {
         const path0Form = this.pathForm(paths[0]);
         if (paths.slice(1).some(path => this.pathForm(path) != path0Form))
-            throw new Error('getRates input paths must bear the same form');
+            throw new Error('getRates input paths must bear the same source and the same target tokens');
 
         switch (this.pathType(paths[0][0].blockchainType, paths[0].slice(-1)[0].blockchainType)) {
         case this.pathType(BlockchainType.Ethereum, BlockchainType.Ethereum):
