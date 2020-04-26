@@ -36,10 +36,14 @@ export class EOS {
         return this.getShortestPath(sourcePath, targetPath);
     }
 
-    async getRateByPath(path: Token[], amount): Promise<string> {
+    async getRateByPath(path: Token[], amount: string): Promise<string> {
         for (let i = 0; i < path.length - 1; i += 2)
             amount = await this.getConversionRate(path[i + 1], path[i], path[i + 2], amount);
         return amount.toString();
+    }
+
+    async getRate(from: Token, to: Token, amount: string): Promise<string> {
+        return await this.getRateByPath(await this.getPath(from, to), amount);
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {

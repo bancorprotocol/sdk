@@ -19,7 +19,7 @@ describe('paths test', () => {
         jest.restoreAllMocks();
     });
 
-    it('getPath from ethereum token to ethereum token', async () => {
+    it('getPaths from ethereum token to ethereum token', async () => {
         const spyGetPathsFunc = jest
             .spyOn(sdk._core.blockchains[BlockchainType.Ethereum], 'getPathsFunc')
             .mockImplementationOnce(sdk._core.blockchains[BlockchainType.Ethereum].getAllPathsFunc);
@@ -33,34 +33,48 @@ describe('paths test', () => {
                 '0x4444444444444444444444444444444444444444' : ['0x1111111111111111111111111111111111111111', '0x2222222222222222222222222222222222222222', '0x3333333333333333333333333333333333333333']
             }));
 
-        const spyGetDecimals = jest
-            .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('10'))
-            .mockImplementationOnce(() => Promise.resolve('10'));
-
-        ethereumMocks.setRatesGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['5555555555', '4444444444', '3333333333', '2222222222', '1111111111']);
-
         await sdk.refresh();
 
-        const received = await sdk.conversionPaths.getPath(
+        const received = await sdk._core.getPaths(
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
         );
 
         const expected = [
-            { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
-            { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
-            { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' },
-            { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
+            [
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
+            ],
+            [
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
+            ],
+            [
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
+            ],
+            [
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
+            ],
+            [
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
+                { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
+            ]
         ];
 
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
-        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetPathsFunc).toHaveBeenCalledTimes(1);
     });
 
-    it('getPath from ethereum token to eos token', async () => {
+    it('getPaths from ethereum token to eos token', async () => {
         const spyGetContractAddresses = jest
             .spyOn(ethereum, 'getContractAddresses')
             .mockImplementation(() => ({ anchorToken: '0x3333333333333333333333333333333333333333',
@@ -74,13 +88,6 @@ describe('paths test', () => {
                '0x3333333333333333333333333333333333333333' : ['0x2222222222222222222222222222222222222222']
             }));
 
-        const spyGetDecimals = jest
-            .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('10'))
-            .mockImplementationOnce(() => Promise.resolve('10'));
-
-        ethereumMocks.setRatesGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['123123123']);
-
         const spyGetAnchorToken = jest
             .spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }))
@@ -88,28 +95,27 @@ describe('paths test', () => {
 
         await sdk.refresh();
 
-        const received = await sdk.conversionPaths.getPath(
+        const received = await sdk._core.getPaths(
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' }
         );
 
-        const expected = [
+        const expected = [[
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' }
-        ];
+        ]];
 
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
-        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(3);
     });
 
-    it('getPath from eos token to ethereum token', async () => {
+    it('getPaths from eos token to ethereum token', async () => {
         const spyGetContractAddresses = jest
             .spyOn(ethereum, 'getContractAddresses')
             .mockImplementation(() => ({ anchorToken: '0x3333333333333333333333333333333333333333',
@@ -123,13 +129,6 @@ describe('paths test', () => {
                '0x3333333333333333333333333333333333333333' : ['0x2222222222222222222222222222222222222222']
             }));
 
-        const spyGetDecimals = jest
-            .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('10'))
-            .mockImplementationOnce(() => Promise.resolve('10'));
-
-        ethereumMocks.setRatesGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['123123123']);
-
         const spyGetAnchorToken = jest
             .spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }))
@@ -137,148 +136,45 @@ describe('paths test', () => {
 
         await sdk.refresh();
 
-        const received = await sdk.conversionPaths.getPath(
+        const received = await sdk._core.getPaths(
             { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' }
         );
 
-        const expected = [
+        const expected = [[
             { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' },
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' }
-        ];
+        ]];
 
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
-        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(2);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(3);
     });
 
-    it('getPath from eos token to eos token', async () => {
+    it('getPaths from eos token to eos token', async () => {
         const spyGetAnchorToken = jest
             .spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
         await sdk.refresh();
 
-        const received = await sdk.conversionPaths.getPath(
+        const received = await sdk._core.getPaths(
             { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
         );
 
-        const expected = [
+        const expected = [[
             { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
-        ];
+        ]];
 
         expect(received).toEqual(expected);
         expect(spyGetAnchorToken).toHaveBeenCalledTimes(1);
-    });
-
-    it('getAllPathsAndRates from ethereum token to ethereum token', async () => {
-        const spyGetPathsFunc = jest
-            .spyOn(sdk._core.blockchains[BlockchainType.Ethereum], 'getPathsFunc')
-            .mockImplementationOnce(sdk._core.blockchains[BlockchainType.Ethereum].getAllPathsFunc);
-
-        const spyGetGraph = jest
-            .spyOn(ethereum, 'getGraph')
-            .mockImplementationOnce(() => Promise.resolve({
-                '0x1111111111111111111111111111111111111111' : ['0x2222222222222222222222222222222222222222', '0x3333333333333333333333333333333333333333', '0x4444444444444444444444444444444444444444'],
-                '0x2222222222222222222222222222222222222222' : ['0x3333333333333333333333333333333333333333', '0x4444444444444444444444444444444444444444', '0x1111111111111111111111111111111111111111'],
-                '0x3333333333333333333333333333333333333333' : ['0x4444444444444444444444444444444444444444', '0x1111111111111111111111111111111111111111', '0x2222222222222222222222222222222222222222'],
-                '0x4444444444444444444444444444444444444444' : ['0x1111111111111111111111111111111111111111', '0x2222222222222222222222222222222222222222', '0x3333333333333333333333333333333333333333']
-            }));
-
-        const spyGetDecimals = jest
-            .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('10'))
-            .mockImplementationOnce(() => Promise.resolve('10'));
-
-        ethereumMocks.setRatesGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['5555555555', '4444444444', '3333333333', '2222222222', '1111111111']);
-
-        await sdk.refresh();
-
-        const received = await sdk._core.getAllPathsAndRates(
-            { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
-            { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
-        );
-
-        const expected = [
-            {
-                path: [
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
-                ],
-                rate: '0.5555555555'
-            },
-            {
-                path: [
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
-                ],
-                rate: '0.4444444444'
-            },
-            {
-                path: [
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
-                ],
-                rate: '0.3333333333'
-            },
-            {
-                path: [
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
-                ],
-                rate: '0.2222222222'
-            },
-            {
-                path: [
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
-                    { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
-                ],
-                rate: '0.1111111111'
-            }
-        ];
-
-        expect(received).toEqual(expected);
-        expect(spyGetGraph).toHaveBeenCalledTimes(1);
-        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetPathsFunc).toHaveBeenCalledTimes(1);
-    });
-
-    it('getAllPathsAndRates from ethereum token to eos token', async () => {
-        const promise = sdk._core.getAllPathsAndRates(
-            { blockchainType: BlockchainType.Ethereum, blockchainId: '' },
-            { blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' }
-        );
-        expect(promise).rejects.toEqual(new Error('getAllPathsAndRates from ethereum token to eos token not supported'));
-    });
-
-    it('getAllPathsAndRates from eos token to ethereum token', async () => {
-        const promise = sdk._core.getAllPathsAndRates(
-            { blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' },
-            { blockchainType: BlockchainType.Ethereum, blockchainId: '' }
-        );
-        expect(promise).rejects.toEqual(new Error('getAllPathsAndRates from eos token to ethereum token not supported'));
-    });
-
-    it('getAllPathsAndRates from eos token to eos token', async () => {
-        const promise = sdk._core.getAllPathsAndRates(
-            { blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' },
-            { blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' }
-        );
-        expect(promise).rejects.toEqual(new Error('getAllPathsAndRates from eos token to eos token not supported'));
     });
 });

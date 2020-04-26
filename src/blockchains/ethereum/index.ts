@@ -3,7 +3,7 @@ import * as abis from './abis';
 import * as helpers from '../../helpers';
 import * as conversionEvents from './conversion_events';
 import * as converterVersion from './converter_version';
-import { Token, Converter, ConversionEvent } from '../../types';
+import { BlockchainType, Token, Converter, ConversionEvent } from '../../types';
 import { timestampToBlockNumber } from './timestamp_to_block_number';
 
 const CONTRACT_ADDRESSES = {
@@ -78,14 +78,11 @@ export class Ethereum {
         this.trees = await getTrees(this);
     }
 
-    getAnchorToken(): string {
-        return getContractAddresses(this).anchorToken;
+    getAnchorToken(): Token {
+        return {blockchainType: BlockchainType.Ethereum, blockchainId: getContractAddresses(this).anchorToken};
     }
 
     async getRateByPath(path: Token[], amount: string): Promise<string> {
-        if (path.length == 1)
-            return amount;
-
         const tokens = path.map(token => token.blockchainId);
         const sourceDecimals = await getDecimals(this, tokens[0]);
         const targetDecimals = await getDecimals(this, tokens[tokens.length - 1]);
@@ -95,14 +92,18 @@ export class Ethereum {
         return amount;
     }
 
-    async getAllPathsAndRates(sourceToken, targetToken, amount) {
-        sourceToken = Web3.utils.toChecksumAddress(sourceToken);
-        targetToken = Web3.utils.toChecksumAddress(targetToken);
-        const paths = this.getPathsFunc(sourceToken, targetToken);
-        const sourceDecimals = await getDecimals(this, sourceToken);
-        const targetDecimals = await getDecimals(this, targetToken);
-        const rates = await getRatesSafe(this, paths, helpers.toWei(amount, sourceDecimals));
-        return [paths, rates.map(rate => helpers.fromWei(rate, targetDecimals))];
+    async getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]> {
+        const sourceAddress = Web3.utils.toChecksumAddress(sourceToken.blockchainId);
+        const targetAddress = Web3.utils.toChecksumAddress(targetToken.blockchainId);
+        const addressPaths = this.getPathsFunc(sourceAddress, targetAddress);
+        return addressPaths.map(addressPath => addressPath.map(address => ({blockchainType: BlockchainType.Ethereum, blockchainId: address})));
+    }
+
+    async getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]> {
+        const addressPaths = tokenPaths.map(tokenPath => tokenPath.map(token => Web3.helpers.toChecksumAddress(token.blockchainId)));
+        const sourceDecimals = await getDecimals(this, addressPaths[0][0]);
+        const targetDecimals = await getDecimals(this, addressPaths[0].slice(-1)[0]);
+        return await getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals));
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {

@@ -70,14 +70,21 @@ var Pricing = /** @class */ (function (_super) {
     Pricing.prototype.getRate = function (sourceToken, targetToken, amount) {
         if (amount === void 0) { amount = '1'; }
         return __awaiter(this, void 0, void 0, function () {
-            var path;
+            var paths, rates, index, i;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.core.getPath(sourceToken, targetToken, amount)];
+                    case 0: return [4 /*yield*/, this.core.getPaths(sourceToken, targetToken)];
                     case 1:
-                        path = _a.sent();
-                        return [4 /*yield*/, this.getRateByPath(path, amount)];
-                    case 2: return [2 /*return*/, _a.sent()];
+                        paths = _a.sent();
+                        return [4 /*yield*/, this.core.getRates(paths, amount)];
+                    case 2:
+                        rates = _a.sent();
+                        index = 0;
+                        for (i = 1; i < rates.length; i++) {
+                            if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
+                                index = i;
+                        }
+                        return [2 /*return*/, rates[index]];
                 }
             });
         });
@@ -97,8 +104,6 @@ var Pricing = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (path.length == 1)
-                            return [2 /*return*/, amount];
                         bgn = 0;
                         _a.label = 1;
                     case 1:
@@ -117,3 +122,19 @@ var Pricing = /** @class */ (function (_super) {
     return Pricing;
 }(sdk_module_1.SDKModule));
 exports.Pricing = Pricing;
+function betterRate(rates, index1, index2) {
+    // return Number(rates[index1]) < Number(rates[index2]);
+    var rate1 = rates[index1].split('.').concat('');
+    var rate2 = rates[index2].split('.').concat('');
+    rate1[0] = rate1[0].padStart(rate2[0].length, '0');
+    rate2[0] = rate2[0].padStart(rate1[0].length, '0');
+    rate1[1] = rate1[1].padEnd(rate2[1].length, '0');
+    rate2[1] = rate2[1].padEnd(rate1[1].length, '0');
+    return rate1.join('') < rate2.join('');
+}
+function equalRate(rates, index1, index2) {
+    return rates[index1] == rates[index2];
+}
+function betterPath(paths, index1, index2) {
+    return paths[index1].length > paths[index2].length;
+}

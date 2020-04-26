@@ -123,102 +123,87 @@ var Core = /** @class */ (function () {
             });
         });
     };
-    Core.prototype.getAllPathsAndRates = function (sourceToken, targetToken, amount) {
-        if (amount === void 0) { amount = '1'; }
+    Core.prototype.getPaths = function (sourceToken, targetToken) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, _b, paths, rates_1;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var f, cartesian, _a, _b, _c, _d, _e;
+            return __generator(this, function (_f) {
+                switch (_f.label) {
                     case 0:
-                        _a = this.pathType(sourceToken.blockchainType, targetToken.blockchainType);
+                        f = function (a, b) { return [].concat.apply([], a.map(function (d) { return b.map(function (e) { return [].concat(d, e); }); })); };
+                        cartesian = function (a, b) {
+                            var c = [];
+                            for (var _i = 2; _i < arguments.length; _i++) {
+                                c[_i - 2] = arguments[_i];
+                            }
+                            return (b ? cartesian.apply(void 0, __spreadArrays([f(a, b)], c)) : a);
+                        };
+                        _a = pathType(sourceToken.blockchainType, targetToken.blockchainType);
                         switch (_a) {
-                            case this.pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.EOS): return [3 /*break*/, 1];
-                            case this.pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.Ethereum): return [3 /*break*/, 2];
-                            case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.EOS): return [3 /*break*/, 3];
-                            case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.Ethereum): return [3 /*break*/, 4];
-                        }
-                        return [3 /*break*/, 6];
-                    case 1: throw new Error('getAllPathsAndRates from eos token to eos token not supported');
-                    case 2: throw new Error('getAllPathsAndRates from eos token to ethereum token not supported');
-                    case 3: throw new Error('getAllPathsAndRates from ethereum token to eos token not supported');
-                    case 4: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
-                    case 5:
-                        _b = _c.sent(), paths = _b[0], rates_1 = _b[1];
-                        return [2 /*return*/, paths.map(function (path, i) { return ({ path: path.map(function (x) { return ({ blockchainType: types_1.BlockchainType.Ethereum, blockchainId: x }); }), rate: rates_1[i] }); })];
-                    case 6: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    Core.prototype.getPath = function (sourceToken, targetToken, amount) {
-        return __awaiter(this, void 0, void 0, function () {
-            var ethPaths, ethRates, eosPath, _a;
-            var _b, _c, _d;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
-                    case 0:
-                        _a = this.pathType(sourceToken.blockchainType, targetToken.blockchainType);
-                        switch (_a) {
-                            case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.Ethereum): return [3 /*break*/, 1];
-                            case this.pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.EOS): return [3 /*break*/, 3];
-                            case this.pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.Ethereum): return [3 /*break*/, 6];
-                            case this.pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.EOS): return [3 /*break*/, 9];
+                            case pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.Ethereum): return [3 /*break*/, 1];
+                            case pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.EOS): return [3 /*break*/, 3];
+                            case pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.Ethereum): return [3 /*break*/, 6];
+                            case pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.EOS): return [3 /*break*/, 9];
                         }
                         return [3 /*break*/, 11];
-                    case 1: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getAllPathsAndRates(sourceToken.blockchainId, targetToken.blockchainId, amount)];
-                    case 2:
-                        _b = _e.sent(), ethPaths = _b[0], ethRates = _b[1];
-                        return [2 /*return*/, this.getCheapestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: types_1.BlockchainType.Ethereum, blockchainId: x }); })];
-                    case 3: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getAllPathsAndRates(sourceToken.blockchainId, this.blockchains[types_1.BlockchainType.Ethereum].getAnchorToken(), amount)];
+                    case 1: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getPaths(sourceToken, targetToken)];
+                    case 2: return [2 /*return*/, _f.sent()];
+                    case 3:
+                        _b = cartesian;
+                        return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getPaths(sourceToken, this.blockchains[types_1.BlockchainType.Ethereum].getAnchorToken())];
                     case 4:
-                        _c = _e.sent(), ethPaths = _c[0], ethRates = _c[1];
+                        _c = [_f.sent()];
                         return [4 /*yield*/, this.blockchains[types_1.BlockchainType.EOS].getPath(this.blockchains[types_1.BlockchainType.EOS].getAnchorToken(), targetToken)];
-                    case 5:
-                        eosPath = _e.sent();
-                        return [2 /*return*/, __spreadArrays(this.getCheapestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: types_1.BlockchainType.Ethereum, blockchainId: x }); }), eosPath)];
-                    case 6: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.EOS].getPath(sourceToken, this.blockchains[types_1.BlockchainType.EOS].getAnchorToken())];
+                    case 5: return [2 /*return*/, _b.apply(void 0, _c.concat([[_f.sent()]]))];
+                    case 6:
+                        _d = cartesian;
+                        return [4 /*yield*/, this.blockchains[types_1.BlockchainType.EOS].getPath(sourceToken, this.blockchains[types_1.BlockchainType.EOS].getAnchorToken())];
                     case 7:
-                        eosPath = _e.sent();
-                        return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getAllPathsAndRates(this.blockchains[types_1.BlockchainType.Ethereum].getAnchorToken(), targetToken.blockchainId, amount)];
-                    case 8:
-                        _d = _e.sent(), ethPaths = _d[0], ethRates = _d[1];
-                        return [2 /*return*/, __spreadArrays(eosPath, this.getCheapestPath(ethPaths, ethRates).map(function (x) { return ({ blockchainType: types_1.BlockchainType.Ethereum, blockchainId: x }); }))];
+                        _e = [[_f.sent()]];
+                        return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getPaths(this.blockchains[types_1.BlockchainType.Ethereum].getAnchorToken(), targetToken)];
+                    case 8: return [2 /*return*/, _d.apply(void 0, _e.concat([_f.sent()]))];
                     case 9: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.EOS].getPath(sourceToken, targetToken)];
-                    case 10:
-                        eosPath = _e.sent();
-                        return [2 /*return*/, eosPath];
+                    case 10: return [2 /*return*/, [_f.sent()]];
                     case 11: return [2 /*return*/];
                 }
             });
         });
     };
-    Core.prototype.getCheapestPath = function (paths, rates) {
-        var index = 0;
-        for (var i = 1; i < rates.length; i++) {
-            if (this.betterRate(rates, index, i) || (this.equalRate(rates, index, i) && this.betterPath(paths, index, i)))
-                index = i;
-        }
-        return paths[index];
-    };
-    Core.prototype.betterPath = function (paths, index1, index2) {
-        return paths[index1].length > paths[index2].length;
-    };
-    Core.prototype.betterRate = function (rates, index1, index2) {
-        // return Number(rates[index1]) < Number(rates[index2]);
-        var rate1 = rates[index1].split('.').concat('');
-        var rate2 = rates[index2].split('.').concat('');
-        rate1[0] = rate1[0].padStart(rate2[0].length, '0');
-        rate2[0] = rate2[0].padStart(rate1[0].length, '0');
-        rate1[1] = rate1[1].padEnd(rate2[1].length, '0');
-        rate2[1] = rate2[1].padEnd(rate1[1].length, '0');
-        return rate1.join('') < rate2.join('');
-    };
-    Core.prototype.equalRate = function (rates, index1, index2) {
-        return rates[index1] == rates[index2];
-    };
-    Core.prototype.pathType = function (blockchainType1, blockchainType2) {
-        return blockchainType1 + ',' + blockchainType2;
+    Core.prototype.getRates = function (paths, amount) {
+        if (amount === void 0) { amount = '1'; }
+        return __awaiter(this, void 0, void 0, function () {
+            var path0Form, _a;
+            var _this = this;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        path0Form = pathForm(paths[0]);
+                        if (paths.slice(1).some(function (path) { return pathForm(path) != path0Form; }))
+                            throw new Error('getRates input paths must bear the same form');
+                        _a = pathType(paths[0][0].blockchainType, paths[0].slice(-1)[0].blockchainType);
+                        switch (_a) {
+                            case pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.Ethereum): return [3 /*break*/, 1];
+                            case pathType(types_1.BlockchainType.Ethereum, types_1.BlockchainType.EOS): return [3 /*break*/, 3];
+                            case pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.Ethereum): return [3 /*break*/, 4];
+                            case pathType(types_1.BlockchainType.EOS, types_1.BlockchainType.EOS): return [3 /*break*/, 5];
+                        }
+                        return [3 /*break*/, 7];
+                    case 1: return [4 /*yield*/, this.blockchains[types_1.BlockchainType.Ethereum].getRates(paths, amount)];
+                    case 2: return [2 /*return*/, _b.sent()];
+                    case 3: throw new Error('getRates from ethereum token to eos token not supported');
+                    case 4: throw new Error('getRates from eos token to ethereum token not supported');
+                    case 5: return [4 /*yield*/, Promise.all(paths.map(function (path) { return _this.blockchains[types_1.BlockchainType.EOS].getRate(path, amount); }))];
+                    case 6: return [2 /*return*/, _b.sent()];
+                    case 7: return [2 /*return*/];
+                }
+            });
+        });
     };
     return Core;
 }());
 exports.Core = Core;
+function pathType(blockchainType1, blockchainType2) {
+    return blockchainType1 + ',' + blockchainType2;
+}
+function pathForm(path) {
+    return JSON.stringify(path[0]) + JSON.stringify(path[path.length - 1]);
+}

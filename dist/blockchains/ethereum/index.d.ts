@@ -13,9 +13,10 @@ export declare class Ethereum {
     static create(nodeEndpoint: string | Object): Promise<Ethereum>;
     static destroy(ethereum: Ethereum): Promise<void>;
     refresh(): Promise<void>;
-    getAnchorToken(): string;
+    getAnchorToken(): Token;
     getRateByPath(path: Token[], amount: string): Promise<string>;
-    getAllPathsAndRates(sourceToken: any, targetToken: any, amount: any): Promise<any[]>;
+    getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]>;
+    getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]>;
     getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;

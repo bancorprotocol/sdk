@@ -126,6 +126,20 @@ var EOS = /** @class */ (function () {
             });
         });
     };
+    EOS.prototype.getRate = function (from, to, amount) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = this.getRateByPath;
+                        return [4 /*yield*/, this.getPath(from, to)];
+                    case 1: return [4 /*yield*/, _a.apply(this, [_b.sent(), amount])];
+                    case 2: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
     EOS.prototype.getConverterVersion = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

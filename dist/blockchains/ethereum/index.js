@@ -69,6 +69,7 @@ var abis = __importStar(require("./abis"));
 var helpers = __importStar(require("../../helpers"));
 var conversionEvents = __importStar(require("./conversion_events"));
 var converterVersion = __importStar(require("./converter_version"));
+var types_1 = require("../../types");
 var timestamp_to_block_number_1 = require("./timestamp_to_block_number");
 var CONTRACT_ADDRESSES = {
     main: {
@@ -165,7 +166,7 @@ var Ethereum = /** @class */ (function () {
         });
     };
     Ethereum.prototype.getAnchorToken = function () {
-        return exports.getContractAddresses(this).anchorToken;
+        return { blockchainType: types_1.BlockchainType.Ethereum, blockchainId: exports.getContractAddresses(this).anchorToken };
     };
     Ethereum.prototype.getRateByPath = function (path, amount) {
         return __awaiter(this, void 0, void 0, function () {
@@ -173,8 +174,6 @@ var Ethereum = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (path.length == 1)
-                            return [2 /*return*/, amount];
                         tokens = path.map(function (token) { return token.blockchainId; });
                         return [4 /*yield*/, exports.getDecimals(this, tokens[0])];
                     case 1:
@@ -192,25 +191,32 @@ var Ethereum = /** @class */ (function () {
             });
         });
     };
-    Ethereum.prototype.getAllPathsAndRates = function (sourceToken, targetToken, amount) {
+    Ethereum.prototype.getPaths = function (sourceToken, targetToken) {
         return __awaiter(this, void 0, void 0, function () {
-            var paths, sourceDecimals, targetDecimals, rates;
+            var sourceAddress, targetAddress, addressPaths;
+            return __generator(this, function (_a) {
+                sourceAddress = web3_1.default.utils.toChecksumAddress(sourceToken.blockchainId);
+                targetAddress = web3_1.default.utils.toChecksumAddress(targetToken.blockchainId);
+                addressPaths = this.getPathsFunc(sourceAddress, targetAddress);
+                return [2 /*return*/, addressPaths.map(function (addressPath) { return addressPath.map(function (address) { return ({ blockchainType: types_1.BlockchainType.Ethereum, blockchainId: address }); }); })];
+            });
+        });
+    };
+    Ethereum.prototype.getRates = function (tokenPaths, tokenAmount) {
+        return __awaiter(this, void 0, void 0, function () {
+            var addressPaths, sourceDecimals, targetDecimals;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        sourceToken = web3_1.default.utils.toChecksumAddress(sourceToken);
-                        targetToken = web3_1.default.utils.toChecksumAddress(targetToken);
-                        paths = this.getPathsFunc(sourceToken, targetToken);
-                        return [4 /*yield*/, exports.getDecimals(this, sourceToken)];
+                        addressPaths = tokenPaths.map(function (tokenPath) { return tokenPath.map(function (token) { return web3_1.default.helpers.toChecksumAddress(token.blockchainId); }); });
+                        return [4 /*yield*/, exports.getDecimals(this, addressPaths[0][0])];
                     case 1:
                         sourceDecimals = _a.sent();
-                        return [4 /*yield*/, exports.getDecimals(this, targetToken)];
+                        return [4 /*yield*/, exports.getDecimals(this, addressPaths[0].slice(-1)[0])];
                     case 2:
                         targetDecimals = _a.sent();
-                        return [4 /*yield*/, exports.getRatesSafe(this, paths, helpers.toWei(amount, sourceDecimals))];
-                    case 3:
-                        rates = _a.sent();
-                        return [2 /*return*/, [paths, rates.map(function (rate) { return helpers.fromWei(rate, targetDecimals); })]];
+                        return [4 /*yield*/, exports.getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals))];
+                    case 3: return [2 /*return*/, _a.sent()];
                 }
             });
         });

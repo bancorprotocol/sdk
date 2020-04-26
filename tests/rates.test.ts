@@ -212,4 +212,28 @@ describe('rates test', () => {
 
         expect(received).toEqual('0.0593');
     });
+
+    it('getRates from ethereum token to eos token', async () => {
+        const promise = sdk._core.getRates([[
+            { blockchainType: BlockchainType.Ethereum, blockchainId: '' },
+            { blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' }
+        ]]);
+        expect(promise).rejects.toEqual(new Error('getRates from ethereum token to eos token not supported'));
+    });
+
+    it('getRates from eos token to ethereum token', async () => {
+        const promise = sdk._core.getRates([[
+            { blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' },
+            { blockchainType: BlockchainType.Ethereum, blockchainId: '' }
+        ]]);
+        expect(promise).rejects.toEqual(new Error('getRates from eos token to ethereum token not supported'));
+    });
+
+    it('getRates from eos token to eos token', async () => {
+        const received = await sdk._core.getRates([[
+            { blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' },
+            { blockchainType: BlockchainType.EOS, blockchainId: '', symbol: '' }
+        ]]);
+        //expect(promise).rejects.toEqual(new Error('getRates from eos token to eos token not supported'));
+    });
 });
