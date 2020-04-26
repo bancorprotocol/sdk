@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("./core");
-var conversion_paths_1 = require("./conversion_paths");
 var history_1 = require("./history");
 var pricing_1 = require("./pricing");
 var utils_1 = require("./utils");
@@ -46,7 +45,6 @@ var utils_1 = require("./utils");
  */
 var SDK = /** @class */ (function () {
     function SDK() {
-        this.conversionPaths = null;
         this.history = null;
         this.pricing = null;
         this.utils = null;
@@ -70,7 +68,6 @@ var SDK = /** @class */ (function () {
                         return [4 /*yield*/, sdk._core.create(settings)];
                     case 1:
                         _a.sent();
-                        sdk.conversionPaths = new conversion_paths_1.ConversionPaths(sdk._core);
                         sdk.history = new history_1.History(sdk._core);
                         sdk.pricing = new pricing_1.Pricing(sdk._core);
                         sdk.utils = new utils_1.Utils(sdk._core);
@@ -90,7 +87,6 @@ var SDK = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        sdk.conversionPaths = null;
                         sdk.history = null;
                         sdk.pricing = null;
                         sdk.utils = null;

@@ -96,7 +96,16 @@ describe('rates test', () => {
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
         );
 
-        expect(received).toEqual('0.1675');
+        const expected = {
+            path: [
+                { blockchainId: 'cccccccccccc', blockchainType: 'eos', symbol: 'CCC' },
+                { blockchainId: 'aaacccaaaccc', blockchainType: 'eos', symbol: 'AAACCC' },
+                { blockchainId: 'aaaaaaaaaaaa', blockchainType: 'eos', symbol: 'AAA' }
+            ],
+            rate: '0.1675'
+        };
+
+        expect(received).toEqual(expected);
         expect(spyGetTableRows).toHaveBeenCalledTimes(5);
     });
 
@@ -113,7 +122,16 @@ describe('rates test', () => {
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' }
         );
 
-        expect(received).toEqual('16.7633');
+        const expected = {
+            path: [
+                { blockchainId: 'aaaaaaaaaaaa', blockchainType: 'eos', symbol: 'AAA' },
+                { blockchainId: 'aaacccaaaccc', blockchainType: 'eos', symbol: 'AAACCC' },
+                { blockchainId: 'aaacccaaaccc', blockchainType: 'eos', symbol: 'AAACCC' }
+            ],
+            rate: '16.7633'
+        };
+
+        expect(received).toEqual(expected);
         expect(spyGetTableRows).toHaveBeenCalledTimes(4);
     });
 
@@ -130,7 +148,16 @@ describe('rates test', () => {
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }
         );
 
-        expect(received).toEqual('0.0593');
+        const expected = {
+            path: [
+                { blockchainId: 'aaacccaaaccc', blockchainType: 'eos', symbol: 'AAACCC' },
+                { blockchainId: 'aaacccaaaccc', blockchainType: 'eos', symbol: 'AAACCC' },
+                { blockchainId: 'aaaaaaaaaaaa', blockchainType: 'eos', symbol: 'AAA' },
+            ],
+            rate: '0.0593'
+        };
+
+        expect(received).toEqual(expected);
         expect(spyGetTableRows).toHaveBeenCalledTimes(4);
     });
 

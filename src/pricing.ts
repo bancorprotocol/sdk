@@ -6,16 +6,16 @@ import { Token } from './types';
  */
 export class Pricing extends SDKModule {
     /**
-    * returns the cheapest rate between any two tokens in the bancor network
-    * getting the rate between tokens of different blockchains is not supported
+    * returns the best conversion path for a given pair of tokens in the bancor network, along with its rate
+    * this function currently does not support tokens of different blockchains; use `getRateByPath` instead
     * 
     * @param sourceToken    source token
     * @param targetToken    target token
-    * @param amount         input amount in decimal string
+    * @param amount         input amount
     * 
-    * @returns  rate between the source token and the target token in decimal string
+    * @returns  the best conversion path between the source token and the target token, along with the output amount
     */
-    async getRate(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<string> {
+    async getRate(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
         const paths = await this.core.getPaths(sourceToken, targetToken);
         const rates = await this.core.getRates(paths, amount);
 
@@ -24,16 +24,20 @@ export class Pricing extends SDKModule {
             if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
                 index = i;
         }
-        return rates[index];
+
+        return {
+            path: paths[index],
+            rate: rates[index]
+        };
     }
 
     /**
-    * returns the rate between any two tokens in the bancor network for a given conversion path
+    * returns the rate for a given conversion path in the bancor network 
     * 
     * @param path    conversion path
-    * @param amount  input amount in decimal string
+    * @param amount  input amount
     * 
-    * @returns  rate between the first token in the path and the last token in the path in decimal string
+    * @returns  output amount for a conversion on the given path
     */
     async getRateByPath(path: Token[], amount: string = '1'): Promise<string> {
         let bgn = 0;

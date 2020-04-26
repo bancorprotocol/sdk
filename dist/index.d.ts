@@ -4,7 +4,6 @@ import { Settings } from './types';
  * Main SDK object, should be instantiated using the `create` static method
  */
 export declare class SDK {
-    conversionPaths: any;
     history: any;
     pricing: any;
     utils: any;

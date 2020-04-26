@@ -59,14 +59,14 @@ var Pricing = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     /**
-    * returns the cheapest rate between any two tokens in the bancor network
-    * getting the rate between tokens of different blockchains is not supported
+    * returns the best conversion path for a given pair of tokens in the bancor network, along with its rate
+    * this function currently does not support tokens of different blockchains; use `getRateByPath` instead
     *
     * @param sourceToken    source token
     * @param targetToken    target token
-    * @param amount         input amount in decimal string
+    * @param amount         input amount
     *
-    * @returns  rate between the source token and the target token in decimal string
+    * @returns  the best conversion path between the source token and the target token, along with the output amount
     */
     Pricing.prototype.getRate = function (sourceToken, targetToken, amount) {
         if (amount === void 0) { amount = '1'; }
@@ -85,18 +85,21 @@ var Pricing = /** @class */ (function (_super) {
                             if (betterRate(rates, index, i) || (equalRate(rates, index, i) && betterPath(paths, index, i)))
                                 index = i;
                         }
-                        return [2 /*return*/, rates[index]];
+                        return [2 /*return*/, {
+                                path: paths[index],
+                                rate: rates[index]
+                            }];
                 }
             });
         });
     };
     /**
-    * returns the rate between any two tokens in the bancor network for a given conversion path
+    * returns the rate for a given conversion path in the bancor network
     *
     * @param path    conversion path
-    * @param amount  input amount in decimal string
+    * @param amount  input amount
     *
-    * @returns  rate between the first token in the path and the last token in the path in decimal string
+    * @returns  output amount for a conversion on the given path
     */
     Pricing.prototype.getRateByPath = function (path, amount) {
         if (amount === void 0) { amount = '1'; }
