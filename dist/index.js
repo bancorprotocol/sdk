@@ -41,6 +41,9 @@ var conversion_paths_1 = require("./conversion_paths");
 var history_1 = require("./history");
 var pricing_1 = require("./pricing");
 var utils_1 = require("./utils");
+/**
+ * Main SDK object, should be instantiated using the `create` static method
+ */
 var SDK = /** @class */ (function () {
     function SDK() {
         this.conversionPaths = null;
@@ -49,6 +52,11 @@ var SDK = /** @class */ (function () {
         this.utils = null;
         this._core = new core_1.Core();
     }
+    /**
+    * creates an initializes a new SDK object
+    *
+    * @param settings   initialization settings
+    */
     SDK.create = function (settings) {
         return __awaiter(this, void 0, void 0, function () {
             var sdk;
@@ -68,6 +76,11 @@ var SDK = /** @class */ (function () {
             });
         });
     };
+    /**
+    * deinitializes and destroys an existing SDK object
+    *
+    * @param sdk   sdk object
+    */
     SDK.destroy = function (sdk) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

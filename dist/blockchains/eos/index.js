@@ -93,10 +93,10 @@ var EOS = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         anchorToken = this.getAnchorToken();
-                        return [4 /*yield*/, this.getPathToAnchor(this.jsonRpc, from, anchorToken)];
+                        return [4 /*yield*/, this.getPathToAnchor(from, anchorToken)];
                     case 1:
                         sourcePath = _a.sent();
-                        return [4 /*yield*/, this.getPathToAnchor(this.jsonRpc, to, anchorToken)];
+                        return [4 /*yield*/, this.getPathToAnchor(to, anchorToken)];
                     case 2:
                         targetPath = _a.sent();
                         return [2 /*return*/, this.getShortestPath(sourcePath, targetPath)];
@@ -114,7 +114,7 @@ var EOS = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         if (!(i < path.length - 1)) return [3 /*break*/, 4];
-                        return [4 /*yield*/, this.getConversionRate(this.jsonRpc, path[i + 1], path[i], path[i + 2], amount)];
+                        return [4 /*yield*/, this.getConversionRate(path[i + 1], path[i], path[i + 2], amount)];
                     case 2:
                         amount = _a.sent();
                         _a.label = 3;
@@ -147,12 +147,12 @@ var EOS = /** @class */ (function () {
             });
         });
     };
-    EOS.prototype.getConverterSettings = function (jsonRpc, converter) {
+    EOS.prototype.getConverterSettings = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
             var res;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, jsonRpc.get_table_rows({
+                    case 0: return [4 /*yield*/, this.jsonRpc.get_table_rows({
                             json: true,
                             code: converter.blockchainId,
                             scope: converter.blockchainId,
@@ -167,12 +167,12 @@ var EOS = /** @class */ (function () {
         });
     };
     ;
-    EOS.prototype.getSmartTokenStat = function (jsonRpc, smartToken) {
+    EOS.prototype.getSmartTokenStat = function (smartToken) {
         return __awaiter(this, void 0, void 0, function () {
             var stat;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, jsonRpc.get_table_rows({
+                    case 0: return [4 /*yield*/, this.jsonRpc.get_table_rows({
                             json: true,
                             code: smartToken.blockchainId,
                             scope: smartToken.symbol,
@@ -187,12 +187,12 @@ var EOS = /** @class */ (function () {
         });
     };
     ;
-    EOS.prototype.getReserves = function (jsonRpc, converter) {
+    EOS.prototype.getReserves = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
             var res;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, jsonRpc.get_table_rows({
+                    case 0: return [4 /*yield*/, this.jsonRpc.get_table_rows({
                             json: true,
                             code: converter.blockchainId,
                             scope: converter.blockchainId,
@@ -207,12 +207,12 @@ var EOS = /** @class */ (function () {
         });
     };
     ;
-    EOS.prototype.getReserveBalance = function (jsonRpc, converter, reserveToken) {
+    EOS.prototype.getReserveBalance = function (converter, reserveToken) {
         return __awaiter(this, void 0, void 0, function () {
             var res;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, jsonRpc.get_table_rows({
+                    case 0: return [4 /*yield*/, this.jsonRpc.get_table_rows({
                             json: true,
                             code: reserveToken.blockchainId,
                             scope: converter.blockchainId,
@@ -243,12 +243,12 @@ var EOS = /** @class */ (function () {
     EOS.prototype.getDecimals = function (amount) {
         return amount.split('.')[1].length;
     };
-    EOS.prototype.getConversionRate = function (jsonRpc, smartToken, sourceToken, targetToken, amount) {
+    EOS.prototype.getConversionRate = function (smartToken, sourceToken, targetToken, amount) {
         return __awaiter(this, void 0, void 0, function () {
             var smartTokenStat, converterBlockchainId, converter, conversionSettings, conversionFee, reserves, magnitude, targetDecimals, returnAmount, supply, reserveBalance, reserveRatio, supply, reserveBalance, reserveRatio, sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getSmartTokenStat(jsonRpc, smartToken)];
+                    case 0: return [4 /*yield*/, this.getSmartTokenStat(smartToken)];
                     case 1:
                         smartTokenStat = _a.sent();
                         return [4 /*yield*/, smartTokenStat.issuer];
@@ -259,18 +259,18 @@ var EOS = /** @class */ (function () {
                             blockchainId: converterBlockchainId,
                             symbol: smartToken.symbol
                         };
-                        return [4 /*yield*/, this.getConverterSettings(jsonRpc, converter)];
+                        return [4 /*yield*/, this.getConverterSettings(converter)];
                     case 3:
                         conversionSettings = _a.sent();
                         conversionFee = conversionSettings.fee;
-                        return [4 /*yield*/, this.getReserves(jsonRpc, converter)];
+                        return [4 /*yield*/, this.getReserves(converter)];
                     case 4:
                         reserves = _a.sent();
                         magnitude = 1;
                         targetDecimals = 4;
                         if (!helpers.isTokenEqual(sourceToken, smartToken)) return [3 /*break*/, 6];
                         supply = this.getBalance(smartTokenStat.supply);
-                        return [4 /*yield*/, this.getReserveBalance(jsonRpc, converter, targetToken)];
+                        return [4 /*yield*/, this.getReserveBalance(converter, targetToken)];
                     case 5:
                         reserveBalance = _a.sent();
                         reserveRatio = this.getReserve(reserves, targetToken).ratio;
@@ -280,18 +280,18 @@ var EOS = /** @class */ (function () {
                     case 6:
                         if (!helpers.isTokenEqual(targetToken, smartToken)) return [3 /*break*/, 8];
                         supply = this.getBalance(smartTokenStat.supply);
-                        return [4 /*yield*/, this.getReserveBalance(jsonRpc, converter, sourceToken)];
+                        return [4 /*yield*/, this.getReserveBalance(converter, sourceToken)];
                     case 7:
                         reserveBalance = _a.sent();
                         reserveRatio = this.getReserve(reserves, sourceToken).ratio;
                         targetDecimals = this.getDecimals(supply);
                         returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
                         return [3 /*break*/, 11];
-                    case 8: return [4 /*yield*/, this.getReserveBalance(jsonRpc, converter, sourceToken)];
+                    case 8: return [4 /*yield*/, this.getReserveBalance(converter, sourceToken)];
                     case 9:
                         sourceReserveBalance = _a.sent();
                         sourceReserveRatio = this.getReserve(reserves, sourceToken).ratio;
-                        return [4 /*yield*/, this.getReserveBalance(jsonRpc, converter, targetToken)];
+                        return [4 /*yield*/, this.getReserveBalance(converter, targetToken)];
                     case 10:
                         targetReserveBalance = _a.sent();
                         targetReserveRatio = this.getReserve(reserves, targetToken).ratio;
@@ -333,7 +333,7 @@ var EOS = /** @class */ (function () {
             });
         });
     };
-    EOS.prototype.getPathToAnchor = function (jsonRpc, token, anchorToken) {
+    EOS.prototype.getPathToAnchor = function (token, anchorToken) {
         return __awaiter(this, void 0, void 0, function () {
             var smartTokens;
             return __generator(this, function (_a) {
