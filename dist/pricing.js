@@ -50,11 +50,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var sdk_module_1 = require("./sdk_module");
+/**
+ * The Pricing module provides access to pricing and rates logic for tokens in the bancor network
+ */
 var Pricing = /** @class */ (function (_super) {
     __extends(Pricing, _super);
     function Pricing() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    /**
+    * returns the cheapest rate between any two tokens in the bancor network
+    *
+    * @param sourceToken    source token
+    * @param targetToken    target token
+    * @param amount         input amount in decimal string
+    *
+    * @returns  rate between the source token and the target token in decimal string
+    */
     Pricing.prototype.getRate = function (sourceToken, targetToken, amount) {
         if (amount === void 0) { amount = '1'; }
         return __awaiter(this, void 0, void 0, function () {
@@ -70,6 +82,14 @@ var Pricing = /** @class */ (function (_super) {
             });
         });
     };
+    /**
+    * returns the rate between any two tokens in the bancor network for a given conversion path
+    *
+    * @param path    conversion path
+    * @param amount  input amount in decimal string
+    *
+    * @returns  rate between the first token in the path and the last token in the path in decimal string
+    */
     Pricing.prototype.getRateByPath = function (path, amount) {
         if (amount === void 0) { amount = '1'; }
         return __awaiter(this, void 0, void 0, function () {

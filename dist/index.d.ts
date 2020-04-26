@@ -10,13 +10,17 @@ export declare class SDK {
     utils: any;
     _core: Core;
     /**
-    * creates an initializes a new SDK object
+    * creates and initializes a new SDK object
+    * should be called as the first step before using the SDK
     *
     * @param settings   initialization settings
+    *
+    * @returns  new SDK object
     */
     static create(settings: Settings): Promise<SDK>;
     /**
-    * deinitializes and destroys an existing SDK object
+    * cleans up and destroys an existing SDK object
+    * should be called as the last step after the SDK work is complete to free up resources
     *
     * @param sdk   sdk object
     */

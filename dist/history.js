@@ -50,11 +50,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var sdk_module_1 = require("./sdk_module");
+/**
+ * The History module allows querying historical data in the bancor network
+ */
 var History = /** @class */ (function (_super) {
     __extends(History, _super);
     function History() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    /**
+    * returns all Conversion events for a given liquidity pool / liquid token between two block numbers
+    *
+    * @param token      smart token
+    * @param fromBlock  start block number
+    * @param toBlock    end block number
+    *
+    * @returns  list of Conversion events
+    */
     History.prototype.getConversionEvents = function (token, fromBlock, toBlock) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -65,6 +77,15 @@ var History = /** @class */ (function (_super) {
             });
         });
     };
+    /**
+    * returns all Conversion events for a given liquidity pool / liquid token between two points in time
+    *
+    * @param token          smart token
+    * @param fromTimestamp  start time
+    * @param toTimestamp    end time
+    *
+    * @returns  list of Conversion events
+    */
     History.prototype.getConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

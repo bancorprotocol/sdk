@@ -50,11 +50,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var sdk_module_1 = require("./sdk_module");
+/**
+ * The ConversionPaths module provides an interface to path generation logic
+ */
 var ConversionPaths = /** @class */ (function (_super) {
     __extends(ConversionPaths, _super);
     function ConversionPaths() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    /**
+    * finds the cheapest path between any two tokens in the bancor network
+    *
+    * @param sourceToken    source token
+    * @param targetToken    target token
+    * @param amount         input amount in decimal string
+    *
+    * @returns  conversion path
+    */
     ConversionPaths.prototype.getPath = function (sourceToken, targetToken, amount) {
         if (amount === void 0) { amount = '1'; }
         return __awaiter(this, void 0, void 0, function () {

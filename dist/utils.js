@@ -50,11 +50,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var sdk_module_1 = require("./sdk_module");
+/**
+ * The Utils module provides various utility and helper functions
+ */
 var Utils = /** @class */ (function (_super) {
     __extends(Utils, _super);
     function Utils() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    /**
+    * returns the version number of a converter in the bancor network
+    *
+    * @param converter    converter
+    *
+    * @returns  converter version
+    */
     Utils.prototype.getConverterVersion = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
