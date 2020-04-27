@@ -18,7 +18,7 @@ function fromWei(amount, decimals) {
 }
 exports.fromWei = fromWei;
 function toDecimalPlaces(amount, decimals) {
-    return amount.toDecimalPlaces(decimals, decimal_js_1.default.ROUND_DOWN).toFixed();
+    return amount.toDecimalPlaces(decimals).toFixed();
 }
 exports.toDecimalPlaces = toDecimalPlaces;
 function isTokenEqual(token1, token2) {

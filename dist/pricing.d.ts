@@ -14,7 +14,7 @@ export declare class Pricing extends SDKModule {
     *
     * @returns  the best rate between the source token and the target token, along with the conversion path used to produce that rate
     */
-    getRate(sourceToken: Token, targetToken: Token, amount?: string): Promise<{
+    getPathAndRate(sourceToken: Token, targetToken: Token, amount?: string): Promise<{
         path: Token[];
         rate: string;
     }>;

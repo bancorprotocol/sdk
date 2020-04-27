@@ -24,41 +24,69 @@ export class Core {
             await this.blockchains[blockchainType].refresh();
     }
 
-    async getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]> {
-        if (sourceToken.blockchainType == targetToken.blockchainType)
-            return await this.blockchains[sourceToken.blockchainType].getPaths(sourceToken, targetToken);
+    async getPathAndRate(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
+        const sourceBlockchain = this.blockchains[sourceToken.blockchainType];
+        const targetBlockchain = this.blockchains[targetToken.blockchainType];
 
-        const sourceBlockchain: Blockchain = this.blockchains[sourceToken.blockchainType];
-        const targetBlockchain: Blockchain = this.blockchains[targetToken.blockchainType];
-        const sourcePaths: Token[][] = await sourceBlockchain.getPaths(sourceToken, sourceBlockchain.getAnchorToken());
-        const targetPaths: Token[][] = await targetBlockchain.getPaths(targetBlockchain.getAnchorToken(), targetToken);
-        const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
-        const cartesian = (a, b?, ...c) => (b ? cartesian(f(a, b), ...c) : a);
-        return cartesian(sourcePaths, targetPaths);
-    }
-
-    async getRates(paths: Token[][], amount: string = '1'): Promise<string[]> {
-        const path0Form = this.pathForm(paths[0]);
-        if (paths.slice(1).some(path => this.pathForm(path) != path0Form))
-            throw new Error('getRates input paths must bear the same source and the same target tokens');
-
-        switch (this.pathType(paths[0][0].blockchainType, paths[0].slice(-1)[0].blockchainType)) {
-        case this.pathType(BlockchainType.Ethereum, BlockchainType.Ethereum):
-            return await this.blockchains[BlockchainType.Ethereum].getRates(paths, amount);
-        case this.pathType(BlockchainType.Ethereum, BlockchainType.EOS):
-            throw new Error('getRates from ethereum token to eos token not supported');
-        case this.pathType(BlockchainType.EOS, BlockchainType.Ethereum):
-            throw new Error('getRates from eos token to ethereum token not supported');
-        case this.pathType(BlockchainType.EOS, BlockchainType.EOS):
-            return await Promise.all(paths.map(path => this.blockchains[BlockchainType.EOS].getRateByPath(path, amount)));
+        if (sourceBlockchain == targetBlockchain) {
+            const paths = await sourceBlockchain.getPaths(sourceToken, targetToken);
+            const rates = await sourceBlockchain.getRates(paths, amount);
+            const index = Core.getBest(paths, rates);
+            return {
+                path: paths[index],
+                rate: rates[index],
+            };
         }
+
+        const sourcePaths = await sourceBlockchain.getPaths(sourceToken, sourceBlockchain.getAnchorToken());
+        const sourceRates = await sourceBlockchain.getRates(sourcePaths, amount);
+        const sourceIndex = Core.getBest(sourcePaths, sourceRates);
+
+        const targetPaths = await targetBlockchain.getPaths(targetBlockchain.getAnchorToken(), targetToken);
+        const targetRates = await targetBlockchain.getRates(targetPaths, sourceRates[sourceIndex]);
+        const targetIndex = Core.getBest(targetPaths, targetRates);
+
+        return {
+            path: [...sourcePaths[sourceIndex], ...targetPaths[targetIndex]],
+            rate: targetRates[targetIndex],
+        };
     }
 
-    private pathType(sourceBlockchain: BlockchainType, targetBlockchain: BlockchainType): string {
-        return sourceBlockchain + ',' + targetBlockchain;
+    async getRateByPath(path: Token[], amount: string = '1'): Promise<string> {
+        let bgn = 0;
+        while (bgn < path.length) {
+            const end = path.slice(bgn).findIndex(token => token.blockchainType != path[bgn].blockchainType) >>> 0;
+            amount = await this.blockchains[path[bgn].blockchainType].getRateByPath(path.slice(bgn, end), amount);
+            bgn = end;
+        }
+        return amount;
     }
-    
-    private pathForm(path: Token[]): string {
-        return JSON.stringify(path[0]) + JSON.stringify(path[path.length - 1]);
+
+    private static getBest(paths: Token[][], rates: string[]): number {
+        let index = 0;
+        for (let i = 1; i < rates.length; i++) {
+            if (Core.betterRate(rates, index, i) || (Core.equalRate(rates, index, i) && Core.betterPath(paths, index, i)))
+                index = i;
+        }
+        return index;
+    }
+
+    private static betterRate(rates: string[], index1: number, index2: number): boolean {
+        // return Number(rates[index1]) < Number(rates[index2]);
+        const rate1 = rates[index1].split('.').concat('');
+        const rate2 = rates[index2].split('.').concat('');
+        rate1[0] = rate1[0].padStart(rate2[0].length, '0');
+        rate2[0] = rate2[0].padStart(rate1[0].length, '0');
+        rate1[1] = rate1[1].padEnd(rate2[1].length, '0');
+        rate2[1] = rate2[1].padEnd(rate1[1].length, '0');
+        return rate1.join('') < rate2.join('');
+    }
+
+    private static equalRate(rates: string[], index1: number, index2: number): boolean {
+        return rates[index1] == rates[index2];
+    }
+
+    private static betterPath(paths: Token[][], index1: number, index2: number): boolean {
+        return paths[index1].length > paths[index2].length;
     }
 }

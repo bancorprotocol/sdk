@@ -100,10 +100,11 @@ export class Ethereum implements Blockchain {
     }
 
     async getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]> {
-        const addressPaths = tokenPaths.map(tokenPath => tokenPath.map(token => Web3.helpers.toChecksumAddress(token.blockchainId)));
+        const addressPaths = tokenPaths.map(tokenPath => tokenPath.map(token => Web3.utils.toChecksumAddress(token.blockchainId)));
         const sourceDecimals = await getDecimals(this, addressPaths[0][0]);
         const targetDecimals = await getDecimals(this, addressPaths[0].slice(-1)[0]);
-        return await getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals));
+        const tokenRates = await getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals));
+        return tokenRates.map(tokenRate => helpers.fromWei(tokenRate, targetDecimals));
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {

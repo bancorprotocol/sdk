@@ -204,11 +204,11 @@ var Ethereum = /** @class */ (function () {
     };
     Ethereum.prototype.getRates = function (tokenPaths, tokenAmount) {
         return __awaiter(this, void 0, void 0, function () {
-            var addressPaths, sourceDecimals, targetDecimals;
+            var addressPaths, sourceDecimals, targetDecimals, tokenRates;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        addressPaths = tokenPaths.map(function (tokenPath) { return tokenPath.map(function (token) { return web3_1.default.helpers.toChecksumAddress(token.blockchainId); }); });
+                        addressPaths = tokenPaths.map(function (tokenPath) { return tokenPath.map(function (token) { return web3_1.default.utils.toChecksumAddress(token.blockchainId); }); });
                         return [4 /*yield*/, exports.getDecimals(this, addressPaths[0][0])];
                     case 1:
                         sourceDecimals = _a.sent();
@@ -216,7 +216,9 @@ var Ethereum = /** @class */ (function () {
                     case 2:
                         targetDecimals = _a.sent();
                         return [4 /*yield*/, exports.getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals))];
-                    case 3: return [2 /*return*/, _a.sent()];
+                    case 3:
+                        tokenRates = _a.sent();
+                        return [2 /*return*/, tokenRates.map(function (tokenRate) { return helpers.fromWei(tokenRate, targetDecimals); })];
                 }
             });
         });
