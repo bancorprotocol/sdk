@@ -29,26 +29,17 @@ export class EOS implements Blockchain {
         return anchorToken;
     }
 
-    async getPath(from: Token, to: Token): Promise<Token[]> {
+    async getPaths(from: Token, to: Token): Promise<Token[][]> {
         const anchorToken = this.getAnchorToken();
         const sourcePath = await this.getPathToAnchor(from, anchorToken);
         const targetPath = await this.getPathToAnchor(to, anchorToken);
-        return this.getShortestPath(sourcePath, targetPath);
+        return [this.getShortestPath(sourcePath, targetPath)];
     }
 
     async getRateByPath(path: Token[], amount: string): Promise<string> {
         for (let i = 0; i < path.length - 1; i += 2)
             amount = await this.getConversionRate(path[i + 1], path[i], path[i + 2], amount);
         return amount.toString();
-    }
-
-    async getRate(from: Token, to: Token, amount: string): Promise<string> {
-        return await this.getRateByPath(await this.getPath(from, to), amount);
-    }
-
-    async getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]> {
-        let path = await this.getPath(sourceToken, targetToken);
-        return [path];
     }
 
     async getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]> {

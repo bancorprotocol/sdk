@@ -86,7 +86,7 @@ var EOS = /** @class */ (function () {
     EOS.prototype.getAnchorToken = function () {
         return anchorToken;
     };
-    EOS.prototype.getPath = function (from, to) {
+    EOS.prototype.getPaths = function (from, to) {
         return __awaiter(this, void 0, void 0, function () {
             var anchorToken, sourcePath, targetPath;
             return __generator(this, function (_a) {
@@ -99,7 +99,7 @@ var EOS = /** @class */ (function () {
                         return [4 /*yield*/, this.getPathToAnchor(to, anchorToken)];
                     case 2:
                         targetPath = _a.sent();
-                        return [2 /*return*/, this.getShortestPath(sourcePath, targetPath)];
+                        return [2 /*return*/, [this.getShortestPath(sourcePath, targetPath)]];
                 }
             });
         });
@@ -122,33 +122,6 @@ var EOS = /** @class */ (function () {
                         i += 2;
                         return [3 /*break*/, 1];
                     case 4: return [2 /*return*/, amount.toString()];
-                }
-            });
-        });
-    };
-    EOS.prototype.getRate = function (from, to, amount) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = this.getRateByPath;
-                        return [4 /*yield*/, this.getPath(from, to)];
-                    case 1: return [4 /*yield*/, _a.apply(this, [_b.sent(), amount])];
-                    case 2: return [2 /*return*/, _b.sent()];
-                }
-            });
-        });
-    };
-    EOS.prototype.getPaths = function (sourceToken, targetToken) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getPath(sourceToken, targetToken)];
-                    case 1:
-                        path = _a.sent();
-                        return [2 /*return*/, [path]];
                 }
             });
         });
