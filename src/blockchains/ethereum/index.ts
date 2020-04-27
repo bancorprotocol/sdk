@@ -3,8 +3,8 @@ import * as abis from './abis';
 import * as helpers from '../../helpers';
 import * as conversionEvents from './conversion_events';
 import * as converterVersion from './converter_version';
-import { Blockchain, BlockchainType, Converter, ConversionEvent, Token } from '../../types';
 import { timestampToBlockNumber } from './timestamp_to_block_number';
+import { Blockchain, BlockchainType, Converter, ConversionEvent, Token } from '../../types';
 
 const CONTRACT_ADDRESSES = {
     main: {
@@ -86,10 +86,7 @@ export class Ethereum implements Blockchain {
         const tokens = path.map(token => token.blockchainId);
         const sourceDecimals = await getDecimals(this, tokens[0]);
         const targetDecimals = await getDecimals(this, tokens[tokens.length - 1]);
-        amount = helpers.toWei(amount, sourceDecimals);
-        amount = await getReturn(this, tokens, amount);
-        amount = helpers.fromWei(amount, targetDecimals);
-        return amount;
+        return helpers.fromWei(await getReturn(this, tokens, helpers.toWei(amount, sourceDecimals)), targetDecimals);
     }
 
     async getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]> {

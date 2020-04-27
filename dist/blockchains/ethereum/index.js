@@ -69,8 +69,8 @@ var abis = __importStar(require("./abis"));
 var helpers = __importStar(require("../../helpers"));
 var conversionEvents = __importStar(require("./conversion_events"));
 var converterVersion = __importStar(require("./converter_version"));
-var types_1 = require("../../types");
 var timestamp_to_block_number_1 = require("./timestamp_to_block_number");
+var types_1 = require("../../types");
 var CONTRACT_ADDRESSES = {
     main: {
         registry: '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4',
@@ -170,23 +170,20 @@ var Ethereum = /** @class */ (function () {
     };
     Ethereum.prototype.getRateByPath = function (path, amount) {
         return __awaiter(this, void 0, void 0, function () {
-            var tokens, sourceDecimals, targetDecimals;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var tokens, sourceDecimals, targetDecimals, _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         tokens = path.map(function (token) { return token.blockchainId; });
                         return [4 /*yield*/, exports.getDecimals(this, tokens[0])];
                     case 1:
-                        sourceDecimals = _a.sent();
+                        sourceDecimals = _c.sent();
                         return [4 /*yield*/, exports.getDecimals(this, tokens[tokens.length - 1])];
                     case 2:
-                        targetDecimals = _a.sent();
-                        amount = helpers.toWei(amount, sourceDecimals);
-                        return [4 /*yield*/, exports.getReturn(this, tokens, amount)];
-                    case 3:
-                        amount = _a.sent();
-                        amount = helpers.fromWei(amount, targetDecimals);
-                        return [2 /*return*/, amount];
+                        targetDecimals = _c.sent();
+                        _b = (_a = helpers).fromWei;
+                        return [4 /*yield*/, exports.getReturn(this, tokens, helpers.toWei(amount, sourceDecimals))];
+                    case 3: return [2 /*return*/, _b.apply(_a, [_c.sent(), targetDecimals])];
                 }
             });
         });
