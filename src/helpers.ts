@@ -17,7 +17,7 @@ export function fromWei(amount, decimals) {
 }
 
 export function toDecimalPlaces(amount, decimals) {
-    return amount.toDecimalPlaces(decimals, helpers.ROUND_DOWN);
+    return amount.toDecimalPlaces(decimals, helpers.ROUND_DOWN).toFixed();
 }
 
 export function isTokenEqual(token1: Token, token2: Token) {

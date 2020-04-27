@@ -39,7 +39,7 @@ export class EOS implements Blockchain {
     async getRateByPath(path: Token[], amount: string): Promise<string> {
         for (let i = 0; i < path.length - 1; i += 2)
             amount = await this.getConversionRate(path[i + 1], path[i], path[i + 2], amount);
-        return amount.toString();
+        return amount;
     }
 
     async getRates(paths: Token[][], amount: string): Promise<string[]> {
@@ -134,7 +134,7 @@ export class EOS implements Blockchain {
         let conversionFee = conversionSettings.fee;
         let reserves = await this.getReserves(converter);
         let magnitude = 1;
-        let targetDecimals = 4;
+        let targetDecimals;
         let returnAmount;
 
         // sale
@@ -164,8 +164,7 @@ export class EOS implements Blockchain {
             magnitude = 2;
         }
 
-        returnAmount = helpers.getFinalAmount(returnAmount, conversionFee, magnitude);
-        return helpers.toDecimalPlaces(returnAmount, targetDecimals);
+        return helpers.toDecimalPlaces(helpers.getFinalAmount(returnAmount, conversionFee, magnitude), targetDecimals);
     }
 
     private async getTokenSmartTokens(token: Token) {

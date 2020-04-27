@@ -121,7 +121,7 @@ var EOS = /** @class */ (function () {
                     case 3:
                         i += 2;
                         return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/, amount.toString()];
+                    case 4: return [2 /*return*/, amount];
                 }
             });
         });
@@ -278,7 +278,6 @@ var EOS = /** @class */ (function () {
                     case 4:
                         reserves = _a.sent();
                         magnitude = 1;
-                        targetDecimals = 4;
                         if (!helpers.isTokenEqual(sourceToken, smartToken)) return [3 /*break*/, 6];
                         supply = this.getBalance(smartTokenStat.supply);
                         return [4 /*yield*/, this.getReserveBalance(converter, targetToken)];
@@ -310,9 +309,7 @@ var EOS = /** @class */ (function () {
                         returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
                         magnitude = 2;
                         _a.label = 11;
-                    case 11:
-                        returnAmount = helpers.getFinalAmount(returnAmount, conversionFee, magnitude);
-                        return [2 /*return*/, helpers.toDecimalPlaces(returnAmount, targetDecimals)];
+                    case 11: return [2 /*return*/, helpers.toDecimalPlaces(helpers.getFinalAmount(returnAmount, conversionFee, magnitude), targetDecimals)];
                 }
             });
         });
