@@ -36,12 +36,6 @@ export class EOS implements Blockchain {
         return [this.getShortestPath(sourcePath, targetPath)];
     }
 
-    async getRateByPath(path: Token[], amount: string): Promise<string> {
-        for (let i = 0; i < path.length - 1; i += 2)
-            amount = await this.getConversionRate(path[i + 1], path[i], path[i + 2], amount);
-        return amount;
-    }
-
     async getRates(paths: Token[][], amount: string): Promise<string[]> {
         return await Promise.all(paths.map(path => this.getRateByPath(path, amount)));
     }
@@ -56,6 +50,12 @@ export class EOS implements Blockchain {
 
     async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
         throw new Error('getConversionEventsByTimestamp not supported on eos');
+    }
+
+    private async getRateByPath(path: Token[], amount: string): Promise<string> {
+        for (let i = 0; i < path.length - 1; i += 2)
+            amount = await this.getConversionRate(path[i + 1], path[i], path[i + 2], amount);
+        return amount;
     }
 
     private async getConverterSettings(converter: Converter) {

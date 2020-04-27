@@ -14,7 +14,6 @@ export declare class Ethereum implements Blockchain {
     static destroy(ethereum: Ethereum): Promise<void>;
     refresh(): Promise<void>;
     getAnchorToken(): Token;
-    getRateByPath(path: Token[], amount: string): Promise<string>;
     getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]>;
     getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]>;
     getConverterVersion(converter: Converter): Promise<string>;

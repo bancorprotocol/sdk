@@ -168,26 +168,6 @@ var Ethereum = /** @class */ (function () {
     Ethereum.prototype.getAnchorToken = function () {
         return { blockchainType: types_1.BlockchainType.Ethereum, blockchainId: exports.getContractAddresses(this).anchorToken };
     };
-    Ethereum.prototype.getRateByPath = function (path, amount) {
-        return __awaiter(this, void 0, void 0, function () {
-            var tokens, sourceDecimals, targetDecimals, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        tokens = path.map(function (token) { return token.blockchainId; });
-                        return [4 /*yield*/, exports.getDecimals(this, tokens[0])];
-                    case 1:
-                        sourceDecimals = _c.sent();
-                        return [4 /*yield*/, exports.getDecimals(this, tokens[tokens.length - 1])];
-                    case 2:
-                        targetDecimals = _c.sent();
-                        _b = (_a = helpers).fromWei;
-                        return [4 /*yield*/, exports.getReturn(this, tokens, helpers.toWei(amount, sourceDecimals))];
-                    case 3: return [2 /*return*/, _b.apply(_a, [_c.sent(), targetDecimals])];
-                }
-            });
-        });
-    };
     Ethereum.prototype.getPaths = function (sourceToken, targetToken) {
         return __awaiter(this, void 0, void 0, function () {
             var sourceAddress, targetAddress, addressPaths;

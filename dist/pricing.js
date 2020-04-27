@@ -60,7 +60,6 @@ var Pricing = /** @class */ (function (_super) {
     }
     /**
     * returns the best conversion path for a given pair of tokens in the bancor network, along with its rate
-    * this function currently does not support tokens of different blockchains; use `getRateByPath` instead
     *
     * @param sourceToken    source token
     * @param targetToken    target token

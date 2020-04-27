@@ -104,28 +104,6 @@ var EOS = /** @class */ (function () {
             });
         });
     };
-    EOS.prototype.getRateByPath = function (path, amount) {
-        return __awaiter(this, void 0, void 0, function () {
-            var i;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        i = 0;
-                        _a.label = 1;
-                    case 1:
-                        if (!(i < path.length - 1)) return [3 /*break*/, 4];
-                        return [4 /*yield*/, this.getConversionRate(path[i + 1], path[i], path[i + 2], amount)];
-                    case 2:
-                        amount = _a.sent();
-                        _a.label = 3;
-                    case 3:
-                        i += 2;
-                        return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/, amount];
-                }
-            });
-        });
-    };
     EOS.prototype.getRates = function (paths, amount) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
@@ -155,6 +133,28 @@ var EOS = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 throw new Error('getConversionEventsByTimestamp not supported on eos');
+            });
+        });
+    };
+    EOS.prototype.getRateByPath = function (path, amount) {
+        return __awaiter(this, void 0, void 0, function () {
+            var i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        i = 0;
+                        _a.label = 1;
+                    case 1:
+                        if (!(i < path.length - 1)) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.getConversionRate(path[i + 1], path[i], path[i + 2], amount)];
+                    case 2:
+                        amount = _a.sent();
+                        _a.label = 3;
+                    case 3:
+                        i += 2;
+                        return [3 /*break*/, 1];
+                    case 4: return [2 /*return*/, amount];
+                }
             });
         });
     };

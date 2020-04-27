@@ -169,21 +169,24 @@ var Core = /** @class */ (function () {
     Core.prototype.getRateByPath = function (path, amount) {
         if (amount === void 0) { amount = '1'; }
         return __awaiter(this, void 0, void 0, function () {
-            var bgn, end;
+            var sourceBlockchainType, targetBlockchainType, index, sourceBlockchainPath, targetBlockchainPath, sourceBlockchainRate;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        bgn = 0;
-                        _a.label = 1;
-                    case 1:
-                        if (!(bgn < path.length)) return [3 /*break*/, 3];
-                        end = path.slice(bgn).findIndex(function (token) { return token.blockchainType != path[bgn].blockchainType; }) >>> 0;
-                        return [4 /*yield*/, this.blockchains[path[bgn].blockchainType].getRateByPath(path.slice(bgn, end), amount)];
+                        sourceBlockchainType = path[0].blockchainType;
+                        targetBlockchainType = path[path.length - 1].blockchainType;
+                        if (!(sourceBlockchainType == targetBlockchainType)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.blockchains[sourceBlockchainType].getRates([path], amount)];
+                    case 1: return [2 /*return*/, (_a.sent())[0]];
                     case 2:
-                        amount = _a.sent();
-                        bgn = end;
-                        return [3 /*break*/, 1];
-                    case 3: return [2 /*return*/, amount];
+                        index = path.findIndex(function (item) { return item.blockchainType == targetBlockchainType; });
+                        sourceBlockchainPath = path.slice(0, index);
+                        targetBlockchainPath = path.slice(index);
+                        return [4 /*yield*/, this.blockchains[sourceBlockchainType].getRates([sourceBlockchainPath], amount)];
+                    case 3:
+                        sourceBlockchainRate = (_a.sent())[0];
+                        return [4 /*yield*/, this.blockchains[targetBlockchainType].getRates([targetBlockchainPath], sourceBlockchainRate)];
+                    case 4: return [2 /*return*/, (_a.sent())[0]];
                 }
             });
         });

@@ -82,13 +82,6 @@ export class Ethereum implements Blockchain {
         return {blockchainType: BlockchainType.Ethereum, blockchainId: getContractAddresses(this).anchorToken};
     }
 
-    async getRateByPath(path: Token[], amount: string): Promise<string> {
-        const tokens = path.map(token => token.blockchainId);
-        const sourceDecimals = await getDecimals(this, tokens[0]);
-        const targetDecimals = await getDecimals(this, tokens[tokens.length - 1]);
-        return helpers.fromWei(await getReturn(this, tokens, helpers.toWei(amount, sourceDecimals)), targetDecimals);
-    }
-
     async getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]> {
         const sourceAddress = Web3.utils.toChecksumAddress(sourceToken.blockchainId);
         const targetAddress = Web3.utils.toChecksumAddress(targetToken.blockchainId);
