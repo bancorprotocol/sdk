@@ -20,9 +20,10 @@ describe('paths test', () => {
     });
 
     it('getPaths from ethereum token to ethereum token', async () => {
+        const blockchain = sdk._core.blockchains[BlockchainType.Ethereum] as ethereum.Ethereum;
         const spyGetPathsFunc = jest
-            .spyOn(sdk._core.blockchains[BlockchainType.Ethereum], 'getPathsFunc')
-            .mockImplementationOnce(sdk._core.blockchains[BlockchainType.Ethereum].getAllPathsFunc);
+            .spyOn(blockchain, 'getPathsFunc')
+            .mockImplementationOnce(blockchain.getAllPathsFunc);
 
         const spyGetGraph = jest
             .spyOn(ethereum, 'getGraph')

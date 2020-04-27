@@ -87,8 +87,9 @@ describe('rates test', () => {
         jest.spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
+        const blockchain = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
         const spyGetTableRows = jest
-            .spyOn(sdk._core.blockchains[BlockchainType.EOS].jsonRpc, 'get_table_rows')
+            .spyOn(blockchain.jsonRpc, 'get_table_rows')
             .mockImplementation((args: any) => eosMocks.jsonRpcGetTableRows(args));
 
         const received = await sdk.pricing.getRate(
@@ -113,8 +114,9 @@ describe('rates test', () => {
         jest.spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
+        const blockchain = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
         const spyGetTableRows = jest
-            .spyOn(sdk._core.blockchains[BlockchainType.EOS].jsonRpc, 'get_table_rows')
+            .spyOn(blockchain.jsonRpc, 'get_table_rows')
             .mockImplementation((args: any) => eosMocks.jsonRpcGetTableRows(args));
 
         const received = await sdk.pricing.getRate(
@@ -139,8 +141,9 @@ describe('rates test', () => {
         jest.spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
 
+        const blockchain = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
         const spyGetTableRows = jest
-            .spyOn(sdk._core.blockchains[BlockchainType.EOS].jsonRpc, 'get_table_rows')
+            .spyOn(blockchain.jsonRpc, 'get_table_rows')
             .mockImplementation((args: any) => eosMocks.jsonRpcGetTableRows(args));
 
         const received = await sdk.pricing.getRate(
