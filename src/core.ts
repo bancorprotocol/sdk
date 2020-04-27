@@ -25,16 +25,15 @@ export class Core {
     }
 
     async getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]> {
-        const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
-        const cartesian = (a, b?, ...c) => (b ? cartesian(f(a, b), ...c) : a);
-
         if (sourceToken.blockchainType == targetToken.blockchainType)
             return await this.blockchains[sourceToken.blockchainType].getPaths(sourceToken, targetToken);
 
-        let sourceBlockchain: Blockchain = this.blockchains[sourceToken.blockchainType];
-        let targetBlockchain: Blockchain = this.blockchains[targetToken.blockchainType];
-        let sourcePaths: Token[][] = await sourceBlockchain.getPaths(sourceToken, sourceBlockchain.getAnchorToken());
-        let targetPaths: Token[][] = await targetBlockchain.getPaths(targetBlockchain.getAnchorToken(), targetToken);
+        const sourceBlockchain: Blockchain = this.blockchains[sourceToken.blockchainType];
+        const targetBlockchain: Blockchain = this.blockchains[targetToken.blockchainType];
+        const sourcePaths: Token[][] = await sourceBlockchain.getPaths(sourceToken, sourceBlockchain.getAnchorToken());
+        const targetPaths: Token[][] = await targetBlockchain.getPaths(targetBlockchain.getAnchorToken(), targetToken);
+        const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
+        const cartesian = (a, b?, ...c) => (b ? cartesian(f(a, b), ...c) : a);
         return cartesian(sourcePaths, targetPaths);
     }
 
@@ -55,8 +54,8 @@ export class Core {
         }
     }
 
-    private pathType(blockchainType1: BlockchainType, blockchainType2: BlockchainType): string {
-        return blockchainType1 + ',' + blockchainType2;
+    private pathType(sourceBlockchain: BlockchainType, targetBlockchain: BlockchainType): string {
+        return sourceBlockchain + ',' + targetBlockchain;
     }
     
     private pathForm(path: Token[]): string {

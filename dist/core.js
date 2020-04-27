@@ -125,18 +125,10 @@ var Core = /** @class */ (function () {
     };
     Core.prototype.getPaths = function (sourceToken, targetToken) {
         return __awaiter(this, void 0, void 0, function () {
-            var f, cartesian, sourceBlockchain, targetBlockchain, sourcePaths, targetPaths;
+            var sourceBlockchain, targetBlockchain, sourcePaths, targetPaths, f, cartesian;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        f = function (a, b) { return [].concat.apply([], a.map(function (d) { return b.map(function (e) { return [].concat(d, e); }); })); };
-                        cartesian = function (a, b) {
-                            var c = [];
-                            for (var _i = 2; _i < arguments.length; _i++) {
-                                c[_i - 2] = arguments[_i];
-                            }
-                            return (b ? cartesian.apply(void 0, __spreadArrays([f(a, b)], c)) : a);
-                        };
                         if (!(sourceToken.blockchainType == targetToken.blockchainType)) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.blockchains[sourceToken.blockchainType].getPaths(sourceToken, targetToken)];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -149,6 +141,14 @@ var Core = /** @class */ (function () {
                         return [4 /*yield*/, targetBlockchain.getPaths(targetBlockchain.getAnchorToken(), targetToken)];
                     case 4:
                         targetPaths = _a.sent();
+                        f = function (a, b) { return [].concat.apply([], a.map(function (d) { return b.map(function (e) { return [].concat(d, e); }); })); };
+                        cartesian = function (a, b) {
+                            var c = [];
+                            for (var _i = 2; _i < arguments.length; _i++) {
+                                c[_i - 2] = arguments[_i];
+                            }
+                            return (b ? cartesian.apply(void 0, __spreadArrays([f(a, b)], c)) : a);
+                        };
                         return [2 /*return*/, cartesian(sourcePaths, targetPaths)];
                 }
             });
@@ -184,8 +184,8 @@ var Core = /** @class */ (function () {
             });
         });
     };
-    Core.prototype.pathType = function (blockchainType1, blockchainType2) {
-        return blockchainType1 + ',' + blockchainType2;
+    Core.prototype.pathType = function (sourceBlockchain, targetBlockchain) {
+        return sourceBlockchain + ',' + targetBlockchain;
     };
     Core.prototype.pathForm = function (path) {
         return JSON.stringify(path[0]) + JSON.stringify(path[path.length - 1]);
