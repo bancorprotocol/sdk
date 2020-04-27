@@ -126,27 +126,13 @@ var EOS = /** @class */ (function () {
             });
         });
     };
-    EOS.prototype.getRates = function (tokenPaths, tokenAmount) {
+    EOS.prototype.getRates = function (paths, amount) {
         return __awaiter(this, void 0, void 0, function () {
-            var rates, _i, tokenPaths_1, path, amount;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        rates = [];
-                        _i = 0, tokenPaths_1 = tokenPaths;
-                        _a.label = 1;
-                    case 1:
-                        if (!(_i < tokenPaths_1.length)) return [3 /*break*/, 4];
-                        path = tokenPaths_1[_i];
-                        return [4 /*yield*/, this.getRateByPath(path, tokenAmount)];
-                    case 2:
-                        amount = _a.sent();
-                        rates.push(amount);
-                        _a.label = 3;
-                    case 3:
-                        _i++;
-                        return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/, rates];
+                    case 0: return [4 /*yield*/, Promise.all(paths.map(function (path) { return _this.getRateByPath(path, amount); }))];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });

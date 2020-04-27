@@ -8,7 +8,7 @@ export declare class EOS implements Blockchain {
     getAnchorToken(): Token;
     getPaths(from: Token, to: Token): Promise<Token[][]>;
     getRateByPath(path: Token[], amount: string): Promise<string>;
-    getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]>;
+    getRates(paths: Token[][], amount: string): Promise<string[]>;
     getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;
