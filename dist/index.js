@@ -45,9 +45,13 @@ var utils_1 = require("./utils");
  */
 var SDK = /** @class */ (function () {
     function SDK() {
+        /** History module */
         this.history = null;
+        /** Pricing module */
         this.pricing = null;
+        /** Utils module */
         this.utils = null;
+        /** @internal */
         this._core = new core_1.Core();
     }
     /**

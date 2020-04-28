@@ -9,23 +9,31 @@ export declare enum BlockchainType {
 * SDK initialization settings interface
 */
 export interface Settings {
+    /** web3 endpoint - optional, mandatory when interacting with an Ethereum blockchain */
     ethereumNodeEndpoint?: string | Object;
+    /** eosjs endpoint - optional, mandatory when interacting with an EOS blockchain */
     eosNodeEndpoint?: string;
 }
 /**
 * Token interface
 */
 export interface Token {
+    /** token blockchain type **/
     blockchainType: BlockchainType;
+    /** token blockchain id - address for Ethereum blockchain, account name for EOS blockchain **/
     blockchainId: string;
+    /** token symbol - optional, mandatory for EOS tokens **/
     symbol?: string;
 }
 /**
 * Converter interface
 */
 export interface Converter {
+    /** converter blockchain type **/
     blockchainType: BlockchainType;
+    /** converter blockchain id - address for Ethereum blockchain, account name for EOS blockchain **/
     blockchainId: string;
+    /** converter symbol - optional, mandatory for EOS tokens **/
     symbol?: string;
 }
 /**
@@ -40,9 +48,7 @@ export interface ConversionEvent {
     conversionFee?: string;
     trader: string;
 }
-/**
-* Blockchain interface - defines the methods that each blockchain plugin should implement
-*/
+/** @internal */
 export interface Blockchain {
     getAnchorToken(): Token;
     getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]>;

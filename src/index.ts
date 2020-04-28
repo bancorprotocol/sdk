@@ -8,9 +8,13 @@ import { Settings } from './types';
  * Main SDK object, should be instantiated using the `create` static method
  */
 export class SDK {
-    history = null;
-    pricing = null;
-    utils = null;
+    /** History module */
+    history: History = null;
+    /** Pricing module */
+    pricing: Pricing = null;
+    /** Utils module */
+    utils: Utils = null;
+    /** @internal */
     _core = new Core();
 
     /**

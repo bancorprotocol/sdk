@@ -1,12 +1,19 @@
 import { Core } from './core';
+import { History } from './history';
+import { Pricing } from './pricing';
+import { Utils } from './utils';
 import { Settings } from './types';
 /**
  * Main SDK object, should be instantiated using the `create` static method
  */
 export declare class SDK {
-    history: any;
-    pricing: any;
-    utils: any;
+    /** History module */
+    history: History;
+    /** Pricing module */
+    pricing: Pricing;
+    /** Utils module */
+    utils: Utils;
+    /** @internal */
     _core: Core;
     /**
     * creates and initializes a new SDK object
