@@ -33,7 +33,7 @@ export class EOS implements Blockchain {
         const anchorToken = this.getAnchorToken();
         const sourcePath = await this.getPathToAnchor(from, anchorToken);
         const targetPath = await this.getPathToAnchor(to, anchorToken);
-        return [this.getShortestPath(sourcePath, targetPath)];
+        return [EOS.getShortestPath(sourcePath, targetPath)];
     }
 
     async getRates(paths: Token[][], amount: string): Promise<string[]> {
@@ -99,27 +99,8 @@ export class EOS implements Blockchain {
             table: 'accounts',
             limit: 1
         });
-        return this.getBalance(res.rows[0].balance);
+        return EOS.getBalance(res.rows[0].balance);
     };
-
-    private getReserve(reserves, reserveToken: Token) {
-        return reserves.filter(reserve => {
-            return reserve.contract == reserveToken.blockchainId &&
-                   this.getSymbol(reserve.currency) == reserveToken.symbol;
-        })[0];
-    }
-
-    private getBalance(asset) {
-        return asset.split(' ')[0];
-    }
-
-    private getSymbol(asset) {
-        return asset.split(' ')[1];
-    }
-
-    private getDecimals(amount) {
-        return amount.split('.')[1].length;
-    }
 
     private async getConversionRate(smartToken: Token, sourceToken: Token, targetToken: Token, amount: string) {
         let smartTokenStat = await this.getSmartTokenStat(smartToken);
@@ -139,27 +120,27 @@ export class EOS implements Blockchain {
 
         // sale
         if (helpers.isTokenEqual(sourceToken, smartToken)) {
-            let supply = this.getBalance(smartTokenStat.supply);
+            let supply = EOS.getBalance(smartTokenStat.supply);
             let reserveBalance = await this.getReserveBalance(converter, targetToken);
-            let reserveRatio = this.getReserve(reserves, targetToken).ratio;
-            targetDecimals = this.getDecimals(reserveBalance);
+            let reserveRatio = EOS.getReserve(reserves, targetToken).ratio;
+            targetDecimals = EOS.getDecimals(reserveBalance);
             returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
         }
         // purchase
         else if (helpers.isTokenEqual(targetToken, smartToken)) {
-            let supply = this.getBalance(smartTokenStat.supply);
+            let supply = EOS.getBalance(smartTokenStat.supply);
             let reserveBalance = await this.getReserveBalance(converter, sourceToken);
-            let reserveRatio = this.getReserve(reserves, sourceToken).ratio;
-            targetDecimals = this.getDecimals(supply);
+            let reserveRatio = EOS.getReserve(reserves, sourceToken).ratio;
+            targetDecimals = EOS.getDecimals(supply);
             returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
         }
         else {
             // cross convert
             let sourceReserveBalance = await this.getReserveBalance(converter, sourceToken);
-            let sourceReserveRatio = this.getReserve(reserves, sourceToken).ratio;
+            let sourceReserveRatio = EOS.getReserve(reserves, sourceToken).ratio;
             let targetReserveBalance = await this.getReserveBalance(converter, targetToken);
-            let targetReserveRatio = this.getReserve(reserves, targetToken).ratio;
-            targetDecimals = this.getDecimals(targetReserveBalance);
+            let targetReserveRatio = EOS.getReserve(reserves, targetToken).ratio;
+            targetDecimals = EOS.getDecimals(targetReserveBalance);
             returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
             magnitude = 2;
         }
@@ -206,7 +187,7 @@ export class EOS implements Blockchain {
         return [token, smartTokens[0], anchorToken];
     }
 
-    private getShortestPath(sourcePath, targetPath) {
+    private static getShortestPath(sourcePath, targetPath) {
         if (sourcePath.length > 0 && targetPath.length > 0) {
             let i = sourcePath.length - 1;
             let j = targetPath.length - 1;
@@ -234,5 +215,24 @@ export class EOS implements Blockchain {
         }
 
         return [];
+    }
+
+    private static getReserve(reserves, reserveToken: Token) {
+        return reserves.filter(reserve => {
+            return reserve.contract == reserveToken.blockchainId &&
+                   EOS.getSymbol(reserve.currency) == reserveToken.symbol;
+        })[0];
+    }
+
+    private static getBalance(asset) {
+        return asset.split(' ')[0];
+    }
+
+    private static getSymbol(asset) {
+        return asset.split(' ')[1];
+    }
+
+    private static getDecimals(amount) {
+        return amount.split('.')[1].length;
     }
 }

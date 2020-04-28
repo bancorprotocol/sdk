@@ -99,7 +99,7 @@ var EOS = /** @class */ (function () {
                         return [4 /*yield*/, this.getPathToAnchor(to, anchorToken)];
                     case 2:
                         targetPath = _a.sent();
-                        return [2 /*return*/, [this.getShortestPath(sourcePath, targetPath)]];
+                        return [2 /*return*/, [EOS.getShortestPath(sourcePath, targetPath)]];
                 }
             });
         });
@@ -232,28 +232,12 @@ var EOS = /** @class */ (function () {
                         })];
                     case 1:
                         res = _a.sent();
-                        return [2 /*return*/, this.getBalance(res.rows[0].balance)];
+                        return [2 /*return*/, EOS.getBalance(res.rows[0].balance)];
                 }
             });
         });
     };
     ;
-    EOS.prototype.getReserve = function (reserves, reserveToken) {
-        var _this = this;
-        return reserves.filter(function (reserve) {
-            return reserve.contract == reserveToken.blockchainId &&
-                _this.getSymbol(reserve.currency) == reserveToken.symbol;
-        })[0];
-    };
-    EOS.prototype.getBalance = function (asset) {
-        return asset.split(' ')[0];
-    };
-    EOS.prototype.getSymbol = function (asset) {
-        return asset.split(' ')[1];
-    };
-    EOS.prototype.getDecimals = function (amount) {
-        return amount.split('.')[1].length;
-    };
     EOS.prototype.getConversionRate = function (smartToken, sourceToken, targetToken, amount) {
         return __awaiter(this, void 0, void 0, function () {
             var smartTokenStat, converterBlockchainId, converter, conversionSettings, conversionFee, reserves, magnitude, targetDecimals, returnAmount, supply, reserveBalance, reserveRatio, supply, reserveBalance, reserveRatio, sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio;
@@ -279,33 +263,33 @@ var EOS = /** @class */ (function () {
                         reserves = _a.sent();
                         magnitude = 1;
                         if (!helpers.isTokenEqual(sourceToken, smartToken)) return [3 /*break*/, 6];
-                        supply = this.getBalance(smartTokenStat.supply);
+                        supply = EOS.getBalance(smartTokenStat.supply);
                         return [4 /*yield*/, this.getReserveBalance(converter, targetToken)];
                     case 5:
                         reserveBalance = _a.sent();
-                        reserveRatio = this.getReserve(reserves, targetToken).ratio;
-                        targetDecimals = this.getDecimals(reserveBalance);
+                        reserveRatio = EOS.getReserve(reserves, targetToken).ratio;
+                        targetDecimals = EOS.getDecimals(reserveBalance);
                         returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
                         return [3 /*break*/, 11];
                     case 6:
                         if (!helpers.isTokenEqual(targetToken, smartToken)) return [3 /*break*/, 8];
-                        supply = this.getBalance(smartTokenStat.supply);
+                        supply = EOS.getBalance(smartTokenStat.supply);
                         return [4 /*yield*/, this.getReserveBalance(converter, sourceToken)];
                     case 7:
                         reserveBalance = _a.sent();
-                        reserveRatio = this.getReserve(reserves, sourceToken).ratio;
-                        targetDecimals = this.getDecimals(supply);
+                        reserveRatio = EOS.getReserve(reserves, sourceToken).ratio;
+                        targetDecimals = EOS.getDecimals(supply);
                         returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
                         return [3 /*break*/, 11];
                     case 8: return [4 /*yield*/, this.getReserveBalance(converter, sourceToken)];
                     case 9:
                         sourceReserveBalance = _a.sent();
-                        sourceReserveRatio = this.getReserve(reserves, sourceToken).ratio;
+                        sourceReserveRatio = EOS.getReserve(reserves, sourceToken).ratio;
                         return [4 /*yield*/, this.getReserveBalance(converter, targetToken)];
                     case 10:
                         targetReserveBalance = _a.sent();
-                        targetReserveRatio = this.getReserve(reserves, targetToken).ratio;
-                        targetDecimals = this.getDecimals(targetReserveBalance);
+                        targetReserveRatio = EOS.getReserve(reserves, targetToken).ratio;
+                        targetDecimals = EOS.getDecimals(targetReserveBalance);
                         returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
                         magnitude = 2;
                         _a.label = 11;
@@ -359,7 +343,7 @@ var EOS = /** @class */ (function () {
             });
         });
     };
-    EOS.prototype.getShortestPath = function (sourcePath, targetPath) {
+    EOS.getShortestPath = function (sourcePath, targetPath) {
         if (sourcePath.length > 0 && targetPath.length > 0) {
             var i = sourcePath.length - 1;
             var j = targetPath.length - 1;
@@ -383,6 +367,21 @@ var EOS = /** @class */ (function () {
             return path.slice(0, length_1);
         }
         return [];
+    };
+    EOS.getReserve = function (reserves, reserveToken) {
+        return reserves.filter(function (reserve) {
+            return reserve.contract == reserveToken.blockchainId &&
+                EOS.getSymbol(reserve.currency) == reserveToken.symbol;
+        })[0];
+    };
+    EOS.getBalance = function (asset) {
+        return asset.split(' ')[0];
+    };
+    EOS.getSymbol = function (asset) {
+        return asset.split(' ')[1];
+    };
+    EOS.getDecimals = function (amount) {
+        return amount.split('.')[1].length;
     };
     return EOS;
 }());

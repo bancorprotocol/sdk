@@ -16,12 +16,12 @@ export declare class EOS implements Blockchain {
     private getSmartTokenStat;
     private getReserves;
     private getReserveBalance;
-    private getReserve;
-    private getBalance;
-    private getSymbol;
-    private getDecimals;
     private getConversionRate;
     private getTokenSmartTokens;
     private getPathToAnchor;
-    private getShortestPath;
+    private static getShortestPath;
+    private static getReserve;
+    private static getBalance;
+    private static getSymbol;
+    private static getDecimals;
 }
