@@ -164,10 +164,13 @@ export const getRatesSafe = async function(ethereum, paths, amount) {
         return await getRates(ethereum, paths, amount);
     }
     catch (error) {
-        const mid = paths.length >> 1;
-        const arr1 = await getRatesSafe(ethereum, paths.slice(0, mid), amount);
-        const arr2 = await getRatesSafe(ethereum, paths.slice(mid, paths.length), amount);
-        return [...arr1, ...arr2];
+        if (paths.length > 1) {
+            const mid = paths.length >> 1;
+            const arr1 = await getRatesSafe(ethereum, paths.slice(0, mid), amount);
+            const arr2 = await getRatesSafe(ethereum, paths.slice(mid, paths.length), amount);
+            return [...arr1, ...arr2];
+        }
+        return ['0'];
     }
 }
 
