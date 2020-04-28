@@ -1,3 +1,12 @@
+### 0.2.0
+* Complete rewrite - new module based design
+* Path-finding logic now finds the best rate between any two tokens in the network
+* Improved path-finding performance
+* Added the ability to query historical Conversion events for a given smart token (Ethereum only)
+* Added the ability to query the converter version
+* General bug fixes and cleanups
+
+
 ### 0.1.7
 * Added support for EOS multi converter contract
 
@@ -19,5 +28,4 @@
 
 
 ### 0.1.0
-
 Initial version
