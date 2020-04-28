@@ -176,8 +176,6 @@ describe('rates test', () => {
             { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB' }
         );
 
-        console.log(JSON.stringify(received));
-
         const expected = {
             path:[
                 { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
@@ -283,6 +281,66 @@ describe('rates test', () => {
                 { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' }
             ],
             rate: '4.4392'
+        };
+
+        expect(received).toEqual(expected);
+    });
+
+    it('getPathAndRate from eos token to eos token (smart -> reserve)', async () => {
+        const blockchainEOS = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
+        jest.spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
+            .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
+
+        const spyGetTableRows = jest
+            .spyOn(blockchainEOS.jsonRpc, 'get_table_rows')
+            .mockImplementation((args: any) => eosMocks.jsonRpcGetTableRows(args));
+
+        await sdk.refresh();
+
+        const received = await sdk.pricing.getPathAndRate(
+            { blockchainType: BlockchainType.EOS, blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
+            { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' }
+        );
+
+        const expected = {
+            path:[
+                { blockchainType: BlockchainType.EOS, blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
+                { blockchainType: BlockchainType.EOS, blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
+                { blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
+                { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+                { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' }
+            ],
+            rate: '1.8208'
+        };
+
+        expect(received).toEqual(expected);
+    });
+
+    it('getPathAndRate from eos token to eos token (reserve -> smart)', async () => {
+        const blockchainEOS = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
+        jest.spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
+            .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
+
+        const spyGetTableRows = jest
+            .spyOn(blockchainEOS.jsonRpc, 'get_table_rows')
+            .mockImplementation((args: any) => eosMocks.jsonRpcGetTableRows(args));
+
+        await sdk.refresh();
+
+        const received = await sdk.pricing.getPathAndRate(
+            { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB' },
+            { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' }
+        );
+
+        const expected = {
+            path:[
+                { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB'},
+                { blockchainType: BlockchainType.EOS, blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
+                { blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' },
+                { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
+                { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' }
+            ],
+            rate: '12.5927'
         };
 
         expect(received).toEqual(expected);
