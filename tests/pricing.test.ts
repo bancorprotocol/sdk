@@ -176,6 +176,8 @@ describe('rates test', () => {
             { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB' }
         );
 
+        console.log(JSON.stringify(received));
+
         const expected = {
             path:[
                 { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
@@ -183,7 +185,7 @@ describe('rates test', () => {
                 { blockchainType: BlockchainType.EOS, blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
                 { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB'}
             ],
-            rate: ''
+            rate: '44.0806'
         };
 
         expect(received).toEqual(expected);
@@ -246,14 +248,14 @@ describe('rates test', () => {
                 { blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' },
                 { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
             ],
-            rate: ''
+            rate: '33.333333333333333333'
         };
 
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
         expect(spyGetRates).toHaveBeenCalledTimes(5);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
-        expect(spyGetContractAddresses).toHaveBeenCalledTimes(2);
+        expect(spyGetContractAddresses).toHaveBeenCalledTimes(3);
     });
 
     it('getPathAndRate from eos token to eos token', async () => {
@@ -340,7 +342,7 @@ describe('rates test', () => {
             { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB'}
         ]);
 
-        expect(received).toEqual('');
+        expect(received).toEqual('14.6988');
         expect(spyGetRates).toHaveBeenCalledTimes(5);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
     });
@@ -372,7 +374,7 @@ describe('rates test', () => {
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x4444444444444444444444444444444444444444' }
         ]);
 
-        expect(received).toEqual('');
+        expect(received).toEqual('11.111111111111111111');
         expect(spyGetRates).toHaveBeenCalledTimes(5);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
     });
