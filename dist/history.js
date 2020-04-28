@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,80 +49,53 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("./core");
-var history_1 = require("./history");
-var pricing_1 = require("./pricing");
-var utils_1 = require("./utils");
+var sdk_module_1 = require("./sdk_module");
 /**
- * Main SDK object, should be instantiated using the `create` static method
+ * The History module allows querying historical data in the bancor network
  */
-var SDK = /** @class */ (function () {
-    function SDK() {
-        this.history = null;
-        this.pricing = null;
-        this.utils = null;
-        this._core = new core_1.Core();
+var History = /** @class */ (function (_super) {
+    __extends(History, _super);
+    function History() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     /**
-    * creates and initializes a new SDK object
-    * should be called as the first step before using the SDK
+    * returns all Conversion events for a given liquidity pool / liquid token between two block numbers
     *
-    * @param settings   initialization settings
+    * @param token      smart token
+    * @param fromBlock  start block number
+    * @param toBlock    end block number
     *
-    * @returns  new SDK object
+    * @returns  list of Conversion events
     */
-    SDK.create = function (settings) {
+    History.prototype.getConversionEvents = function (token, fromBlock, toBlock) {
         return __awaiter(this, void 0, void 0, function () {
-            var sdk;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        sdk = new SDK();
-                        return [4 /*yield*/, sdk._core.create(settings)];
-                    case 1:
-                        _a.sent();
-                        sdk.history = new history_1.History(sdk._core);
-                        sdk.pricing = new pricing_1.Pricing(sdk._core);
-                        sdk.utils = new utils_1.Utils(sdk._core);
-                        return [2 /*return*/, sdk];
+                    case 0: return [4 /*yield*/, this.core.blockchains[token.blockchainType].getConversionEvents(token, fromBlock, toBlock)];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
     /**
-    * cleans up and destroys an existing SDK object
-    * should be called as the last step after the SDK work is complete to free up resources
+    * returns all Conversion events for a given liquidity pool / liquid token between two points in time
     *
-    * @param sdk   sdk object
+    * @param token          smart token
+    * @param fromTimestamp  start time
+    * @param toTimestamp    end time
+    *
+    * @returns  list of Conversion events
     */
-    SDK.destroy = function (sdk) {
+    History.prototype.getConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        sdk.history = null;
-                        sdk.pricing = null;
-                        sdk.utils = null;
-                        return [4 /*yield*/, sdk._core.destroy()];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
+                    case 0: return [4 /*yield*/, this.core.blockchains[token.blockchainType].getConversionEventsByTimestamp(token, fromTimestamp, toTimestamp)];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    SDK.prototype.refresh = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this._core.refresh()];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    return SDK;
-}());
-exports.SDK = SDK;
+    return History;
+}(sdk_module_1.SDKModule));
+exports.History = History;

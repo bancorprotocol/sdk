@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,80 +49,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("./core");
-var history_1 = require("./history");
-var pricing_1 = require("./pricing");
-var utils_1 = require("./utils");
+var sdk_module_1 = require("./sdk_module");
 /**
- * Main SDK object, should be instantiated using the `create` static method
+ * The Utils module provides various utility and helper functions
  */
-var SDK = /** @class */ (function () {
-    function SDK() {
-        this.history = null;
-        this.pricing = null;
-        this.utils = null;
-        this._core = new core_1.Core();
+var Utils = /** @class */ (function (_super) {
+    __extends(Utils, _super);
+    function Utils() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     /**
-    * creates and initializes a new SDK object
-    * should be called as the first step before using the SDK
+    * returns the version number of a converter in the bancor network
     *
-    * @param settings   initialization settings
+    * @param converter    converter
     *
-    * @returns  new SDK object
+    * @returns  converter version
     */
-    SDK.create = function (settings) {
+    Utils.prototype.getConverterVersion = function (converter) {
         return __awaiter(this, void 0, void 0, function () {
-            var sdk;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        sdk = new SDK();
-                        return [4 /*yield*/, sdk._core.create(settings)];
-                    case 1:
-                        _a.sent();
-                        sdk.history = new history_1.History(sdk._core);
-                        sdk.pricing = new pricing_1.Pricing(sdk._core);
-                        sdk.utils = new utils_1.Utils(sdk._core);
-                        return [2 /*return*/, sdk];
+                    case 0: return [4 /*yield*/, this.core.blockchains[converter.blockchainType].getConverterVersion(converter)];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    /**
-    * cleans up and destroys an existing SDK object
-    * should be called as the last step after the SDK work is complete to free up resources
-    *
-    * @param sdk   sdk object
-    */
-    SDK.destroy = function (sdk) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        sdk.history = null;
-                        sdk.pricing = null;
-                        sdk.utils = null;
-                        return [4 /*yield*/, sdk._core.destroy()];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    SDK.prototype.refresh = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this._core.refresh()];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    return SDK;
-}());
-exports.SDK = SDK;
+    return Utils;
+}(sdk_module_1.SDKModule));
+exports.Utils = Utils;

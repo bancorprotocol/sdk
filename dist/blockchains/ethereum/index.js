@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -45,427 +56,290 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-/* eslint-disable max-len */
-/* eslint-disable no-sync */
-/* eslint-disable prefer-reflect */
 var web3_1 = __importDefault(require("web3"));
-var BancorConverterV9_1 = require("./contracts/BancorConverterV9");
-var utils_1 = require("./utils");
-var BancorConverter_1 = require("./contracts/BancorConverter");
-var ContractRegistry_1 = require("./contracts/ContractRegistry");
-var BancorConverterRegistry_1 = require("./contracts/BancorConverterRegistry");
-var BancorNetwork_1 = require("./contracts/BancorNetwork");
-var SmartToken_1 = require("./contracts/SmartToken");
-var ERC20Token_1 = require("./contracts/ERC20Token");
-var USDBBlockchainId = '0x309627af60F0926daa6041B8279484312f2bf060';
-var BNTBlockchainId = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
-var MULTICALL_ABI = [{ "constant": false, "inputs": [{ "components": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "bytes", "name": "callData", "type": "bytes" }], "internalType": "struct Multicall.Call[]", "name": "calls", "type": "tuple[]" }, { "internalType": "bool", "name": "strict", "type": "bool" }], "name": "aggregate", "outputs": [{ "internalType": "uint256", "name": "blockNumber", "type": "uint256" }, { "components": [{ "internalType": "bool", "name": "success", "type": "bool" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Multicall.Return[]", "name": "returnData", "type": "tuple[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
-var MULTICALL_ADDRESS = '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2';
-var web3;
-var bancorConverter = BancorConverter_1.BancorConverter;
-var contractRegistry = ContractRegistry_1.ContractRegistry;
-var registryAbi = BancorConverterRegistry_1.BancorConverterRegistry;
-var networkAbi = BancorNetwork_1.BancorNetwork;
-var registry;
-var network;
-var multicall;
-var registryData;
-function init(ethereumNodeUrl, ethereumContractRegistryAddress) {
-    if (ethereumContractRegistryAddress === void 0) { ethereumContractRegistryAddress = '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4'; }
-    return __awaiter(this, void 0, void 0, function () {
-        var contractRegistryContract, registryBlockchainId, networkBlockchainId;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    web3 = new web3_1.default(ethereumNodeUrl);
-                    contractRegistryContract = new web3.eth.Contract(contractRegistry, ethereumContractRegistryAddress);
-                    return [4 /*yield*/, contractRegistryContract.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
-                case 1:
-                    registryBlockchainId = _a.sent();
-                    return [4 /*yield*/, contractRegistryContract.methods.addressOf(web3_1.default.utils.asciiToHex('BancorNetwork')).call()];
-                case 2:
-                    networkBlockchainId = _a.sent();
-                    registry = new web3.eth.Contract(registryAbi, registryBlockchainId);
-                    network = new web3.eth.Contract(networkAbi, networkBlockchainId);
-                    multicall = new web3.eth.Contract(MULTICALL_ABI, MULTICALL_ADDRESS);
-                    return [4 /*yield*/, getGraph()];
-                case 3:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.init = init;
-function deinit() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            if (web3 && web3.currentProvider.constructor.name == 'WebsocketProvider')
-                web3.currentProvider.connection.close();
-            return [2 /*return*/];
-        });
-    });
-}
-exports.deinit = deinit;
-exports.getAmountInTokenWei = function (token, amount, web3) { return __awaiter(void 0, void 0, void 0, function () {
-    var decimals;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, exports.getTokenDecimals(token)];
-            case 1:
-                decimals = _a.sent();
-                return [2 /*return*/, utils_1.toWei(amount, decimals)];
+var abis = __importStar(require("./abis"));
+var helpers = __importStar(require("../../helpers"));
+var conversionEvents = __importStar(require("./conversion_events"));
+var converterVersion = __importStar(require("./converter_version"));
+var timestamp_to_block_number_1 = require("./timestamp_to_block_number");
+var types_1 = require("../../types");
+var CONTRACT_ADDRESSES = {
+    main: {
+        registry: '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4',
+        multicall: '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2',
+        anchorToken: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
+        pivotTokens: [
+            '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
+            '0x309627af60F0926daa6041B8279484312f2bf060'
+        ],
+        nonStandardTokenDecimals: {
+            '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': '9',
+            '0xbdEB4b83251Fb146687fa19D1C660F99411eefe3': '18'
         }
-    });
-}); };
-exports.getConversionReturn = function (converterPair, amount, ABI, web3) { return __awaiter(void 0, void 0, void 0, function () {
-    var converterContract, returnAmount;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                converterContract = new web3.eth.Contract(ABI, converterPair.converterBlockchainId);
-                return [4 /*yield*/, converterContract.methods.getReturn(converterPair.fromToken, converterPair.toToken, amount).call()];
-            case 1:
-                returnAmount = _a.sent();
-                return [2 /*return*/, returnAmount];
-        }
-    });
-}); };
-exports.getTokenDecimals = function (tokenBlockchainId) { return __awaiter(void 0, void 0, void 0, function () {
-    var tokenDecimals, token;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                tokenDecimals = {
-                    '0xe0b7927c4af23765cb51314a0e0521a9645f0e2a': '9',
-                    '0xbdeb4b83251fb146687fa19d1c660f99411eefe3': '18'
-                };
-                if (tokenBlockchainId.toLowerCase() in tokenDecimals)
-                    return [2 /*return*/, tokenDecimals[tokenBlockchainId.toLowerCase()]];
-                token = new web3.eth.Contract(ERC20Token_1.ERC20Token, tokenBlockchainId);
-                return [4 /*yield*/, token.methods.decimals().call()];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
-    });
-}); };
-function getPathStepRate(converterPair, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        var amountInTokenWei, tokenBlockchainId, tokenDecimals, returnAmount, e_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, exports.getAmountInTokenWei(converterPair.fromToken, amount, web3)];
-                case 1:
-                    amountInTokenWei = _a.sent();
-                    tokenBlockchainId = converterPair.toToken;
-                    return [4 /*yield*/, exports.getTokenDecimals(tokenBlockchainId)];
-                case 2:
-                    tokenDecimals = _a.sent();
-                    _a.label = 3;
-                case 3:
-                    _a.trys.push([3, 5, , 9]);
-                    return [4 /*yield*/, exports.getConversionReturn(converterPair, amountInTokenWei, bancorConverter, web3)];
-                case 4:
-                    returnAmount = _a.sent();
-                    amountInTokenWei = returnAmount['0'];
-                    return [3 /*break*/, 9];
-                case 5:
-                    e_1 = _a.sent();
-                    if (!e_1.message.includes('insufficient data for uint256')) return [3 /*break*/, 7];
-                    return [4 /*yield*/, exports.getConversionReturn(converterPair, amountInTokenWei, BancorConverterV9_1.BancorConverterV9, web3)];
-                case 6:
-                    amountInTokenWei = _a.sent();
-                    return [3 /*break*/, 8];
-                case 7: throw (e_1);
-                case 8: return [3 /*break*/, 9];
-                case 9: return [2 /*return*/, utils_1.fromWei(amountInTokenWei, tokenDecimals)];
-            }
+    },
+    ropsten: {
+        registry: '0xFD95E724962fCfC269010A0c6700Aa09D5de3074',
+        multicall: '0xf3ad7e31b052ff96566eedd218a823430e74b406',
+        anchorToken: '0x62bd9D98d4E188e281D7B78e29334969bbE1053c',
+        pivotTokens: [
+            '0x62bd9D98d4E188e281D7B78e29334969bbE1053c'
+        ],
+        nonStandardTokenDecimals: {}
+    },
+    dummy: {
+        registry: '0x0000000000000000000000000000000000000000',
+        multicall: '0x0000000000000000000000000000000000000000',
+        anchorToken: '0x0000000000000000000000000000000000000000',
+        pivotTokens: [],
+        nonStandardTokenDecimals: {}
+    }
+};
+var Ethereum = /** @class */ (function () {
+    function Ethereum() {
+    }
+    Ethereum.create = function (nodeEndpoint) {
+        return __awaiter(this, void 0, void 0, function () {
+            var ethereum, _a, contractRegistry, bancorNetworkAddress, converterRegistryAddress;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        ethereum = new Ethereum();
+                        ethereum.web3 = exports.getWeb3(nodeEndpoint);
+                        _a = ethereum;
+                        return [4 /*yield*/, ethereum.web3.eth.net.getNetworkType()];
+                    case 1:
+                        _a.networkType = _b.sent();
+                        contractRegistry = new ethereum.web3.eth.Contract(abis.ContractRegistry, exports.getContractAddresses(ethereum).registry);
+                        return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorNetwork')).call()];
+                    case 2:
+                        bancorNetworkAddress = _b.sent();
+                        return [4 /*yield*/, contractRegistry.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
+                    case 3:
+                        converterRegistryAddress = _b.sent();
+                        ethereum.bancorNetwork = new ethereum.web3.eth.Contract(abis.BancorNetwork, bancorNetworkAddress);
+                        ethereum.converterRegistry = new ethereum.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
+                        ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, exports.getContractAddresses(ethereum).multicall);
+                        ethereum.decimals = __assign({}, CONTRACT_ADDRESSES[ethereum.networkType].nonStandardTokenDecimals);
+                        ethereum.getPathsFunc = ethereum.getSomePathsFunc;
+                        return [4 /*yield*/, ethereum.refresh()];
+                    case 4:
+                        _b.sent();
+                        return [2 /*return*/, ethereum];
+                }
+            });
         });
-    });
-}
-exports.getPathStepRate = getPathStepRate;
-function getRegistry() {
-    return __awaiter(this, void 0, void 0, function () {
-        var contractRegistryContract, registryBlockchainId;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    contractRegistryContract = new web3.eth.Contract(contractRegistry, '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4');
-                    return [4 /*yield*/, contractRegistryContract.methods.addressOf(web3_1.default.utils.asciiToHex('BancorConverterRegistry')).call()];
-                case 1:
-                    registryBlockchainId = _a.sent();
-                    return [2 /*return*/, new web3.eth.Contract(registryAbi, registryBlockchainId)];
-            }
-        });
-    });
-}
-exports.getRegistry = getRegistry;
-exports.getConverterBlockchainId = function (blockchainId) { return __awaiter(void 0, void 0, void 0, function () {
-    var tokenContract;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                tokenContract = new web3.eth.Contract(SmartToken_1.SmartToken, blockchainId);
-                return [4 /*yield*/, tokenContract.methods.owner().call()];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
-    });
-}); };
-function getReserves(converterBlockchainId) {
-    return __awaiter(this, void 0, void 0, function () {
-        var reserves;
-        return __generator(this, function (_a) {
-            reserves = new web3.eth.Contract(bancorConverter, converterBlockchainId);
-            return [2 /*return*/, { reserves: reserves }];
-        });
-    });
-}
-exports.getReserves = getReserves;
-function getReservesCount(reserves) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getTokenCount(reserves, 'connectorTokenCount')];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
-}
-exports.getReservesCount = getReservesCount;
-function getReserveBlockchainId(converter, position) {
-    return __awaiter(this, void 0, void 0, function () {
-        var blockchainId, returnValue;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, converter.methods.connectorTokens(position).call()];
-                case 1:
-                    blockchainId = _a.sent();
-                    returnValue = {
-                        blockchainType: 'ethereum',
-                        blockchainId: blockchainId
-                    };
-                    return [2 /*return*/, returnValue];
-            }
-        });
-    });
-}
-exports.getReserveBlockchainId = getReserveBlockchainId;
-function getConverterSmartToken(converter) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, converter.methods.token().call()];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
-}
-exports.getConverterSmartToken = getConverterSmartToken;
-function getTokenCount(converter, funcName) {
-    return __awaiter(this, void 0, void 0, function () {
-        var response, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    response = null;
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, converter.methods[funcName]().call()];
-                case 2:
-                    response = _a.sent();
-                    return [2 /*return*/, response];
-                case 3:
-                    error_1 = _a.sent();
-                    if (!error_1.message.startsWith('Invalid JSON RPC response')) {
-                        response = 0;
-                        return [2 /*return*/, response];
-                    }
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
-            }
-        });
-    });
-}
-function getReserveToken(converterContract, i) {
-    return __awaiter(this, void 0, void 0, function () {
-        var blockchainId, token;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, converterContract.methods.connectorTokens(i).call()];
-                case 1:
-                    blockchainId = _a.sent();
-                    token = {
-                        blockchainType: 'ethereum',
-                        blockchainId: blockchainId
-                    };
-                    return [2 /*return*/, token];
-            }
-        });
-    });
-}
-exports.getReserveToken = getReserveToken;
-function getSmartTokens(token) {
-    return __awaiter(this, void 0, void 0, function () {
-        var isSmartToken, smartTokens, _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, registry.methods.isSmartToken(token.blockchainId).call()];
-                case 1:
-                    isSmartToken = _b.sent();
-                    if (!isSmartToken) return [3 /*break*/, 2];
-                    _a = [token.blockchainId];
-                    return [3 /*break*/, 4];
-                case 2: return [4 /*yield*/, registry.methods.getConvertibleTokenSmartTokens(token.blockchainId).call()];
-                case 3:
-                    _a = _b.sent();
-                    _b.label = 4;
-                case 4:
-                    smartTokens = _a;
-                    return [2 /*return*/, smartTokens];
-            }
-        });
-    });
-}
-exports.getSmartTokens = getSmartTokens;
-function registryDataUpdate(key, value) {
-    if (registryData[key] == undefined)
-        registryData[key] = [value];
-    else if (!registryData[key].includes(value))
-        registryData[key].push(value);
-}
-function getAllPathsRecursive(paths, path, targetToken) {
-    var prevToken = path[path.length - 1];
-    if (prevToken == targetToken)
-        paths.push(path);
-    else
-        for (var _i = 0, _a = registryData[prevToken].filter(function (token) { return !path.includes(token); }); _i < _a.length; _i++) {
-            var nextToken = _a[_i];
-            getAllPathsRecursive(paths, __spreadArrays(path, [nextToken]), targetToken);
-        }
-}
-function getGraph() {
-    return __awaiter(this, void 0, void 0, function () {
-        var convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, registry.methods.getConvertibleTokens().call()];
-                case 1:
-                    convertibleTokens = _b.sent();
-                    calls = convertibleTokens.map(function (convertibleToken) { return [registry._address, registry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
-                    return [4 /*yield*/, multicall.methods.aggregate(calls, true).call()];
-                case 2:
-                    _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
-                    registryData = {};
-                    _loop_1 = function (i) {
-                        for (var _i = 0, _a = Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(function (n) { return web3_1.default.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)); }); _i < _a.length; _i++) {
-                            var smartToken = _a[_i];
-                            if (convertibleTokens[i] != smartToken) {
-                                registryDataUpdate(convertibleTokens[i], smartToken);
-                                registryDataUpdate(smartToken, convertibleTokens[i]);
-                            }
-                        }
-                    };
-                    for (i = 0; i < returnData.length; i++) {
-                        _loop_1(i);
-                    }
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
-function getAllPathsAndRates(sourceToken, targetToken, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        var allPaths, somePaths, sourceDecimals, targetDecimals, rates;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    allPaths = [];
-                    getAllPathsRecursive(allPaths, [web3_1.default.utils.toChecksumAddress(sourceToken)], web3_1.default.utils.toChecksumAddress(targetToken));
-                    somePaths = filter(allPaths);
-                    return [4 /*yield*/, getDecimals(sourceToken)];
-                case 1:
-                    sourceDecimals = _a.sent();
-                    return [4 /*yield*/, getDecimals(targetToken)];
-                case 2:
-                    targetDecimals = _a.sent();
-                    return [4 /*yield*/, getRatesSafe(somePaths, utils_1.toWei(amount, sourceDecimals))];
-                case 3:
-                    rates = _a.sent();
-                    return [2 /*return*/, [somePaths, rates.map(function (rate) { return utils_1.fromWei(rate, targetDecimals); })]];
-            }
-        });
-    });
-}
-exports.getAllPathsAndRates = getAllPathsAndRates;
-function filter(paths) {
-    var table = { 'all': { paths: paths, length: 0 } };
-    var _loop_2 = function (pivotToken) {
-        table[pivotToken] = { paths: paths.filter(function (path) { return path.includes(pivotToken); }), length: 0 };
     };
-    for (var _i = 0, _a = [USDBBlockchainId, BNTBlockchainId]; _i < _a.length; _i++) {
-        var pivotToken = _a[_i];
-        _loop_2(pivotToken);
-    }
-    for (var _b = 0, _c = Object.entries(table); _b < _c.length; _b++) {
-        var _d = _c[_b], key = _d[0], value = _d[1];
-        table[key].length = Math.min.apply(Math, value.paths.map(function (path) { return path.length; }));
-    }
-    var filteredPaths = {};
-    var _loop_3 = function (key, value) {
-        for (var _i = 0, _a = value.paths.filter(function (path) { return path.length == value.length; }); _i < _a.length; _i++) {
-            var path = _a[_i];
-            filteredPaths[path.join(',')] = true;
-        }
+    Ethereum.destroy = function (ethereum) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == 'WebsocketProvider')
+                    ethereum.web3.currentProvider.connection.close();
+                return [2 /*return*/];
+            });
+        });
     };
-    for (var _e = 0, _f = Object.entries(table); _e < _f.length; _e++) {
-        var _g = _f[_e], key = _g[0], value = _g[1];
-        _loop_3(key, value);
-    }
-    return Object.keys(filteredPaths).map(function (key) { return key.split(','); });
-}
-var getDecimals = function (token) {
+    Ethereum.prototype.refresh = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _a = this;
+                        return [4 /*yield*/, exports.getGraph(this)];
+                    case 1:
+                        _a.graph = _c.sent();
+                        _b = this;
+                        return [4 /*yield*/, exports.getTrees(this)];
+                    case 2:
+                        _b.trees = _c.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Ethereum.prototype.getAnchorToken = function () {
+        return { blockchainType: types_1.BlockchainType.Ethereum, blockchainId: exports.getContractAddresses(this).anchorToken };
+    };
+    Ethereum.prototype.getPaths = function (sourceToken, targetToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sourceAddress, targetAddress, addressPaths;
+            return __generator(this, function (_a) {
+                sourceAddress = web3_1.default.utils.toChecksumAddress(sourceToken.blockchainId);
+                targetAddress = web3_1.default.utils.toChecksumAddress(targetToken.blockchainId);
+                addressPaths = this.getPathsFunc(sourceAddress, targetAddress);
+                return [2 /*return*/, addressPaths.map(function (addressPath) { return addressPath.map(function (address) { return ({ blockchainType: types_1.BlockchainType.Ethereum, blockchainId: address }); }); })];
+            });
+        });
+    };
+    Ethereum.prototype.getRates = function (tokenPaths, tokenAmount) {
+        return __awaiter(this, void 0, void 0, function () {
+            var addressPaths, sourceDecimals, targetDecimals, tokenRates;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        addressPaths = tokenPaths.map(function (tokenPath) { return tokenPath.map(function (token) { return web3_1.default.utils.toChecksumAddress(token.blockchainId); }); });
+                        return [4 /*yield*/, exports.getDecimals(this, addressPaths[0][0])];
+                    case 1:
+                        sourceDecimals = _a.sent();
+                        return [4 /*yield*/, exports.getDecimals(this, addressPaths[0].slice(-1)[0])];
+                    case 2:
+                        targetDecimals = _a.sent();
+                        return [4 /*yield*/, exports.getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals))];
+                    case 3:
+                        tokenRates = _a.sent();
+                        return [2 /*return*/, tokenRates.map(function (tokenRate) { return helpers.fromWei(tokenRate, targetDecimals); })];
+                }
+            });
+        });
+    };
+    Ethereum.prototype.getConverterVersion = function (converter) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, converterVersion.get(this.web3, converter.blockchainId)];
+                    case 1: return [2 /*return*/, (_a.sent()).value];
+                }
+            });
+        });
+    };
+    Ethereum.prototype.getConversionEvents = function (token, fromBlock, toBlock) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, conversionEvents.get(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    Ethereum.prototype.getConversionEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
+        return __awaiter(this, void 0, void 0, function () {
+            var fromBlock, toBlock;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, timestamp_to_block_number_1.timestampToBlockNumber(this.web3, fromTimestamp)];
+                    case 1:
+                        fromBlock = _a.sent();
+                        return [4 /*yield*/, timestamp_to_block_number_1.timestampToBlockNumber(this.web3, toTimestamp)];
+                    case 2:
+                        toBlock = _a.sent();
+                        return [4 /*yield*/, conversionEvents.get(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock)];
+                    case 3: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    Ethereum.prototype.getAllPathsFunc = function (sourceToken, targetToken) {
+        var paths = [];
+        var tokens = [web3_1.default.utils.toChecksumAddress(sourceToken)];
+        var destToken = web3_1.default.utils.toChecksumAddress(targetToken);
+        getAllPathsRecursive(paths, this.graph, tokens, destToken);
+        return paths;
+    };
+    Ethereum.prototype.getSomePathsFunc = function (sourceToken, targetToken) {
+        var _this = this;
+        var commonTokens = this.graph[sourceToken].filter(function (token) { return _this.graph[targetToken].includes(token); });
+        var paths = commonTokens.map(function (commonToken) { return [sourceToken, commonToken, targetToken]; });
+        var pivotTokens = exports.getContractAddresses(this).pivotTokens;
+        for (var _i = 0, pivotTokens_1 = pivotTokens; _i < pivotTokens_1.length; _i++) {
+            var pivotToken1 = pivotTokens_1[_i];
+            for (var _a = 0, pivotTokens_2 = pivotTokens; _a < pivotTokens_2.length; _a++) {
+                var pivotToken2 = pivotTokens_2[_a];
+                var sourcePath = getOnePathRecursive(this.trees[pivotToken1], sourceToken);
+                var middlePath = getOnePathRecursive(this.trees[pivotToken2], pivotToken1);
+                var targetPath = getOnePathRecursive(this.trees[pivotToken2], targetToken);
+                paths.push(getMergedPath(sourcePath.concat(middlePath.slice(1)), targetPath));
+            }
+        }
+        return Array.from(new Set(paths.map(function (path) { return path.join(','); }))).map(function (path) { return path.split(','); });
+    };
+    Ethereum.getNormalizedToken = function (token) {
+        return Object.assign({}, token, { blockchainId: web3_1.default.utils.toChecksumAddress(token.blockchainId) });
+    };
+    return Ethereum;
+}());
+exports.Ethereum = Ethereum;
+exports.getWeb3 = function (nodeEndpoint) {
+    var web3 = new web3_1.default();
+    web3.setProvider(nodeEndpoint);
+    return web3;
+};
+exports.getContractAddresses = function (ethereum) {
+    if (CONTRACT_ADDRESSES[ethereum.networkType])
+        return CONTRACT_ADDRESSES[ethereum.networkType];
+    throw new Error(ethereum.networkType + ' network not supported');
+};
+exports.getReturn = function (ethereum, path, amount) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, exports.getTokenDecimals(token)];
-                case 1: return [2 /*return*/, _a.sent()];
+                case 0: return [4 /*yield*/, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).call()];
+                case 1: return [2 /*return*/, (_a.sent())['0']];
             }
         });
     });
 };
-var getRatesSafe = function (paths, amount) {
+exports.getDecimals = function (ethereum, token) {
     return __awaiter(this, void 0, void 0, function () {
-        var error_2, mid, arr1, arr2;
+        var tokenContract, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    if (!(ethereum.decimals[token] == undefined)) return [3 /*break*/, 2];
+                    tokenContract = new ethereum.web3.eth.Contract(abis.ERC20Token, token);
+                    _a = ethereum.decimals;
+                    _b = token;
+                    return [4 /*yield*/, tokenContract.methods.decimals().call()];
+                case 1:
+                    _a[_b] = _c.sent();
+                    _c.label = 2;
+                case 2: return [2 /*return*/, ethereum.decimals[token]];
+            }
+        });
+    });
+};
+exports.getRatesSafe = function (ethereum, paths, amount) {
+    return __awaiter(this, void 0, void 0, function () {
+        var error_1, mid, arr1, arr2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 5]);
-                    return [4 /*yield*/, getRates(paths, amount)];
+                    _a.trys.push([0, 2, , 6]);
+                    return [4 /*yield*/, exports.getRates(ethereum, paths, amount)];
                 case 1: return [2 /*return*/, _a.sent()];
                 case 2:
-                    error_2 = _a.sent();
+                    error_1 = _a.sent();
+                    if (!(paths.length > 1)) return [3 /*break*/, 5];
                     mid = paths.length >> 1;
-                    return [4 /*yield*/, getRatesSafe(paths.slice(0, mid), amount)];
+                    return [4 /*yield*/, exports.getRatesSafe(ethereum, paths.slice(0, mid), amount)];
                 case 3:
                     arr1 = _a.sent();
-                    return [4 /*yield*/, getRatesSafe(paths.slice(mid, paths.length), amount)];
+                    return [4 /*yield*/, exports.getRatesSafe(ethereum, paths.slice(mid, paths.length), amount)];
                 case 4:
                     arr2 = _a.sent();
                     return [2 /*return*/, __spreadArrays(arr1, arr2)];
-                case 5: return [2 /*return*/];
+                case 5: return [2 /*return*/, ['0']];
+                case 6: return [2 /*return*/];
             }
         });
     });
 };
-var getRates = function (paths, amount) {
+exports.getRates = function (ethereum, paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var calls, _a, blockNumber, returnData;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    calls = paths.map(function (path) { return [network._address, network.methods.getReturnByPath(path, amount).encodeABI()]; });
-                    return [4 /*yield*/, multicall.methods.aggregate(calls, false).call()];
+                    calls = paths.map(function (path) { return [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]; });
+                    return [4 /*yield*/, ethereum.multicallContract.methods.aggregate(calls, false).call()];
                 case 1:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
                     return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : '0'; })];
@@ -473,3 +347,107 @@ var getRates = function (paths, amount) {
         });
     });
 };
+exports.getGraph = function (ethereum) {
+    return __awaiter(this, void 0, void 0, function () {
+        var graph, convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    graph = {};
+                    return [4 /*yield*/, ethereum.converterRegistry.methods.getConvertibleTokens().call()];
+                case 1:
+                    convertibleTokens = _b.sent();
+                    calls = convertibleTokens.map(function (convertibleToken) { return [ethereum.converterRegistry._address, ethereum.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
+                    return [4 /*yield*/, ethereum.multicallContract.methods.aggregate(calls, true).call()];
+                case 2:
+                    _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
+                    _loop_1 = function (i) {
+                        for (var _i = 0, _a = Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(function (n) { return web3_1.default.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)); }); _i < _a.length; _i++) {
+                            var smartToken = _a[_i];
+                            if (convertibleTokens[i] != smartToken) {
+                                updateGraph(graph, convertibleTokens[i], smartToken);
+                                updateGraph(graph, smartToken, convertibleTokens[i]);
+                            }
+                        }
+                    };
+                    for (i = 0; i < returnData.length; i++) {
+                        _loop_1(i);
+                    }
+                    return [2 /*return*/, graph];
+            }
+        });
+    });
+};
+exports.getTrees = function (ethereum) {
+    return __awaiter(this, void 0, void 0, function () {
+        var trees, _i, _a, pivotToken;
+        return __generator(this, function (_b) {
+            trees = {};
+            for (_i = 0, _a = exports.getContractAddresses(ethereum).pivotTokens; _i < _a.length; _i++) {
+                pivotToken = _a[_i];
+                trees[pivotToken] = getTree(ethereum.graph, pivotToken);
+            }
+            return [2 /*return*/, trees];
+        });
+    });
+};
+function updateGraph(graph, key, value) {
+    if (graph[key] == undefined)
+        graph[key] = [value];
+    else if (!graph[key].includes(value))
+        graph[key].push(value);
+}
+function getTree(graph, root) {
+    var _a;
+    var tree = (_a = {}, _a[root] = null, _a);
+    var queue = [root];
+    while (queue.length > 0) {
+        var dst = queue.shift();
+        for (var _i = 0, _b = graph[dst].filter(function (node) { return tree[node] === undefined; }); _i < _b.length; _i++) {
+            var src = _b[_i];
+            tree[src] = dst;
+            queue.push(src);
+        }
+    }
+    return tree;
+}
+function getAllPathsRecursive(paths, graph, tokens, destToken) {
+    var prevToken = tokens[tokens.length - 1];
+    if (prevToken == destToken)
+        paths.push(tokens);
+    else
+        for (var _i = 0, _a = graph[prevToken].filter(function (token) { return !tokens.includes(token); }); _i < _a.length; _i++) {
+            var nextToken = _a[_i];
+            getAllPathsRecursive(paths, graph, __spreadArrays(tokens, [nextToken]), destToken);
+        }
+}
+function getOnePathRecursive(tree, token) {
+    if (tree[token])
+        return __spreadArrays([token], getOnePathRecursive(tree, tree[token]));
+    return [token];
+}
+function getMergedPath(sourcePath, targetPath) {
+    if (sourcePath.length > 0 && targetPath.length > 0) {
+        var i = sourcePath.length - 1;
+        var j = targetPath.length - 1;
+        while (i >= 0 && j >= 0 && sourcePath[i] == targetPath[j]) {
+            i--;
+            j--;
+        }
+        var path = [];
+        for (var m = 0; m <= i + 1; m++)
+            path.push(sourcePath[m]);
+        for (var n = j; n >= 0; n--)
+            path.push(targetPath[n]);
+        var length_1 = 0;
+        for (var p = 0; p < path.length; p += 1) {
+            for (var q = p + 2; q < path.length - p % 2; q += 2) {
+                if (path[p] == path[q])
+                    p = q;
+            }
+            path[length_1++] = path[p];
+        }
+        return path.slice(0, length_1);
+    }
+    return [];
+}

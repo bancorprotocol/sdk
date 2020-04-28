@@ -1,14 +1,10 @@
-### 0.1.10
-* Ethereum - new path generation logic that finds the cheapest price vs. shortest path
-* Ethereum - lower number of requests to a node by utilising the Multicall contract
-
-
-### 0.1.9
-* Fixed Ethereum non checksummed address input
-
-
-### 0.1.8
-* Path generation on Ethereum now always returns the shortest path
+### 0.2.0
+* Complete rewrite - new module based design
+* Path-finding logic now finds the best rate between any two tokens in the network
+* Improved path-finding performance
+* Added the ability to query historical Conversion events for a given smart token (Ethereum only)
+* Added the ability to query the converter version
+* General bug fixes and cleanups
 
 
 ### 0.1.7
@@ -32,5 +28,4 @@
 
 
 ### 0.1.0
-
 Initial version

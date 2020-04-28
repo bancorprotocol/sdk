@@ -1,244 +1,238 @@
 import { JsonRpc } from 'eosjs';
 import fetch from 'node-fetch';
-import { converterBlockchainIds } from './converter_blockchain_ids';
-import fs from 'fs';
-import { shortConvert, sellSmartToken, buySmartToken, returnWithFee } from '../../utils/formulas';
-import { ConversionPathStep, Token } from '../../path_generation';
-import { Paths } from './paths';
+import * as helpers from '../../helpers';
+import { Blockchain, BlockchainType, Converter, ConversionEvent, Token } from '../../types';
+import legacyConverters from './legacy_converters';
 
-interface Reserve {
-    contract: string;
-    currency: string;
-    ratio: number;
-}
-
-let pathJson = Paths;
-let jsonRpc;
-
-export function initEOS(endpoint) {
-    jsonRpc = new JsonRpc(endpoint, { fetch });
-}
-
-export function getEosjsRpc() {
-    return jsonRpc;
-}
-
-export const getReservesFromCode = async (code, symbol?) => {
-    const scope = symbol ? symbol : code;
-    const rpc = getEosjsRpc();
-
-    return await rpc.get_table_rows({
-        json: true,
-        code: code,
-        scope: scope,
-        table: 'reserves',
-        limit: 10
-    });
+const anchorToken:Token = {
+    blockchainType: BlockchainType.EOS,
+    blockchainId: 'bntbntbntbnt',
+    symbol: 'BNT'
 };
 
-export const getConverterSettings = async code => {
-    const rpc = getEosjsRpc();
+export class EOS implements Blockchain {
+    jsonRpc: JsonRpc;
 
-    return await rpc.get_table_rows({
-        json: true,
-        code: code,
-        scope: code,
-        table: 'settings',
-        limit: 10
-    });
-};
+    static async create(nodeEndpoint: string): Promise<EOS> {
+        const eos = new EOS();
+        eos.jsonRpc = new JsonRpc(nodeEndpoint, { fetch });
+        return eos;
+    }
 
-export const getConverterFeeFromSettings = async code => {
-    const settings = await getConverterSettings(code);
-    return settings.rows[0].fee;
-};
+    static async destroy(eos: EOS): Promise<void> {
+    }
 
-export async function getSmartToken(code) {
-    const rpc = getEosjsRpc();
+    async refresh(): Promise<void> {
+    }
 
-    return await rpc.get_table_rows({
-        json: true,
-        code: code,
-        scope: code,
-        table: 'settings',
-        limit: 10
-    });
-}
+    getAnchorToken(): Token {
+        return anchorToken;
+    }
 
-export const getSmartTokenSupply = async (account, code) => {
-    const rpc = getEosjsRpc();
+    async getPaths(from: Token, to: Token): Promise<Token[][]> {
+        const anchorToken = this.getAnchorToken();
+        const sourcePath = await this.getPathToAnchor(from, anchorToken);
+        const targetPath = await this.getPathToAnchor(to, anchorToken);
+        return [EOS.getShortestPath(sourcePath, targetPath)];
+    }
 
-    return await rpc.get_table_rows({
-        json: true,
-        code: account,
-        scope: code,
-        table: 'stat',
-        limit: 10
-    });
-};
+    async getRates(paths: Token[][], amount: string): Promise<string[]> {
+        return await Promise.all(paths.map(path => this.getRateByPath(path, amount)));
+    }
 
-export const isMultiConverter = blockchhainId => {
-    return pathJson.smartTokens[blockchhainId] && pathJson.smartTokens[blockchhainId].isMultiConverter;
-};
+    async getConverterVersion(converter: Converter): Promise<string> {
+        return '1.0';
+    }
 
-export const getReserveBalances = async (code, scope, table = 'accounts') => {
-    const rpc = getEosjsRpc();
+    async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]> {
+        throw new Error('getConversionEvents not supported on eos');
+    }
 
-    return await rpc.get_table_rows({
-        json: true,
-        code: code,
-        scope: scope,
-        table: table,
-        limit: 10
-    });
-};
+    async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
+        throw new Error('getConversionEventsByTimestamp not supported on eos');
+    }
 
-export const getReserveTokenSymbol = (reserve: Reserve) => {
-    return getSymbol(reserve.currency);
-};
+    private async getRateByPath(path: Token[], amount: string): Promise<string> {
+        for (let i = 0; i < path.length - 1; i += 2)
+            amount = await this.getConversionRate(path[i + 1], path[i], path[i + 2], amount);
+        return amount;
+    }
 
-export function getSymbol(string) {
-    return string.split(' ')[1];
-}
-
-export function getBalance(string) {
-    return string.split(' ')[0];
-}
-
-export async function buildPathsFile() {
-    const tokens = {};
-    const smartTokens = {};
-    await Promise.all(converterBlockchainIds.map(async converterBlockchainId => {
-        const smartToken = await getSmartToken(converterBlockchainId);
-        const smartTokenContract = smartToken.rows[0].smart_contract;
-        const smartTokenName = getSymbol(smartToken.rows[0].smart_currency);
-        const reservesObject = await getReservesFromCode(converterBlockchainId);
-        const reserves = Object.values(reservesObject.rows);
-        smartTokens[smartTokenContract] = { [smartTokenName]: { [smartTokenName]: converterBlockchainId } };
-        reserves.map((reserveObj: Reserve) => {
-            const reserveSymbol = getReserveTokenSymbol(reserveObj);
-            const existingRecord = tokens[reserveObj.contract];
-            if (existingRecord)
-                existingRecord[reserveSymbol][smartTokenName] = converterBlockchainId;
-
-            tokens[reserveObj.contract] = existingRecord ? existingRecord : { [reserveSymbol]: { [smartTokenName]: converterBlockchainId } };
+    private async getConverterSettings(converter: Converter) {
+        let res = await this.jsonRpc.get_table_rows({
+            json: true,
+            code: converter.blockchainId,
+            scope: converter.blockchainId,
+            table: 'settings',
+            limit: 1
         });
-    }));
-    await fs.writeFile('./src/blockchains/eos/paths.ts',
-        `export const Paths = \n{convertibleTokens:${JSON.stringify(tokens)}, \n smartTokens: ${JSON.stringify(smartTokens)}}`,
-        'utf8',
-        // eslint-disable-next-line no-console
-        () => console.log('Done making paths json'));
-}
-
-function isFromSmartToken(pair: ConversionPathStep, reserves: string[]) {
-    return (!reserves.includes(Object.values(pair.fromToken)[0]));
-}
-
-function isToSmartToken(pair: ConversionPathStep, reserves: string[]) {
-    return (!reserves.includes(Object.values(pair.toToken)[0]));
-}
-
-export async function getPathStepRate(pair: ConversionPathStep, amount: string) {
-    const toTokenBlockchainId = Object.values(pair.toToken)[0];
-    const fromTokenBlockchainId = Object.values(pair.fromToken)[0];
-    const fromTokenSymbol = Object.keys(pair.fromToken)[0];
-    const toTokenSymbol = Object.keys(pair.toToken)[0];
-    const isFromTokenMultiToken = isMultiConverter(fromTokenBlockchainId);
-    const isToTokenMultiToken = isMultiConverter(toTokenBlockchainId);
-    const converterBlockchainId = Object.values(pair.converterBlockchainId)[0];
-    let reserveSymbol;
-    if (isFromTokenMultiToken)
-        reserveSymbol = fromTokenSymbol;
-    if (isToTokenMultiToken)
-        reserveSymbol = toTokenSymbol;
-
-    const reserves = await getReservesFromCode(converterBlockchainId, reserveSymbol);
-    const reservesContacts = reserves.rows.map(res => res.contract);
-    const fee = await getConverterFeeFromSettings(converterBlockchainId);
-    const isConversionFromSmartToken = isFromSmartToken(pair, reservesContacts);
-    let balanceFrom;
-    if (isToTokenMultiToken)
-        balanceFrom = await getReserveBalances(converterBlockchainId, toTokenSymbol, 'reserves');
-    else
-        balanceFrom = await getReserveBalances(fromTokenBlockchainId, converterBlockchainId);
-    let balanceTo;
-    if (isFromTokenMultiToken)
-        balanceTo = await getReserveBalances(converterBlockchainId, fromTokenSymbol, 'reserves');
-    else
-        balanceTo = await getReserveBalances(toTokenBlockchainId, converterBlockchainId);
-
-    const isConversionToSmartToken = isToSmartToken(pair, reservesContacts);
-    let amountWithoutFee = 0;
-    let magnitude = 0;
-    const balanceObject = { [fromTokenBlockchainId]: balanceFrom.rows[0].balance, [toTokenBlockchainId]: balanceTo.rows[0].balance };
-    const converterReserves = {};
-    reserves.rows.map((reserve: Reserve) => {
-        converterReserves[reserve.contract] = {
-            ratio: reserve.ratio, balance: balanceObject[reserve.contract]
-        };
-    });
-
-    if (isConversionFromSmartToken) {
-        const token = pathJson.smartTokens[fromTokenBlockchainId] || pathJson.convertibleTokens[fromTokenBlockchainId];
-        const tokenSymbol = Object.keys(token[fromTokenSymbol])[0];
-        const tokenSupplyObj = await getSmartTokenSupply(fromTokenBlockchainId, tokenSymbol);
-        const toReserveRatio = converterReserves[toTokenBlockchainId].ratio;
-        const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
-        const reserveTokenBalance = getBalance(balanceTo.rows[0].balance);
-        amountWithoutFee = sellSmartToken(reserveTokenBalance, toReserveRatio, amount, tokenSupply);
-        magnitude = 1;
-    }
-
-    else if (isConversionToSmartToken) {
-        const token = pathJson.smartTokens[toTokenBlockchainId] || pathJson.convertibleTokens[toTokenBlockchainId];
-        const tokenSymbol = Object.keys(token[toTokenSymbol])[0];
-        const tokenSupplyObj = await getSmartTokenSupply(toTokenBlockchainId, tokenSymbol);
-        const toReserveRatio = converterReserves[fromTokenBlockchainId].ratio;
-        const tokenSupply = getBalance(tokenSupplyObj.rows[0].supply);
-        const reserveTokenBalance = getBalance(balanceFrom.rows[0].balance);
-        amountWithoutFee = buySmartToken(reserveTokenBalance, toReserveRatio, amount, tokenSupply);
-        magnitude = 1;
-    }
-    else {
-        amountWithoutFee = shortConvert(amount, getBalance(converterReserves[toTokenBlockchainId].balance), getBalance(converterReserves[fromTokenBlockchainId].balance));
-        magnitude = 2;
-    }
-
-    if (fee == 0)
-        return amountWithoutFee;
-
-    return returnWithFee(amountWithoutFee, fee, magnitude);
-}
-
-export async function getConverterBlockchainId(token: Token) {
-    const isSmart = !pathJson.convertibleTokens[token.blockchainId];
-    return pathJson[isSmart ? 'smartTokens' : 'convertibleTokens'][token.blockchainId][token.symbol];
-}
-
-export async function getReserveBlockchainId(reserves: Token[], position) {
-    const blockchainId = reserves[position].blockchainId;
-    const symbol = reserves[position].symbol;
-    const tok: Token = {
-        blockchainType: 'eos',
-        blockchainId,
-        symbol
+        return res.rows[0];
     };
 
-    return tok;
-}
+    private async getSmartTokenStat(smartToken: Token) {
+        let stat = await this.jsonRpc.get_table_rows({
+            json: true,
+            code: smartToken.blockchainId,
+            scope: smartToken.symbol,
+            table: 'stat',
+            limit: 1
+        });
+        return stat.rows[0];
+    };
 
-export async function getReserves(converterBlockchainId, symbol, isMulti = false) {
-    const reserves = await getReservesFromCode(converterBlockchainId, isMulti ? symbol : null);
-    const tokens = [];
-    reserves.rows.map(reserve => {
-        const symbol = getSymbol(reserve.currency);
+    private async getReserves(converter: Converter) {
+        let res = await this.jsonRpc.get_table_rows({
+            json: true,
+            code: converter.blockchainId,
+            scope: converter.blockchainId,
+            table: 'reserves',
+            limit: 10
+        });
+        return res.rows;
+    };
 
-        tokens.push({ symbol, blockchainId: reserve.contract });
-    });
-    return { reserves: tokens };
-}
+    private async getReserveBalance(converter: Converter, reserveToken: Token) {
+        let res = await this.jsonRpc.get_table_rows({
+            json: true,
+            code: reserveToken.blockchainId,
+            scope: converter.blockchainId,
+            table: 'accounts',
+            limit: 1
+        });
+        return EOS.getBalance(res.rows[0].balance);
+    };
 
-export async function getReservesCount(reserves: Token[]) {
-    return reserves.length;
+    private async getConversionRate(smartToken: Token, sourceToken: Token, targetToken: Token, amount: string) {
+        let smartTokenStat = await this.getSmartTokenStat(smartToken);
+        let converterBlockchainId = await smartTokenStat.issuer;
+        let converter: Converter = {
+            blockchainType: BlockchainType.EOS,
+            blockchainId: converterBlockchainId,
+            symbol: smartToken.symbol
+        };
+
+        let conversionSettings = await this.getConverterSettings(converter);
+        let conversionFee = conversionSettings.fee;
+        let reserves = await this.getReserves(converter);
+        let magnitude = 1;
+        let targetDecimals;
+        let returnAmount;
+
+        // sale
+        if (helpers.isTokenEqual(sourceToken, smartToken)) {
+            let supply = EOS.getBalance(smartTokenStat.supply);
+            let reserveBalance = await this.getReserveBalance(converter, targetToken);
+            let reserveRatio = EOS.getReserve(reserves, targetToken).ratio;
+            targetDecimals = EOS.getDecimals(reserveBalance);
+            returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
+        }
+        // purchase
+        else if (helpers.isTokenEqual(targetToken, smartToken)) {
+            let supply = EOS.getBalance(smartTokenStat.supply);
+            let reserveBalance = await this.getReserveBalance(converter, sourceToken);
+            let reserveRatio = EOS.getReserve(reserves, sourceToken).ratio;
+            targetDecimals = EOS.getDecimals(supply);
+            returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
+        }
+        else {
+            // cross convert
+            let sourceReserveBalance = await this.getReserveBalance(converter, sourceToken);
+            let sourceReserveRatio = EOS.getReserve(reserves, sourceToken).ratio;
+            let targetReserveBalance = await this.getReserveBalance(converter, targetToken);
+            let targetReserveRatio = EOS.getReserve(reserves, targetToken).ratio;
+            targetDecimals = EOS.getDecimals(targetReserveBalance);
+            returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
+            magnitude = 2;
+        }
+
+        return helpers.toDecimalPlaces(helpers.getFinalAmount(returnAmount, conversionFee, magnitude), targetDecimals);
+    }
+
+    private async getTokenSmartTokens(token: Token) {
+        let smartTokens: Token[] = [];
+
+        // search in legacy converters
+        for (let converterAccount in legacyConverters) {
+            let converter = legacyConverters[converterAccount];
+
+            // check if the token is the converter smart token
+            if (converter.smartToken[token.blockchainId] == token.symbol)
+                smartTokens.push(token);
+
+            // check if the token is one of the converter's reserve tokens
+            for (let reserveAccount in converter.reserves) {
+                if (reserveAccount == token.blockchainId && converter.reserves[reserveAccount] == token.symbol) {
+                    let smartTokenAccount = Object.keys(converter.smartToken)[0];
+                    smartTokens.push({
+                        blockchainType: BlockchainType.EOS,
+                        blockchainId: smartTokenAccount,
+                        symbol: converter.smartToken[smartTokenAccount]
+                    });
+                }
+            }
+        }
+
+        return smartTokens;
+    }
+
+    private async getPathToAnchor(token: Token, anchorToken: Token) {
+        if (helpers.isTokenEqual(token, anchorToken))
+            return [token];
+
+        // hardcoded path for legacy converters
+        const smartTokens = await this.getTokenSmartTokens(token);
+        if (smartTokens.length == 0)
+            return [];
+
+        return [token, smartTokens[0], anchorToken];
+    }
+
+    private static getShortestPath(sourcePath, targetPath) {
+        if (sourcePath.length > 0 && targetPath.length > 0) {
+            let i = sourcePath.length - 1;
+            let j = targetPath.length - 1;
+            while (i >= 0 && j >= 0 && helpers.isTokenEqual(sourcePath[i], targetPath[j])) {
+                i--;
+                j--;
+            }
+
+            const path = [];
+            for (let m = 0; m <= i + 1; m++)
+                path.push(sourcePath[m]);
+            for (let n = j; n >= 0; n--)
+                path.push(targetPath[n]);
+
+            let length = 0;
+            for (let p = 0; p < path.length; p += 1) {
+                for (let q = p + 2; q < path.length - p % 2; q += 2) {
+                    if (helpers.isTokenEqual(path[p], path[q]))
+                        p = q;
+                }
+                path[length++] = path[p];
+            }
+
+            return path.slice(0, length);
+        }
+
+        return [];
+    }
+
+    private static getReserve(reserves, reserveToken: Token) {
+        return reserves.filter(reserve => {
+            return reserve.contract == reserveToken.blockchainId &&
+                   EOS.getSymbol(reserve.currency) == reserveToken.symbol;
+        })[0];
+    }
+
+    private static getBalance(asset) {
+        return asset.split(' ')[0];
+    }
+
+    private static getSymbol(asset) {
+        return asset.split(' ')[1];
+    }
+
+    private static getDecimals(amount) {
+        return amount.split('.')[1].length;
+    }
 }
