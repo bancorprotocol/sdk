@@ -1,4 +1,4 @@
-# Bancor SDK v0.1 (beta)
+# Bancor SDK v0.2 (beta)
 
 Javascript API that provides utilities and access to the Bancor Network mainnet contracts across the different blockchains using a unified & simplified interface.
 
