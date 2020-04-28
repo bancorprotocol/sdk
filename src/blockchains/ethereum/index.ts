@@ -133,6 +133,10 @@ export class Ethereum implements Blockchain {
         }
         return Array.from(new Set<string>(paths.map(path => path.join(',')))).map(path => path.split(','));
     }
+
+    private static getNormalizedToken(token: Token): Token {
+        return Object.assign({}, token, { blockchainId: Web3.utils.toChecksumAddress(token.blockchainId) });
+    }
 }
 
 export const getWeb3 = function(nodeEndpoint) {

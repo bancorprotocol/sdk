@@ -261,6 +261,9 @@ var Ethereum = /** @class */ (function () {
         }
         return Array.from(new Set(paths.map(function (path) { return path.join(','); }))).map(function (path) { return path.split(','); });
     };
+    Ethereum.getNormalizedToken = function (token) {
+        return Object.assign({}, token, { blockchainId: web3_1.default.utils.toChecksumAddress(token.blockchainId) });
+    };
     return Ethereum;
 }());
 exports.Ethereum = Ethereum;
@@ -309,11 +312,12 @@ exports.getRatesSafe = function (ethereum, paths, amount) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 5]);
+                    _a.trys.push([0, 2, , 6]);
                     return [4 /*yield*/, exports.getRates(ethereum, paths, amount)];
                 case 1: return [2 /*return*/, _a.sent()];
                 case 2:
                     error_1 = _a.sent();
+                    if (!(paths.length > 1)) return [3 /*break*/, 5];
                     mid = paths.length >> 1;
                     return [4 /*yield*/, exports.getRatesSafe(ethereum, paths.slice(0, mid), amount)];
                 case 3:
@@ -322,7 +326,8 @@ exports.getRatesSafe = function (ethereum, paths, amount) {
                 case 4:
                     arr2 = _a.sent();
                     return [2 /*return*/, __spreadArrays(arr1, arr2)];
-                case 5: return [2 /*return*/];
+                case 5: return [2 /*return*/, ['0']];
+                case 6: return [2 /*return*/];
             }
         });
     });

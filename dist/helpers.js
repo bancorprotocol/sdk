@@ -23,7 +23,7 @@ function toDecimalPlaces(amount, decimals) {
 exports.toDecimalPlaces = toDecimalPlaces;
 function isTokenEqual(token1, token2) {
     return token1.blockchainType == token2.blockchainType &&
-        token1.blockchainId == token2.blockchainId &&
+        token1.blockchainId.toLowerCase() == token2.blockchainId.toLowerCase() &&
         token1.symbol == token2.symbol;
 }
 exports.isTokenEqual = isTokenEqual;

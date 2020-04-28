@@ -21,6 +21,7 @@ export declare class Ethereum implements Blockchain {
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;
     getAllPathsFunc(sourceToken: string, targetToken: string): string[][];
     getSomePathsFunc(sourceToken: string, targetToken: string): string[][];
+    private static getNormalizedToken;
 }
 export declare const getWeb3: (nodeEndpoint: any) => any;
 export declare const getContractAddresses: (ethereum: any) => any;

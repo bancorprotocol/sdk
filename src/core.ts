@@ -1,3 +1,4 @@
+import * as helpers from './helpers';
 import { Ethereum } from './blockchains/ethereum';
 import { EOS } from './blockchains/eos';
 import { Settings, BlockchainType, Token, Blockchain } from './types';
@@ -30,26 +31,26 @@ export class Core {
 
         // single blockchain path - get the path/rate from that blockchain
         if (sourceBlockchain == targetBlockchain) {
-            const paths = await sourceBlockchain.getPaths(sourceToken, targetToken);
-            const rates = await sourceBlockchain.getRates(paths, amount);
+            const paths = await this.getPaths(sourceToken.blockchainType, sourceToken, targetToken);
+            const rates = await this.getRates(sourceToken.blockchainType, paths, amount);
             const index = Core.getBest(paths, rates);
             return {
                 path: paths[index],
-                rate: rates[index],
+                rate: rates[index]
             };
         }
 
         // cross blockchain path
         // source blockchain - get the paths from the source token to the anchor token
-        const sourcePaths = await sourceBlockchain.getPaths(sourceToken, sourceBlockchain.getAnchorToken());
+        const sourcePaths = await this.getPaths(sourceToken.blockchainType, sourceToken, sourceBlockchain.getAnchorToken());
         // source blockchain - get the rates
-        const sourceRates = await sourceBlockchain.getRates(sourcePaths, amount);
+        const sourceRates = await this.getRates(sourceToken.blockchainType, sourcePaths, amount);
         const sourceIndex = Core.getBest(sourcePaths, sourceRates);
 
         // target blockchain - get the paths from the anchor to the target token
-        const targetPaths = await targetBlockchain.getPaths(targetBlockchain.getAnchorToken(), targetToken);
+        const targetPaths = await this.getPaths(targetToken.blockchainType, targetBlockchain.getAnchorToken(), targetToken);
         // target blockchain - get the rates
-        const targetRates = await targetBlockchain.getRates(targetPaths, sourceRates[sourceIndex]);
+        const targetRates = await this.getRates(targetToken.blockchainType, targetPaths, sourceRates[sourceIndex]);
         const targetIndex = Core.getBest(targetPaths, targetRates);
 
         return {
@@ -64,7 +65,7 @@ export class Core {
 
         // single blockchain path - get the rate from that blockchain
         if (sourceBlockchainType == targetBlockchainType)
-            return (await this.blockchains[sourceBlockchainType].getRates([path], amount))[0];
+            return (await this.getRates(sourceBlockchainType, [path], amount))[0];
 
         // cross blockchain path - split the path in two
         const index = path.findIndex(item => item.blockchainType == targetBlockchainType);
@@ -72,8 +73,24 @@ export class Core {
         const targetBlockchainPath = path.slice(index);
 
         // get the rate from the source blockchain and pass it as the input for the target blockchain
-        const sourceBlockchainRate = (await this.blockchains[sourceBlockchainType].getRates([sourceBlockchainPath], amount))[0];
-        return (await this.blockchains[targetBlockchainType].getRates([targetBlockchainPath], sourceBlockchainRate))[0];
+        const sourceBlockchainRate = (await this.getRates(sourceBlockchainType, [sourceBlockchainPath], amount))[0];
+        return (await this.getRates(targetBlockchainType, [targetBlockchainPath], sourceBlockchainRate))[0];
+    }
+
+    private async getPaths(blockchainType: BlockchainType, sourceToken: Token, targetToken: Token): Promise<Token[][]> {
+        // special case for source token == target token
+        if (helpers.isTokenEqual(sourceToken, targetToken))
+            return [[sourceToken]];
+
+        return await this.blockchains[blockchainType].getPaths(sourceToken, targetToken);
+    }
+
+    private async getRates(blockchainType: BlockchainType, paths: Token[][], amount: string = '1'): Promise<string[]> {
+        // special case for single path and source token == target token
+        if (paths.length == 1 && helpers.isTokenEqual(paths[0][0], paths[0][paths[0].length - 1]))
+            return [amount];
+
+        return await this.blockchains[blockchainType].getRates(paths, amount);
     }
 
     private static getBest(paths: Token[][], rates: string[]): number {

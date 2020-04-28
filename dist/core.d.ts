@@ -9,6 +9,8 @@ export declare class Core {
         rate: string;
     }>;
     getRateByPath(path: Token[], amount?: string): Promise<string>;
+    private getPaths;
+    private getRates;
     private static getBest;
     private static betterRate;
     private static equalRate;

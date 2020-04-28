@@ -148,19 +148,6 @@ describe('rates test', () => {
                 '0x4444444444444444444444444444444444444444' : ['0x1111111111111111111111111111111111111111', '0x2222222222222222222222222222222222222222', '0x3333333333333333333333333333333333333333']
             }));
 
-        const spyGetRates = jest
-            .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.reject())
-            .mockImplementationOnce(() => Promise.resolve(['11111111111111111111']))
-            .mockImplementationOnce(() => Promise.reject())
-            .mockImplementationOnce(() => Promise.resolve(['22222222222222222222']))
-            .mockImplementationOnce(() => Promise.resolve(['33333333333333333333']))
-
-        const spyGetDecimals = jest
-            .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('18'))
-            .mockImplementationOnce(() => Promise.resolve('18'));
-
         const blockchainEOS = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
         jest.spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
@@ -183,13 +170,11 @@ describe('rates test', () => {
                 { blockchainType: BlockchainType.EOS, blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
                 { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB'}
             ],
-            rate: '44.0806'
+            rate: '1.3231'
         };
 
         expect(received).toEqual(expected);
         expect(spyGetGraph).toHaveBeenCalledTimes(1);
-        expect(spyGetRates).toHaveBeenCalledTimes(5);
-        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(2);
     });
 
@@ -349,11 +334,7 @@ describe('rates test', () => {
     it('getRateByPath from ethereum token to ethereum', async () => {
         const spyGetRates = jest
             .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.reject())
-            .mockImplementationOnce(() => Promise.resolve(['11111111111111111111']))
-            .mockImplementationOnce(() => Promise.reject())
-            .mockImplementationOnce(() => Promise.resolve(['22222222222222222222']))
-            .mockImplementationOnce(() => Promise.resolve(['33333333333333333333']))
+            .mockImplementationOnce(() => Promise.resolve(['11111111111111111111', '22222222222222222222', '33333333333333333333']))
 
         const spyGetDecimals = jest
             .spyOn(ethereum, 'getDecimals')
@@ -369,25 +350,11 @@ describe('rates test', () => {
         ]);
 
         expect(received).toEqual('11.111111111111111111');
-        expect(spyGetRates).toHaveBeenCalledTimes(5);
+        expect(spyGetRates).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
     });
 
     it('getRateByPath from ethereum token to eos', async () => {
-        const spyGetRates = jest
-            .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.reject())
-            .mockImplementationOnce(() => Promise.resolve(['11111111111111111111']))
-            .mockImplementationOnce(() => Promise.reject())
-            .mockImplementationOnce(() => Promise.resolve(['22222222222222222222']))
-            .mockImplementationOnce(() => Promise.resolve(['33333333333333333333']))
-
-
-        const spyGetDecimals = jest
-            .spyOn(ethereum, 'getDecimals')
-            .mockImplementationOnce(() => Promise.resolve('18'))
-            .mockImplementationOnce(() => Promise.resolve('18'));
-
         const blockchainEOS = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
         const spyGetTableRows = jest
             .spyOn(blockchainEOS.jsonRpc, 'get_table_rows')
@@ -400,9 +367,7 @@ describe('rates test', () => {
             { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB'}
         ]);
 
-        expect(received).toEqual('14.6988');
-        expect(spyGetRates).toHaveBeenCalledTimes(5);
-        expect(spyGetDecimals).toHaveBeenCalledTimes(2);
+        expect(received).toEqual('1.3231');
     });
 
     it('getRateByPath from eos token to ethereum', async () => {
@@ -413,11 +378,7 @@ describe('rates test', () => {
 
         const spyGetRates = jest
             .spyOn(ethereum, 'getRates')
-            .mockImplementationOnce(() => Promise.reject())
-            .mockImplementationOnce(() => Promise.resolve(['11111111111111111111']))
-            .mockImplementationOnce(() => Promise.reject())
-            .mockImplementationOnce(() => Promise.resolve(['22222222222222222222']))
-            .mockImplementationOnce(() => Promise.resolve(['33333333333333333333']))
+            .mockImplementationOnce(() => Promise.resolve(['11111111111111111111', '22222222222222222222', '33333333333333333333']))
 
         const spyGetDecimals = jest
             .spyOn(ethereum, 'getDecimals')
@@ -433,7 +394,7 @@ describe('rates test', () => {
         ]);
 
         expect(received).toEqual('11.111111111111111111');
-        expect(spyGetRates).toHaveBeenCalledTimes(5);
+        expect(spyGetRates).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
     });
 
