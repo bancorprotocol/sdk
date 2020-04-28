@@ -98,6 +98,10 @@ var SDK = /** @class */ (function () {
             });
         });
     };
+    /**
+    * refreshes the local cache with data from the converter registry
+    * should be called periodically to support new pools
+    */
     SDK.prototype.refresh = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

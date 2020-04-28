@@ -24,5 +24,9 @@ export declare class SDK {
     * @param sdk   sdk object
     */
     static destroy(sdk: SDK): Promise<void>;
+    /**
+    * refreshes the local cache with data from the converter registry
+    * should be called periodically to support new pools
+    */
     refresh(): Promise<void>;
 }

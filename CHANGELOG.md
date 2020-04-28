@@ -1,3 +1,6 @@
+### 0.2.1
+* Minor documentation changes
+
 ### 0.2.0
 * Complete rewrite - new module based design
 * Path-finding logic now finds the best rate between any two tokens in the network

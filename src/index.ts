@@ -43,6 +43,10 @@ export class SDK {
         await sdk._core.destroy();
     }
 
+    /**
+    * refreshes the local cache with data from the converter registry
+    * should be called periodically to support new pools
+    */
     async refresh(): Promise<void> {
         await this._core.refresh();
     }
