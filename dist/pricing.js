@@ -59,13 +59,13 @@ var Pricing = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     /**
-    * returns the best conversion path for a given pair of tokens in the bancor network, along with its rate
+    * returns the best conversion path and rate for a given pair of tokens in the bancor network
     *
     * @param sourceToken    source token
     * @param targetToken    target token
     * @param amount         input amount
     *
-    * @returns  the best rate between the source token and the target token, along with the conversion path used to produce that rate
+    * @returns  the best path and rate between the source token and the target token
     */
     Pricing.prototype.getPathAndRate = function (sourceToken, targetToken, amount) {
         if (amount === void 0) { amount = '1'; }

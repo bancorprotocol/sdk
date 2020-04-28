@@ -5,13 +5,13 @@ import { Token } from './types';
  */
 export declare class Pricing extends SDKModule {
     /**
-    * returns the best conversion path for a given pair of tokens in the bancor network, along with its rate
+    * returns the best conversion path and rate for a given pair of tokens in the bancor network
     *
     * @param sourceToken    source token
     * @param targetToken    target token
     * @param amount         input amount
     *
-    * @returns  the best rate between the source token and the target token, along with the conversion path used to produce that rate
+    * @returns  the best path and rate between the source token and the target token
     */
     getPathAndRate(sourceToken: Token, targetToken: Token, amount?: string): Promise<{
         path: Token[];
