@@ -74,8 +74,8 @@ export class Ethereum implements Blockchain {
     }
 
     async refresh(): Promise<void> {
-        this.graph = await getGraph(this);
-        this.trees = await getTrees(this);
+        this.graph = getGraph(await getTokens(this));
+        this.trees = getTrees(this.graph, getContractAddresses(this).pivotTokens);
     }
 
     getAnchorToken(): Token {
@@ -184,19 +184,40 @@ export const getRates = async function(ethereum, paths, amount) {
     return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : '0');
 };
 
-export const getGraph = async function(ethereum) {
-    const graph = {};
-
+export const getTokens = async function(ethereum) {
     const convertibleTokens = await ethereum.converterRegistry.methods.getConvertibleTokens().call();
     const calls = convertibleTokens.map(convertibleToken => [ethereum.converterRegistry._address, ethereum.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]);
     const [blockNumber, returnData] = await ethereum.multicallContract.methods.aggregate(calls, true).call();
     const smartTokenLists = returnData.map(item => Array.from(Array((item.data.length - 130) / 64).keys()).map(n => Web3.utils.toChecksumAddress(item.data.substr(64 * n + 154, 40))));
+    return convertibleTokens.reduce((obj, item, index) => ({...obj, [item]: smartTokenLists[index]}), {});
+};
 
-    for (let i = 0; i < convertibleTokens.length; i++) {
-        for (const smartToken of smartTokenLists[i]) {
-            if (convertibleTokens[i] != smartToken) {
-                updateGraph(graph, convertibleTokens[i], smartToken);
-                updateGraph(graph, smartToken, convertibleTokens[i]);
+function getGraph(tokens) {
+    const graph = {};
+
+    const smartTokens = {};
+
+    for (const convertibleToken in tokens) {
+        for (const smartToken of tokens[convertibleToken]) {
+            if (smartTokens[smartToken] == undefined)
+                smartTokens[smartToken] = [convertibleToken];
+            else
+                smartTokens[smartToken].push(convertibleToken);
+        }
+    }
+
+    for (const smartToken in smartTokens) {
+        for (const convertibleToken of smartTokens[smartToken]) {
+            updateGraph(graph, smartToken, [smartToken, convertibleToken]);
+            updateGraph(graph, convertibleToken, [smartToken, smartToken]);
+        }
+    }
+
+    for (const smartToken in smartTokens) {
+        for (const sourceToken of smartTokens[smartToken]) {
+            for (const targetToken of smartTokens[smartToken]) {
+                if (sourceToken != targetToken)
+                    updateGraph(graph, sourceToken, [smartToken, targetToken]);
             }
         }
     }
@@ -204,11 +225,11 @@ export const getGraph = async function(ethereum) {
     return graph;
 };
 
-export const getTrees = async function(ethereum) {
+function getTrees(graph, pivotTokens) {
     const trees = {};
 
-    for (const pivotToken of getContractAddresses(ethereum).pivotTokens)
-        trees[pivotToken] = getTree(ethereum.graph, pivotToken);
+    for (const pivotToken of pivotTokens)
+        trees[pivotToken] = getTree(graph, pivotToken);
 
     return trees;
 };
@@ -216,18 +237,18 @@ export const getTrees = async function(ethereum) {
 function updateGraph(graph, key, value) {
     if (graph[key] == undefined)
         graph[key] = [value];
-    else if (!graph[key].includes(value))
+    else
         graph[key].push(value);
 }
 
 function getTree(graph, root) {
-    const tree = {[root]: null};
+    const tree = {[root]: []};
     const queue = [root];
     while (queue.length > 0) {
         const dst = queue.shift();
-        for (const src of graph[dst].filter(node => tree[node] === undefined)) {
-            tree[src] = dst;
-            queue.push(src);
+        for (const src of graph[dst].filter(src => tree[src[1]] === undefined)) {
+            tree[src[1]] = [src[0], dst];
+            queue.push(src[1]);
         }
     }
     return tree;
@@ -237,13 +258,13 @@ function getAllPathsRecursive(paths, graph, tokens, destToken) {
     const prevToken = tokens[tokens.length - 1];
     if (prevToken == destToken)
         paths.push(tokens);
-    else for (const nextToken of graph[prevToken].filter(token => !tokens.includes(token)))
-        getAllPathsRecursive(paths, graph, [...tokens, nextToken], destToken);
+    else for (const pair of graph[prevToken].filter(pair => !tokens.includes(pair[1])))
+        getAllPathsRecursive(paths, graph, [...tokens, ...pair], destToken);
 }
 
 function getOnePathRecursive(tree, token) {
     if (tree[token])
-        return [token, ...getOnePathRecursive(tree, tree[token])];
+        return [token, tree[token][0], ...getOnePathRecursive(tree, tree[token][1])];
     return [token];
 }
 
