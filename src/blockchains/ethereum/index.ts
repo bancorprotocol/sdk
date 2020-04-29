@@ -223,7 +223,7 @@ function getGraph(tokens) {
     }
 
     return graph;
-};
+}
 
 function getTrees(graph, pivotTokens) {
     const trees = {};
@@ -232,7 +232,7 @@ function getTrees(graph, pivotTokens) {
         trees[pivotToken] = getTree(graph, pivotToken);
 
     return trees;
-};
+}
 
 function updateGraph(graph, key, value) {
     if (graph[key] == undefined)

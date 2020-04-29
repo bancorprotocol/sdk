@@ -397,7 +397,6 @@ function getGraph(tokens) {
     }
     return graph;
 }
-;
 function getTrees(graph, pivotTokens) {
     var trees = {};
     for (var _i = 0, pivotTokens_3 = pivotTokens; _i < pivotTokens_3.length; _i++) {
@@ -406,7 +405,6 @@ function getTrees(graph, pivotTokens) {
     }
     return trees;
 }
-;
 function updateGraph(graph, key, value) {
     if (graph[key] == undefined)
         graph[key] = [value];
