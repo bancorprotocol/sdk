@@ -438,7 +438,7 @@ function getAllPathsRecursive(paths, graph, tokens, destToken) {
         }
 }
 function getOnePathRecursive(tree, token) {
-    if (tree[token])
+    if (tree[token].length > 0)
         return __spreadArrays([token, tree[token][0]], getOnePathRecursive(tree, tree[token][1]));
     return [token];
 }
