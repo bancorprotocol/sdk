@@ -349,29 +349,27 @@ exports.getRates = function (ethereum, paths, amount) {
 };
 exports.getGraph = function (ethereum) {
     return __awaiter(this, void 0, void 0, function () {
-        var graph, convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var graph, convertibleTokens, calls, _a, blockNumber, returnData, smartTokenLists, i, _i, _b, smartToken;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     graph = {};
                     return [4 /*yield*/, ethereum.converterRegistry.methods.getConvertibleTokens().call()];
                 case 1:
-                    convertibleTokens = _b.sent();
+                    convertibleTokens = _c.sent();
                     calls = convertibleTokens.map(function (convertibleToken) { return [ethereum.converterRegistry._address, ethereum.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
                     return [4 /*yield*/, ethereum.multicallContract.methods.aggregate(calls, true).call()];
                 case 2:
-                    _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
-                    _loop_1 = function (i) {
-                        for (var _i = 0, _a = Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(function (n) { return web3_1.default.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)); }); _i < _a.length; _i++) {
-                            var smartToken = _a[_i];
+                    _a = _c.sent(), blockNumber = _a[0], returnData = _a[1];
+                    smartTokenLists = returnData.map(function (item) { return Array.from(Array((item.data.length - 130) / 64).keys()).map(function (n) { return web3_1.default.utils.toChecksumAddress(item.data.substr(64 * n + 154, 40)); }); });
+                    for (i = 0; i < convertibleTokens.length; i++) {
+                        for (_i = 0, _b = smartTokenLists[i]; _i < _b.length; _i++) {
+                            smartToken = _b[_i];
                             if (convertibleTokens[i] != smartToken) {
                                 updateGraph(graph, convertibleTokens[i], smartToken);
                                 updateGraph(graph, smartToken, convertibleTokens[i]);
                             }
                         }
-                    };
-                    for (i = 0; i < returnData.length; i++) {
-                        _loop_1(i);
                     }
                     return [2 /*return*/, graph];
             }

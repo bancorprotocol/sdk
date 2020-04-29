@@ -190,9 +190,10 @@ export const getGraph = async function(ethereum) {
     const convertibleTokens = await ethereum.converterRegistry.methods.getConvertibleTokens().call();
     const calls = convertibleTokens.map(convertibleToken => [ethereum.converterRegistry._address, ethereum.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]);
     const [blockNumber, returnData] = await ethereum.multicallContract.methods.aggregate(calls, true).call();
+    const smartTokenLists = returnData.map(item => Array.from(Array((item.data.length - 130) / 64).keys()).map(n => Web3.utils.toChecksumAddress(item.data.substr(64 * n + 154, 40))));
 
-    for (let i = 0; i < returnData.length; i++) {
-        for (const smartToken of Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(n => Web3.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)))) {
+    for (let i = 0; i < convertibleTokens.length; i++) {
+        for (const smartToken of smartTokenLists[i]) {
             if (convertibleTokens[i] != smartToken) {
                 updateGraph(graph, convertibleTokens[i], smartToken);
                 updateGraph(graph, smartToken, convertibleTokens[i]);
