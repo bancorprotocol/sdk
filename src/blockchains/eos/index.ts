@@ -4,7 +4,7 @@ import * as helpers from '../../helpers';
 import { Blockchain, BlockchainType, Converter, ConversionEvent, Token } from '../../types';
 import legacyConverters from './legacy_converters';
 
-const anchorToken:Token = {
+const anchorToken: Token = {
     blockchainType: BlockchainType.EOS,
     blockchainId: 'bntbntbntbnt',
     symbol: 'BNT'

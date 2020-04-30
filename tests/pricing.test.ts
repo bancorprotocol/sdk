@@ -1,6 +1,3 @@
-import { legacyConverters } from './mocks/eos'
-jest.mock('../src/blockchains/eos/legacy_converters', () => legacyConverters);
-
 import { SDK } from '../src';
 import { BlockchainType } from '../src/types';
 import * as eos from '../src/blockchains/eos';
@@ -41,6 +38,27 @@ const eosTable = {
         }
     }
 };
+
+jest.mock('../src/blockchains/eos/legacy_converters', () => ({
+    converteraab: {
+        smartToken: {
+            aaabbbaaabbb: 'AAABBB'
+        },
+        reserves: {
+            aaaaaaaaaaaa: 'AAA',
+            bbbbbbbbbbbb: 'BBB'
+        }
+    },
+    converteraac: {
+        smartToken: {
+            aaacccaaaccc: 'AAACCC'
+        },
+        reserves: {
+            aaaaaaaaaaaa: 'AAA',
+            cccccccccccc: 'CCC'
+        }
+    }
+}));
 
 describe('rates test', () => {
     let sdk: SDK;
