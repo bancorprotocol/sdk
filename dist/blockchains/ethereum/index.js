@@ -190,7 +190,7 @@ var Ethereum = /** @class */ (function () {
                         return [4 /*yield*/, exports.getDecimals(this, addressPaths[0].slice(-1)[0])];
                     case 2:
                         targetDecimals = _a.sent();
-                        return [4 /*yield*/, exports.getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals))];
+                        return [4 /*yield*/, getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals))];
                     case 3:
                         tokenRates = _a.sent();
                         return [2 /*return*/, tokenRates.map(function (tokenRate) { return helpers.fromWei(tokenRate, targetDecimals); })];
@@ -275,16 +275,6 @@ exports.getContractAddresses = function (ethereum) {
         return CONTRACT_ADDRESSES[ethereum.networkType];
     throw new Error(ethereum.networkType + ' network not supported');
 };
-exports.getReturn = function (ethereum, path, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).call()];
-                case 1: return [2 /*return*/, (_a.sent())['0']];
-            }
-        });
-    });
-};
 exports.getDecimals = function (ethereum, token) {
     return __awaiter(this, void 0, void 0, function () {
         var tokenContract, _a, _b;
@@ -304,7 +294,7 @@ exports.getDecimals = function (ethereum, token) {
         });
     });
 };
-exports.getRatesSafe = function (ethereum, paths, amount) {
+function getRatesSafe(ethereum, paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var error_1, mid, arr1, arr2;
         return __generator(this, function (_a) {
@@ -317,10 +307,10 @@ exports.getRatesSafe = function (ethereum, paths, amount) {
                     error_1 = _a.sent();
                     if (!(paths.length > 1)) return [3 /*break*/, 5];
                     mid = paths.length >> 1;
-                    return [4 /*yield*/, exports.getRatesSafe(ethereum, paths.slice(0, mid), amount)];
+                    return [4 /*yield*/, getRatesSafe(ethereum, paths.slice(0, mid), amount)];
                 case 3:
                     arr1 = _a.sent();
-                    return [4 /*yield*/, exports.getRatesSafe(ethereum, paths.slice(mid, paths.length), amount)];
+                    return [4 /*yield*/, getRatesSafe(ethereum, paths.slice(mid, paths.length), amount)];
                 case 4:
                     arr2 = _a.sent();
                     return [2 /*return*/, __spreadArrays(arr1, arr2)];
@@ -329,7 +319,7 @@ exports.getRatesSafe = function (ethereum, paths, amount) {
             }
         });
     });
-};
+}
 exports.getRates = function (ethereum, paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var calls, _a, blockNumber, returnData;

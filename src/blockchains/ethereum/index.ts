@@ -151,10 +151,6 @@ export const getContractAddresses = function(ethereum) {
     throw new Error(ethereum.networkType + ' network not supported');
 };
 
-export const getReturn = async function(ethereum, path, amount) {
-    return (await ethereum.bancorNetwork.methods.getReturnByPath(path, amount).call())['0'];
-};
-
 export const getDecimals = async function(ethereum, token) {
     if (ethereum.decimals[token] == undefined) {
         const tokenContract = new ethereum.web3.eth.Contract(abis.ERC20Token, token);
@@ -163,7 +159,7 @@ export const getDecimals = async function(ethereum, token) {
     return ethereum.decimals[token];
 };
 
-export const getRatesSafe = async function(ethereum, paths, amount) {
+async function getRatesSafe(ethereum, paths, amount) {
     try {
         return await getRates(ethereum, paths, amount);
     }
