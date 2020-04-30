@@ -240,7 +240,7 @@ var EOS = /** @class */ (function () {
     ;
     EOS.prototype.getConversionRate = function (smartToken, sourceToken, targetToken, amount) {
         return __awaiter(this, void 0, void 0, function () {
-            var smartTokenStat, converterBlockchainId, converter, conversionSettings, conversionFee, reserves, magnitude, targetDecimals, returnAmount, supply, reserveBalance, reserveRatio, supply, reserveBalance, reserveRatio, sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio;
+            var smartTokenStat, converterBlockchainId, converter, conversionSettings, conversionFee, reserves, magnitude, targetDecimals, returnAmount, supply, reserveBalance, reserveWeight, supply, reserveBalance, reserveWeight, sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.getSmartTokenStat(smartToken)];
@@ -267,9 +267,9 @@ var EOS = /** @class */ (function () {
                         return [4 /*yield*/, this.getReserveBalance(converter, targetToken)];
                     case 5:
                         reserveBalance = _a.sent();
-                        reserveRatio = EOS.getReserve(reserves, targetToken).ratio;
+                        reserveWeight = EOS.getReserve(reserves, targetToken).ratio;
                         targetDecimals = EOS.getDecimals(reserveBalance);
-                        returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
+                        returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveWeight, amount);
                         return [3 /*break*/, 11];
                     case 6:
                         if (!helpers.isTokenEqual(targetToken, smartToken)) return [3 /*break*/, 8];
@@ -277,20 +277,20 @@ var EOS = /** @class */ (function () {
                         return [4 /*yield*/, this.getReserveBalance(converter, sourceToken)];
                     case 7:
                         reserveBalance = _a.sent();
-                        reserveRatio = EOS.getReserve(reserves, sourceToken).ratio;
+                        reserveWeight = EOS.getReserve(reserves, sourceToken).ratio;
                         targetDecimals = EOS.getDecimals(supply);
-                        returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
+                        returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveWeight, amount);
                         return [3 /*break*/, 11];
                     case 8: return [4 /*yield*/, this.getReserveBalance(converter, sourceToken)];
                     case 9:
                         sourceReserveBalance = _a.sent();
-                        sourceReserveRatio = EOS.getReserve(reserves, sourceToken).ratio;
+                        sourceReserveWeight = EOS.getReserve(reserves, sourceToken).ratio;
                         return [4 /*yield*/, this.getReserveBalance(converter, targetToken)];
                     case 10:
                         targetReserveBalance = _a.sent();
-                        targetReserveRatio = EOS.getReserve(reserves, targetToken).ratio;
+                        targetReserveWeight = EOS.getReserve(reserves, targetToken).ratio;
                         targetDecimals = EOS.getDecimals(targetReserveBalance);
-                        returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
+                        returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount);
                         magnitude = 2;
                         _a.label = 11;
                     case 11: return [2 /*return*/, helpers.toDecimalPlaces(helpers.getFinalAmount(returnAmount, conversionFee, magnitude), targetDecimals)];

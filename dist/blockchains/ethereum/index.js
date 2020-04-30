@@ -153,13 +153,11 @@ var Ethereum = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         _a = this;
-                        return [4 /*yield*/, exports.getGraph(this)];
+                        _b = getGraph;
+                        return [4 /*yield*/, exports.getTokens(this)];
                     case 1:
-                        _a.graph = _c.sent();
-                        _b = this;
-                        return [4 /*yield*/, exports.getTrees(this)];
-                    case 2:
-                        _b.trees = _c.sent();
+                        _a.graph = _b.apply(void 0, [_c.sent()]);
+                        this.trees = getTrees(this.graph, exports.getContractAddresses(this).pivotTokens);
                         return [2 /*return*/];
                 }
             });
@@ -192,7 +190,7 @@ var Ethereum = /** @class */ (function () {
                         return [4 /*yield*/, exports.getDecimals(this, addressPaths[0].slice(-1)[0])];
                     case 2:
                         targetDecimals = _a.sent();
-                        return [4 /*yield*/, exports.getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals))];
+                        return [4 /*yield*/, getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals))];
                     case 3:
                         tokenRates = _a.sent();
                         return [2 /*return*/, tokenRates.map(function (tokenRate) { return helpers.fromWei(tokenRate, targetDecimals); })];
@@ -277,16 +275,6 @@ exports.getContractAddresses = function (ethereum) {
         return CONTRACT_ADDRESSES[ethereum.networkType];
     throw new Error(ethereum.networkType + ' network not supported');
 };
-exports.getReturn = function (ethereum, path, amount) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).call()];
-                case 1: return [2 /*return*/, (_a.sent())['0']];
-            }
-        });
-    });
-};
 exports.getDecimals = function (ethereum, token) {
     return __awaiter(this, void 0, void 0, function () {
         var tokenContract, _a, _b;
@@ -306,7 +294,7 @@ exports.getDecimals = function (ethereum, token) {
         });
     });
 };
-exports.getRatesSafe = function (ethereum, paths, amount) {
+function getRatesSafe(ethereum, paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var error_1, mid, arr1, arr2;
         return __generator(this, function (_a) {
@@ -319,10 +307,10 @@ exports.getRatesSafe = function (ethereum, paths, amount) {
                     error_1 = _a.sent();
                     if (!(paths.length > 1)) return [3 /*break*/, 5];
                     mid = paths.length >> 1;
-                    return [4 /*yield*/, exports.getRatesSafe(ethereum, paths.slice(0, mid), amount)];
+                    return [4 /*yield*/, getRatesSafe(ethereum, paths.slice(0, mid), amount)];
                 case 3:
                     arr1 = _a.sent();
-                    return [4 /*yield*/, exports.getRatesSafe(ethereum, paths.slice(mid, paths.length), amount)];
+                    return [4 /*yield*/, getRatesSafe(ethereum, paths.slice(mid, paths.length), amount)];
                 case 4:
                     arr2 = _a.sent();
                     return [2 /*return*/, __spreadArrays(arr1, arr2)];
@@ -331,7 +319,7 @@ exports.getRatesSafe = function (ethereum, paths, amount) {
             }
         });
     });
-};
+}
 exports.getRates = function (ethereum, paths, amount) {
     return __awaiter(this, void 0, void 0, function () {
         var calls, _a, blockNumber, returnData;
@@ -347,66 +335,82 @@ exports.getRates = function (ethereum, paths, amount) {
         });
     });
 };
-exports.getGraph = function (ethereum) {
+exports.getTokens = function (ethereum) {
     return __awaiter(this, void 0, void 0, function () {
-        var graph, convertibleTokens, calls, _a, blockNumber, returnData, _loop_1, i;
+        var convertibleTokens, calls, _a, blockNumber, returnData, smartTokenLists;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0:
-                    graph = {};
-                    return [4 /*yield*/, ethereum.converterRegistry.methods.getConvertibleTokens().call()];
+                case 0: return [4 /*yield*/, ethereum.converterRegistry.methods.getConvertibleTokens().call()];
                 case 1:
                     convertibleTokens = _b.sent();
                     calls = convertibleTokens.map(function (convertibleToken) { return [ethereum.converterRegistry._address, ethereum.converterRegistry.methods.getConvertibleTokenSmartTokens(convertibleToken).encodeABI()]; });
                     return [4 /*yield*/, ethereum.multicallContract.methods.aggregate(calls, true).call()];
                 case 2:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
-                    _loop_1 = function (i) {
-                        for (var _i = 0, _a = Array.from(Array((returnData[i].data.length - 130) / 64).keys()).map(function (n) { return web3_1.default.utils.toChecksumAddress(returnData[i].data.substr(64 * n + 154, 40)); }); _i < _a.length; _i++) {
-                            var smartToken = _a[_i];
-                            if (convertibleTokens[i] != smartToken) {
-                                updateGraph(graph, convertibleTokens[i], smartToken);
-                                updateGraph(graph, smartToken, convertibleTokens[i]);
-                            }
-                        }
-                    };
-                    for (i = 0; i < returnData.length; i++) {
-                        _loop_1(i);
-                    }
-                    return [2 /*return*/, graph];
+                    smartTokenLists = returnData.map(function (item) { return Array.from(Array((item.data.length - 130) / 64).keys()).map(function (n) { return web3_1.default.utils.toChecksumAddress(item.data.substr(64 * n + 154, 40)); }); });
+                    return [2 /*return*/, convertibleTokens.reduce(function (obj, item, index) {
+                            var _a;
+                            return (__assign(__assign({}, obj), (_a = {}, _a[item] = smartTokenLists[index], _a)));
+                        }, {})];
             }
         });
     });
 };
-exports.getTrees = function (ethereum) {
-    return __awaiter(this, void 0, void 0, function () {
-        var trees, _i, _a, pivotToken;
-        return __generator(this, function (_b) {
-            trees = {};
-            for (_i = 0, _a = exports.getContractAddresses(ethereum).pivotTokens; _i < _a.length; _i++) {
-                pivotToken = _a[_i];
-                trees[pivotToken] = getTree(ethereum.graph, pivotToken);
+function getGraph(tokens) {
+    var graph = {};
+    var smartTokens = {};
+    for (var convertibleToken in tokens) {
+        for (var _i = 0, _a = tokens[convertibleToken]; _i < _a.length; _i++) {
+            var smartToken = _a[_i];
+            if (smartTokens[smartToken] == undefined)
+                smartTokens[smartToken] = [convertibleToken];
+            else
+                smartTokens[smartToken].push(convertibleToken);
+        }
+    }
+    for (var smartToken in smartTokens) {
+        for (var _b = 0, _c = smartTokens[smartToken]; _b < _c.length; _b++) {
+            var convertibleToken = _c[_b];
+            updateGraph(graph, smartToken, [smartToken, convertibleToken]);
+            updateGraph(graph, convertibleToken, [smartToken, smartToken]);
+        }
+    }
+    for (var smartToken in smartTokens) {
+        for (var _d = 0, _e = smartTokens[smartToken]; _d < _e.length; _d++) {
+            var sourceToken = _e[_d];
+            for (var _f = 0, _g = smartTokens[smartToken]; _f < _g.length; _f++) {
+                var targetToken = _g[_f];
+                if (sourceToken != targetToken)
+                    updateGraph(graph, sourceToken, [smartToken, targetToken]);
             }
-            return [2 /*return*/, trees];
-        });
-    });
-};
+        }
+    }
+    return graph;
+}
+function getTrees(graph, pivotTokens) {
+    var trees = {};
+    for (var _i = 0, pivotTokens_3 = pivotTokens; _i < pivotTokens_3.length; _i++) {
+        var pivotToken = pivotTokens_3[_i];
+        trees[pivotToken] = getTree(graph, pivotToken);
+    }
+    return trees;
+}
 function updateGraph(graph, key, value) {
     if (graph[key] == undefined)
         graph[key] = [value];
-    else if (!graph[key].includes(value))
+    else
         graph[key].push(value);
 }
 function getTree(graph, root) {
     var _a;
-    var tree = (_a = {}, _a[root] = null, _a);
+    var tree = (_a = {}, _a[root] = [], _a);
     var queue = [root];
     while (queue.length > 0) {
         var dst = queue.shift();
-        for (var _i = 0, _b = graph[dst].filter(function (node) { return tree[node] === undefined; }); _i < _b.length; _i++) {
+        for (var _i = 0, _b = graph[dst].filter(function (src) { return tree[src[1]] === undefined; }); _i < _b.length; _i++) {
             var src = _b[_i];
-            tree[src] = dst;
-            queue.push(src);
+            tree[src[1]] = [src[0], dst];
+            queue.push(src[1]);
         }
     }
     return tree;
@@ -416,14 +420,14 @@ function getAllPathsRecursive(paths, graph, tokens, destToken) {
     if (prevToken == destToken)
         paths.push(tokens);
     else
-        for (var _i = 0, _a = graph[prevToken].filter(function (token) { return !tokens.includes(token); }); _i < _a.length; _i++) {
-            var nextToken = _a[_i];
-            getAllPathsRecursive(paths, graph, __spreadArrays(tokens, [nextToken]), destToken);
+        for (var _i = 0, _a = graph[prevToken].filter(function (pair) { return !tokens.includes(pair[1]); }); _i < _a.length; _i++) {
+            var pair = _a[_i];
+            getAllPathsRecursive(paths, graph, __spreadArrays(tokens, pair), destToken);
         }
 }
 function getOnePathRecursive(tree, token) {
-    if (tree[token])
-        return __spreadArrays([token], getOnePathRecursive(tree, tree[token]));
+    if (tree[token].length > 0)
+        return __spreadArrays([token, tree[token][0]], getOnePathRecursive(tree, tree[token][1]));
     return [token];
 }
 function getMergedPath(sourcePath, targetPath) {

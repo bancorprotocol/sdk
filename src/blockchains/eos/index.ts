@@ -4,7 +4,7 @@ import * as helpers from '../../helpers';
 import { Blockchain, BlockchainType, Converter, ConversionEvent, Token } from '../../types';
 import legacyConverters from './legacy_converters';
 
-const anchorToken:Token = {
+const anchorToken: Token = {
     blockchainType: BlockchainType.EOS,
     blockchainId: 'bntbntbntbnt',
     symbol: 'BNT'
@@ -122,26 +122,26 @@ export class EOS implements Blockchain {
         if (helpers.isTokenEqual(sourceToken, smartToken)) {
             let supply = EOS.getBalance(smartTokenStat.supply);
             let reserveBalance = await this.getReserveBalance(converter, targetToken);
-            let reserveRatio = EOS.getReserve(reserves, targetToken).ratio;
+            let reserveWeight = EOS.getReserve(reserves, targetToken).ratio;
             targetDecimals = EOS.getDecimals(reserveBalance);
-            returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveRatio, amount);
+            returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveWeight, amount);
         }
         // purchase
         else if (helpers.isTokenEqual(targetToken, smartToken)) {
             let supply = EOS.getBalance(smartTokenStat.supply);
             let reserveBalance = await this.getReserveBalance(converter, sourceToken);
-            let reserveRatio = EOS.getReserve(reserves, sourceToken).ratio;
+            let reserveWeight = EOS.getReserve(reserves, sourceToken).ratio;
             targetDecimals = EOS.getDecimals(supply);
-            returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveRatio, amount);
+            returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveWeight, amount);
         }
         else {
             // cross convert
             let sourceReserveBalance = await this.getReserveBalance(converter, sourceToken);
-            let sourceReserveRatio = EOS.getReserve(reserves, sourceToken).ratio;
+            let sourceReserveWeight = EOS.getReserve(reserves, sourceToken).ratio;
             let targetReserveBalance = await this.getReserveBalance(converter, targetToken);
-            let targetReserveRatio = EOS.getReserve(reserves, targetToken).ratio;
+            let targetReserveWeight = EOS.getReserve(reserves, targetToken).ratio;
             targetDecimals = EOS.getDecimals(targetReserveBalance);
-            returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveRatio, targetReserveBalance, targetReserveRatio, amount);
+            returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount);
             magnitude = 2;
         }
 
