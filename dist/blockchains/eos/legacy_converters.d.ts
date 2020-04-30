@@ -1,227 +1,227 @@
 declare const _default: {
-    'bnt2eoscnvrt': {
+    bnt2eoscnvrt: {
         smartToken: {
-            'bnt2eosrelay': string;
+            bnt2eosrelay: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
+            bntbntbntbnt: string;
             'eosio.token': string;
         };
     };
-    'bancorc11111': {
+    bancorc11111: {
         smartToken: {
-            'bancorr11111': string;
+            bancorr11111: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'eosblackteam': string;
+            bntbntbntbnt: string;
+            eosblackteam: string;
         };
     };
-    'bancorc11112': {
+    bancorc11112: {
         smartToken: {
-            'bancorr11112': string;
+            bancorr11112: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'therealkarma': string;
+            bntbntbntbnt: string;
+            therealkarma: string;
         };
     };
-    'bancorc11121': {
+    bancorc11121: {
         smartToken: {
-            'bancorr11121': string;
+            bancorr11121: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'horustokenio': string;
+            bntbntbntbnt: string;
+            horustokenio: string;
         };
     };
-    'bancorc11122': {
+    bancorc11122: {
         smartToken: {
-            'bancorr11122': string;
+            bancorr11122: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'eosiomeetone': string;
+            bntbntbntbnt: string;
+            eosiomeetone: string;
         };
     };
-    'bancorc11123': {
+    bancorc11123: {
         smartToken: {
-            'bancorr11123': string;
+            bancorr11123: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'everipediaiq': string;
+            bntbntbntbnt: string;
+            everipediaiq: string;
         };
     };
-    'bancorc11124': {
+    bancorc11124: {
         smartToken: {
-            'bancorr11124': string;
+            bancorr11124: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'epraofficial': string;
+            bntbntbntbnt: string;
+            epraofficial: string;
         };
     };
-    'bancorc11125': {
+    bancorc11125: {
         smartToken: {
-            'bancorr11125': string;
+            bancorr11125: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'betdicetoken': string;
+            bntbntbntbnt: string;
+            betdicetoken: string;
         };
     };
-    'bancorc11131': {
+    bancorc11131: {
         smartToken: {
-            'bancorr11131': string;
+            bancorr11131: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'hirevibeshvt': string;
+            bntbntbntbnt: string;
+            hirevibeshvt: string;
         };
     };
-    'bancorc11132': {
+    bancorc11132: {
         smartToken: {
-            'bancorr11132': string;
+            bancorr11132: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'octtothemoon': string;
+            bntbntbntbnt: string;
+            octtothemoon: string;
         };
     };
-    'bancorc11134': {
+    bancorc11134: {
         smartToken: {
-            'bancorr11134': string;
+            bancorr11134: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'eosvegascoin': string;
+            bntbntbntbnt: string;
+            eosvegascoin: string;
         };
     };
-    'bancorc11145': {
+    bancorc11145: {
         smartToken: {
-            'bancorr11145': string;
+            bancorr11145: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'realgoldtael': string;
+            bntbntbntbnt: string;
+            realgoldtael: string;
         };
     };
-    'bancorc11151': {
+    bancorc11151: {
         smartToken: {
-            'bancorr11151': string;
+            bancorr11151: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'zosdiscounts': string;
+            bntbntbntbnt: string;
+            zosdiscounts: string;
         };
     };
-    'bancorc11152': {
+    bancorc11152: {
         smartToken: {
-            'bancorr11152': string;
+            bancorr11152: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'equacasheos1': string;
+            bntbntbntbnt: string;
+            equacasheos1: string;
         };
     };
-    'bancorc11153': {
+    bancorc11153: {
         smartToken: {
-            'bancorr11153': string;
+            bancorr11153: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'thepeostoken': string;
+            bntbntbntbnt: string;
+            thepeostoken: string;
         };
     };
-    'bancorc11154': {
+    bancorc11154: {
         smartToken: {
-            'bancorr11154': string;
+            bancorr11154: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'dappservices': string;
+            bntbntbntbnt: string;
+            dappservices: string;
         };
     };
-    'bancorc11155': {
+    bancorc11155: {
         smartToken: {
-            'bancorr11155': string;
+            bancorr11155: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'chexchexchex': string;
+            bntbntbntbnt: string;
+            chexchexchex: string;
         };
     };
-    'bancorc11211': {
+    bancorc11211: {
         smartToken: {
-            'bancorr11211': string;
+            bancorr11211: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'finxtokenvci': string;
+            bntbntbntbnt: string;
+            finxtokenvci: string;
         };
     };
-    'bancorc11213': {
+    bancorc11213: {
         smartToken: {
-            'bancorr11213': string;
+            bancorr11213: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'emanateoneos': string;
+            bntbntbntbnt: string;
+            emanateoneos: string;
         };
     };
-    'bancorc11214': {
+    bancorc11214: {
         smartToken: {
-            'bancorr11214': string;
+            bancorr11214: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'pixeos1token': string;
+            bntbntbntbnt: string;
+            pixeos1token: string;
         };
     };
-    'bancorc11215': {
+    bancorc11215: {
         smartToken: {
-            'bancorr11215': string;
+            bancorr11215: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'eosdtnutoken': string;
+            bntbntbntbnt: string;
+            eosdtnutoken: string;
         };
     };
-    'bancorc11222': {
+    bancorc11222: {
         smartToken: {
-            'bancorr11222': string;
+            bancorr11222: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'eosdtsttoken': string;
+            bntbntbntbnt: string;
+            eosdtsttoken: string;
         };
     };
-    'bancorc11223': {
+    bancorc11223: {
         smartToken: {
-            'bancorr11223': string;
+            bancorr11223: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'eosdragontkn': string;
+            bntbntbntbnt: string;
+            eosdragontkn: string;
         };
     };
-    'bancorc11225': {
+    bancorc11225: {
         smartToken: {
-            'bancorr11225': string;
+            bancorr11225: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'lumetokenctr': string;
+            bntbntbntbnt: string;
+            lumetokenctr: string;
         };
     };
-    'bancorc11232': {
+    bancorc11232: {
         smartToken: {
-            'bancorr11232': string;
+            bancorr11232: string;
         };
         reserves: {
-            'bntbntbntbnt': string;
-            'tethertether': string;
+            bntbntbntbnt: string;
+            tethertether: string;
         };
     };
 };
