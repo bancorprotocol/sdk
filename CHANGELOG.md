@@ -1,5 +1,11 @@
+### 0.2.2
+* Added support in Ethereum for getting path/rate for smart tokens
+* Cleaned up tests
+
+
 ### 0.2.1
 * Minor documentation changes
+
 
 ### 0.2.0
 * Complete rewrite - new module based design
