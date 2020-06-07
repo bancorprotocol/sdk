@@ -26,7 +26,7 @@ export function isTokenEqual(token1: Token, token2: Token) {
            token1.symbol == token2.symbol;
 }
 
-export function calculatePurchaseReturn(supply, reserveBalance, reserveWeight, depositAmount) {
+export function purchaseRate(supply, reserveBalance, reserveWeight, depositAmount) {
     [supply, reserveBalance, reserveWeight, depositAmount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 deposit amount
@@ -41,7 +41,7 @@ export function calculatePurchaseReturn(supply, reserveBalance, reserveWeight, d
     return supply.mul((ONE.add(depositAmount.div(reserveBalance))).pow(reserveWeight.div(MAX_WEIGHT)).sub(ONE));
 }
 
-export function calculateSaleReturn(supply, reserveBalance, reserveWeight, sellAmount) {
+export function saleRate(supply, reserveBalance, reserveWeight, sellAmount) {
     [supply, reserveBalance, reserveWeight, sellAmount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 sell amount
@@ -60,7 +60,7 @@ export function calculateSaleReturn(supply, reserveBalance, reserveWeight, sellA
     return reserveBalance.mul(ONE.sub(ONE.sub(sellAmount.div(supply)).pow((MAX_WEIGHT.div(reserveWeight)))));
 }
 
-export function calculateCrossReserveReturn(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount) {
+export function crossReserveRate(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount) {
     [sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for equal weights
@@ -71,7 +71,7 @@ export function calculateCrossReserveReturn(sourceReserveBalance, sourceReserveW
     return targetReserveBalance.mul(ONE.sub(sourceReserveBalance.div(sourceReserveBalance.add(amount)).pow(sourceReserveWeight.div(targetReserveWeight))));
 }
 
-export function calculateFundCost(supply, reserveBalance, reserveRatio, amount) {
+export function fundCost(supply, reserveBalance, reserveRatio, amount) {
     [supply, reserveBalance, reserveRatio, amount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 amount
@@ -86,7 +86,7 @@ export function calculateFundCost(supply, reserveBalance, reserveRatio, amount) 
     return reserveBalance.mul(supply.add(amount).div(supply).pow(MAX_WEIGHT.div(reserveRatio)).sub(ONE));
 }
 
-export function calculateLiquidateReturn(supply, reserveBalance, reserveRatio, amount) {
+export function liquidateRate(supply, reserveBalance, reserveRatio, amount) {
     [supply, reserveBalance, reserveRatio, amount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 amount
