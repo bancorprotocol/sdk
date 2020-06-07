@@ -114,7 +114,6 @@ export class EOS implements Blockchain {
         let conversionSettings = await this.getConverterSettings(converter);
         let conversionFee = conversionSettings.fee;
         let reserves = await this.getReserves(converter);
-        let magnitude = 1;
         let targetDecimals;
         let returnAmount;
 
@@ -142,10 +141,9 @@ export class EOS implements Blockchain {
             let targetReserveWeight = EOS.getReserve(reserves, targetToken).ratio;
             targetDecimals = EOS.getDecimals(targetReserveBalance);
             returnAmount = helpers.crossReserveRate(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount);
-            magnitude = 2;
         }
 
-        return helpers.toDecimalPlaces(helpers.getFinalAmount(returnAmount, conversionFee, magnitude), targetDecimals);
+        return helpers.toDecimalPlaces(helpers.getFinalAmount(returnAmount, conversionFee), targetDecimals);
     }
 
     private async getTokenSmartTokens(token: Token) {
