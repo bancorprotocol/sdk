@@ -26,38 +26,38 @@ export function isTokenEqual(token1: Token, token2: Token) {
            token1.symbol == token2.symbol;
 }
 
-export function purchaseRate(supply, reserveBalance, reserveWeight, depositAmount) {
-    [supply, reserveBalance, reserveWeight, depositAmount] = Array.from(arguments).map(x => new Decimal(x));
+export function purchaseRate(supply, reserveBalance, reserveWeight, amount) {
+    [supply, reserveBalance, reserveWeight, amount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 deposit amount
-    if (depositAmount.equals(ZERO))
+    if (amount.equals(ZERO))
         return ZERO;
 
     // special case if the weight = 100%
     if (reserveWeight.equals(MAX_WEIGHT))
-        return supply.mul(depositAmount).div(reserveBalance);
+        return supply.mul(amount).div(reserveBalance);
 
-    // return supply * ((1 + depositAmount / reserveBalance) ^ (reserveWeight / MAX_WEIGHT) - 1)
-    return supply.mul((ONE.add(depositAmount.div(reserveBalance))).pow(reserveWeight.div(MAX_WEIGHT)).sub(ONE));
+    // return supply * ((1 + amount / reserveBalance) ^ (reserveWeight / MAX_WEIGHT) - 1)
+    return supply.mul((ONE.add(amount.div(reserveBalance))).pow(reserveWeight.div(MAX_WEIGHT)).sub(ONE));
 }
 
-export function saleRate(supply, reserveBalance, reserveWeight, sellAmount) {
-    [supply, reserveBalance, reserveWeight, sellAmount] = Array.from(arguments).map(x => new Decimal(x));
+export function saleRate(supply, reserveBalance, reserveWeight, amount) {
+    [supply, reserveBalance, reserveWeight, amount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 sell amount
-    if (sellAmount.equals(ZERO))
+    if (amount.equals(ZERO))
         return ZERO;
 
     // special case for selling the entire supply
-    if (sellAmount.equals(supply))
+    if (amount.equals(supply))
         return reserveBalance;
 
     // special case if the weight = 100%
     if (reserveWeight.equals(MAX_WEIGHT))
-        return reserveBalance.mul(sellAmount).div(supply);
+        return reserveBalance.mul(amount).div(supply);
 
-    // return reserveBalance * (1 - (1 - sellAmount / supply) ^ (MAX_WEIGHT / reserveWeight))
-    return reserveBalance.mul(ONE.sub(ONE.sub(sellAmount.div(supply)).pow((MAX_WEIGHT.div(reserveWeight)))));
+    // return reserveBalance * (1 - (1 - amount / supply) ^ (MAX_WEIGHT / reserveWeight))
+    return reserveBalance.mul(ONE.sub(ONE.sub(amount.div(supply)).pow((MAX_WEIGHT.div(reserveWeight)))));
 }
 
 export function crossReserveRate(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount) {
