@@ -1,19 +1,19 @@
-import helpers from 'decimal.js';
+import Decimal from 'decimal.js';
 import { Token } from './types';
 
-const ZERO = new helpers(0);
-const ONE = new helpers(1);
-const MAX_WEIGHT = new helpers(1000000);
-const MAX_FEE = new helpers(1000000);
+const ZERO = new Decimal(0);
+const ONE = new Decimal(1);
+const MAX_WEIGHT = new Decimal(1000000);
+const MAX_FEE = new Decimal(1000000);
 
-helpers.set({precision: 100, rounding: helpers.ROUND_DOWN});
+Decimal.set({precision: 100, rounding: Decimal.ROUND_DOWN});
 
 export function toWei(amount, decimals) {
-    return new helpers(`${amount}e+${decimals}`).toFixed();
+    return new Decimal(`${amount}e+${decimals}`).toFixed();
 }
 
 export function fromWei(amount, decimals) {
-    return new helpers(`${amount}e-${decimals}`).toFixed();
+    return new Decimal(`${amount}e-${decimals}`).toFixed();
 }
 
 export function toDecimalPlaces(amount, decimals) {
@@ -27,7 +27,7 @@ export function isTokenEqual(token1: Token, token2: Token) {
 }
 
 export function calculatePurchaseReturn(supply, reserveBalance, reserveWeight, depositAmount) {
-    [supply, reserveBalance, reserveWeight, depositAmount] = Array.from(arguments).map(x => new helpers(x));
+    [supply, reserveBalance, reserveWeight, depositAmount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 deposit amount
     if (depositAmount.equals(ZERO))
@@ -37,12 +37,12 @@ export function calculatePurchaseReturn(supply, reserveBalance, reserveWeight, d
     if (reserveWeight.equals(MAX_WEIGHT))
         return supply.mul(depositAmount).div(reserveBalance);
 
-    // return supply * ((1 + depositAmount / reserveBalance) ^ (reserveWeight / 1000000) - 1)
+    // return supply * ((1 + depositAmount / reserveBalance) ^ (reserveWeight / MAX_WEIGHT) - 1)
     return supply.mul((ONE.add(depositAmount.div(reserveBalance))).pow(reserveWeight.div(MAX_WEIGHT)).sub(ONE));
 }
 
 export function calculateSaleReturn(supply, reserveBalance, reserveWeight, sellAmount) {
-    [supply, reserveBalance, reserveWeight, sellAmount] = Array.from(arguments).map(x => new helpers(x));
+    [supply, reserveBalance, reserveWeight, sellAmount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 sell amount
     if (sellAmount.equals(ZERO))
@@ -56,12 +56,12 @@ export function calculateSaleReturn(supply, reserveBalance, reserveWeight, sellA
     if (reserveWeight.equals(MAX_WEIGHT))
         return reserveBalance.mul(sellAmount).div(supply);
 
-    // return reserveBalance * (1 - (1 - sellAmount / supply) ^ (1000000 / reserveWeight))
+    // return reserveBalance * (1 - (1 - sellAmount / supply) ^ (MAX_WEIGHT / reserveWeight))
     return reserveBalance.mul(ONE.sub(ONE.sub(sellAmount.div(supply)).pow((MAX_WEIGHT.div(reserveWeight)))));
 }
 
 export function calculateCrossReserveReturn(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount) {
-    [sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount] = Array.from(arguments).map(x => new helpers(x));
+    [sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for equal weights
     if (sourceReserveWeight.equals(targetReserveWeight))
@@ -72,7 +72,7 @@ export function calculateCrossReserveReturn(sourceReserveBalance, sourceReserveW
 }
 
 export function calculateFundCost(supply, reserveBalance, reserveRatio, amount) {
-    [supply, reserveBalance, reserveRatio, amount] = Array.from(arguments).map(x => new helpers(x));
+    [supply, reserveBalance, reserveRatio, amount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 amount
     if (amount.equals(ZERO))
@@ -87,7 +87,7 @@ export function calculateFundCost(supply, reserveBalance, reserveRatio, amount) 
 }
 
 export function calculateLiquidateReturn(supply, reserveBalance, reserveRatio, amount) {
-    [supply, reserveBalance, reserveRatio, amount] = Array.from(arguments).map(x => new helpers(x));
+    [supply, reserveBalance, reserveRatio, amount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 amount
     if (amount.equals(ZERO))
@@ -106,6 +106,6 @@ export function calculateLiquidateReturn(supply, reserveBalance, reserveRatio, a
 }
 
 export function getFinalAmount(amount, conversionFee, magnitude) {
-    [amount, conversionFee, magnitude] = Array.from(arguments).map(x => new helpers(x));
+    [amount, conversionFee, magnitude] = Array.from(arguments).map(x => new Decimal(x));
     return amount.mul(MAX_FEE.sub(conversionFee).pow(magnitude)).div(MAX_FEE.pow(magnitude));
 }
