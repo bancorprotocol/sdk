@@ -244,7 +244,7 @@ describe('rates test', () => {
                 { blockchainType: BlockchainType.EOS, blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
                 { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB'}
             ],
-            rate: '1.3231'
+            rate: '1.3251'
         };
 
         expect(received).toEqual(expected);
@@ -333,7 +333,7 @@ describe('rates test', () => {
                 { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
                 { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' }
             ],
-            rate: '4.4392'
+            rate: '4.4568'
         };
 
         expect(received).toEqual(expected);
@@ -363,7 +363,7 @@ describe('rates test', () => {
                 { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
                 { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' }
             ],
-            rate: '1.8208'
+            rate: '1.8254'
         };
 
         expect(received).toEqual(expected);
@@ -393,7 +393,7 @@ describe('rates test', () => {
                 { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' },
                 { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' }
             ],
-            rate: '12.5927'
+            rate: '12.6111'
         };
 
         expect(received).toEqual(expected);
@@ -446,7 +446,7 @@ describe('rates test', () => {
             { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB'}
         ]);
 
-        expect(received).toEqual('1.3231');
+        expect(received).toEqual('1.3251');
         expect(spyGetRates).toHaveBeenCalledTimes(1);
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
         expect(spyGetTableRows).toHaveBeenCalledTimes(5);
@@ -496,7 +496,7 @@ describe('rates test', () => {
             { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' }
         ]);
 
-        expect(received).toEqual('4.4392');
+        expect(received).toEqual('4.4568');
         expect(spyGetTableRows).toHaveBeenCalledTimes(10);
     });
 });
