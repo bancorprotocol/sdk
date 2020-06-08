@@ -142,7 +142,8 @@ export class EOS implements Blockchain {
             let targetReserveWeight = EOS.getReserve(reserves, targetToken).ratio;
             targetDecimals = EOS.getDecimals(targetReserveBalance);
             returnAmount = helpers.crossReserveRate(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount);
-            magnitude = 2;
+            if ((await this.getConverterVersion(converter)) == '1.0')
+                magnitude = 2;
         }
 
         return helpers.toDecimalPlaces(helpers.getFinalAmount(returnAmount, conversionFee, magnitude), targetDecimals);
