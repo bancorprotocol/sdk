@@ -200,15 +200,6 @@ exports.default = {
             'eosdtsttoken': 'EOSDT'
         }
     },
-    'bancorc11223': {
-        smartToken: {
-            'bancorr11223': 'BNTDRGN'
-        },
-        reserves: {
-            'bntbntbntbnt': 'BNT',
-            'eosdragontkn': 'DRAGON'
-        }
-    },
     'bancorc11225': {
         smartToken: {
             'bancorr11225': 'BNTLUME'
@@ -216,6 +207,15 @@ exports.default = {
         reserves: {
             'bntbntbntbnt': 'BNT',
             'lumetokenctr': 'LUME'
+        }
+    },
+    'bancorc11231': {
+        smartToken: {
+            'bancorr11231': 'BNTSENS'
+        },
+        reserves: {
+            'bntbntbntbnt': 'BNT',
+            'sensegenesis': 'SENSE'
         }
     },
     'bancorc11232': {

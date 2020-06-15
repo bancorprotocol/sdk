@@ -197,15 +197,6 @@ declare const _default: {
             eosdtsttoken: string;
         };
     };
-    bancorc11223: {
-        smartToken: {
-            bancorr11223: string;
-        };
-        reserves: {
-            bntbntbntbnt: string;
-            eosdragontkn: string;
-        };
-    };
     bancorc11225: {
         smartToken: {
             bancorr11225: string;
@@ -213,6 +204,15 @@ declare const _default: {
         reserves: {
             bntbntbntbnt: string;
             lumetokenctr: string;
+        };
+    };
+    bancorc11231: {
+        smartToken: {
+            bancorr11231: string;
+        };
+        reserves: {
+            bntbntbntbnt: string;
+            sensegenesis: string;
         };
     };
     bancorc11232: {
