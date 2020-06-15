@@ -1,19 +1,27 @@
 {
   "name": "@bancor/sdk",
   "version": "0.2.3",
-  "description": "",
+  "description": "Javascript API that provides utilities and access to the Bancor Network mainnet contracts across the different blockchains using a unified & simplified interface.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bancorprotocol/sdk"
+    "url": "git+https://github.com/bancorprotocol/sdk.git"
+  },
+  "homepage": "https://github.com/bancorprotocol/sdk#readme",
+  "bugs": {
+    "url": "https://github.com/bancorprotocol/sdk/issues"
+  },
+  "directories": {
+    "test": "tests"
   },
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "test": "jest --coverage"
   },
   "keywords": [],
-  "author": "",
+  "author": "Yudi Levi",
   "dependencies": {
     "@types/text-encoding": "0.0.35",
     "decimal.js": "^10.2.0",
