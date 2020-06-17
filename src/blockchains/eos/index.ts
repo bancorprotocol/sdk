@@ -124,7 +124,7 @@ export class EOS implements Blockchain {
             let reserveBalance = await this.getReserveBalance(converter, targetToken);
             let reserveWeight = EOS.getReserve(reserves, targetToken).ratio;
             targetDecimals = EOS.getDecimals(reserveBalance);
-            returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveWeight, amount);
+            returnAmount = helpers.saleRate(supply, reserveBalance, reserveWeight, amount);
         }
         // purchase
         else if (helpers.isTokenEqual(targetToken, smartToken)) {
@@ -132,7 +132,7 @@ export class EOS implements Blockchain {
             let reserveBalance = await this.getReserveBalance(converter, sourceToken);
             let reserveWeight = EOS.getReserve(reserves, sourceToken).ratio;
             targetDecimals = EOS.getDecimals(supply);
-            returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveWeight, amount);
+            returnAmount = helpers.purchaseRate(supply, reserveBalance, reserveWeight, amount);
         }
         else {
             // cross convert
@@ -141,8 +141,9 @@ export class EOS implements Blockchain {
             let targetReserveBalance = await this.getReserveBalance(converter, targetToken);
             let targetReserveWeight = EOS.getReserve(reserves, targetToken).ratio;
             targetDecimals = EOS.getDecimals(targetReserveBalance);
-            returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount);
-            magnitude = 2;
+            returnAmount = helpers.crossReserveRate(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount);
+            if ((await this.getConverterVersion(converter)) == '1.0')
+                magnitude = 2;
         }
 
         return helpers.toDecimalPlaces(helpers.getFinalAmount(returnAmount, conversionFee, magnitude), targetDecimals);
