@@ -1,3 +1,8 @@
+### 0.2.4
+* Added support for the new ETH token address
+* Added fallback for token decimals
+
+
 ### 0.2.2
 * Added support in Ethereum for getting path/rate for smart tokens
 * Cleaned up tests
