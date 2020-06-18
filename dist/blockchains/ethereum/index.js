@@ -82,7 +82,8 @@ var CONTRACT_ADDRESSES = {
         ],
         nonStandardTokenDecimals: {
             '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': '9',
-            '0xbdEB4b83251Fb146687fa19D1C660F99411eefe3': '18'
+            '0xbdEB4b83251Fb146687fa19D1C660F99411eefe3': '18',
+            '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE': '18'
         }
     },
     ropsten: {
@@ -277,19 +278,27 @@ exports.getContractAddresses = function (ethereum) {
 };
 exports.getDecimals = function (ethereum, token) {
     return __awaiter(this, void 0, void 0, function () {
-        var tokenContract, _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var tokenContract, _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
-                    if (!(ethereum.decimals[token] == undefined)) return [3 /*break*/, 2];
+                    if (!(ethereum.decimals[token] == undefined)) return [3 /*break*/, 4];
+                    _d.label = 1;
+                case 1:
+                    _d.trys.push([1, 3, , 4]);
                     tokenContract = new ethereum.web3.eth.Contract(abis.ERC20Token, token);
                     _a = ethereum.decimals;
                     _b = token;
                     return [4 /*yield*/, tokenContract.methods.decimals().call()];
-                case 1:
-                    _a[_b] = _c.sent();
-                    _c.label = 2;
-                case 2: return [2 /*return*/, ethereum.decimals[token]];
+                case 2:
+                    _a[_b] = _d.sent();
+                    return [3 /*break*/, 4];
+                case 3:
+                    _c = _d.sent();
+                    // falling back to 18 decimals
+                    ethereum.decimals[token] = 18;
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/, ethereum.decimals[token]];
             }
         });
     });

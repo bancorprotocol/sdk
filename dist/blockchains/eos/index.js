@@ -269,8 +269,8 @@ var EOS = /** @class */ (function () {
                         reserveBalance = _a.sent();
                         reserveWeight = EOS.getReserve(reserves, targetToken).ratio;
                         targetDecimals = EOS.getDecimals(reserveBalance);
-                        returnAmount = helpers.calculateSaleReturn(supply, reserveBalance, reserveWeight, amount);
-                        return [3 /*break*/, 11];
+                        returnAmount = helpers.saleRate(supply, reserveBalance, reserveWeight, amount);
+                        return [3 /*break*/, 12];
                     case 6:
                         if (!helpers.isTokenEqual(targetToken, smartToken)) return [3 /*break*/, 8];
                         supply = EOS.getBalance(smartTokenStat.supply);
@@ -279,8 +279,8 @@ var EOS = /** @class */ (function () {
                         reserveBalance = _a.sent();
                         reserveWeight = EOS.getReserve(reserves, sourceToken).ratio;
                         targetDecimals = EOS.getDecimals(supply);
-                        returnAmount = helpers.calculatePurchaseReturn(supply, reserveBalance, reserveWeight, amount);
-                        return [3 /*break*/, 11];
+                        returnAmount = helpers.purchaseRate(supply, reserveBalance, reserveWeight, amount);
+                        return [3 /*break*/, 12];
                     case 8: return [4 /*yield*/, this.getReserveBalance(converter, sourceToken)];
                     case 9:
                         sourceReserveBalance = _a.sent();
@@ -290,10 +290,13 @@ var EOS = /** @class */ (function () {
                         targetReserveBalance = _a.sent();
                         targetReserveWeight = EOS.getReserve(reserves, targetToken).ratio;
                         targetDecimals = EOS.getDecimals(targetReserveBalance);
-                        returnAmount = helpers.calculateCrossReserveReturn(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount);
-                        magnitude = 2;
-                        _a.label = 11;
-                    case 11: return [2 /*return*/, helpers.toDecimalPlaces(helpers.getFinalAmount(returnAmount, conversionFee, magnitude), targetDecimals)];
+                        returnAmount = helpers.crossReserveRate(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount);
+                        return [4 /*yield*/, this.getConverterVersion(converter)];
+                    case 11:
+                        if ((_a.sent()) == '1.0')
+                            magnitude = 2;
+                        _a.label = 12;
+                    case 12: return [2 /*return*/, helpers.toDecimalPlaces(helpers.getFinalAmount(returnAmount, conversionFee, magnitude), targetDecimals)];
                 }
             });
         });

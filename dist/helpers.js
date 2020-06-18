@@ -27,36 +27,36 @@ function isTokenEqual(token1, token2) {
         token1.symbol == token2.symbol;
 }
 exports.isTokenEqual = isTokenEqual;
-function calculatePurchaseReturn(supply, reserveBalance, reserveWeight, depositAmount) {
+function purchaseRate(supply, reserveBalance, reserveWeight, amount) {
     var _a;
-    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveWeight = _a[2], depositAmount = _a[3];
+    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveWeight = _a[2], amount = _a[3];
     // special case for 0 deposit amount
-    if (depositAmount.equals(ZERO))
+    if (amount.equals(ZERO))
         return ZERO;
     // special case if the weight = 100%
     if (reserveWeight.equals(MAX_WEIGHT))
-        return supply.mul(depositAmount).div(reserveBalance);
-    // return supply * ((1 + depositAmount / reserveBalance) ^ (reserveWeight / 1000000) - 1)
-    return supply.mul((ONE.add(depositAmount.div(reserveBalance))).pow(reserveWeight.div(MAX_WEIGHT)).sub(ONE));
+        return supply.mul(amount).div(reserveBalance);
+    // return supply * ((1 + amount / reserveBalance) ^ (reserveWeight / MAX_WEIGHT) - 1)
+    return supply.mul((ONE.add(amount.div(reserveBalance))).pow(reserveWeight.div(MAX_WEIGHT)).sub(ONE));
 }
-exports.calculatePurchaseReturn = calculatePurchaseReturn;
-function calculateSaleReturn(supply, reserveBalance, reserveWeight, sellAmount) {
+exports.purchaseRate = purchaseRate;
+function saleRate(supply, reserveBalance, reserveWeight, amount) {
     var _a;
-    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveWeight = _a[2], sellAmount = _a[3];
+    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveWeight = _a[2], amount = _a[3];
     // special case for 0 sell amount
-    if (sellAmount.equals(ZERO))
+    if (amount.equals(ZERO))
         return ZERO;
     // special case for selling the entire supply
-    if (sellAmount.equals(supply))
+    if (amount.equals(supply))
         return reserveBalance;
     // special case if the weight = 100%
     if (reserveWeight.equals(MAX_WEIGHT))
-        return reserveBalance.mul(sellAmount).div(supply);
-    // return reserveBalance * (1 - (1 - sellAmount / supply) ^ (1000000 / reserveWeight))
-    return reserveBalance.mul(ONE.sub(ONE.sub(sellAmount.div(supply)).pow((MAX_WEIGHT.div(reserveWeight)))));
+        return reserveBalance.mul(amount).div(supply);
+    // return reserveBalance * (1 - (1 - amount / supply) ^ (MAX_WEIGHT / reserveWeight))
+    return reserveBalance.mul(ONE.sub(ONE.sub(amount.div(supply)).pow((MAX_WEIGHT.div(reserveWeight)))));
 }
-exports.calculateSaleReturn = calculateSaleReturn;
-function calculateCrossReserveReturn(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount) {
+exports.saleRate = saleRate;
+function crossReserveRate(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), sourceReserveBalance = _a[0], sourceReserveWeight = _a[1], targetReserveBalance = _a[2], targetReserveWeight = _a[3], amount = _a[4];
     // special case for equal weights
@@ -65,8 +65,8 @@ function calculateCrossReserveReturn(sourceReserveBalance, sourceReserveWeight, 
     // return targetReserveBalance * (1 - (sourceReserveBalance / (sourceReserveBalance + amount)) ^ (sourceReserveWeight / targetReserveWeight))
     return targetReserveBalance.mul(ONE.sub(sourceReserveBalance.div(sourceReserveBalance.add(amount)).pow(sourceReserveWeight.div(targetReserveWeight))));
 }
-exports.calculateCrossReserveReturn = calculateCrossReserveReturn;
-function calculateFundCost(supply, reserveBalance, reserveRatio, amount) {
+exports.crossReserveRate = crossReserveRate;
+function fundCost(supply, reserveBalance, reserveRatio, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], amount = _a[3];
     // special case for 0 amount
@@ -78,8 +78,8 @@ function calculateFundCost(supply, reserveBalance, reserveRatio, amount) {
     // return reserveBalance * (((supply + amount) / supply) ^ (MAX_WEIGHT / reserveRatio) - 1)
     return reserveBalance.mul(supply.add(amount).div(supply).pow(MAX_WEIGHT.div(reserveRatio)).sub(ONE));
 }
-exports.calculateFundCost = calculateFundCost;
-function calculateLiquidateReturn(supply, reserveBalance, reserveRatio, amount) {
+exports.fundCost = fundCost;
+function liquidateRate(supply, reserveBalance, reserveRatio, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], amount = _a[3];
     // special case for 0 amount
@@ -94,7 +94,7 @@ function calculateLiquidateReturn(supply, reserveBalance, reserveRatio, amount) 
     // return reserveBalance * (1 - ((supply - amount) / supply) ^ (MAX_WEIGHT / reserveRatio))
     return reserveBalance.mul(ONE.sub(supply.sub(amount).div(supply).pow(MAX_WEIGHT.div(reserveRatio))));
 }
-exports.calculateLiquidateReturn = calculateLiquidateReturn;
+exports.liquidateRate = liquidateRate;
 function getFinalAmount(amount, conversionFee, magnitude) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), amount = _a[0], conversionFee = _a[1], magnitude = _a[2];

@@ -17,7 +17,8 @@ const CONTRACT_ADDRESSES = {
         ],
         nonStandardTokenDecimals: {
             '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': '9',
-            '0xbdEB4b83251Fb146687fa19D1C660F99411eefe3': '18'
+            '0xbdEB4b83251Fb146687fa19D1C660F99411eefe3': '18',
+            '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE': '18'
         }
     },
     ropsten: {
@@ -153,8 +154,14 @@ export const getContractAddresses = function(ethereum) {
 
 export const getDecimals = async function(ethereum, token) {
     if (ethereum.decimals[token] == undefined) {
-        const tokenContract = new ethereum.web3.eth.Contract(abis.ERC20Token, token);
-        ethereum.decimals[token] = await tokenContract.methods.decimals().call();
+        try {
+            const tokenContract = new ethereum.web3.eth.Contract(abis.ERC20Token, token);
+            ethereum.decimals[token] = await tokenContract.methods.decimals().call();
+        }
+        catch {
+            // falling back to 18 decimals
+            ethereum.decimals[token] = 18;
+        }
     }
     return ethereum.decimals[token];
 };
