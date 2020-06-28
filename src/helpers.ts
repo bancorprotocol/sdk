@@ -120,7 +120,7 @@ export function liquidateRate(supply, reserveBalance, reserveRatio, amount) {
     return reserveBalance.mul(ONE.sub(supply.sub(amount).div(supply).pow(MAX_WEIGHT.div(reserveRatio))));
 }
 
-export function getFinalAmount(amount, conversionFee, magnitude) {
-    [amount, conversionFee, magnitude] = Array.from(arguments).map(x => new Decimal(x));
-    return amount.mul(MAX_FEE.sub(conversionFee).pow(magnitude)).div(MAX_FEE.pow(magnitude));
+export function getFinalAmount(amount, fee, magnitude) {
+    [amount, fee, magnitude] = Array.from(arguments).map(x => new Decimal(x));
+    return amount.mul(MAX_FEE.sub(fee).pow(magnitude)).div(MAX_FEE.pow(magnitude));
 }
