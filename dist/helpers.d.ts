@@ -9,4 +9,5 @@ export declare function crossReserveRate(sourceReserveBalance: any, sourceReserv
 export declare function fundCost(supply: any, reserveBalance: any, reserveRatio: any, amount: any): any;
 export declare function fundSupplyAmount(supply: any, reserveBalance: any, reserveRatio: any, amount: any): any;
 export declare function liquidateRate(supply: any, reserveBalance: any, reserveRatio: any, amount: any): any;
-export declare function getFinalAmount(amount: any, conversionFee: any, magnitude: any): any;
+export declare function getFinalAmount(amount: any, fee: any, magnitude: any): any;
+export declare function getReturn(func: any, args: any, amount: any, fee: any, direction: any, magnitude: any): any;

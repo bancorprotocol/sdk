@@ -1,4 +1,11 @@
 "use strict";
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -108,9 +115,17 @@ function liquidateRate(supply, reserveBalance, reserveRatio, amount) {
     return reserveBalance.mul(ONE.sub(supply.sub(amount).div(supply).pow(MAX_WEIGHT.div(reserveRatio))));
 }
 exports.liquidateRate = liquidateRate;
-function getFinalAmount(amount, conversionFee, magnitude) {
+function getFinalAmount(amount, fee, magnitude) {
     var _a;
-    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), amount = _a[0], conversionFee = _a[1], magnitude = _a[2];
-    return amount.mul(MAX_FEE.sub(conversionFee).pow(magnitude)).div(MAX_FEE.pow(magnitude));
+    _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), amount = _a[0], fee = _a[1], magnitude = _a[2];
+    return amount.mul(MAX_FEE.sub(fee).pow(magnitude)).div(MAX_FEE.pow(magnitude));
 }
 exports.getFinalAmount = getFinalAmount;
+function getReturn(func, args, amount, fee, direction, magnitude) {
+    amount = new decimal_js_1.default(amount);
+    return func.apply(void 0, __spreadArrays(args, [amount.mul(factor(fee, direction, magnitude, -1))])).mul(factor(fee, direction, magnitude, +1));
+}
+exports.getReturn = getReturn;
+function factor(fee, direction, magnitude, sign) {
+    return MAX_WEIGHT.sub(fee).div(MAX_WEIGHT).pow(magnitude).pow((direction + sign) / 2).mul(direction);
+}

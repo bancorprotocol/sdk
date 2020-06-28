@@ -124,3 +124,12 @@ export function getFinalAmount(amount, fee, magnitude) {
     [amount, fee, magnitude] = Array.from(arguments).map(x => new Decimal(x));
     return amount.mul(MAX_FEE.sub(fee).pow(magnitude)).div(MAX_FEE.pow(magnitude));
 }
+
+export function getReturn(func, args, amount, fee, direction, magnitude) {
+    amount = new Decimal(amount);
+    return func(...args, amount.mul(factor(fee, direction, magnitude, -1))).mul(factor(fee, direction, magnitude, +1));
+}
+
+function factor(fee, direction, magnitude, sign) {
+    return MAX_WEIGHT.sub(fee).div(MAX_WEIGHT).pow(magnitude).pow((direction + sign) / 2).mul(direction);
+}
