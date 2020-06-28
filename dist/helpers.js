@@ -86,7 +86,7 @@ function fundCost(supply, reserveBalance, reserveRatio, amount) {
     return reserveBalance.mul(supply.add(amount).div(supply).pow(MAX_WEIGHT.div(reserveRatio)).sub(ONE));
 }
 exports.fundCost = fundCost;
-function fundSupplyAmount(supply, reserveBalance, reserveRatio, amount) {
+function fundRate(supply, reserveBalance, reserveRatio, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], amount = _a[3];
     // special case for 0 amount
@@ -98,7 +98,7 @@ function fundSupplyAmount(supply, reserveBalance, reserveRatio, amount) {
     // return supply * ((amount / reserveBalance + 1) ^ (reserveRatio / MAX_WEIGHT) - 1)
     return supply.mul(amount.div(reserveBalance).add(ONE).pow(reserveRatio.div(MAX_WEIGHT)).sub(ONE));
 }
-exports.fundSupplyAmount = fundSupplyAmount;
+exports.fundRate = fundRate;
 function liquidateRate(supply, reserveBalance, reserveRatio, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], amount = _a[3];

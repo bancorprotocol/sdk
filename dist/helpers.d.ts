@@ -7,7 +7,7 @@ export declare function purchaseRate(supply: any, reserveBalance: any, reserveWe
 export declare function saleRate(supply: any, reserveBalance: any, reserveWeight: any, amount: any): any;
 export declare function crossReserveRate(sourceReserveBalance: any, sourceReserveWeight: any, targetReserveBalance: any, targetReserveWeight: any, amount: any): any;
 export declare function fundCost(supply: any, reserveBalance: any, reserveRatio: any, amount: any): any;
-export declare function fundSupplyAmount(supply: any, reserveBalance: any, reserveRatio: any, amount: any): any;
+export declare function fundRate(supply: any, reserveBalance: any, reserveRatio: any, amount: any): any;
 export declare function liquidateRate(supply: any, reserveBalance: any, reserveRatio: any, amount: any): any;
 export declare function getFinalAmount(amount: any, fee: any, magnitude: any): any;
 export declare function getReturn(func: any, args: any, amount: any, fee: any, direction: any, magnitude: any): any;

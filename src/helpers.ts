@@ -86,7 +86,7 @@ export function fundCost(supply, reserveBalance, reserveRatio, amount) {
     return reserveBalance.mul(supply.add(amount).div(supply).pow(MAX_WEIGHT.div(reserveRatio)).sub(ONE));
 }
 
-export function fundSupplyAmount(supply, reserveBalance, reserveRatio, amount) {
+export function fundRate(supply, reserveBalance, reserveRatio, amount) {
     [supply, reserveBalance, reserveRatio, amount] = Array.from(arguments).map(x => new Decimal(x));
 
     // special case for 0 amount
