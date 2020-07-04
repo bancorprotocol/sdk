@@ -18,7 +18,7 @@ export default {
             'eosblackteam': 'BLACK'
         }
     },
-    'bancorc11112': {
+    /*'bancorc11112': { // disabled
         smartToken: {
             'bancorr11112': 'BNTKRM'
         },
@@ -26,7 +26,7 @@ export default {
             'bntbntbntbnt': 'BNT',
             'therealkarma': 'KARMA'
         }
-    },
+    */},
     'bancorc11121': {
         smartToken: {
             'bancorr11121': 'BNTHRUS'
