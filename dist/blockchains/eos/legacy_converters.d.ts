@@ -17,15 +17,6 @@ declare const _default: {
             eosblackteam: string;
         };
     };
-    bancorc11112: {
-        smartToken: {
-            bancorr11112: string;
-        };
-        reserves: {
-            bntbntbntbnt: string;
-            therealkarma: string;
-        };
-    };
     bancorc11121: {
         smartToken: {
             bancorr11121: string;

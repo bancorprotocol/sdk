@@ -26,7 +26,7 @@ export default {
             'bntbntbntbnt': 'BNT',
             'therealkarma': 'KARMA'
         }
-    */},
+    },*/
     'bancorc11121': {
         smartToken: {
             'bancorr11121': 'BNTHRUS'
