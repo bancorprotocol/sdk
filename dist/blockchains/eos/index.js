@@ -269,7 +269,7 @@ var EOS = /** @class */ (function () {
                         reserveBalance = _a.sent();
                         reserveWeight = EOS.getReserve(reserves, targetToken).ratio;
                         targetDecimals = EOS.getDecimals(reserveBalance);
-                        returnAmount = helpers.saleRate(supply, reserveBalance, reserveWeight, amount);
+                        returnAmount = helpers.saleTargetAmount(supply, reserveBalance, reserveWeight, amount);
                         return [3 /*break*/, 12];
                     case 6:
                         if (!helpers.isTokenEqual(targetToken, smartToken)) return [3 /*break*/, 8];
@@ -279,7 +279,7 @@ var EOS = /** @class */ (function () {
                         reserveBalance = _a.sent();
                         reserveWeight = EOS.getReserve(reserves, sourceToken).ratio;
                         targetDecimals = EOS.getDecimals(supply);
-                        returnAmount = helpers.purchaseRate(supply, reserveBalance, reserveWeight, amount);
+                        returnAmount = helpers.purchaseTargetAmount(supply, reserveBalance, reserveWeight, amount);
                         return [3 /*break*/, 12];
                     case 8: return [4 /*yield*/, this.getReserveBalance(converter, sourceToken)];
                     case 9:
@@ -290,7 +290,7 @@ var EOS = /** @class */ (function () {
                         targetReserveBalance = _a.sent();
                         targetReserveWeight = EOS.getReserve(reserves, targetToken).ratio;
                         targetDecimals = EOS.getDecimals(targetReserveBalance);
-                        returnAmount = helpers.crossReserveRate(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount);
+                        returnAmount = helpers.crossReserveTargetAmount(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount);
                         return [4 /*yield*/, this.getConverterVersion(converter)];
                     case 11:
                         if ((_a.sent()) == '1.0')

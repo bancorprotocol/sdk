@@ -34,7 +34,7 @@ function isTokenEqual(token1, token2) {
         token1.symbol == token2.symbol;
 }
 exports.isTokenEqual = isTokenEqual;
-function purchaseRate(supply, reserveBalance, reserveWeight, amount) {
+function purchaseTargetAmount(supply, reserveBalance, reserveWeight, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveWeight = _a[2], amount = _a[3];
     // special case for 0 deposit amount
@@ -46,8 +46,8 @@ function purchaseRate(supply, reserveBalance, reserveWeight, amount) {
     // return supply * ((1 + amount / reserveBalance) ^ (reserveWeight / MAX_WEIGHT) - 1)
     return supply.mul((ONE.add(amount.div(reserveBalance))).pow(reserveWeight.div(MAX_WEIGHT)).sub(ONE));
 }
-exports.purchaseRate = purchaseRate;
-function saleRate(supply, reserveBalance, reserveWeight, amount) {
+exports.purchaseTargetAmount = purchaseTargetAmount;
+function saleTargetAmount(supply, reserveBalance, reserveWeight, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveWeight = _a[2], amount = _a[3];
     // special case for 0 sell amount
@@ -62,8 +62,8 @@ function saleRate(supply, reserveBalance, reserveWeight, amount) {
     // return reserveBalance * (1 - (1 - amount / supply) ^ (MAX_WEIGHT / reserveWeight))
     return reserveBalance.mul(ONE.sub(ONE.sub(amount.div(supply)).pow((MAX_WEIGHT.div(reserveWeight)))));
 }
-exports.saleRate = saleRate;
-function crossReserveRate(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount) {
+exports.saleTargetAmount = saleTargetAmount;
+function crossReserveTargetAmount(sourceReserveBalance, sourceReserveWeight, targetReserveBalance, targetReserveWeight, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), sourceReserveBalance = _a[0], sourceReserveWeight = _a[1], targetReserveBalance = _a[2], targetReserveWeight = _a[3], amount = _a[4];
     // special case for equal weights
@@ -72,7 +72,7 @@ function crossReserveRate(sourceReserveBalance, sourceReserveWeight, targetReser
     // return targetReserveBalance * (1 - (sourceReserveBalance / (sourceReserveBalance + amount)) ^ (sourceReserveWeight / targetReserveWeight))
     return targetReserveBalance.mul(ONE.sub(sourceReserveBalance.div(sourceReserveBalance.add(amount)).pow(sourceReserveWeight.div(targetReserveWeight))));
 }
-exports.crossReserveRate = crossReserveRate;
+exports.crossReserveTargetAmount = crossReserveTargetAmount;
 function fundCost(supply, reserveBalance, reserveRatio, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], amount = _a[3];
@@ -86,7 +86,7 @@ function fundCost(supply, reserveBalance, reserveRatio, amount) {
     return reserveBalance.mul(supply.add(amount).div(supply).pow(MAX_WEIGHT.div(reserveRatio)).sub(ONE));
 }
 exports.fundCost = fundCost;
-function fundRate(supply, reserveBalance, reserveRatio, amount) {
+function fundSupplyAmount(supply, reserveBalance, reserveRatio, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], amount = _a[3];
     // special case for 0 amount
@@ -98,8 +98,8 @@ function fundRate(supply, reserveBalance, reserveRatio, amount) {
     // return supply * ((amount / reserveBalance + 1) ^ (reserveRatio / MAX_WEIGHT) - 1)
     return supply.mul(amount.div(reserveBalance).add(ONE).pow(reserveRatio.div(MAX_WEIGHT)).sub(ONE));
 }
-exports.fundRate = fundRate;
-function liquidateRate(supply, reserveBalance, reserveRatio, amount) {
+exports.fundSupplyAmount = fundSupplyAmount;
+function liquidateReserveAmount(supply, reserveBalance, reserveRatio, amount) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), supply = _a[0], reserveBalance = _a[1], reserveRatio = _a[2], amount = _a[3];
     // special case for 0 amount
@@ -114,7 +114,7 @@ function liquidateRate(supply, reserveBalance, reserveRatio, amount) {
     // return reserveBalance * (1 - ((supply - amount) / supply) ^ (MAX_WEIGHT / reserveRatio))
     return reserveBalance.mul(ONE.sub(supply.sub(amount).div(supply).pow(MAX_WEIGHT.div(reserveRatio))));
 }
-exports.liquidateRate = liquidateRate;
+exports.liquidateReserveAmount = liquidateReserveAmount;
 function getFinalAmount(amount, fee, magnitude) {
     var _a;
     _a = Array.from(arguments).map(function (x) { return new decimal_js_1.default(x); }), amount = _a[0], fee = _a[1], magnitude = _a[2];
@@ -127,5 +127,5 @@ function getReturn(func, args, amount, fee, direction, magnitude) {
 }
 exports.getReturn = getReturn;
 function factor(fee, direction, magnitude, sign) {
-    return MAX_WEIGHT.sub(fee).div(MAX_WEIGHT).pow(magnitude).pow((direction + sign) / 2).mul(direction);
+    return MAX_FEE.sub(fee).div(MAX_FEE).pow(magnitude).pow((direction + sign) / 2).mul(direction);
 }
