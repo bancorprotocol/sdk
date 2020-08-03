@@ -1,3 +1,7 @@
+### 0.2.5
+* Internal terminology changes
+
+
 ### 0.2.4
 * Added support for the new ETH token address
 * Added fallback for token decimals
