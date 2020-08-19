@@ -6,10 +6,10 @@ export declare class Core {
     create(settings: Settings): Promise<void>;
     destroy(): Promise<void>;
     refresh(): Promise<void>;
-    getPathAndRate(sourceToken: Token, targetToken: Token, amount?: string): Promise<{
+    getPathAndRates(sourceToken: Token, targetToken: Token, amounts?: string[]): Promise<Array<{
         path: Token[];
         rate: string;
-    }>;
+    }>>;
     getRateByPath(path: Token[], amount?: string): Promise<string>;
     private refreshIfNeeded;
     private getPaths;

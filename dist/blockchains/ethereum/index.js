@@ -10,6 +10,25 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -56,14 +75,8 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getTokens = exports.getRates = exports.getDecimals = exports.getContractAddresses = exports.getWeb3 = exports.Ethereum = void 0;
 var web3_1 = __importDefault(require("web3"));
 var abis = __importStar(require("./abis"));
 var helpers = __importStar(require("../../helpers"));
@@ -175,9 +188,9 @@ var Ethereum = /** @class */ (function () {
             });
         });
     };
-    Ethereum.prototype.getRates = function (tokenPaths, tokenAmount) {
+    Ethereum.prototype.getRates = function (tokenPaths, tokenAmounts) {
         return __awaiter(this, void 0, void 0, function () {
-            var addressPaths, sourceDecimals, targetDecimals, tokenRates;
+            var addressPaths, sourceDecimals, targetDecimals, tokenRatesByAmount;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -188,10 +201,10 @@ var Ethereum = /** @class */ (function () {
                         return [4 /*yield*/, exports.getDecimals(this, addressPaths[0].slice(-1)[0])];
                     case 2:
                         targetDecimals = _a.sent();
-                        return [4 /*yield*/, getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals))];
+                        return [4 /*yield*/, getRatesSafe(this, addressPaths, tokenAmounts.map(function (amt) { return helpers.toWei(amt, sourceDecimals); }))];
                     case 3:
-                        tokenRates = _a.sent();
-                        return [2 /*return*/, tokenRates.map(function (tokenRate) { return helpers.fromWei(tokenRate, targetDecimals); })];
+                        tokenRatesByAmount = _a.sent();
+                        return [2 /*return*/, tokenRatesByAmount.map(function (tokenRates) { return tokenRates.map(function (tokenRate) { return helpers.fromWei(tokenRate, targetDecimals); }); })];
                 }
             });
         });
@@ -300,43 +313,48 @@ exports.getDecimals = function (ethereum, token) {
         });
     });
 };
-function getRatesSafe(ethereum, paths, amount) {
+function getRatesSafe(ethereum, paths, amounts) {
     return __awaiter(this, void 0, void 0, function () {
-        var error_1, mid, arr1, arr2;
+        var error_1, mid, arr1_1, arr2_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 6]);
-                    return [4 /*yield*/, exports.getRates(ethereum, paths, amount)];
+                    return [4 /*yield*/, exports.getRates(ethereum, paths, amounts)];
                 case 1: return [2 /*return*/, _a.sent()];
                 case 2:
                     error_1 = _a.sent();
                     if (!(paths.length > 1)) return [3 /*break*/, 5];
                     mid = paths.length >> 1;
-                    return [4 /*yield*/, getRatesSafe(ethereum, paths.slice(0, mid), amount)];
+                    return [4 /*yield*/, getRatesSafe(ethereum, paths.slice(0, mid), amounts)];
                 case 3:
-                    arr1 = _a.sent();
-                    return [4 /*yield*/, getRatesSafe(ethereum, paths.slice(mid, paths.length), amount)];
+                    arr1_1 = _a.sent();
+                    return [4 /*yield*/, getRatesSafe(ethereum, paths.slice(mid, paths.length), amounts)];
                 case 4:
-                    arr2 = _a.sent();
-                    return [2 /*return*/, __spreadArrays(arr1, arr2)];
-                case 5: return [2 /*return*/, ['0']];
+                    arr2_1 = _a.sent();
+                    return [2 /*return*/, Array(amounts.length).fill([]).map(function (_, i) { return __spreadArrays(arr1_1[i], arr2_1[i]); })];
+                case 5: return [2 /*return*/, Array(amounts.length).fill(Array(paths.length).fill('0'))];
                 case 6: return [2 /*return*/];
             }
         });
     });
 }
-exports.getRates = function (ethereum, paths, amount) {
+exports.getRates = function (ethereum, paths, amounts) {
     return __awaiter(this, void 0, void 0, function () {
         var calls, _a, blockNumber, returnData;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    calls = paths.map(function (path) { return [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]; });
+                    calls = amounts.map(function (amount) {
+                        paths.map(function (path) { return [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]; });
+                    }).reduce(function (array, val) { return array.concat(val); }, []);
                     return [4 /*yield*/, ethereum.multicallContract.methods.aggregate(calls, false).call()];
                 case 1:
                     _a = _b.sent(), blockNumber = _a[0], returnData = _a[1];
-                    return [2 /*return*/, returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : '0'; })];
+                    return [2 /*return*/, Array(amounts.length).fill('0').map(function (_, i) {
+                            var _returnData = returnData.slice(i * paths.length, i * paths.length + paths.length);
+                            return _returnData.map(function (item) { return item.success ? web3_1.default.utils.toBN(item.data.substr(0, 66)).toString() : '0'; });
+                        })];
             }
         });
     });

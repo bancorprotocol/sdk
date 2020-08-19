@@ -54,7 +54,7 @@ export interface ConversionEvent {
 export interface Blockchain {
     getAnchorToken(): Token;
     getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]>;
-    getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]>;
+    getRates(tokenPaths: Token[][], tokenAmounts: string[]): Promise<string[][]>;
     getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;

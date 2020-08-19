@@ -15,7 +15,7 @@ export declare class Ethereum implements Blockchain {
     refresh(): Promise<void>;
     getAnchorToken(): Token;
     getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]>;
-    getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]>;
+    getRates(tokenPaths: Token[][], tokenAmounts: string[]): Promise<string[][]>;
     getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;
@@ -26,5 +26,5 @@ export declare class Ethereum implements Blockchain {
 export declare const getWeb3: (nodeEndpoint: any) => any;
 export declare const getContractAddresses: (ethereum: any) => any;
 export declare const getDecimals: (ethereum: any, token: any) => Promise<any>;
-export declare const getRates: (ethereum: any, paths: any, amount: any) => Promise<any>;
+export declare const getRates: (ethereum: any, paths: any, amounts: any) => Promise<string[][]>;
 export declare const getTokens: (ethereum: any) => Promise<any>;

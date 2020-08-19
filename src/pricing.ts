@@ -15,8 +15,21 @@ export class Pricing extends SDKModule {
     * @returns  the best path and rate between the source token and the target token
     */
     async getPathAndRate(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
-        return await this.core.getPathAndRate(sourceToken, targetToken, amount);
+        return (await this.core.getPathAndRates(sourceToken, targetToken, [amount]))[0];
     }
+
+    /**
+    * returns the best conversion paths and rates for a given pair of tokens and input amounts in the bancor network
+    * 
+    * @param sourceToken    source token
+    * @param targetToken    target token
+    * @param amounts         input amounts
+    * 
+    * @returns  the best paths and rates between the source token and the target token for each input amount
+    */
+   async getPathAndRates(sourceToken: Token, targetToken: Token, amounts: string[] = ['1']): Promise<{path: Token[], rate: string}> {
+    return await this.core.getPathAndRates(sourceToken, targetToken, amounts);
+}
 
     /**
     * returns the rate for a given conversion path in the bancor network 
