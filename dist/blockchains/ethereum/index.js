@@ -130,9 +130,6 @@ var Ethereum = /** @class */ (function () {
                         ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, exports.getContractAddresses(ethereum).multicall);
                         ethereum.decimals = __assign({}, CONTRACT_ADDRESSES[ethereum.networkType].nonStandardTokenDecimals);
                         ethereum.getPathsFunc = ethereum.getSomePathsFunc;
-                        return [4 /*yield*/, ethereum.refresh()];
-                    case 4:
-                        _b.sent();
                         return [2 /*return*/, ethereum];
                 }
             });

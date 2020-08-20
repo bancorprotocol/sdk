@@ -79,7 +79,12 @@ var Core = /** @class */ (function () {
                     case 3:
                         _c[_d] = _e.sent();
                         _e.label = 4;
-                    case 4: return [2 /*return*/];
+                    case 4:
+                        this.refreshTimeout = (settings.refreshTimeout || 900) * 1000;
+                        return [4 /*yield*/, this.refresh()];
+                    case 5:
+                        _e.sent();
+                        return [2 /*return*/];
                 }
             });
         });
@@ -111,6 +116,7 @@ var Core = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        this.refreshTimestamp = Date.now() + this.refreshTimeout;
                         _a = [];
                         for (_b in this.blockchains)
                             _a.push(_b);
@@ -137,33 +143,35 @@ var Core = /** @class */ (function () {
             var sourceBlockchain, targetBlockchain, paths, rates, index, sourcePaths, sourceRates, sourceIndex, targetPaths, targetRates, targetIndex;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
+                    case 0: return [4 /*yield*/, this.refreshIfNeeded()];
+                    case 1:
+                        _a.sent();
                         sourceBlockchain = this.blockchains[sourceToken.blockchainType];
                         targetBlockchain = this.blockchains[targetToken.blockchainType];
-                        if (!(sourceBlockchain == targetBlockchain)) return [3 /*break*/, 3];
+                        if (!(sourceBlockchain == targetBlockchain)) return [3 /*break*/, 4];
                         return [4 /*yield*/, this.getPaths(sourceToken.blockchainType, sourceToken, targetToken)];
-                    case 1:
+                    case 2:
                         paths = _a.sent();
                         return [4 /*yield*/, this.getRates(sourceToken.blockchainType, paths, amount)];
-                    case 2:
+                    case 3:
                         rates = _a.sent();
                         index = Core.getBest(paths, rates);
                         return [2 /*return*/, {
                                 path: paths[index],
                                 rate: rates[index]
                             }];
-                    case 3: return [4 /*yield*/, this.getPaths(sourceToken.blockchainType, sourceToken, sourceBlockchain.getAnchorToken())];
-                    case 4:
+                    case 4: return [4 /*yield*/, this.getPaths(sourceToken.blockchainType, sourceToken, sourceBlockchain.getAnchorToken())];
+                    case 5:
                         sourcePaths = _a.sent();
                         return [4 /*yield*/, this.getRates(sourceToken.blockchainType, sourcePaths, amount)];
-                    case 5:
+                    case 6:
                         sourceRates = _a.sent();
                         sourceIndex = Core.getBest(sourcePaths, sourceRates);
                         return [4 /*yield*/, this.getPaths(targetToken.blockchainType, targetBlockchain.getAnchorToken(), targetToken)];
-                    case 6:
+                    case 7:
                         targetPaths = _a.sent();
                         return [4 /*yield*/, this.getRates(targetToken.blockchainType, targetPaths, sourceRates[sourceIndex])];
-                    case 7:
+                    case 8:
                         targetRates = _a.sent();
                         targetIndex = Core.getBest(targetPaths, targetRates);
                         return [2 /*return*/, {
@@ -180,21 +188,38 @@ var Core = /** @class */ (function () {
             var sourceBlockchainType, targetBlockchainType, index, sourceBlockchainPath, targetBlockchainPath, sourceBlockchainRate;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
+                    case 0: return [4 /*yield*/, this.refreshIfNeeded()];
+                    case 1:
+                        _a.sent();
                         sourceBlockchainType = path[0].blockchainType;
                         targetBlockchainType = path[path.length - 1].blockchainType;
-                        if (!(sourceBlockchainType == targetBlockchainType)) return [3 /*break*/, 2];
+                        if (!(sourceBlockchainType == targetBlockchainType)) return [3 /*break*/, 3];
                         return [4 /*yield*/, this.getRates(sourceBlockchainType, [path], amount)];
-                    case 1: return [2 /*return*/, (_a.sent())[0]];
-                    case 2:
+                    case 2: return [2 /*return*/, (_a.sent())[0]];
+                    case 3:
                         index = path.findIndex(function (item) { return item.blockchainType == targetBlockchainType; });
                         sourceBlockchainPath = path.slice(0, index);
                         targetBlockchainPath = path.slice(index);
                         return [4 /*yield*/, this.getRates(sourceBlockchainType, [sourceBlockchainPath], amount)];
-                    case 3:
+                    case 4:
                         sourceBlockchainRate = (_a.sent())[0];
                         return [4 /*yield*/, this.getRates(targetBlockchainType, [targetBlockchainPath], sourceBlockchainRate)];
-                    case 4: return [2 /*return*/, (_a.sent())[0]];
+                    case 5: return [2 /*return*/, (_a.sent())[0]];
+                }
+            });
+        });
+    };
+    Core.prototype.refreshIfNeeded = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(this.refreshTimestamp < Date.now())) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.refresh()];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [2 /*return*/];
                 }
             });
         });

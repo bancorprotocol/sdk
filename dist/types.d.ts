@@ -13,6 +13,8 @@ export interface Settings {
     ethereumNodeEndpoint?: string | Object;
     /** eosjs endpoint - optional, mandatory when interacting with an EOS blockchain */
     eosNodeEndpoint?: string;
+    /** timeout before auto-refresh */
+    refreshTimeout?: number;
 }
 /**
 * Token interface
