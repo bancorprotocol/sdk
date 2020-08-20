@@ -5,12 +5,16 @@ import { Settings, BlockchainType, Token, Blockchain } from './types';
 
 export class Core {
     blockchains: Partial<Record<BlockchainType, Blockchain>> = {};
+    refreshTimeout: number;
+    refreshTimestamp: number;
 
     async create(settings: Settings) {
         if (settings.ethereumNodeEndpoint)
             this.blockchains[BlockchainType.Ethereum] = await Ethereum.create(settings.ethereumNodeEndpoint);
         if (settings.eosNodeEndpoint)
             this.blockchains[BlockchainType.EOS] = await EOS.create(settings.eosNodeEndpoint);
+        this.refreshTimeout = (settings.refreshTimeout || 900) * 1000;
+        await this.refresh();
     }
 
     async destroy(): Promise<void> {
@@ -21,11 +25,14 @@ export class Core {
     }
 
     async refresh(): Promise<void> {
+        this.refreshTimestamp = Date.now() + this.refreshTimeout;
         for (let blockchainType in this.blockchains)
             await this.blockchains[blockchainType].refresh();
     }
 
     async getPathAndRate(sourceToken: Token, targetToken: Token, amount: string = '1'): Promise<{path: Token[], rate: string}> {
+        await this.refreshIfNeeded();
+
         const sourceBlockchain = this.blockchains[sourceToken.blockchainType];
         const targetBlockchain = this.blockchains[targetToken.blockchainType];
 
@@ -60,6 +67,8 @@ export class Core {
     }
 
     async getRateByPath(path: Token[], amount: string = '1'): Promise<string> {
+        await this.refreshIfNeeded();
+
         const sourceBlockchainType = path[0].blockchainType;
         const targetBlockchainType = path[path.length - 1].blockchainType;
 
@@ -75,6 +84,11 @@ export class Core {
         // get the rate from the source blockchain and pass it as the input for the target blockchain
         const sourceBlockchainRate = (await this.getRates(sourceBlockchainType, [sourceBlockchainPath], amount))[0];
         return (await this.getRates(targetBlockchainType, [targetBlockchainPath], sourceBlockchainRate))[0];
+    }
+
+    private async refreshIfNeeded(): Promise<void> {
+        if (this.refreshTimestamp < Date.now())
+            await this.refresh();
     }
 
     private async getPaths(blockchainType: BlockchainType, sourceToken: Token, targetToken: Token): Promise<Token[][]> {
