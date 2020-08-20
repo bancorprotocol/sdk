@@ -14,6 +14,8 @@ export interface Settings {
     ethereumNodeEndpoint?: string | Object; // Object in order to allow an existing web3 provider
     /** eosjs endpoint - optional, mandatory when interacting with an EOS blockchain */
     eosNodeEndpoint?: string;
+    /** timeout before auto-refresh */
+    refreshTimeout?: number; // number of seconds before auto-refresh
 }
 
 /**

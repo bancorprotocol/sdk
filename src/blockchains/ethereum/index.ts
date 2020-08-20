@@ -65,7 +65,6 @@ export class Ethereum implements Blockchain {
         ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, getContractAddresses(ethereum).multicall);
         ethereum.decimals = {...CONTRACT_ADDRESSES[ethereum.networkType].nonStandardTokenDecimals};
         ethereum.getPathsFunc = ethereum.getSomePathsFunc;
-        await ethereum.refresh();
         return ethereum;
     }
 
