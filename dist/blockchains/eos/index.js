@@ -119,9 +119,23 @@ var EOS = /** @class */ (function () {
     };
     EOS.prototype.getRates = function (paths, amounts) {
         return __awaiter(this, void 0, void 0, function () {
+            var ratesPromises;
             var _this = this;
             return __generator(this, function (_a) {
-                return [2 /*return*/, Promise.all(amounts.map(function (amount) { return Promise.all(paths.map(function (path) { return _this.getRateByPath(path, amount); })); }))];
+                switch (_a.label) {
+                    case 0:
+                        ratesPromises = Array(amounts.length).fill(['']).map(function (_, i) { return __awaiter(_this, void 0, void 0, function () {
+                            var _this = this;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, Promise.all(paths.map(function (p) { return _this.getRateByPath(p, amounts[i]); }))];
+                                    case 1: return [2 /*return*/, _a.sent()];
+                                }
+                            });
+                        }); });
+                        return [4 /*yield*/, Promise.all(ratesPromises)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
             });
         });
     };
