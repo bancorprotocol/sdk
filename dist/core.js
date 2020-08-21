@@ -150,10 +150,16 @@ var Core = /** @class */ (function () {
             });
         });
     };
+    /**
+     * @param sourceToken input token
+     * @param targetToken output token
+     * @param amounts input amounts in token decimals
+     * @returns The best rate and corresponding path for each input amount
+     */
     Core.prototype.getPathAndRates = function (sourceToken, targetToken, amounts) {
         if (amounts === void 0) { amounts = ['1']; }
         return __awaiter(this, void 0, void 0, function () {
-            var sourceBlockchain, targetBlockchain, paths_1, ratesByAmount, sourcePaths, sourceRatesByAmount, sourceIndicesByAmount, bestSourceRates, targetPaths, targetRatesByAmount, targetIndicesByAmount;
+            var sourceBlockchain, targetBlockchain, paths_1, rates_1, bestIndices, sourcePaths, sourceRatesByAmount, sourceIndicesByAmount, bestSourceRates, targetPaths, targetRatesByAmount, targetIndicesByAmount;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.refreshIfNeeded()];
@@ -167,14 +173,9 @@ var Core = /** @class */ (function () {
                         paths_1 = _a.sent();
                         return [4 /*yield*/, this.getRates(sourceToken.blockchainType, paths_1, amounts)];
                     case 3:
-                        ratesByAmount = _a.sent();
-                        return [2 /*return*/, ratesByAmount.map(function (rates) {
-                                var index = Core.getBest(paths_1, rates);
-                                return {
-                                    path: paths_1[index],
-                                    rate: rates[index]
-                                };
-                            })];
+                        rates_1 = _a.sent();
+                        bestIndices = rates_1.map(function (r) { return Core.getBest(paths_1, r); });
+                        return [2 /*return*/, bestIndices.map(function (best, i) { return ({ path: paths_1[best], rate: rates_1[i][best] }); })];
                     case 4: return [4 /*yield*/, this.getPaths(sourceToken.blockchainType, sourceToken, sourceBlockchain.getAnchorToken())];
                     case 5:
                         sourcePaths = _a.sent();

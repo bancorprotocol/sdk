@@ -6,6 +6,12 @@ export declare class Core {
     create(settings: Settings): Promise<void>;
     destroy(): Promise<void>;
     refresh(): Promise<void>;
+    /**
+     * @param sourceToken input token
+     * @param targetToken output token
+     * @param amounts input amounts in token decimals
+     * @returns The best rate and corresponding path for each input amount
+     */
     getPathAndRates(sourceToken: Token, targetToken: Token, amounts?: string[]): Promise<Array<{
         path: Token[];
         rate: string;

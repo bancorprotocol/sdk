@@ -29,7 +29,13 @@ export class Core {
         for (let blockchainType in this.blockchains)
             await this.blockchains[blockchainType].refresh();
     }
-
+    
+    /**
+     * @param sourceToken input token
+     * @param targetToken output token
+     * @param amounts input amounts in token decimals
+     * @returns The best rate and corresponding path for each input amount
+     */
     async getPathAndRates(sourceToken: Token, targetToken: Token, amounts: string[] = ['1']): Promise<Array<{path: Token[], rate: string}>> {
         await this.refreshIfNeeded();
         const sourceBlockchain = this.blockchains[sourceToken.blockchainType];
@@ -38,14 +44,9 @@ export class Core {
         // single blockchain path - get the path/rate from that blockchain
         if (sourceBlockchain == targetBlockchain) {
             const paths = await this.getPaths(sourceToken.blockchainType, sourceToken, targetToken);
-            const ratesByAmount = await this.getRates(sourceToken.blockchainType, paths, amounts);
-            return ratesByAmount.map(rates => {
-                const index = Core.getBest(paths, rates);
-                return {
-                    path: paths[index],
-                    rate: rates[index]
-                };
-            });
+            const rates = await this.getRates(sourceToken.blockchainType, paths, amounts);
+            const bestIndices = rates.map(r => Core.getBest(paths, r));
+            return bestIndices.map((best, i) => ({ path: paths[best], rate: rates[i][best]}));
         }
 
         // cross blockchain path

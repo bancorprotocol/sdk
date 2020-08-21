@@ -37,12 +37,7 @@ export class EOS implements Blockchain {
     }
 
     async getRates(paths: Token[][], amounts: string[]): Promise<string[][]> {
-        // ratesPromises is an array of promises, grouped by amount
-        // e.g. [[rateForPath1, rateForPath2, rateForPath3, ...], [rateForPath1, rateForPath2, rateForPath3, ...], ...]
-        const ratesPromises = Array(amounts.length).fill(['']).map(async (_, i) => {
-            return await Promise.all(paths.map(p => this.getRateByPath(p, amounts[i])));
-        });
-        return await Promise.all(ratesPromises);
+        return await Promise.all(amounts.map((a, i) => Promise.all(paths.map(p => this.getRateByPath(p, a)))));
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {

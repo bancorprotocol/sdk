@@ -15,6 +15,11 @@ export declare class Ethereum implements Blockchain {
     refresh(): Promise<void>;
     getAnchorToken(): Token;
     getPaths(sourceToken: Token, targetToken: Token): Promise<Token[][]>;
+    /**
+     * @param tokenPaths paths to get rates for
+     * @param tokenAmounts input amounts to get rates for
+     * @returns The rates for each path in order, grouped by input amounts in order
+     */
     getRates(tokenPaths: Token[][], tokenAmounts: string[]): Promise<string[][]>;
     getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;

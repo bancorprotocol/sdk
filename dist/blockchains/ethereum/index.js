@@ -188,9 +188,14 @@ var Ethereum = /** @class */ (function () {
             });
         });
     };
+    /**
+     * @param tokenPaths paths to get rates for
+     * @param tokenAmounts input amounts to get rates for
+     * @returns The rates for each path in order, grouped by input amounts in order
+     */
     Ethereum.prototype.getRates = function (tokenPaths, tokenAmounts) {
         return __awaiter(this, void 0, void 0, function () {
-            var addressPaths, sourceDecimals, targetDecimals, tokenRatesByAmount;
+            var addressPaths, sourceDecimals, targetDecimals, tokenRatesPerAmount;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -201,10 +206,10 @@ var Ethereum = /** @class */ (function () {
                         return [4 /*yield*/, exports.getDecimals(this, addressPaths[0].slice(-1)[0])];
                     case 2:
                         targetDecimals = _a.sent();
-                        return [4 /*yield*/, getRatesSafe(this, addressPaths, tokenAmounts.map(function (amt) { return helpers.toWei(amt, sourceDecimals); }))];
+                        return [4 /*yield*/, getRatesSafe(this, addressPaths, tokenAmounts.map(function (tokenAmount) { return helpers.toWei(tokenAmount, sourceDecimals); }))];
                     case 3:
-                        tokenRatesByAmount = _a.sent();
-                        return [2 /*return*/, tokenRatesByAmount.map(function (tokenRates) { return tokenRates.map(function (tokenRate) { return helpers.fromWei(tokenRate, targetDecimals); }); })];
+                        tokenRatesPerAmount = _a.sent();
+                        return [2 /*return*/, tokenRatesPerAmount.map(function (tokenRates) { return tokenRates.map(function (tokenRate) { return helpers.fromWei(tokenRate, targetDecimals); }); })];
                 }
             });
         });
