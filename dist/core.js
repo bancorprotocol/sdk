@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -42,14 +61,8 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Core = void 0;
 var helpers = __importStar(require("./helpers"));
 var ethereum_1 = require("./blockchains/ethereum");
 var eos_1 = require("./blockchains/eos");
@@ -137,10 +150,16 @@ var Core = /** @class */ (function () {
             });
         });
     };
-    Core.prototype.getPathAndRate = function (sourceToken, targetToken, amount) {
-        if (amount === void 0) { amount = '1'; }
+    /**
+     * @param sourceToken input token
+     * @param targetToken output token
+     * @param amounts input amounts in token decimals
+     * @returns The best rate and corresponding path for each input amount
+     */
+    Core.prototype.getPathAndRates = function (sourceToken, targetToken, amounts) {
+        if (amounts === void 0) { amounts = ['1']; }
         return __awaiter(this, void 0, void 0, function () {
-            var sourceBlockchain, targetBlockchain, paths, rates, index, sourcePaths, sourceRates, sourceIndex, targetPaths, targetRates, targetIndex;
+            var sourceBlockchain, targetBlockchain, paths_1, rates_1, bestIndices, sourcePaths, sourceRatesByAmount, sourceIndicesByAmount, bestSourceRates, targetPaths, targetRatesByAmount, targetIndicesByAmount;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.refreshIfNeeded()];
@@ -151,33 +170,31 @@ var Core = /** @class */ (function () {
                         if (!(sourceBlockchain == targetBlockchain)) return [3 /*break*/, 4];
                         return [4 /*yield*/, this.getPaths(sourceToken.blockchainType, sourceToken, targetToken)];
                     case 2:
-                        paths = _a.sent();
-                        return [4 /*yield*/, this.getRates(sourceToken.blockchainType, paths, amount)];
+                        paths_1 = _a.sent();
+                        return [4 /*yield*/, this.getRates(sourceToken.blockchainType, paths_1, amounts)];
                     case 3:
-                        rates = _a.sent();
-                        index = Core.getBest(paths, rates);
-                        return [2 /*return*/, {
-                                path: paths[index],
-                                rate: rates[index]
-                            }];
+                        rates_1 = _a.sent();
+                        bestIndices = rates_1.map(function (r) { return Core.getBest(paths_1, r); });
+                        return [2 /*return*/, bestIndices.map(function (best, i) { return ({ path: paths_1[best], rate: rates_1[i][best] }); })];
                     case 4: return [4 /*yield*/, this.getPaths(sourceToken.blockchainType, sourceToken, sourceBlockchain.getAnchorToken())];
                     case 5:
                         sourcePaths = _a.sent();
-                        return [4 /*yield*/, this.getRates(sourceToken.blockchainType, sourcePaths, amount)];
+                        return [4 /*yield*/, this.getRates(sourceToken.blockchainType, sourcePaths, amounts)];
                     case 6:
-                        sourceRates = _a.sent();
-                        sourceIndex = Core.getBest(sourcePaths, sourceRates);
+                        sourceRatesByAmount = _a.sent();
+                        sourceIndicesByAmount = sourceRatesByAmount.map(function (rates) { return Core.getBest(sourcePaths, rates); });
+                        bestSourceRates = sourceIndicesByAmount.map(function (amountIndex, rateIndex) { return sourceRatesByAmount[amountIndex][rateIndex]; });
                         return [4 /*yield*/, this.getPaths(targetToken.blockchainType, targetBlockchain.getAnchorToken(), targetToken)];
                     case 7:
                         targetPaths = _a.sent();
-                        return [4 /*yield*/, this.getRates(targetToken.blockchainType, targetPaths, sourceRates[sourceIndex])];
+                        return [4 /*yield*/, this.getRates(targetToken.blockchainType, targetPaths, bestSourceRates)];
                     case 8:
-                        targetRates = _a.sent();
-                        targetIndex = Core.getBest(targetPaths, targetRates);
-                        return [2 /*return*/, {
-                                path: __spreadArrays(sourcePaths[sourceIndex], targetPaths[targetIndex]),
-                                rate: targetRates[targetIndex],
-                            }];
+                        targetRatesByAmount = _a.sent();
+                        targetIndicesByAmount = targetRatesByAmount.map(function (rates) { return Core.getBest(targetPaths, rates); });
+                        return [2 /*return*/, Array(amounts.length).fill('0').map(function (_, i) { return ({
+                                path: __spreadArrays(sourcePaths[sourceIndicesByAmount[i]], targetPaths[targetIndicesByAmount[i]]),
+                                rate: targetRatesByAmount[i][targetIndicesByAmount[i]],
+                            }); })];
                 }
             });
         });
@@ -194,17 +211,17 @@ var Core = /** @class */ (function () {
                         sourceBlockchainType = path[0].blockchainType;
                         targetBlockchainType = path[path.length - 1].blockchainType;
                         if (!(sourceBlockchainType == targetBlockchainType)) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.getRates(sourceBlockchainType, [path], amount)];
-                    case 2: return [2 /*return*/, (_a.sent())[0]];
+                        return [4 /*yield*/, this.getRates(sourceBlockchainType, [path], [amount])];
+                    case 2: return [2 /*return*/, (_a.sent())[0][0]];
                     case 3:
                         index = path.findIndex(function (item) { return item.blockchainType == targetBlockchainType; });
                         sourceBlockchainPath = path.slice(0, index);
                         targetBlockchainPath = path.slice(index);
-                        return [4 /*yield*/, this.getRates(sourceBlockchainType, [sourceBlockchainPath], amount)];
+                        return [4 /*yield*/, this.getRates(sourceBlockchainType, [sourceBlockchainPath], [amount])];
                     case 4:
-                        sourceBlockchainRate = (_a.sent())[0];
-                        return [4 /*yield*/, this.getRates(targetBlockchainType, [targetBlockchainPath], sourceBlockchainRate)];
-                    case 5: return [2 /*return*/, (_a.sent())[0]];
+                        sourceBlockchainRate = (_a.sent())[0][0];
+                        return [4 /*yield*/, this.getRates(targetBlockchainType, [targetBlockchainPath], [sourceBlockchainRate])];
+                    case 5: return [2 /*return*/, (_a.sent())[0][0]];
                 }
             });
         });
@@ -238,16 +255,16 @@ var Core = /** @class */ (function () {
             });
         });
     };
-    Core.prototype.getRates = function (blockchainType, paths, amount) {
-        if (amount === void 0) { amount = '1'; }
+    Core.prototype.getRates = function (blockchainType, paths, amounts) {
+        if (amounts === void 0) { amounts = ['1']; }
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         // special case for single path and source token == target token
                         if (paths.length == 1 && helpers.isTokenEqual(paths[0][0], paths[0][paths[0].length - 1]))
-                            return [2 /*return*/, [amount]];
-                        return [4 /*yield*/, this.blockchains[blockchainType].getRates(paths, amount)];
+                            return [2 /*return*/, amounts.map(function (amt) { return [amt]; })];
+                        return [4 /*yield*/, this.blockchains[blockchainType].getRates(paths, amounts)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

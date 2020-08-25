@@ -89,12 +89,17 @@ export class Ethereum implements Blockchain {
         return addressPaths.map(addressPath => addressPath.map(address => ({blockchainType: BlockchainType.Ethereum, blockchainId: address})));
     }
 
-    async getRates(tokenPaths: Token[][], tokenAmount: string): Promise<string[]> {
+    /**
+     * @param tokenPaths paths to get rates for
+     * @param tokenAmounts input amounts to get rates for
+     * @returns The rates for each path in order, grouped by input amounts in order
+     */
+    async getRates(tokenPaths: Token[][], tokenAmounts: string[]): Promise<string[][]> {
         const addressPaths = tokenPaths.map(tokenPath => tokenPath.map(token => Web3.utils.toChecksumAddress(token.blockchainId)));
         const sourceDecimals = await getDecimals(this, addressPaths[0][0]);
         const targetDecimals = await getDecimals(this, addressPaths[0].slice(-1)[0]);
-        const tokenRates = await getRatesSafe(this, addressPaths, helpers.toWei(tokenAmount, sourceDecimals));
-        return tokenRates.map(tokenRate => helpers.fromWei(tokenRate, targetDecimals));
+        const tokenRatesPerAmount = await getRatesSafe(this, addressPaths, tokenAmounts.map(tokenAmount => helpers.toWei(tokenAmount, sourceDecimals)));
+        return tokenRatesPerAmount.map(tokenRates => tokenRates.map(tokenRate => helpers.fromWei(tokenRate, targetDecimals)));
     }
 
     async getConverterVersion(converter: Converter): Promise<string> {
@@ -165,26 +170,32 @@ export const getDecimals = async function(ethereum, token) {
     return ethereum.decimals[token];
 };
 
-async function getRatesSafe(ethereum, paths, amount) {
+async function getRatesSafe(ethereum, paths, amounts) {
     try {
-        return await getRates(ethereum, paths, amount);
+        return await getRates(ethereum, paths, amounts);
     }
     catch (error) {
         if (paths.length > 1) {
             const mid = paths.length >> 1;
-            const arr1 = await getRatesSafe(ethereum, paths.slice(0, mid), amount);
-            const arr2 = await getRatesSafe(ethereum, paths.slice(mid, paths.length), amount);
-            return [...arr1, ...arr2];
+            const arr1 = await getRatesSafe(ethereum, paths.slice(0, mid), amounts);
+            const arr2 = await getRatesSafe(ethereum, paths.slice(mid, paths.length), amounts);
+            return Array(amounts.length).fill([]).map((_, i) => [...arr1[i], ...arr2[i]]);
         }
-        return ['0'];
+        return Array(amounts.length).fill(Array(paths.length).fill('0'));
     }
 }
 
-export const getRates = async function(ethereum, paths, amount) {
-    const calls = paths.map(path => [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]);
+export const getRates = async function(ethereum, paths, amounts): Promise<string[][]> {
+    const calls = amounts.map(amount => {
+        paths.map(path => [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]);
+    }).reduce((array, val) => array.concat(val), []);
+
     const [blockNumber, returnData] = await ethereum.multicallContract.methods.aggregate(calls, false).call();
-    return returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : '0');
-};
+    return Array(amounts.length).fill('0').map((_, i) => {
+        const _returnData = returnData.slice(i * paths.length, i * paths.length + paths.length)
+        return _returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : '0');
+    })
+}
 
 export const getTokens = async function(ethereum) {
     const convertibleTokens = await ethereum.converterRegistry.methods.getConvertibleTokens().call();

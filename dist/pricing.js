@@ -49,6 +49,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Pricing = void 0;
 var sdk_module_1 = require("./sdk_module");
 /**
  * The Pricing module provides access to pricing and rates logic for tokens in the bancor network
@@ -72,7 +73,27 @@ var Pricing = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.core.getPathAndRate(sourceToken, targetToken, amount)];
+                    case 0: return [4 /*yield*/, this.core.getPathAndRates(sourceToken, targetToken, [amount])];
+                    case 1: return [2 /*return*/, (_a.sent())[0]];
+                }
+            });
+        });
+    };
+    /**
+    * returns the best conversion paths and rates for a given pair of tokens and input amounts in the bancor network
+    *
+    * @param sourceToken    source token
+    * @param targetToken    target token
+    * @param amounts         input amounts
+    *
+    * @returns  the best paths and rates between the source token and the target token for each input amount
+    */
+    Pricing.prototype.getPathAndRates = function (sourceToken, targetToken, amounts) {
+        if (amounts === void 0) { amounts = ['1']; }
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.core.getPathAndRates(sourceToken, targetToken, amounts)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
