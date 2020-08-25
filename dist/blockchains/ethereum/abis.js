@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MulticallContract = exports.ERC20Token = exports.BancorConverterRegistry = exports.BancorNetwork = exports.ContractRegistry = void 0;
 exports.ContractRegistry = [
     { "constant": true, "inputs": [{ "name": "_contractName", "type": "bytes32" }], "name": "addressOf", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }
 ];

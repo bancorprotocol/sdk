@@ -1,3 +1,7 @@
+### 0.2.7
+* Added support for getting rates in batch
+
+
 ### 0.2.5
 * Internal terminology changes
 

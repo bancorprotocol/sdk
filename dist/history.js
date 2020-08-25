@@ -49,7 +49,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.History = void 0;
 var sdk_module_1 = require("./sdk_module");
 /**
  * The History module allows querying historical data in the bancor network
