@@ -108,6 +108,7 @@ export default {
             'realgoldtael': 'TAEL'
         }
     },
+    /*
     'bancorc11151': {
         smartToken: {
             'bancorr11151': 'BNTZOS'
@@ -116,7 +117,7 @@ export default {
             'bntbntbntbnt': 'BNT',
             'zosdiscounts': 'ZOS'
         }
-    },
+    },*/
     'bancorc11152': {
         smartToken: {
             'bancorr11152': 'BNTEQA'
