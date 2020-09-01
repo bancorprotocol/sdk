@@ -171,7 +171,7 @@ export default {
             'emanateoneos': 'EMT'
         }
     },
-    'bancorc11214': {
+    /*'bancorc11214': {
         smartToken: {
             'bancorr11214': 'BNTPIXE'
         },
@@ -179,7 +179,7 @@ export default {
             'bntbntbntbnt': 'BNT',
             'pixeos1token': 'PIXEOS'
         }
-    },
+    },*/
     'bancorc11215': {
         smartToken: {
             'bancorr11215': 'BNTNUT'
