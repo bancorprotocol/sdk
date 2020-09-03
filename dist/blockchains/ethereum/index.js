@@ -338,7 +338,7 @@ exports.getRates = function (ethereum, paths, amounts) {
             switch (_b.label) {
                 case 0:
                     calls = amounts.map(function (amount) {
-                        paths.map(function (path) { return [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]; });
+                        return paths.map(function (path) { return [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]; });
                     }).reduce(function (array, val) { return array.concat(val); }, []);
                     return [4 /*yield*/, ethereum.multicallContract.methods.aggregate(calls, false).call()];
                 case 1:

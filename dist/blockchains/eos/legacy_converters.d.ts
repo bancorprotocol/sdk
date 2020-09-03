@@ -98,15 +98,6 @@ declare const _default: {
             realgoldtael: string;
         };
     };
-    bancorc11151: {
-        smartToken: {
-            bancorr11151: string;
-        };
-        reserves: {
-            bntbntbntbnt: string;
-            zosdiscounts: string;
-        };
-    };
     bancorc11152: {
         smartToken: {
             bancorr11152: string;
@@ -159,15 +150,6 @@ declare const _default: {
         reserves: {
             bntbntbntbnt: string;
             emanateoneos: string;
-        };
-    };
-    bancorc11214: {
-        smartToken: {
-            bancorr11214: string;
-        };
-        reserves: {
-            bntbntbntbnt: string;
-            pixeos1token: string;
         };
     };
     bancorc11215: {

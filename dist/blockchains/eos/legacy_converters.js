@@ -110,6 +110,7 @@ exports.default = {
             'realgoldtael': 'TAEL'
         }
     },
+    /*
     'bancorc11151': {
         smartToken: {
             'bancorr11151': 'BNTZOS'
@@ -118,7 +119,7 @@ exports.default = {
             'bntbntbntbnt': 'BNT',
             'zosdiscounts': 'ZOS'
         }
-    },
+    },*/
     'bancorc11152': {
         smartToken: {
             'bancorr11152': 'BNTEQA'
@@ -173,7 +174,7 @@ exports.default = {
             'emanateoneos': 'EMT'
         }
     },
-    'bancorc11214': {
+    /*'bancorc11214': {
         smartToken: {
             'bancorr11214': 'BNTPIXE'
         },
@@ -181,7 +182,7 @@ exports.default = {
             'bntbntbntbnt': 'BNT',
             'pixeos1token': 'PIXEOS'
         }
-    },
+    },*/
     'bancorc11215': {
         smartToken: {
             'bancorr11215': 'BNTNUT'
