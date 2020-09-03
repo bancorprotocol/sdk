@@ -1,6 +1,6 @@
 {
   "name": "@bancor/sdk",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Javascript API that provides utilities and access to the Bancor Network mainnet contracts across the different blockchains using a unified & simplified interface.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
