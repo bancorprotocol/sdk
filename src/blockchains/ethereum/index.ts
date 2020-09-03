@@ -186,9 +186,9 @@ async function getRatesSafe(ethereum, paths, amounts) {
 }
 
 export const getRates = async function(ethereum, paths, amounts): Promise<string[][]> {
-    const calls = amounts.map(amount => {
-        paths.map(path => [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()]);
-    }).reduce((array, val) => array.concat(val), []);
+    const calls = amounts.map(amount => 
+        paths.map(path => [ethereum.bancorNetwork._address, ethereum.bancorNetwork.methods.getReturnByPath(path, amount).encodeABI()])
+    ).reduce((array, val) => array.concat(val), []);
 
     const [blockNumber, returnData] = await ethereum.multicallContract.methods.aggregate(calls, false).call();
     return Array(amounts.length).fill('0').map((_, i) => {
