@@ -1,3 +1,11 @@
+### 0.2.9
+* Fixed `getPathAndRates` return type
+
+
+### 0.2.8
+* Fixed querying rates
+
+
 ### 0.2.7
 * Added support for getting rates in batch
 

@@ -36,7 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SDK = void 0;
 var core_1 = require("./core");
 var history_1 = require("./history");
 var pricing_1 = require("./pricing");
