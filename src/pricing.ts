@@ -27,7 +27,7 @@ export class Pricing extends SDKModule {
     * 
     * @returns  the best paths and rates between the source token and the target token for each input amount
     */
-   async getPathAndRates(sourceToken: Token, targetToken: Token, amounts: string[] = ['1']): Promise<{path: Token[], rate: string}> {
+   async getPathAndRates(sourceToken: Token, targetToken: Token, amounts: string[] = ['1']): Promise<Array<{path: Token[], rate: string}>> {
     return await this.core.getPathAndRates(sourceToken, targetToken, amounts);
 }
 
