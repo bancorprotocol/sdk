@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.timestampToBlockNumber = void 0;
 function timestampToBlockNumber(web3, timestamp) {
     return __awaiter(this, void 0, void 0, function () {
         var lo, hi, block;

@@ -26,10 +26,10 @@ export declare class Pricing extends SDKModule {
     *
     * @returns  the best paths and rates between the source token and the target token for each input amount
     */
-    getPathAndRates(sourceToken: Token, targetToken: Token, amounts?: string[]): Promise<{
+    getPathAndRates(sourceToken: Token, targetToken: Token, amounts?: string[]): Promise<Array<{
         path: Token[];
         rate: string;
-    }>;
+    }>>;
     /**
     * returns the rate for a given conversion path in the bancor network
     *

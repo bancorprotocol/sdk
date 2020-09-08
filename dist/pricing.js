@@ -49,6 +49,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Pricing = void 0;
 var sdk_module_1 = require("./sdk_module");
 /**
  * The Pricing module provides access to pricing and rates logic for tokens in the bancor network
