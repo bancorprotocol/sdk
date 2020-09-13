@@ -130,7 +130,7 @@ describe('rates test', () => {
 
         await sdk.refresh();
 
-        const received = await sdk.pricing.getPathAndRates(
+        const received = await sdk.pricing.getPathsAndRates(
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' },
             [ '1', '20' ]
@@ -177,7 +177,7 @@ describe('rates test', () => {
         expect(spyGetDecimals).toHaveBeenCalledTimes(2);
     });
 
-    it('getPathAndRates from ethereum token to ethereum token using getSomePathsFunc', async () => {
+    it('getPathsAndRates from ethereum token to ethereum token using getSomePathsFunc', async () => {
         const blockchain = sdk._core.blockchains[BlockchainType.Ethereum] as ethereum.Ethereum;
         const spyGetPathsFunc = jest
             .spyOn(blockchain, 'getPathsFunc')
@@ -211,7 +211,7 @@ describe('rates test', () => {
 
         await sdk.refresh();
 
-        const received = await sdk.pricing.getPathAndRates(
+        const received = await sdk.pricing.getPathsAndRates(
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x3333333333333333333333333333333333333333' }
         );
@@ -236,7 +236,7 @@ describe('rates test', () => {
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(2);
     });
 
-    it('getPathAndRates from ethereum token to eos token', async () => {
+    it('getPathsAndRates from ethereum token to eos token', async () => {
         const spyGetContractAddresses = jest
             .spyOn(ethereum, 'getContractAddresses')
             .mockImplementation(() => ({
@@ -267,7 +267,7 @@ describe('rates test', () => {
 
         await sdk.refresh();
 
-        const received = await sdk.pricing.getPathAndRates(
+        const received = await sdk.pricing.getPathsAndRates(
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB' }
         );
@@ -291,7 +291,7 @@ describe('rates test', () => {
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(3);
     });
 
-    it('getPathAndRates from eos token to ethereum token', async () => { 
+    it('getPathsAndRates from eos token to ethereum token', async () => { 
         const blockchainEOS = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
         jest.spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
@@ -322,7 +322,7 @@ describe('rates test', () => {
 
         await sdk.refresh();
 
-        const received = await sdk.pricing.getPathAndRates(
+        const received = await sdk.pricing.getPathsAndRates(
             { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB' },
             { blockchainType: BlockchainType.Ethereum, blockchainId: '0x2222222222222222222222222222222222222222' }
         );
@@ -346,7 +346,7 @@ describe('rates test', () => {
         expect(spyGetContractAddresses).toHaveBeenCalledTimes(3);
     });
 
-    it('getPathAndRates from eos token to eos token', async () => {
+    it('getPathsAndRates from eos token to eos token', async () => {
         const blockchainEOS = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
         jest.spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
@@ -376,7 +376,7 @@ describe('rates test', () => {
         expect(received).toEqual(expected);
     });
 
-    it('getPathAndRates from eos token to eos token (smart -> reserve)', async () => {
+    it('getPathsAndRates from eos token to eos token (smart -> reserve)', async () => {
         const blockchainEOS = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
         jest.spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
@@ -387,7 +387,7 @@ describe('rates test', () => {
 
         await sdk.refresh();
 
-        const received = await sdk.pricing.getPathAndRates(
+        const received = await sdk.pricing.getPathsAndRates(
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaabbbaaabbb', symbol: 'AAABBB' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'cccccccccccc', symbol: 'CCC' }
         );
@@ -406,7 +406,7 @@ describe('rates test', () => {
         expect(received[0]).toEqual(expected);
     });
 
-    it('getPathAndRates from eos token to eos token (reserve -> smart)', async () => {
+    it('getPathsAndRates from eos token to eos token (reserve -> smart)', async () => {
         const blockchainEOS = sdk._core.blockchains[BlockchainType.EOS] as eos.EOS;
         jest.spyOn(sdk._core.blockchains[BlockchainType.EOS], 'getAnchorToken')
             .mockImplementationOnce(() => ({ blockchainType: BlockchainType.EOS, blockchainId: 'aaaaaaaaaaaa', symbol: 'AAA' }));
@@ -417,7 +417,7 @@ describe('rates test', () => {
 
         await sdk.refresh();
 
-        const received = await sdk.pricing.getPathAndRates(
+        const received = await sdk.pricing.getPathsAndRates(
             { blockchainType: BlockchainType.EOS, blockchainId: 'bbbbbbbbbbbb', symbol: 'BBB' },
             { blockchainType: BlockchainType.EOS, blockchainId: 'aaacccaaaccc', symbol: 'AAACCC' }
         );

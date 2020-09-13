@@ -72,7 +72,7 @@ var Pricing = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.core.getPathAndRates(sourceToken, targetToken, [amount])];
+                    case 0: return [4 /*yield*/, this.core.getPathsAndRates(sourceToken, targetToken, [amount])];
                     case 1: return [2 /*return*/, (_a.sent())[0]];
                 }
             });
@@ -87,12 +87,12 @@ var Pricing = /** @class */ (function (_super) {
     *
     * @returns  the best paths and rates between the source token and the target token for each input amount
     */
-    Pricing.prototype.getPathAndRates = function (sourceToken, targetToken, amounts) {
+    Pricing.prototype.getPathsAndRates = function (sourceToken, targetToken, amounts) {
         if (amounts === void 0) { amounts = ['1']; }
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.core.getPathAndRates(sourceToken, targetToken, amounts)];
+                    case 0: return [4 /*yield*/, this.core.getPathsAndRates(sourceToken, targetToken, amounts)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

@@ -36,7 +36,7 @@ export class Core {
      * @param amounts input amounts in token decimals
      * @returns The best rate and corresponding path for each input amount
      */
-    async getPathAndRates(sourceToken: Token, targetToken: Token, amounts: string[] = ['1']): Promise<Array<{path: Token[], rate: string}>> {
+    async getPathsAndRates(sourceToken: Token, targetToken: Token, amounts: string[] = ['1']): Promise<Array<{path: Token[], rate: string}>> {
         await this.refreshIfNeeded();
         const sourceBlockchain = this.blockchains[sourceToken.blockchainType];
         const targetBlockchain = this.blockchains[targetToken.blockchainType];

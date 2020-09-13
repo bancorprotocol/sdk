@@ -143,7 +143,7 @@ var Core = /** @class */ (function () {
      * @param amounts input amounts in token decimals
      * @returns The best rate and corresponding path for each input amount
      */
-    Core.prototype.getPathAndRates = function (sourceToken, targetToken, amounts) {
+    Core.prototype.getPathsAndRates = function (sourceToken, targetToken, amounts) {
         if (amounts === void 0) { amounts = ['1']; }
         return __awaiter(this, void 0, void 0, function () {
             var sourceBlockchain, targetBlockchain, paths_1, rates_1, bestIndices, sourcePaths, sourceRatesByAmount, sourceIndicesByAmount, bestSourceRates, targetPaths, targetRatesByAmount, targetIndicesByAmount;
