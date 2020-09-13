@@ -27,7 +27,7 @@
     "decimal.js": "^10.2.0",
     "eosjs": "^20.0.3",
     "node-fetch": "^2.6.0",
-    "web3": "1.2.1",
+    "web3": "^1.2.1",
     "web3-typescript-typings": "^0.10.2"
   },
   "devDependencies": {
