@@ -5,7 +5,7 @@ Javascript API that provides utilities and access to the Bancor Network mainnet 
 ## Initialization
 
 ```js
-const BancorSDK = require('bancor-sdk').SDK;
+const BancorSDK = require('@bancor/sdk').SDK;
 
 const settings = {
     // optional, mandatory when interacting with the ethereum mainnet
