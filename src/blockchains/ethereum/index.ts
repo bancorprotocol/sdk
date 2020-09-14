@@ -69,7 +69,8 @@ export class Ethereum implements Blockchain {
     }
 
     static async destroy(ethereum: Ethereum): Promise<void> {
-        ethereum.web3.currentProvider.disconnect();
+        if (ethereum.web3.currentProvider.disconnect)
+            ethereum.web3.currentProvider.disconnect();
     }
 
     async refresh(): Promise<void> {

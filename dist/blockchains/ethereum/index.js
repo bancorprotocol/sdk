@@ -138,7 +138,8 @@ var Ethereum = /** @class */ (function () {
     Ethereum.destroy = function (ethereum) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                ethereum.web3.currentProvider.disconnect();
+                if (ethereum.web3.currentProvider.disconnect)
+                    ethereum.web3.currentProvider.disconnect();
                 return [2 /*return*/];
             });
         });
