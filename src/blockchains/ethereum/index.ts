@@ -194,7 +194,7 @@ export const getRates = async function(ethereum, paths, amounts): Promise<string
     return Array(amounts.length).fill('0').map((_, i) => {
         const _returnData = returnData.slice(i * paths.length, i * paths.length + paths.length)
         return _returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : '0');
-    })
+    });
 }
 
 export const getTokens = async function(ethereum) {
