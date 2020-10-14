@@ -98,3 +98,20 @@ export function setConverterEventsGetter(ethereum, logs, events) {
         }
     };
 }
+
+export function setRatesGetter(ethereum, rates) {
+    ethereum.bancorNetwork.methods.getReturnByPath = function(path, amount) {
+        return {
+            encodeABI: function() {
+                return '';
+            }
+        };
+    };
+    ethereum.multicallContract.methods.aggregate = function(calls, strict) {
+        return {
+            call: function() {
+                return [0, rates.map(rate => ({success: true, data: '0x' + rate.toString(16).padStart(64, '0')}))];
+            }
+        };
+    };
+}
