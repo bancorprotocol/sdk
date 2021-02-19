@@ -91,7 +91,7 @@ function get(web3, address) {
                     version = _b.sent();
                     value = parse(type, version);
                     if (value)
-                        return [2 /*return*/, { type: type, value: value }];
+                        return [2 /*return*/, { type: type, value: String(Number(value.split('.').join(''))) }];
                     _b.label = 3;
                 case 3:
                     _i++;
