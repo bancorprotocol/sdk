@@ -33,7 +33,7 @@ describe('versions test', () => {
     }
 
     for (const version of ['12', '34', '56', '78']) {
-        it(`getConverterVersion of ethereum converter with uint16 version = "${version}"`, async () => {
+        it(`getConverterVersion of ethereum converter with uint16 version = ${version}`, async () => {
             ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['', '', version]);
             const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
             expect(received).toEqual(version);
