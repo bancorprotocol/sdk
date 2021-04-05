@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import { ERC20Token } from './abis';
 import { fromWei } from '../../helpers';
-import { ConversionEvent } from '../../types';
+import { ConversionEvent, TokenRateEvent } from '../../types';
 
 const GENESIS_BLOCK_NUMBER = 3851136;
 
@@ -11,6 +11,10 @@ const CONVERSION_EVENT_LEGACY = [
     {"anonymous":false,"inputs":[{"indexed":true,"name":"fromToken","type":"address"},{"indexed":true,"name":"toToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"inputAmount","type":"uint256"},{"indexed":false,"name":"outputAmount","type":"uint256"}],"name":"Change","type":"event"},
     {"anonymous":false,"inputs":[{"indexed":true,"name":"fromToken","type":"address"},{"indexed":true,"name":"toToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"inputAmount","type":"uint256"},{"indexed":false,"name":"outputAmount","type":"uint256"},{"indexed":false,"name":"_currentPriceN","type":"uint256"},{"indexed":false,"name":"_currentPriceD","type":"uint256"}],"name":"Conversion","type":"event"},
     {"anonymous":false,"inputs":[{"indexed":true,"name":"fromToken","type":"address"},{"indexed":true,"name":"toToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"inputAmount","type":"uint256"},{"indexed":false,"name":"outputAmount","type":"uint256"},{"indexed":false,"name":"conversionFee","type":"int256"}],"name":"Conversion","type":"event"}
+];
+
+const TOKEN_RATE_EVENT_LEGACY = [
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":false,"name":"tokenRateN","type":"uint256"},{"indexed":false,"name":"tokenRateD","type":"uint256"}],"name":"TokenRateUpdate","type":"event"},
 ];
 
 function parseOwnerUpdateEvent(log) {
@@ -73,7 +77,7 @@ async function getOwnerUpdateEvents(web3, token, fromBlock, toBlock) {
     throw new Error("Inactive Token");
 }
 
-export async function get(web3, decimals, token, fromBlock, toBlock) {
+export async function getConversionEvents(web3, decimals, token, fromBlock, toBlock) {
     const result: ConversionEvent[] = [];
 
     const batches = [{fromBlock: fromBlock, toBlock: undefined, owner: undefined}];
@@ -104,6 +108,43 @@ export async function get(web3, decimals, token, fromBlock, toBlock) {
                     });
                 }
                 index = CONVERSION_EVENT_LEGACY.indexOf(abi);
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+
+export async function getTokenRateEvents(web3, decimals, token, fromBlock, toBlock) {
+    const result: TokenRateEvent[] = [];
+
+    const batches = [{fromBlock: fromBlock, toBlock: undefined, owner: undefined}];
+    const events = await getOwnerUpdateEvents(web3, token, fromBlock, toBlock);
+    for (const event of events.filter(event => event.blockNumber > fromBlock)) {
+        batches[batches.length - 1].toBlock = event.blockNumber - 1;
+        batches[batches.length - 1].owner = event.prevOwner;
+        batches.push({fromBlock: event.blockNumber, toBlock: undefined, owner: undefined});
+    }
+    batches[batches.length - 1].toBlock = toBlock;
+    batches[batches.length - 1].owner = events[events.length - 1].currOwner;
+
+    let index = 0;
+    for (const batch of batches) {
+        for (const abi of TOKEN_RATE_EVENT_LEGACY.slice(index)) {
+            const converter = new web3.eth.Contract([abi], batch.owner);
+            const events = await getPastEvents(converter, abi.name, batch.fromBlock, batch.toBlock);
+            if (events.length > 0) {
+                for (const event of events) {
+                    result.push({
+                        blockNumber: event.blockNumber,
+                        sourceToken: event.returnValues.sourceToken,
+                        targetToken: event.returnValues.targetToken,
+                        tokenRateN : await getTokenAmount(web3, decimals, event.returnValues.sourceToken, event.returnValues.tokenRateN),
+                        tokenRateD : await getTokenAmount(web3, decimals, event.returnValues.targetToken, event.returnValues.tokenRateD),
+                    });
+                }
+                index = TOKEN_RATE_EVENT_LEGACY.indexOf(abi);
                 break;
             }
         }
