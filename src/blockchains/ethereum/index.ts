@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import * as abis from './abis';
 import * as helpers from '../../helpers';
-import * as conversionEvents from './conversion_events';
+import * as converterEvents from './converter_events';
 import * as converterVersion from './converter_version';
 import { timestampToBlockNumber } from './timestamp_to_block_number';
 import { Blockchain, BlockchainType, Converter, ConversionEvent, TokenRateEvent, Token } from '../../types';
@@ -107,23 +107,23 @@ export class Ethereum implements Blockchain {
     }
 
     async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]> {
-        return await conversionEvents.getConversionEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
+        return await converterEvents.getConversionEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
     }
 
     async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
         const fromBlock = await timestampToBlockNumber(this.web3, fromTimestamp);
         const toBlock = await timestampToBlockNumber(this.web3, toTimestamp);
-        return await conversionEvents.getConversionEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
+        return await converterEvents.getConversionEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
     }
 
     async getTokenRateEvents(token: Token, fromBlock: number, toBlock: number): Promise<TokenRateEvent[]> {
-        return await conversionEvents.getTokenRateEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
+        return await converterEvents.getTokenRateEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
     }
 
     async getTokenRateEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<TokenRateEvent[]> {
         const fromBlock = await timestampToBlockNumber(this.web3, fromTimestamp);
         const toBlock = await timestampToBlockNumber(this.web3, toTimestamp);
-        return await conversionEvents.getTokenRateEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
+        return await converterEvents.getTokenRateEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
     }
 
     getAllPathsFunc(sourceToken: string, targetToken: string): string[][] {
