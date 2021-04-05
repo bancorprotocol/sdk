@@ -62,8 +62,7 @@ export interface TokenRateEvent {
     blockNumber: number;
     sourceToken: string;
     targetToken: string;
-    tokenRateN: string;
-    tokenRateD: string;
+    tokenRate: string;
 }
 
 /** @internal */

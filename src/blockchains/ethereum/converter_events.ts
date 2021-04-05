@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import { ERC20Token } from './abis';
-import { fromWei } from '../../helpers';
+import { fromWei, toRatio } from '../../helpers';
 import { ConversionEvent, TokenRateEvent } from '../../types';
 
 const GENESIS_BLOCK_NUMBER = 3851136;
@@ -14,7 +14,7 @@ const CONVERSION_EVENT_LEGACY = [
 ];
 
 const TOKEN_RATE_EVENT_LEGACY = [
-    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":false,"name":"tokenRateN","type":"uint256"},{"indexed":false,"name":"tokenRateD","type":"uint256"}],"name":"TokenRateUpdate","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"}],"name":"TokenRateUpdate","type":"event"},
 ];
 
 function parseOwnerUpdateEvent(log) {
@@ -35,6 +35,14 @@ async function getTokenAmount(web3, decimals, token, amount) {
         decimals[token] = await tokenContract.methods.decimals().call();
     }
     return fromWei(amount, decimals[token]);
+}
+
+async function getTokenRatio(web3, decimals, token1, token2, amount1, amount2) {
+    for (const token of [token1, token2].filter(token => decimals[token] == undefined)) {
+        const tokenContract = new web3.eth.Contract(ERC20Token, token);
+        decimals[token] = await tokenContract.methods.decimals().call();
+    }
+    return toRatio(amount1, decimals[token1], amount2, decimals[token2]);
 }
 
 async function getPastLogs(web3, address, topic0, fromBlock, toBlock) {
@@ -133,8 +141,14 @@ export async function getTokenRateEvents(web3, decimals, token, fromBlock, toBlo
                         blockNumber: event.blockNumber,
                         sourceToken: event.returnValues.sourceToken,
                         targetToken: event.returnValues.targetToken,
-                        tokenRateN : await getTokenAmount(web3, decimals, event.returnValues.sourceToken, event.returnValues.tokenRateN),
-                        tokenRateD : await getTokenAmount(web3, decimals, event.returnValues.targetToken, event.returnValues.tokenRateD),
+                        tokenRate  : await getTokenRatio(
+                            web3,
+                            decimals,
+                            event.returnValues.sourceToken,
+                            event.returnValues.targetToken,
+                            event.returnValues.sourceAmount,
+                            event.returnValues.targetAmount,
+                        ),
                     });
                 }
                 index = TOKEN_RATE_EVENT_LEGACY.indexOf(abi);
