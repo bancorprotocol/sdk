@@ -77,9 +77,7 @@ async function getOwnerUpdateEvents(web3, token, fromBlock, toBlock) {
     throw new Error("Inactive Token");
 }
 
-export async function getConversionEvents(web3, decimals, token, fromBlock, toBlock) {
-    const result: ConversionEvent[] = [];
-
+async function getBatches(web3, token, fromBlock, toBlock) {
     const batches = [{fromBlock: fromBlock, toBlock: undefined, owner: undefined}];
     const events = await getOwnerUpdateEvents(web3, token, fromBlock, toBlock);
     for (const event of events.filter(event => event.blockNumber > fromBlock)) {
@@ -89,9 +87,14 @@ export async function getConversionEvents(web3, decimals, token, fromBlock, toBl
     }
     batches[batches.length - 1].toBlock = toBlock;
     batches[batches.length - 1].owner = events[events.length - 1].currOwner;
+    return batches;
+}
+
+export async function getConversionEvents(web3, decimals, token, fromBlock, toBlock) {
+    const result: ConversionEvent[] = [];
 
     let index = 0;
-    for (const batch of batches) {
+    for (const batch of await getBatches(web3, token, fromBlock, toBlock)) {
         for (const abi of CONVERSION_EVENT_LEGACY.slice(index)) {
             const converter = new web3.eth.Contract([abi], batch.owner);
             const events = await getPastEvents(converter, abi.name, batch.fromBlock, batch.toBlock);
@@ -119,18 +122,8 @@ export async function getConversionEvents(web3, decimals, token, fromBlock, toBl
 export async function getTokenRateEvents(web3, decimals, token, fromBlock, toBlock) {
     const result: TokenRateEvent[] = [];
 
-    const batches = [{fromBlock: fromBlock, toBlock: undefined, owner: undefined}];
-    const events = await getOwnerUpdateEvents(web3, token, fromBlock, toBlock);
-    for (const event of events.filter(event => event.blockNumber > fromBlock)) {
-        batches[batches.length - 1].toBlock = event.blockNumber - 1;
-        batches[batches.length - 1].owner = event.prevOwner;
-        batches.push({fromBlock: event.blockNumber, toBlock: undefined, owner: undefined});
-    }
-    batches[batches.length - 1].toBlock = toBlock;
-    batches[batches.length - 1].owner = events[events.length - 1].currOwner;
-
     let index = 0;
-    for (const batch of batches) {
+    for (const batch of await getBatches(web3, token, fromBlock, toBlock)) {
         for (const abi of TOKEN_RATE_EVENT_LEGACY.slice(index)) {
             const converter = new web3.eth.Contract([abi], batch.owner);
             const events = await getPastEvents(converter, abi.name, batch.fromBlock, batch.toBlock);
