@@ -42,8 +42,8 @@ describe('events test', () => {
         returnValues: {
             sourceToken: '0x'.padEnd(42, `${n + 1}`),
             targetToken: '0x'.padEnd(42, `${n + 2}`),
-            sourceAmount: `${123 * n + 1}`,
-            targetAmount: `${456 * n + 1}`,
+            tokenRateN: `${123 * n + 1}`,
+            tokenRateD: `${456 * n + 1}`,
         }
     }));
 

@@ -14,7 +14,7 @@ const CONVERSION_EVENT_LEGACY = [
 ];
 
 const TOKEN_RATE_EVENT_LEGACY = [
-    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"}],"name":"TokenRateUpdate","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":false,"name":"tokenRateN","type":"uint256"},{"indexed":false,"name":"tokenRateD","type":"uint256"}],"name":"TokenRateUpdate","type":"event"},
 ];
 
 function parseOwnerUpdateEvent(log) {
@@ -144,10 +144,10 @@ export async function getTokenRateEvents(web3, decimals, token, fromBlock, toBlo
                         tokenRate  : await getTokenRatio(
                             web3,
                             decimals,
-                            event.returnValues.sourceToken,
                             event.returnValues.targetToken,
-                            event.returnValues.sourceAmount,
-                            event.returnValues.targetAmount,
+                            event.returnValues.sourceToken,
+                            event.returnValues.tokenRateN,
+                            event.returnValues.tokenRateD,
                         ),
                     });
                 }
