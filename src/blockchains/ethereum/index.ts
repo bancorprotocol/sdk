@@ -44,6 +44,7 @@ const CONTRACT_ADDRESSES = {
 
 export class Ethereum implements Blockchain {
     web3: Web3;
+    contractAddresses: object;
     networkType: string;
     bancorNetwork: Web3.eth.Contract;
     converterRegistry: Web3.eth.Contract;
@@ -56,6 +57,7 @@ export class Ethereum implements Blockchain {
     static async create(nodeEndpoint: string | Object): Promise<Ethereum> {
         const ethereum = new Ethereum();
         ethereum.web3 = getWeb3(nodeEndpoint);
+        ethereum.contractAddresses = CONTRACT_ADDRESSES;
         ethereum.networkType = await ethereum.web3.eth.net.getNetworkType();
         const contractRegistry = new ethereum.web3.eth.Contract(abis.ContractRegistry, getContractAddresses(ethereum).registry);
         const bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
@@ -63,7 +65,7 @@ export class Ethereum implements Blockchain {
         ethereum.bancorNetwork = new ethereum.web3.eth.Contract(abis.BancorNetwork, bancorNetworkAddress);
         ethereum.converterRegistry = new ethereum.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
         ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, getContractAddresses(ethereum).multicall);
-        ethereum.decimals = {...CONTRACT_ADDRESSES[ethereum.networkType].nonStandardTokenDecimals};
+        ethereum.decimals = {...ethereum.contractAddresses[ethereum.networkType].nonStandardTokenDecimals};
         ethereum.getPathsFunc = ethereum.getSomePathsFunc;
         return ethereum;
     }
@@ -161,8 +163,8 @@ export const getWeb3 = function(nodeEndpoint) {
 };
 
 export const getContractAddresses = function(ethereum) {
-    if (CONTRACT_ADDRESSES[ethereum.networkType])
-        return CONTRACT_ADDRESSES[ethereum.networkType];
+    if (ethereum.contractAddresses[ethereum.networkType])
+        return ethereum.contractAddresses[ethereum.networkType];
     throw new Error(ethereum.networkType + ' network not supported');
 };
 
