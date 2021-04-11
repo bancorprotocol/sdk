@@ -49,8 +49,8 @@ export interface ConversionEvent {
     blockNumber: number;
     sourceToken: string;
     targetToken: string;
-    inputAmount: string;
-    outputAmount: string;
+    sourceAmount: string;
+    targetAmount: string;
     conversionFee?: string;
     trader: string;
 }

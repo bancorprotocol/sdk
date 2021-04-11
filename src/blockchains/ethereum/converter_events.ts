@@ -8,9 +8,9 @@ const GENESIS_BLOCK_NUMBER = 3851136;
 const OWNER_UPDATE_EVENT_HASH = Web3.utils.keccak256("OwnerUpdate(address,address)");
 
 const CONVERSION_EVENT_LEGACY = [
-    {"anonymous":false,"inputs":[{"indexed":true,"name":"fromToken","type":"address"},{"indexed":true,"name":"toToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"inputAmount","type":"uint256"},{"indexed":false,"name":"outputAmount","type":"uint256"}],"name":"Change","type":"event"},
-    {"anonymous":false,"inputs":[{"indexed":true,"name":"fromToken","type":"address"},{"indexed":true,"name":"toToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"inputAmount","type":"uint256"},{"indexed":false,"name":"outputAmount","type":"uint256"},{"indexed":false,"name":"_currentPriceN","type":"uint256"},{"indexed":false,"name":"_currentPriceD","type":"uint256"}],"name":"Conversion","type":"event"},
-    {"anonymous":false,"inputs":[{"indexed":true,"name":"fromToken","type":"address"},{"indexed":true,"name":"toToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"inputAmount","type":"uint256"},{"indexed":false,"name":"outputAmount","type":"uint256"},{"indexed":false,"name":"conversionFee","type":"int256"}],"name":"Conversion","type":"event"}
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"}],"name":"Change","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"},{"indexed":false,"name":"rateN","type":"uint256"},{"indexed":false,"name":"rateD","type":"uint256"}],"name":"Conversion","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"},{"indexed":false,"name":"conversionFee","type":"int256"}],"name":"Conversion","type":"event"}
 ];
 
 const TOKEN_RATE_EVENT_LEGACY = [
@@ -110,11 +110,11 @@ export async function getConversionEvents(web3, decimals, token, fromBlock, toBl
                 for (const event of events) {
                     result.push({
                         blockNumber  : event.blockNumber,
-                        sourceToken  : event.returnValues.fromToken,
-                        targetToken  : event.returnValues.toToken,
-                        inputAmount  : await getTokenAmount(web3, decimals, event.returnValues.fromToken, event.returnValues.inputAmount),
-                        outputAmount : await getTokenAmount(web3, decimals, event.returnValues.toToken  , event.returnValues.outputAmount),
-                        conversionFee: await getTokenAmount(web3, decimals, event.returnValues.toToken  , event.returnValues.conversionFee),
+                        sourceToken  : event.returnValues.sourceToken,
+                        targetToken  : event.returnValues.targetToken,
+                        sourceAmount : await getTokenAmount(web3, decimals, event.returnValues.sourceToken, event.returnValues.sourceAmount),
+                        targetAmount : await getTokenAmount(web3, decimals, event.returnValues.targetToken, event.returnValues.targetAmount),
+                        conversionFee: await getTokenAmount(web3, decimals, event.returnValues.targetToken, event.returnValues.conversionFee),
                         trader       : event.returnValues.trader,
                     });
                 }
