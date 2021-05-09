@@ -22,11 +22,11 @@ const CONTRACT_ADDRESSES = {
         }
     },
     ropsten: {
-        registry: '0xFD95E724962fCfC269010A0c6700Aa09D5de3074',
+        registry: '0xA6DB4B0963C37Bc959CbC0a874B5bDDf2250f26F',
         multicall: '0xf3ad7e31b052ff96566eedd218a823430e74b406',
-        anchorToken: '0x62bd9D98d4E188e281D7B78e29334969bbE1053c',
+        anchorToken: '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5',
         pivotTokens: [
-            '0x62bd9D98d4E188e281D7B78e29334969bbE1053c'
+            '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5'
         ],
         nonStandardTokenDecimals: {
         }
