@@ -10,6 +10,25 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -56,18 +75,12 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getTokens = exports.getRates = exports.getDecimals = exports.getContractAddresses = exports.getWeb3 = exports.Ethereum = void 0;
 var web3_1 = __importDefault(require("web3"));
 var abis = __importStar(require("./abis"));
 var helpers = __importStar(require("../../helpers"));
-var conversionEvents = __importStar(require("./conversion_events"));
+var converterEvents = __importStar(require("./converter_events"));
 var converterVersion = __importStar(require("./converter_version"));
 var timestamp_to_block_number_1 = require("./timestamp_to_block_number");
 var types_1 = require("../../types");
@@ -87,11 +100,11 @@ var CONTRACT_ADDRESSES = {
         }
     },
     ropsten: {
-        registry: '0xFD95E724962fCfC269010A0c6700Aa09D5de3074',
+        registry: '0xA6DB4B0963C37Bc959CbC0a874B5bDDf2250f26F',
         multicall: '0xf3ad7e31b052ff96566eedd218a823430e74b406',
-        anchorToken: '0x62bd9D98d4E188e281D7B78e29334969bbE1053c',
+        anchorToken: '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5',
         pivotTokens: [
-            '0x62bd9D98d4E188e281D7B78e29334969bbE1053c'
+            '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5'
         ],
         nonStandardTokenDecimals: {}
     },
@@ -114,6 +127,7 @@ var Ethereum = /** @class */ (function () {
                     case 0:
                         ethereum = new Ethereum();
                         ethereum.web3 = exports.getWeb3(nodeEndpoint);
+                        ethereum.contractAddresses = CONTRACT_ADDRESSES;
                         _a = ethereum;
                         return [4 /*yield*/, ethereum.web3.eth.net.getNetworkType()];
                     case 1:
@@ -128,7 +142,7 @@ var Ethereum = /** @class */ (function () {
                         ethereum.bancorNetwork = new ethereum.web3.eth.Contract(abis.BancorNetwork, bancorNetworkAddress);
                         ethereum.converterRegistry = new ethereum.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
                         ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, exports.getContractAddresses(ethereum).multicall);
-                        ethereum.decimals = __assign({}, CONTRACT_ADDRESSES[ethereum.networkType].nonStandardTokenDecimals);
+                        ethereum.decimals = __assign({}, ethereum.contractAddresses[ethereum.networkType].nonStandardTokenDecimals);
                         ethereum.getPathsFunc = ethereum.getSomePathsFunc;
                         return [2 /*return*/, ethereum];
                 }
@@ -215,7 +229,7 @@ var Ethereum = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, conversionEvents.get(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock)];
+                    case 0: return [4 /*yield*/, converterEvents.getConversionEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -232,7 +246,34 @@ var Ethereum = /** @class */ (function () {
                         return [4 /*yield*/, timestamp_to_block_number_1.timestampToBlockNumber(this.web3, toTimestamp)];
                     case 2:
                         toBlock = _a.sent();
-                        return [4 /*yield*/, conversionEvents.get(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock)];
+                        return [4 /*yield*/, converterEvents.getConversionEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock)];
+                    case 3: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    Ethereum.prototype.getTokenRateEvents = function (token, fromBlock, toBlock) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, converterEvents.getTokenRateEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    Ethereum.prototype.getTokenRateEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
+        return __awaiter(this, void 0, void 0, function () {
+            var fromBlock, toBlock;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, timestamp_to_block_number_1.timestampToBlockNumber(this.web3, fromTimestamp)];
+                    case 1:
+                        fromBlock = _a.sent();
+                        return [4 /*yield*/, timestamp_to_block_number_1.timestampToBlockNumber(this.web3, toTimestamp)];
+                    case 2:
+                        toBlock = _a.sent();
+                        return [4 /*yield*/, converterEvents.getTokenRateEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock)];
                     case 3: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -262,9 +303,6 @@ var Ethereum = /** @class */ (function () {
         }
         return Array.from(new Set(paths.map(function (path) { return path.join(','); }))).map(function (path) { return path.split(','); });
     };
-    Ethereum.getNormalizedToken = function (token) {
-        return Object.assign({}, token, { blockchainId: web3_1.default.utils.toChecksumAddress(token.blockchainId) });
-    };
     return Ethereum;
 }());
 exports.Ethereum = Ethereum;
@@ -274,8 +312,8 @@ exports.getWeb3 = function (nodeEndpoint) {
     return web3;
 };
 exports.getContractAddresses = function (ethereum) {
-    if (CONTRACT_ADDRESSES[ethereum.networkType])
-        return CONTRACT_ADDRESSES[ethereum.networkType];
+    if (ethereum.contractAddresses[ethereum.networkType])
+        return ethereum.contractAddresses[ethereum.networkType];
     throw new Error(ethereum.networkType + ' network not supported');
 };
 exports.getDecimals = function (ethereum, token) {

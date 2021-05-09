@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getReturn = exports.getFinalAmount = exports.liquidateReserveAmount = exports.fundSupplyAmount = exports.fundCost = exports.crossReserveTargetAmount = exports.saleTargetAmount = exports.purchaseTargetAmount = exports.isTokenEqual = exports.toDecimalPlaces = exports.toRatio = exports.fromWei = exports.toWei = void 0;
 var decimal_js_1 = __importDefault(require("decimal.js"));
 var ZERO = new decimal_js_1.default(0);
 var ONE = new decimal_js_1.default(1);
@@ -24,6 +25,10 @@ function fromWei(amount, decimals) {
     return new decimal_js_1.default(amount + "e-" + decimals).toFixed();
 }
 exports.fromWei = fromWei;
+function toRatio(amount1, decimals1, amount2, decimals2) {
+    return new decimal_js_1.default(amount1 + "e-" + decimals1).div(amount2 + "e-" + decimals2).toFixed(Number(decimals2));
+}
+exports.toRatio = toRatio;
 function toDecimalPlaces(amount, decimals) {
     return amount.toDecimalPlaces(decimals).toFixed();
 }
