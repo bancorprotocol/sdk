@@ -20,7 +20,7 @@ describe('versions test', () => {
         it(`getConverterVersion of ethereum converter with string version = "${version}"`, async () => {
             ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], [version]);
             const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
-            expect(received).toEqual(String(Number(version.split('.').join(''))));
+            expect(received).toEqual(String(Number(version.replaceAll('.', ''))));
         });
     }
 
@@ -28,7 +28,7 @@ describe('versions test', () => {
         it(`getConverterVersion of ethereum converter with bytes32 version = "${version}"`, async () => {
             ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['', '0x' + version.split('').map(c => c.charCodeAt(0).toString(16)).join('')]);
             const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
-            expect(received).toEqual(String(Number(version.split('.').join(''))));
+            expect(received).toEqual(String(Number(version.replaceAll('.', ''))));
         });
     }
 

@@ -32,7 +32,7 @@ export async function get(web3, address) {
         const version = await rpc(contract.methods.version());
         const value = parse(type, version);
         if (value)
-            return {type: type, value: String(Number(value.split('.').join('')))};
+            return {type: type, value: String(Number(value.replaceAll('.', '')))};
     }
     return {type: "unknown", value: "unknown"};
 }
