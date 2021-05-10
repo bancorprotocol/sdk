@@ -1,23 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -61,8 +42,14 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Core = void 0;
 var helpers = __importStar(require("./helpers"));
 var ethereum_1 = require("./blockchains/ethereum");
 var eos_1 = require("./blockchains/eos");
@@ -156,7 +143,7 @@ var Core = /** @class */ (function () {
      * @param amounts input amounts in token decimals
      * @returns The best rate and corresponding path for each input amount
      */
-    Core.prototype.getPathsAndRates = function (sourceToken, targetToken, amounts) {
+    Core.prototype.getPathAndRates = function (sourceToken, targetToken, amounts) {
         if (amounts === void 0) { amounts = ['1']; }
         return __awaiter(this, void 0, void 0, function () {
             var sourceBlockchain, targetBlockchain, paths_1, rates_1, bestIndices, sourcePaths, sourceRatesByAmount, sourceIndicesByAmount, bestSourceRates, targetPaths, targetRatesByAmount, targetIndicesByAmount;

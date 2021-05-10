@@ -1,7 +1,6 @@
 import { Token } from './types';
 export declare function toWei(amount: any, decimals: any): string;
 export declare function fromWei(amount: any, decimals: any): string;
-export declare function toRatio(amount1: any, decimals1: any, amount2: any, decimals2: any): string;
 export declare function toDecimalPlaces(amount: any, decimals: any): any;
 export declare function isTokenEqual(token1: Token, token2: Token): boolean;
 export declare function purchaseTargetAmount(supply: any, reserveBalance: any, reserveWeight: any, amount: any): any;

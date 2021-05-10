@@ -49,7 +49,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.History = void 0;
 var sdk_module_1 = require("./sdk_module");
 /**
  * The History module allows querying historical data in the bancor network
@@ -92,44 +91,6 @@ var History = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.core.blockchains[token.blockchainType].getConversionEventsByTimestamp(token, fromTimestamp, toTimestamp)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    /**
-    * returns all TokenRate events for a given liquidity pool / liquid token between two block numbers
-    *
-    * @param token      smart token
-    * @param fromBlock  start block number
-    * @param toBlock    end block number
-    *
-    * @returns  list of TokenRate events
-    */
-    History.prototype.getTokenRateEvents = function (token, fromBlock, toBlock) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.core.blockchains[token.blockchainType].getTokenRateEvents(token, fromBlock, toBlock)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    /**
-    * returns all TokenRate events for a given liquidity pool / liquid token between two points in time
-    *
-    * @param token          smart token
-    * @param fromTimestamp  start time
-    * @param toTimestamp    end time
-    *
-    * @returns  list of TokenRate events
-    */
-    History.prototype.getTokenRateEventsByTimestamp = function (token, fromTimestamp, toTimestamp) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.core.blockchains[token.blockchainType].getTokenRateEventsByTimestamp(token, fromTimestamp, toTimestamp)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

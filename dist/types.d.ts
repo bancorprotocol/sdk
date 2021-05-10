@@ -45,19 +45,10 @@ export interface ConversionEvent {
     blockNumber: number;
     sourceToken: string;
     targetToken: string;
-    sourceAmount: string;
-    targetAmount: string;
+    inputAmount: string;
+    outputAmount: string;
     conversionFee?: string;
     trader: string;
-}
-/**
-* TokenRateEvent interface
-*/
-export interface TokenRateEvent {
-    blockNumber: number;
-    sourceToken: string;
-    targetToken: string;
-    tokenRate: string;
 }
 /** @internal */
 export interface Blockchain {
@@ -67,6 +58,4 @@ export interface Blockchain {
     getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;
-    getTokenRateEvents(token: Token, fromBlock: number, toBlock: number): Promise<TokenRateEvent[]>;
-    getTokenRateEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<TokenRateEvent[]>;
 }

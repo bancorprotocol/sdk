@@ -12,7 +12,7 @@ export declare class Core {
      * @param amounts input amounts in token decimals
      * @returns The best rate and corresponding path for each input amount
      */
-    getPathsAndRates(sourceToken: Token, targetToken: Token, amounts?: string[]): Promise<Array<{
+    getPathAndRates(sourceToken: Token, targetToken: Token, amounts?: string[]): Promise<Array<{
         path: Token[];
         rate: string;
     }>>;

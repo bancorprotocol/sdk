@@ -1,5 +1,5 @@
 import { JsonRpc } from 'eosjs';
-import { Blockchain, Converter, ConversionEvent, TokenRateEvent, Token } from '../../types';
+import { Blockchain, Converter, ConversionEvent, Token } from '../../types';
 export declare class EOS implements Blockchain {
     jsonRpc: JsonRpc;
     static create(nodeEndpoint: string): Promise<EOS>;
@@ -11,8 +11,6 @@ export declare class EOS implements Blockchain {
     getConverterVersion(converter: Converter): Promise<string>;
     getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]>;
     getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]>;
-    getTokenRateEvents(token: Token, fromBlock: number, toBlock: number): Promise<TokenRateEvent[]>;
-    getTokenRateEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<TokenRateEvent[]>;
     private getRateByPath;
     private getConverterSettings;
     private getSmartTokenStat;

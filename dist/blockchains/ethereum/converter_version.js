@@ -36,7 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.get = void 0;
 function rpc(func) {
     return __awaiter(this, void 0, void 0, function () {
         var error_1;
@@ -92,7 +91,7 @@ function get(web3, address) {
                     version = _b.sent();
                     value = parse(type, version);
                     if (value)
-                        return [2 /*return*/, { type: type, value: String(Number(value.split('.').join(''))) }];
+                        return [2 /*return*/, { type: type, value: value }];
                     _b.label = 3;
                 case 3:
                     _i++;
