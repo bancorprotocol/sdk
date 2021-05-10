@@ -18,3 +18,13 @@ export const ERC20Token = [
 export const MulticallContract = [
     {"constant":false,"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes","name":"callData","type":"bytes"}],"internalType":"struct Multicall.Call[]","name":"calls","type":"tuple[]"},{"internalType":"bool","name":"strict","type":"bool"}],"name":"aggregate","outputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"components":[{"internalType":"bool","name":"success","type":"bool"},{"internalType":"bytes","name":"data","type":"bytes"}],"internalType":"struct Multicall.Return[]","name":"returnData","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"}
 ];
+
+export const ConversionEventLegacy = [
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"}],"name":"Change","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"},{"indexed":false,"name":"rateN","type":"uint256"},{"indexed":false,"name":"rateD","type":"uint256"}],"name":"Conversion","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"},{"indexed":false,"name":"conversionFee","type":"int256"}],"name":"Conversion","type":"event"}
+];
+
+export const TokenRateEventLegacy = [
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":false,"name":"tokenRateN","type":"uint256"},{"indexed":false,"name":"tokenRateD","type":"uint256"}],"name":"TokenRateUpdate","type":"event"}
+];

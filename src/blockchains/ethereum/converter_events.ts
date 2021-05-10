@@ -1,21 +1,13 @@
 import Web3 from 'web3';
 import { ERC20Token } from './abis';
+import { ConversionEventLegacy } from './abis';
+import { TokenRateEventLegacy } from './abis';
 import { fromWei, toRatio } from '../../helpers';
 import { ConversionEvent, TokenRateEvent } from '../../types';
 
 const GENESIS_BLOCK_NUMBER = 3851136;
 
 const OWNER_UPDATE_EVENT_HASH = Web3.utils.keccak256("OwnerUpdate(address,address)");
-
-const CONVERSION_EVENT_LEGACY = [
-    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"}],"name":"Change","type":"event"},
-    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"},{"indexed":false,"name":"rateN","type":"uint256"},{"indexed":false,"name":"rateD","type":"uint256"}],"name":"Conversion","type":"event"},
-    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"sourceAmount","type":"uint256"},{"indexed":false,"name":"targetAmount","type":"uint256"},{"indexed":false,"name":"conversionFee","type":"int256"}],"name":"Conversion","type":"event"}
-];
-
-const TOKEN_RATE_EVENT_LEGACY = [
-    {"anonymous":false,"inputs":[{"indexed":true,"name":"sourceToken","type":"address"},{"indexed":true,"name":"targetToken","type":"address"},{"indexed":false,"name":"tokenRateN","type":"uint256"},{"indexed":false,"name":"tokenRateD","type":"uint256"}],"name":"TokenRateUpdate","type":"event"},
-];
 
 function parseOwnerUpdateEvent(log) {
     const indexed = log.topics.length > 1;
@@ -103,7 +95,7 @@ export async function getConversionEvents(web3, decimals, token, fromBlock, toBl
 
     let index = 0;
     for (const batch of await getBatches(web3, token, fromBlock, toBlock)) {
-        for (const abi of CONVERSION_EVENT_LEGACY.slice(index)) {
+        for (const abi of ConversionEventLegacy.slice(index)) {
             const converter = new web3.eth.Contract([abi], batch.owner);
             const events = await getPastEvents(converter, abi.name, batch.fromBlock, batch.toBlock);
             if (events.length > 0) {
@@ -118,7 +110,7 @@ export async function getConversionEvents(web3, decimals, token, fromBlock, toBl
                         trader       : event.returnValues.trader,
                     });
                 }
-                index = CONVERSION_EVENT_LEGACY.indexOf(abi);
+                index = ConversionEventLegacy.indexOf(abi);
                 break;
             }
         }
@@ -132,7 +124,7 @@ export async function getTokenRateEvents(web3, decimals, token, fromBlock, toBlo
 
     let index = 0;
     for (const batch of await getBatches(web3, token, fromBlock, toBlock)) {
-        for (const abi of TOKEN_RATE_EVENT_LEGACY.slice(index)) {
+        for (const abi of TokenRateEventLegacy.slice(index)) {
             const converter = new web3.eth.Contract([abi], batch.owner);
             const events = await getPastEvents(converter, abi.name, batch.fromBlock, batch.toBlock);
             if (events.length > 0) {
@@ -151,7 +143,7 @@ export async function getTokenRateEvents(web3, decimals, token, fromBlock, toBlo
                         ),
                     });
                 }
-                index = TOKEN_RATE_EVENT_LEGACY.indexOf(abi);
+                index = TokenRateEventLegacy.indexOf(abi);
                 break;
             }
         }
