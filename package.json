@@ -16,6 +16,9 @@
   "directories": {
     "test": "tests"
   },
+  "files": [
+    "/dist/**/*.*"
+  ],
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "test": "jest --coverage"
