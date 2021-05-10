@@ -16,6 +16,10 @@ export function fromWei(amount, decimals) {
     return new Decimal(`${amount}e-${decimals}`).toFixed();
 }
 
+export function toRatio(amount1, decimals1, amount2, decimals2) {
+    return new Decimal(`${amount1}e-${decimals1}`).div(`${amount2}e-${decimals2}`).toFixed(Number(decimals2));
+}
+
 export function toDecimalPlaces(amount, decimals) {
     return amount.toDecimalPlaces(decimals).toFixed();
 }

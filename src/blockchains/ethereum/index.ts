@@ -1,10 +1,10 @@
 import Web3 from 'web3';
 import * as abis from './abis';
 import * as helpers from '../../helpers';
-import * as conversionEvents from './conversion_events';
+import * as converterEvents from './converter_events';
 import * as converterVersion from './converter_version';
 import { timestampToBlockNumber } from './timestamp_to_block_number';
-import { Blockchain, BlockchainType, Converter, ConversionEvent, Token } from '../../types';
+import { Blockchain, BlockchainType, Converter, ConversionEvent, TokenRateEvent, Token } from '../../types';
 
 const CONTRACT_ADDRESSES = {
     main: {
@@ -22,11 +22,11 @@ const CONTRACT_ADDRESSES = {
         }
     },
     ropsten: {
-        registry: '0xFD95E724962fCfC269010A0c6700Aa09D5de3074',
+        registry: '0xA6DB4B0963C37Bc959CbC0a874B5bDDf2250f26F',
         multicall: '0xf3ad7e31b052ff96566eedd218a823430e74b406',
-        anchorToken: '0x62bd9D98d4E188e281D7B78e29334969bbE1053c',
+        anchorToken: '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5',
         pivotTokens: [
-            '0x62bd9D98d4E188e281D7B78e29334969bbE1053c'
+            '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5'
         ],
         nonStandardTokenDecimals: {
         }
@@ -44,6 +44,7 @@ const CONTRACT_ADDRESSES = {
 
 export class Ethereum implements Blockchain {
     web3: Web3;
+    contractAddresses: object;
     networkType: string;
     bancorNetwork: Web3.eth.Contract;
     converterRegistry: Web3.eth.Contract;
@@ -56,6 +57,7 @@ export class Ethereum implements Blockchain {
     static async create(nodeEndpoint: string | Object): Promise<Ethereum> {
         const ethereum = new Ethereum();
         ethereum.web3 = getWeb3(nodeEndpoint);
+        ethereum.contractAddresses = CONTRACT_ADDRESSES;
         ethereum.networkType = await ethereum.web3.eth.net.getNetworkType();
         const contractRegistry = new ethereum.web3.eth.Contract(abis.ContractRegistry, getContractAddresses(ethereum).registry);
         const bancorNetworkAddress = await contractRegistry.methods.addressOf(Web3.utils.asciiToHex('BancorNetwork')).call();
@@ -63,14 +65,14 @@ export class Ethereum implements Blockchain {
         ethereum.bancorNetwork = new ethereum.web3.eth.Contract(abis.BancorNetwork, bancorNetworkAddress);
         ethereum.converterRegistry = new ethereum.web3.eth.Contract(abis.BancorConverterRegistry, converterRegistryAddress);
         ethereum.multicallContract = new ethereum.web3.eth.Contract(abis.MulticallContract, getContractAddresses(ethereum).multicall);
-        ethereum.decimals = {...CONTRACT_ADDRESSES[ethereum.networkType].nonStandardTokenDecimals};
+        ethereum.decimals = {...ethereum.contractAddresses[ethereum.networkType].nonStandardTokenDecimals};
         ethereum.getPathsFunc = ethereum.getSomePathsFunc;
         return ethereum;
     }
 
     static async destroy(ethereum: Ethereum): Promise<void> {
-        if (ethereum.web3.currentProvider && ethereum.web3.currentProvider.constructor.name == 'WebsocketProvider')
-            ethereum.web3.currentProvider.connection.close();
+        if (ethereum.web3.currentProvider.disconnect)
+            ethereum.web3.currentProvider.disconnect();
     }
 
     async refresh(): Promise<void> {
@@ -107,13 +109,23 @@ export class Ethereum implements Blockchain {
     }
 
     async getConversionEvents(token: Token, fromBlock: number, toBlock: number): Promise<ConversionEvent[]> {
-        return await conversionEvents.get(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
+        return await converterEvents.getConversionEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
     }
 
     async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
         const fromBlock = await timestampToBlockNumber(this.web3, fromTimestamp);
         const toBlock = await timestampToBlockNumber(this.web3, toTimestamp);
-        return await conversionEvents.get(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
+        return await converterEvents.getConversionEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
+    }
+
+    async getTokenRateEvents(token: Token, fromBlock: number, toBlock: number): Promise<TokenRateEvent[]> {
+        return await converterEvents.getTokenRateEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
+    }
+
+    async getTokenRateEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<TokenRateEvent[]> {
+        const fromBlock = await timestampToBlockNumber(this.web3, fromTimestamp);
+        const toBlock = await timestampToBlockNumber(this.web3, toTimestamp);
+        return await converterEvents.getTokenRateEvents(this.web3, this.decimals, token.blockchainId, fromBlock, toBlock);
     }
 
     getAllPathsFunc(sourceToken: string, targetToken: string): string[][] {
@@ -138,10 +150,6 @@ export class Ethereum implements Blockchain {
         }
         return Array.from(new Set<string>(paths.map(path => path.join(',')))).map(path => path.split(','));
     }
-
-    private static getNormalizedToken(token: Token): Token {
-        return Object.assign({}, token, { blockchainId: Web3.utils.toChecksumAddress(token.blockchainId) });
-    }
 }
 
 export const getWeb3 = function(nodeEndpoint) {
@@ -151,8 +159,8 @@ export const getWeb3 = function(nodeEndpoint) {
 };
 
 export const getContractAddresses = function(ethereum) {
-    if (CONTRACT_ADDRESSES[ethereum.networkType])
-        return CONTRACT_ADDRESSES[ethereum.networkType];
+    if (ethereum.contractAddresses[ethereum.networkType])
+        return ethereum.contractAddresses[ethereum.networkType];
     throw new Error(ethereum.networkType + ' network not supported');
 };
 
@@ -194,7 +202,7 @@ export const getRates = async function(ethereum, paths, amounts): Promise<string
     return Array(amounts.length).fill('0').map((_, i) => {
         const _returnData = returnData.slice(i * paths.length, i * paths.length + paths.length)
         return _returnData.map(item => item.success ? Web3.utils.toBN(item.data.substr(0, 66)).toString() : '0');
-    })
+    });
 }
 
 export const getTokens = async function(ethereum) {

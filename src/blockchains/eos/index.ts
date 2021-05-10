@@ -1,7 +1,7 @@
 import { JsonRpc } from 'eosjs';
 import fetch from 'node-fetch';
 import * as helpers from '../../helpers';
-import { Blockchain, BlockchainType, Converter, ConversionEvent, Token } from '../../types';
+import { Blockchain, BlockchainType, Converter, ConversionEvent, TokenRateEvent, Token } from '../../types';
 import legacyConverters from './legacy_converters';
 
 const anchorToken: Token = {
@@ -50,6 +50,14 @@ export class EOS implements Blockchain {
 
     async getConversionEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<ConversionEvent[]> {
         throw new Error('getConversionEventsByTimestamp not supported on eos');
+    }
+
+    async getTokenRateEvents(token: Token, fromBlock: number, toBlock: number): Promise<TokenRateEvent[]> {
+        throw new Error('getTokenRateEvents not supported on eos');
+    }
+
+    async getTokenRateEventsByTimestamp(token: Token, fromTimestamp: number, toTimestamp: number): Promise<TokenRateEvent[]> {
+        throw new Error('getTokenRateEventsByTimestamp not supported on eos');
     }
 
     private async getRateByPath(path: Token[], amount: string): Promise<string> {

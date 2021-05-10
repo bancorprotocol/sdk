@@ -16,26 +16,32 @@ describe('versions test', () => {
         jest.restoreAllMocks();
     });
 
-    it('getConverterVersion of ethereum converter with a "string" version type', async () => {
-        ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['1.1']);
-        const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
-        expect(received).toEqual('1.1');
-    });
+    for (const version of ['0.1.2', '0.34', '5.6', '78']) {
+        it(`getConverterVersion of ethereum converter with string version = "${version}"`, async () => {
+            ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], [version]);
+            const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
+            expect(received).toEqual(String(Number(version.split('.').join(''))));
+        });
+    }
 
-    it('getConverterVersion of ethereum converter with a "bytes32" version type', async () => {
-        ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['', '0x' + '2.2'.split('').map(c => c.charCodeAt(0).toString(16)).join('')]);
-        const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
-        expect(received).toEqual('2.2');
-    });
+    for (const version of ['0.1.2', '0.34', '5.6', '78']) {
+        it(`getConverterVersion of ethereum converter with bytes32 version = "${version}"`, async () => {
+            ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['', '0x' + version.split('').map(c => c.charCodeAt(0).toString(16)).join('')]);
+            const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
+            expect(received).toEqual(String(Number(version.split('.').join(''))));
+        });
+    }
 
-    it('getConverterVersion of ethereum converter with a "uint16" version type', async () => {
-        ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['', '', '3.3']);
-        const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
-        expect(received).toEqual('3.3');
-    });
+    for (const version of ['12', '34', '56', '78']) {
+        it(`getConverterVersion of ethereum converter with uint16 version = ${version}`, async () => {
+            ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['', '', version]);
+            const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
+            expect(received).toEqual(version);
+        });
+    }
 
     it('getConverterVersion of ethereum converter with an unknown version type', async () => {
-        ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['', '', '', '4.4']);
+        ethereumMocks.setConverterVersionGetter(sdk._core.blockchains[BlockchainType.Ethereum], ['', '', '', '12345678']);
         const received = await sdk.utils.getConverterVersion({ blockchainType: BlockchainType.Ethereum, blockchainId: '0x1111111111111111111111111111111111111111' });
         expect(received).toEqual('unknown');
     });
