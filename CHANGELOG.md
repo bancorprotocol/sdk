@@ -1,3 +1,9 @@
+### 0.2.10
+* Fixed ropsten support
+* Added support for TokenRateUpdate event
+* Fixed some terminology inconsistencies
+
+
 ### 0.2.9
 * Fixed `getPathAndRates` return type
 
